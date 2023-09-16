@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  postgres:
+    build:
+      context: Database/
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+
+#networks:
+#  ft_transcendence:
+#    driver: bridge
