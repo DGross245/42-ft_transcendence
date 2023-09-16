@@ -7,7 +7,20 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    networks:
+      - ft_transcendence
+    restart: always
 
-#networks:
-#  ft_transcendence:
-#    driver: bridge
+volumes:
+  postgres_db:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "./Database/data/postgres/"
+
+networks:
+ ft_transcendence:
+   driver: bridge
