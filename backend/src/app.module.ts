@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import  typeOrmConfig from '../ormconfig';
 
 // The @Module decorator is used to create a module that incorporates the specified controllers, services, and other dependencies.
 @Module({
-  imports: [],
+  imports: [TypeOrmModule.forRootAsync({useFactory: () => typeOrmConfig,}),],
   controllers: [AppController],
   providers: [AppService],
 })

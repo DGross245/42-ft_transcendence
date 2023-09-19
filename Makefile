@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dna <dna@student.42.fr>                    +#+  +:+       +#+         #
+#    By: dgross <dgross@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/16 11:24:22 by dgross            #+#    #+#              #
-#    Updated: 2023/09/16 19:32:27 by dna              ###   ########.fr        #
+#    Updated: 2023/09/19 14:37:51 by dgross           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 all: up
 
 data:
-	mkdir -p ./data/postgres
+	mkdir -p ./database/data/postgres
 
 up: data
 	docker-compose up --build
@@ -27,7 +27,7 @@ clean:
 
 fclean: clean
 	docker-compose down --rmi all
-	rm -rf ./data
+	rm -rf ./database/data
 
 ps:
 	docker-compose ps
