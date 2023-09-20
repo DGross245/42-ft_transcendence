@@ -10,11 +10,20 @@ services:
     volumes:
       - postgres_db:/var/lib/postgresql/data
     networks:
-      - ft_transcendence
+      - transcendence
     restart: always
 
-  #nestjs:
-
+  nestjs:
+    build:
+      context: backend/
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    networks:
+      - transcendence
+    depends_on:
+      - postgres
+    restart: always
 
 volumes:
   postgres_db:
@@ -25,5 +34,5 @@ volumes:
       device: "./Database/data/postgres/"
 
 networks:
- ft_transcendence:
-   driver: bridge
+  transcendence:
+    driver: bridge

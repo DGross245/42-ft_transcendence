@@ -3,7 +3,7 @@ import * as path from 'path';
 import { User } from '../src/user/user.entity'; // Import your entity class here
 
 // Specify the path to the .env file based on your project structure
-const envPath = path.join(__dirname, '../.env');
+const envPath = path.join(__dirname, '../../../.env');
 
 dotenv.config({ path: envPath });
 
