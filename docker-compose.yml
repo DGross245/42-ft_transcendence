@@ -23,6 +23,8 @@ services:
       - transcendence
     depends_on:
       - postgres
+    ports:
+      - "8000:8000"
     restart: always
 
 volumes:
