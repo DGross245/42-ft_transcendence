@@ -4,13 +4,13 @@ import { config } from 'dotenv';
 
 // loads .env
 // (check if this is save and good practise)
-// config();
+ config();
 
 async function bootstrap() {
   // NestFactory is used to create an instance of the NestJS application, which typically starts with the AppModule.
   // await just waits until the instance is created.
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  await app.listen(process.env.BACKEND_PORT);
 }
 bootstrap();
 // The main.ts file serves as the entry point of the application, where you bootstrap the NestJS application and start the server.

@@ -10,6 +10,4 @@ COPY ./ ./
 
 EXPOSE 3000
 
-#ENTRYPOINT [""]
-
-CMD npm run start
+CMD npm run start:dev
