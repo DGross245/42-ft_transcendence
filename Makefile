@@ -6,7 +6,7 @@
 #    By: dgross <dgross@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/16 11:24:22 by dgross            #+#    #+#              #
-#    Updated: 2023/09/19 14:37:51 by dgross           ###   ########.fr        #
+#    Updated: 2023/09/24 09:31:21 by dgross           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,10 +23,8 @@ down:
 	docker-compose down
 
 clean:
-	docker-compose down -v
-
-fclean: clean
-	docker-compose down --rmi all
+	docker-compose down -v --rmi all --remove-orphans
+	docker network prune -f
 	rm -rf ./database/data
 
 ps:
@@ -35,4 +33,4 @@ ps:
 logs:
 	docker-compose logs
 
-.PHONY: up down clean 
+.PHONY: up data down clean ps logs

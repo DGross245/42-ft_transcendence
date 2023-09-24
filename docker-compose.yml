@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+  #Database
   postgres:
     build:
       context: Database/
@@ -11,8 +12,14 @@ services:
       - postgres_db:/var/lib/postgresql/data
     networks:
       - transcendence
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
     restart: always
 
+  #Backend
   nestjs:
     build:
       context: backend/
@@ -22,7 +29,8 @@ services:
     networks:
       - transcendence
     depends_on:
-      - postgres
+        postgres:
+          condition: service_healthy
     ports:
       - "3000:3000"
     restart: always
