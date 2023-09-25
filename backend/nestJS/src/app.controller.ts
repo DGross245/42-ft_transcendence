@@ -9,7 +9,7 @@ export class AppController {
   // In this context, 'appService' is the argument name, and 'AppService' is the type of that argument.
   constructor(private readonly appService: AppService) {}
 
-  // This @get decorator, trigger the method only when the path is empty due to the empty brackets.
+  // This @Get decorator, trigger the method only when the path is empty due to the empty brackets.
   // If something is specified then it will trigger only if the specified item is present in the path.
   @Get()
   getHello(): string {

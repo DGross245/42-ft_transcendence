@@ -1,21 +1,38 @@
-import { Injectable } from "@nestjs/common";
-import { User } from "./user.model";
+import { Delete, Injectable, Patch, Post } from "@nestjs/common";
 
 @Injectable()
 export class UserService {
-	// Creating empty array of User (?)
-	users: User[] = [];
 
-	// Creates a new User and inserts it into the Database (?)
-	insertUser( username: string, userPwd: string, avatar: Express.Multer.File ) {
-		const newUser = new User(username, userPwd, avatar);
-		this.users.push(newUser);
-		// return (?)
+	// {repository for Users}
+
+	// find user
+	findUserByID() {
+
 	}
 
-	// here should be a function that creates the users
-	// and push it to the database or something like that
-}
+	// createUser
+	@Post()
+	creatNewUser() {
 
-// Create Entity Classes:
-// Define your database ta bles as TypeScript classes (entities). For example, if you have a User entity, you can create a User.entity.ts file with the entity definition.
+	}
+
+	// delete User
+	@Delete()
+	deleteUser() {
+
+	}
+
+	// change Name
+	@Patch()
+	changeUsername() {
+
+	}
+
+	// change Avatar
+	@Patch()
+	changeAvatar() {
+
+	}
+	
+
+}
