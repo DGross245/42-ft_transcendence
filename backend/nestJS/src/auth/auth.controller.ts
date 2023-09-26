@@ -1,6 +1,8 @@
 import { Controller, Get } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 
+// @todo lookup how authentication normaly works on websites
+
 @Controller('auth')
 export class AuthController {
 	constructor(private readonly authService: AuthService) {}
@@ -14,6 +16,8 @@ export class AuthController {
 	// Login (?)
 	loginUser() : any {
 		this.authService.loginUser()
+
+		// after success redirect the user
 	}
 
 	
@@ -22,3 +26,5 @@ export class AuthController {
 		this.authService.authenticateUser()
 	}
 }
+
+// include like basic logic here and more heavy logic in service

@@ -17,7 +17,11 @@ export class AuthService {
 	signUp() : any {
 		// User will join using 42 API information
 
-		// fetch it ( not sure how this will look like )
+		// fetch the information ( not sure how this will look like )
+
+		// save the data in the Database (for pwd hash it before saving it)
+
+		// push it do the database
 
 	}
 
