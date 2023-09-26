@@ -4,9 +4,9 @@ import { Delete, Injectable, Patch, Post } from "@nestjs/common";
 export class UserService {
 
 	// {repository for Users}
-
+	
 	// find user
-	findUserByID() {
+	findUserByID( UserID: number ) {
 
 	}
 

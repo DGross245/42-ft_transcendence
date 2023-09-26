@@ -15,6 +15,8 @@ export class AuthController {
 	loginUser() : any {
 		this.authService.loginUser()
 	}
+
+	
 	// authentication (?)
 	authenticateUser() : any {
 		this.authService.authenticateUser()
