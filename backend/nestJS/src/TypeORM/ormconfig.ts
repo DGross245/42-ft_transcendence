@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 import * as path from 'path';
-import { User } from '../user/user.entity'; // Import your entity class here
+import { UserEntity } from '../user/user.entity'; // Import your entity class here
 
 // Specify the path to the .env file based on your project structure
 const envPath = path.join(__dirname, '../../../.env');
@@ -14,7 +14,7 @@ export default {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  entities: [User],
+  entities: [UserEntity],
   synchronize: false,
   logging: true
   };

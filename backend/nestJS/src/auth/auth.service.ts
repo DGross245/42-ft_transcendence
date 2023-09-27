@@ -6,23 +6,23 @@ export class AuthService {
 	// Login (?)
 	loginUser() : any {
 		
-		// Search for user ID from 42 API in repository?
+		// redirect to 42 Auth page
 
-		//if already registered then login
+		// check the callback for the data
 
-		// if not sign up
+		// check if the user already exist aka authentication
+		
+		// any errror = back to login page (?)
+
 	}
 
 	// sign up
 	signUp() : any {
-		// User will join using 42 API information
-
-		// fetch the information ( not sure how this will look like )
+		// fetch info
 
 		// save the data in the Database (for pwd hash it before saving it)
 
 		// push it do the database
-
 	}
 
 	// Adding a two factor to the acc
@@ -37,9 +37,14 @@ export class AuthService {
 
 	// authentication (?)
 	authenticateUser() : any {
-		// check if this user is a 42 student
+		// check if this user is already exist
+			// call signin
+		
+		// already in database 
+			// create new session
 
-		// 
+		// Session already exist
+			// deny request (?) or remove old session (?) 
 	}
 
 

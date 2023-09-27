@@ -11,7 +11,24 @@ export class UserRepository extends Repository<UserEntity> {
 	// Here should be function that has something to do with the repository
 	// like interacting with it, read, write etc.
 
-	// findOneByID or somefunction to find user
-
 	// ...
+
+	// @todo look for when I should return something
+
+	async createNewUser( user: UserEntity ): Promise<UserEntity> {
+		return await this.userRepository.save(user);
+	}
+
+	async deleteUser( userID: number ) : Promise<void> {
+		await this.userRepository.findOne({ where: {id: userID }});
+		await this.userRepository.delete(userID);
+	}
+
+	// not sure if avatar is apart of that
+	// updates only new user data
+	async updateUser( userID: number, updateUserDto: Partial<UserEntity> ) : Promise<void> {
+		const user = await this.userRepository.findOne({ where: {id: userID }});
+		Object.assign(user, updateUserDto);
+	}
+
 }

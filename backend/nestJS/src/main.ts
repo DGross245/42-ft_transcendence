@@ -20,7 +20,8 @@ bootstrap();
 // When multiple decorators of the same type are applied to a method, such as '@Get()', only the first one encountered will be executed.
 
 // 1. Login and Registration
-// 2. Chat
-// 3. Game
-// 4. User profile adding friends and stuff
-// 5. rest
+// 2. Websockets for multiple Users
+// 3. Chat
+// 4. Game
+// 5. User profile adding friends and stuff
+// 6. rest

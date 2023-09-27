@@ -1,38 +1,33 @@
-import { Delete, Injectable, Patch, Post } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
+import { UserRepository } from "./user.repository";
 
 @Injectable()
 export class UserService {
 
-	// {repository for Users}
-	
-	// find user
-	findUserByID( UserID: number ) {
+	constructor( private userRepository: UserRepository ) {}
 
-	}
+	// moved all userRepository related stuff to user.respository
 
-	// createUser
-	@Post()
-	creatNewUser() {
+	// Profil related stuff here?
 
-	}
+	// deleteUser (here handling notifications and stuff and calling the basic deletion method from the repository)
+	// not sure if theres a better way to get the ID of the user
+	async deleteUser( userID: number ) : Promise<void> {
 
-	// delete User
-	@Delete()
-	deleteUser() {
+		await this.userRepository.deleteUser( userID );
 
-	}
+		// remove user from channels
 
-	// change Name
-	@Patch()
-	changeUsername() {
+		// remove user from friendlist
 
-	}
-
-	// change Avatar
-	@Patch()
-	changeAvatar() {
+		// remove user from game stats?
 
 	}
 	
+	// createUser (maybe useless due to the repository)
 
+	private async updateUser(userID: number, newStatus: string ): Promise<void> {
+		const user = await this.userRepository.findOne({ where: { id: userID }});
+		user.status = newStatus;
+	}
 }
