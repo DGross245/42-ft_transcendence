@@ -2,20 +2,25 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class UserEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+	// default set to unique
+	@PrimaryGeneratedColumn()
+	id: number;
 
-  @Column()
-  username: string;
+	@Column({ unique : true })
+	username: string;
 
-  @Column()
-  email: string;
+	@Column()
+	email: string;
 
-  @Column()
-  status: string;
+	@Column()
+	status: string;
 
-  @Column()
-  avatar: Express.Multer.File;
+	// should the password be saved here? (Dont forget to hash it)
+  	@Column()
+	password: string
+// postgres has some problems with avatar
+//  @Column()
+//  avatar: Express.Multer.File;
 
   // friends?
 

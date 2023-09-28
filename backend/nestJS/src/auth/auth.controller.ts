@@ -1,30 +1,47 @@
-import { Controller, Get } from "@nestjs/common";
+import { Body, Controller, Get, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { AuthService } from "./auth.service";
+import { FileInterceptor } from "@nestjs/platform-express";
 
 // @todo lookup how authentication normaly works on websites
+// @todo lookup possible error handling syntaxes in NestJS
 
 @Controller('auth')
 export class AuthController {
-	constructor(private readonly authService: AuthService) {}
+	constructor(private readonly authService: AuthService ) {}
 
-	@Get()
-	nothing(): any {
-		return ;
+	@Post('login')
+	async loginUser(
+		@Body() username: string,
+		@Body() password: string
+	) : Promise<void> {
+		try {
+			await this.authService.loginUser( username, password )
+
+		} catch ( erro ) {
+
+		}
 	}
 
+	@Post('signup')
+	@UseInterceptors(FileInterceptor('avatar'))
+	async addUser(
+		@Body() username: string,
+		@Body() userPwd: string,
+		@Body() email: string,
+		@UploadedFile() avatar: Express.Multer.File
+	) {
+		try {
 
-	// Login (?)
-	loginUser() : any {
-		this.authService.loginUser()
+			await this.authService.signUp( username, userPwd, email, avatar )
 
-		// after success redirect the user
+		} catch ( error ) {
+
+			// return success status?
+
+		}
 	}
 
 	
-	// authentication (?)
-	authenticateUser() : any {
-		this.authService.authenticateUser()
-	}
 }
 
 // include like basic logic here and more heavy logic in service

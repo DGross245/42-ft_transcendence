@@ -1,28 +1,44 @@
 import { Injectable } from "@nestjs/common";
+import { UserRepository } from "./../user/user.repository";
 
 @Injectable()
 export class AuthService {
 
-	// Login (?)
-	loginUser() : any {
-		
-		// redirect to 42 Auth page
+	constructor(private userRepository: UserRepository ) {}
 
-		// check the callback for the data
-
-		// check if the user already exist aka authentication
+	async loginUser( username: string , password: string ) : Promise<void> {
 		
-		// any errror = back to login page (?)
+		try {
+			
+			// redirect to 42 Auth page
+	
+			// check the callback for the data
+	
+			await this.authenticateUser( 0 );
+
+		} catch ( error ) {
+			
+			// any errror = back to login page (?)
+		}
+	
+		// check if twofact is active
+			// redirect on fail
 
 	}
 
-	// sign up
-	signUp() : any {
-		// fetch info
+	async signUp(
+			username: string,
+			userPwd: string,
+			email: string,
+			avatar: Express.Multer.File ) : Promise<void> {
+		
+		try {
 
-		// save the data in the Database (for pwd hash it before saving it)
+			await this.userRepository.createNewUser( username, userPwd, email, avatar );
 
-		// push it do the database
+		} catch ( error ) {
+			// throw error
+		}
 	}
 
 	// Adding a two factor to the acc
@@ -35,8 +51,7 @@ export class AuthService {
 
 	}
 
-	// authentication (?)
-	authenticateUser() : any {
+	async authenticateUser( userID: number ) : Promise<void> {
 		// check if this user is already exist
 			// call signin
 		

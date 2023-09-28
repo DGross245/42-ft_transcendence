@@ -15,7 +15,17 @@ export class UserRepository extends Repository<UserEntity> {
 
 	// @todo look for when I should return something
 
-	async createNewUser( user: UserEntity ): Promise<UserEntity> {
+	async createNewUser( 
+			username: string, 
+			userPwd: string,
+			email: string,
+			avatar: Express.Multer.File ) : Promise<UserEntity> {
+		const user = new UserEntity;
+		user.id = 0; // @todo look up how do set them (ID from 42 API? Gen one?)
+		user.username = username;
+		user.email = email;
+		user.password = userPwd;
+		user.status = "ONLINE";
 		return await this.userRepository.save(user);
 	}
 

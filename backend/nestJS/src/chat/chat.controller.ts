@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Delete, Get, Patch } from "@nestjs/common";
 import { ChatService } from "./chat.service";
 
 @Controller('chat')
@@ -6,33 +6,34 @@ export class ChatController {
 	// maybe wrong syntax because not handling multiple chatrooms
 	constructor(private readonly chatService: ChatService) {}
 
-	// Join Chat/Channels (?)
+	@Patch()
 	joinChannel() {
 		this.chatService.joinChannel();
 	}
-	// See all Chats/Channels (?)
+
+	@Get()
 	showAllChats() {
 		this.chatService.showAllChats();
 	}
-	// Invite to Chat/Channel {?}
+
+	@Patch()
 	inviteToChat() {
 		this.chatService.showAllChats();
 	}
-	// Ban from Chat/Channel 
+
+	@Patch()
 	banFormChat() {
 		this.chatService.banFormChat();
 	}
-	// kick from chat/channel
+
+	@Delete()
 	kickFromChat() {
 		this.chatService.kickFromChat();
 	}
-	// Change channel name
+
+	@Patch()
 	changeChatName() {
 		this.chatService.changeChatName();
 	}
 	
-	@Get()
-	nothing(): any {
-		return ;
-	}
 }

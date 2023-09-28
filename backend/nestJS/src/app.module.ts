@@ -13,7 +13,6 @@ import { ChatModule } from './chat/chat.module';
   imports: [TypeOrmModule.forRootAsync({useFactory: () => typeOrmConfig,}),
 			UserModule,
 			GameModule,
-			AuthModule,
 			ChatModule],
   controllers: [AppController],
   providers: [AppService],
@@ -21,3 +20,5 @@ import { ChatModule } from './chat/chat.module';
 export class AppModule {}
 
 // In the app.modules.ts file, configure and organize the application's modules, services, controllers, and dependencies that the module should use.
+
+// Avoid including a module that is already included in another module you have already imported
