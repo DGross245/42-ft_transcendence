@@ -7,4 +7,8 @@ export class UserController {
 	constructor( private readonly userService: UserService) {}
 
 
+	@Get()
+	nothing() : string {
+		return ('success user');
+	}
 }

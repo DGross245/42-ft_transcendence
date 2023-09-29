@@ -6,40 +6,40 @@ export class AuthService {
 
 	constructor(private userRepository: UserRepository ) {}
 
-	async loginUser( username: string , password: string ) : Promise<void> {
+	//async loginUser( username: string , password: string ) : Promise<void> {
 		
-		try {
+	//	try {
 			
-			// redirect to 42 Auth page
+	//		// redirect to 42 Auth page
 	
-			// check the callback for the data
+	//		// check the callback for the data
 	
-			await this.authenticateUser( 0 );
+	//		await this.authenticateUser( 0 );
 
-		} catch ( error ) {
+	//	} catch ( error ) {
 			
-			// any errror = back to login page (?)
-		}
+	//		// any errror = back to login page (?)
+	//	}
 	
-		// check if twofact is active
-			// redirect on fail
+	//	// check if twofact is active
+	//		// redirect on fail
 
-	}
+	//}
 
-	async signUp(
-			username: string,
-			userPwd: string,
-			email: string,
-			avatar: Express.Multer.File ) : Promise<void> {
+	//async signUp(
+	//		username: string,
+	//		userPwd: string,
+	//		email: string,
+	//		avatar: Express.Multer.File ) : Promise<void> {
 		
-		try {
+	//	try {
 
-			await this.userRepository.createNewUser( username, userPwd, email, avatar );
+	//		await this.userRepository.createNewUser( username, userPwd, email, avatar );
 
-		} catch ( error ) {
-			// throw error
-		}
-	}
+	//	} catch ( error ) {
+	//		// throw error
+	//	}
+	//}
 
 	// Adding a two factor to the acc
 	AddtwoFactor() {

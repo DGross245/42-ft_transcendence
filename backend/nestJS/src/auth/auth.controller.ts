@@ -1,6 +1,8 @@
-import { Body, Controller, Get, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Get, Post, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { Response } from "express";
+import { IntraAuthGuard } from "./auth.guard";
 
 // @todo lookup how authentication normaly works on websites
 // @todo lookup possible error handling syntaxes in NestJS
@@ -9,38 +11,67 @@ import { FileInterceptor } from "@nestjs/platform-express";
 export class AuthController {
 	constructor(private readonly authService: AuthService ) {}
 
-	@Post('login')
-	async loginUser(
-		@Body() username: string,
-		@Body() password: string
-	) : Promise<void> {
-		try {
-			await this.authService.loginUser( username, password )
+	//@Get('login')
+	//async loginUser(
+	//	@Body() username: string,
+	//	@Body() password: string
+	//) : Promise<void> {
+	//	try {
+	//		await this.authService.loginUser( username, password )
 
-		} catch ( erro ) {
+	//	} catch ( erro ) {
 
-		}
+	//	}
+	//}
+
+	@Get()
+	nothing() : string {
+		return ('success auth');
 	}
 
-	@Post('signup')
-	@UseInterceptors(FileInterceptor('avatar'))
-	async addUser(
-		@Body() username: string,
-		@Body() userPwd: string,
-		@Body() email: string,
-		@UploadedFile() avatar: Express.Multer.File
-	) {
-		try {
-
-			await this.authService.signUp( username, userPwd, email, avatar )
-
-		} catch ( error ) {
-
-			// return success status?
-
-		}
+	@Get('login')
+	@UseGuards(IntraAuthGuard)
+	login() {
+		return ;
 	}
 
+	@Get('redirect')
+	@UseGuards(IntraAuthGuard)
+	redirect(@Res() res: Response) {
+		res.send(200);
+		//return ('redirect');
+	}
+
+	@Get('status')
+	userStatus() {
+
+	}
+
+
+	@Get('logout')
+	logoutUser() {
+
+	}
+	
+
+	//@Post('signup')
+	//@UseInterceptors(FileInterceptor('avatar'))
+	//async addUser(
+	//	@Body() username: string,
+	//	@Body() userPwd: string,
+	//	@Body() email: string,
+	//	@UploadedFile() avatar: Express.Multer.File
+	//) {
+	//	try {
+
+	//		await this.authService.signUp( username, userPwd, email, avatar )
+
+	//	} catch ( error ) {
+
+	//		// return success status?
+
+	//	}
+	//}
 	
 }
 

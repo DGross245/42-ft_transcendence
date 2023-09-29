@@ -9,7 +9,8 @@ import { UserEntity } from "./user.entity";
 @Module({
 	imports: [TypeOrmModule.forFeature([UserEntity])],
 	controllers: [UserController],
-	providers: [UserService,UserRepository]
+	providers: [UserService,UserRepository],
+	exports: [UserService, UserRepository]
 })
 
 // @todo lookup what u can do in these classes

@@ -5,12 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import  typeOrmConfig from './TypeORM/ormconfig';
 import { UserModule } from './user/user.module';
 import { GameModule } from './game/game.module';
-import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
+import { AuthModule } from './auth/auth.module';
 
 // The @Module decorator is used to create a module that incorporates the specified controllers, services, and other dependencies.
 @Module({
   imports: [TypeOrmModule.forRootAsync({useFactory: () => typeOrmConfig,}),
+			AuthModule,
 			UserModule,
 			GameModule,
 			ChatModule],
