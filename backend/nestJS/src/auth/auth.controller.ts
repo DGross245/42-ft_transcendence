@@ -38,7 +38,7 @@ export class AuthController {
 	@Get('redirect')
 	@UseGuards(IntraAuthGuard)
 	redirect(@Res() res: Response) {
-		res.send(200);
+		res.sendStatus(200);
 		//return ('redirect');
 	}
 

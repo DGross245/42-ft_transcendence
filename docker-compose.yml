@@ -28,6 +28,8 @@ services:
       - .env
     networks:
       - transcendence
+    volumes:
+      - nestjs_data:/nestJS
     depends_on:
         postgres:
           condition: service_healthy
@@ -42,6 +44,12 @@ volumes:
       type: "none"
       o: "bind"
       device: "./Database/data/postgres/"
+  nestjs_data:
+    driver: local
+    driver_opts:
+      type: "none"
+      o: "bind"
+      device: "./backend/nestjs/"
 
 networks:
   transcendence:

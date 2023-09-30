@@ -1,12 +1,13 @@
-FROM node:16
+FROM node:latest
 
 WORKDIR /nestJS
 
-COPY nestJS/tsconfig*.json ./
-COPY nestJS/package*.json ./
+COPY ./nestJS/tsconfig*.json ./
+COPY ./nestJS/package*.json ./
+
 RUN npm install
 
-COPY ./ ./
+COPY ./nestJS/src ./src
 
 EXPOSE 3000
 

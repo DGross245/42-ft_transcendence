@@ -11,6 +11,8 @@ async function bootstrap() {
   // await just waits until the instance is created.
   const app = await NestFactory.create(AppModule);
   await app.listen(process.env.BACKEND_PORT);
+  console.log('NestJS application is running on port 3000');
+
 }
 bootstrap();
 // The main.ts file serves as the entry point of the application, where you bootstrap the NestJS application and start the server.
