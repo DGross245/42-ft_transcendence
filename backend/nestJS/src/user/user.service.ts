@@ -6,10 +6,6 @@ export class UserService {
 
 	constructor( private userRepository: UserRepository ) {}
 
-	// moved all userRepository related stuff to user.respository
-
-	// Profil related stuff here?
-
 	// deleteUser (here handling notifications and stuff and calling the basic deletion method from the repository)
 	// not sure if theres a better way to get the ID of the user
 	async deleteUser( userID: number ) : Promise<void> {
