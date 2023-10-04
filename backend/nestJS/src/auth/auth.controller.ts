@@ -11,19 +11,6 @@ import { IntraAuthGuard } from "./auth.guard";
 export class AuthController {
 	constructor(private readonly authService: AuthService ) {}
 
-	//@Get('login')
-	//async loginUser(
-	//	@Body() username: string,
-	//	@Body() password: string
-	//) : Promise<void> {
-	//	try {
-	//		await this.authService.loginUser( username, password )
-
-	//	} catch ( erro ) {
-
-	//	}
-	//}
-
 	@Get()
 	nothing() : string {
 		return ('success auth');
@@ -52,26 +39,6 @@ export class AuthController {
 	logoutUser() {
 
 	}
-	
-
-	//@Post('signup')
-	//@UseInterceptors(FileInterceptor('avatar'))
-	//async addUser(
-	//	@Body() username: string,
-	//	@Body() userPwd: string,
-	//	@Body() email: string,
-	//	@UploadedFile() avatar: Express.Multer.File
-	//) {
-	//	try {
-
-	//		await this.authService.signUp( username, userPwd, email, avatar )
-
-	//	} catch ( error ) {
-
-	//		// return success status?
-
-	//	}
-	//}
 	
 }
 

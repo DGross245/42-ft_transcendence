@@ -13,14 +13,14 @@ export class IntraStrategy extends PassportStrategy(Strategy, 'intra42') {
 		});
 	}
 
+	// need to work on the extraction of the data
 	async validate(accessToken: string, refreshToken: string, profile: Profile, done: VerifiedCallback ) : Promise<any> {
-		console.log('done');
 		if (!profile) {
 			throw new UnauthorizedException();
 		}
-		const { name, id, email } = profile;
+		const { id, emails, username } = profile;
 
-		console.log(name, id, email);
-		return (done(null, { id, name, email }));
+		console.log(id, username, emails); // tempo will be removed later
+		return (done(null, { id, username, emails }));
 	}
 }
