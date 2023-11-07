@@ -1,55 +1,8 @@
 version: '3.8'
 
 services:
-  #Database
-  postgres:
-    build:
-      context: Database/
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    volumes:
-      - postgres_db:/var/lib/postgresql/data
-    networks:
-      - transcendence
-    healthcheck:
-      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
-      interval: 10s
-      timeout: 3s
-      retries: 3
-    restart: always
-
-  #Backend
-  nestjs:
-    build:
-      context: backend/
-      dockerfile: Dockerfile
-    env_file:
-      - .env
-    networks:
-      - transcendence
-    volumes:
-      - nestjs_data:/nestJS
-    depends_on:
-        postgres:
-          condition: service_healthy
-    ports:
-      - "3000:3000"
-    restart: always
 
 volumes:
-  postgres_db:
-    driver: local
-    driver_opts:
-      type: "none"
-      o: "bind"
-      device: "./Database/data/postgres/"
-  nestjs_data:
-    driver: local
-    driver_opts:
-      type: "none"
-      o: "bind"
-      device: "./backend/nestjs/"
 
 networks:
   transcendence:

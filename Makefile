@@ -6,7 +6,7 @@
 #    By: dgross <dgross@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/16 11:24:22 by dgross            #+#    #+#              #
-#    Updated: 2023/09/24 09:31:21 by dgross           ###   ########.fr        #
+#    Updated: 2023/11/07 14:23:41 by dgross           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,6 @@
 all: up
 
 data:
-	mkdir -p ./database/data/postgres
 
 up: data
 	docker-compose up --build
