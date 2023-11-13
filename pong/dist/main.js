@@ -13,9 +13,9 @@ const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerH
 camera.position.set(0, 0, 90);
 camera.lookAt(0, 0, 0);
 // Animation loop including handling events
-const animate = () => {
+const tick = () => {
     scene.update();
     renderer.render(scene, camera);
-    requestAnimationFrame(animate);
+    window.requestAnimationFrame(tick);
 };
-animate();
+tick();

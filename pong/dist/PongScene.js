@@ -40,6 +40,7 @@ export default class PongScene extends THREE.Scene {
             cubeLine.position.z = -1;
             this.add(cubeLine);
         }
+        //keyboard input handling
         document.addEventListener('keydown', this.onKeyDown.bind(this));
         document.addEventListener('keyup', this.onKeyUp.bind(this));
     }
