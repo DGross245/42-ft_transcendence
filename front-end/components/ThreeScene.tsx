@@ -21,6 +21,7 @@ const ThreeScene: React.FC = () => {
 
 	window.addEventListener('resize', handleResize);
 
+
 	const animate = () => {
 		pongScene.update();
 		pongScene.handleResize();

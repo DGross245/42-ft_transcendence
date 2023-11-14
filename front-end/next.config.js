@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {}
-
-module.exports = nextConfig
+const nextConfig = {
+	webpack: (config, { isServer }) => {
+		return config;
+	},
+};
+  
+  module.exports = nextConfig;
+  
