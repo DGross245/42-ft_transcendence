@@ -12,7 +12,7 @@ export default class PongScene extends THREE.Scene {
 	private renderer!: THREE.WebGLRenderer;
 	private ball!: THREE.Mesh;
 	private ballGeometry!: THREE.BoxGeometry;
-	private ballSpeed = 3;
+	private ballSpeed = 2;
 	private ballDirection = new THREE.Vector3(1, 1, 0).normalize();
 
 	constructor(private canvas: HTMLCanvasElement) {
