@@ -52,7 +52,6 @@ const Paddle = ({ position }: { position: [number, number, number] }) => {
 
 const Ball = () => {
 	const ref = useRef<Mesh>(null);
-
 	return (
 		<mesh ref={ref}>
 			<boxGeometry args={[4, 4, 4]} />
@@ -61,7 +60,7 @@ const Ball = () => {
 				transparent={false}
 				blending={THREE.AdditiveBlending}
 				side={THREE.BackSide}
-				/>
+			/>
 		</mesh>
 	)
 }
@@ -70,18 +69,19 @@ const MultipleCubeLine = () => {
 	const cubeGeometry = new BoxGeometry(2, 2, 0.5);
 	const cubeMaterial = new MeshBasicMaterial({ color: 0x808080 });
 	const cubes = [];
-
+  
 	for (let i = 0; i < 20; i++) {
-		const positionY = i * (105 * 2) / 20 - 105;
-		const cube = (
-			<mesh key={i} geometry={cubeGeometry} material={cubeMaterial} position={[0, positionY, -4]} />
-		);
-		cubes.push(cube);
+	  const positionY = i * (105 * 2) / 20 - 105;
+	  const cube = (
+		<mesh key={i} geometry={cubeGeometry} material={cubeMaterial} position={[0, positionY, -4]} />
+	  );
+	  cubes.push(cube);
 	}
-
-	return cubes;
+  
+	return <group>{cubes}</group>;
 };
 
+  
 const GroundReflection = () => {
 	return (
 	<mesh position={[0, 0, -4]}>
@@ -108,7 +108,7 @@ export default function ThreePongScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const [paddleLeftPosition, setPaddleLeftPosition] = useState(0);
 	const [paddleRightPosition, setPaddleRightPosition] = useState(0);
-	const paddleSpeed = 1;
+	const paddleSpeed = 2;
 
 	const keyStates: { [key: string]: boolean } = {
 		ArrowUp: false,
@@ -176,12 +176,12 @@ export default function ThreePongScene() {
 				<Camera />
 				<ambientLight />
 				<pointLight position={[10, 10, 10]} />
-					<Border position={[0,105,0]} />
-					<Border position={[0,-105,0]} />
-					<Paddle position={[152, paddleRightPosition, 0]} />
-					<Paddle position={[-152, paddleLeftPosition, 0]} />
-					<Ball />
-					<MultipleCubeLine />
+				<Border position={[0,105,0]} />
+				<Border position={[0,-105,0]} />
+				<Paddle position={[152, paddleRightPosition, 0]} />
+				<Paddle position={[-152, paddleLeftPosition, 0]} />
+				<Ball />
+				<MultipleCubeLine />
 				<GroundReflection />
 				<mesh>
 					<planeGeometry args={[360, 230]}/>
@@ -190,16 +190,17 @@ export default function ThreePongScene() {
 						transparent={true}
 						blending={THREE.AdditiveBlending}
 						side={THREE.BackSide}
-				/>
+					/>
 				</mesh>
-				<OrbitControls />
 				<EffectComposer>
 					<Bloom
-					mipmapBlur
-					luminanceThreshold={0}
-					intensity={0.5}
-					radius={0.72} />
+						mipmapBlur
+						luminanceThreshold={0}
+						intensity={0.5}
+						radius={0.72}
+					/>
 				</EffectComposer>
+				<OrbitControls />
 			</Canvas>
 		</div>
 	)

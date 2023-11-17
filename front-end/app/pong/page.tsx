@@ -1,5 +1,5 @@
 import { title } from "@/components/primitives";
-import ThreePongScene from "./ThreePongScene";
+import ThreePongScene from "@/app/pong/ThreePongScene";
 
 export default function PongPage() {
 	return (
