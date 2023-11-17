@@ -110,7 +110,7 @@ export default function ThreePongScene() {
 	const [paddleRightPosition, setPaddleRightPosition] = useState(0);
 	const paddleSpeed = 1;
 
-	const keyStates = {
+	const keyStates: { [key: string]: boolean } = {
 		ArrowUp: false,
 		ArrowDown: false,
 		KeyW: false,
@@ -125,13 +125,13 @@ export default function ThreePongScene() {
 			});
 		};
 
-		const handleKeyDown = (event: KeyboardEvent ) => {
+		const handleKeyDown = (event: KeyboardEvent) => {
 			if (event.code in keyStates) {
 				keyStates[event.code] = true;
 			}
 		};
 
-		const handleKeyUp = (event) => {
+		const handleKeyUp = (event: KeyboardEvent) => {
 			if (event.code in keyStates) {
 				keyStates[event.code] = false;
 			}
