@@ -3,9 +3,10 @@
 import * as THREE from 'three';
 import { Mesh, BoxGeometry, MeshBasicMaterial } from 'three';
 import React, { useEffect, useRef, useState } from 'react';
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useFrame, } from '@react-three/fiber'
 import { MeshReflectorMaterial, PerspectiveCamera, OrbitControls } from '@react-three/drei'; 
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import useKeyboard from './hooks/useKeyboard';
 
 const Camera = () => {
 	return (
@@ -34,19 +35,47 @@ const Border = ({ position }: { position: [number, number, number] }) => {
 	)
 }
 
-const Paddle = ({ position }: { position: [number, number, number] }) => {
-	const ref = useRef<Mesh>(null);
+const Paddle = (props) => {
+	const leftRef = useRef()
+	const rightRef = useRef()
+	const keyMap = props.keyMap
+
+	const [leftSelected, setLeftSelected] = useState(false)
+	const [rightSelected, setRightSelected] = useState(false)
+  
+	useFrame((_, delta) => {
+	  if (leftSelected) {
+		keyMap['KeyW'] && (leftRef.current.position.y += 100 * delta)
+		keyMap['KeyS'] && (leftRef.current.position.y -= 100 * delta)
+	  }
+  
+	  if (rightSelected) {
+		keyMap['ArrowUp'] && (rightRef.current.position.y -= 100 * delta)
+		keyMap['ArrowDown'] && (rightRef.current.position.y -= 100 * delta)
+	  }
+	})
 
 	return (
-		<mesh position={position} ref={ref}>
-			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial
-				color={0xffffff}
-				transparent={false}
-				blending={THREE.AdditiveBlending}
-				side={THREE.BackSide}
-			/>
-		</mesh>
+		<>
+			<mesh ref={leftRef} position={[-150, 0, 0]} onPointerDown={() => setLeftSelected(!leftSelected)}>
+				<boxGeometry args={[4, 30, 4]} />
+				<meshBasicMaterial
+					color={0xffffff}
+					transparent={false}
+					blending={THREE.AdditiveBlending}
+					side={THREE.BackSide}
+				/>
+			</mesh>
+			<mesh ref={rightRef} position={[150, 0, 0]} onPointerDown={() => setRightSelected(!rightSelected)}>
+				<boxGeometry args={[4, 30, 4]} />
+				<meshBasicMaterial
+					color={0xffffff}
+					transparent={false}
+					blending={THREE.AdditiveBlending}
+					side={THREE.BackSide}
+				/>
+			</mesh>
+		</>
 	);
 };
 
@@ -81,7 +110,6 @@ const MultipleCubeLine = () => {
 	return <group>{cubes}</group>;
 };
 
-  
 const GroundReflection = () => {
 	return (
 	<mesh position={[0, 0, -4]}>
@@ -103,19 +131,9 @@ const GroundReflection = () => {
 	);
 };
 
-
 export default function ThreePongScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const [paddleLeftPosition, setPaddleLeftPosition] = useState(0);
-	const [paddleRightPosition, setPaddleRightPosition] = useState(0);
-	const paddleSpeed = 2;
-
-	const keyStates: { [key: string]: boolean } = {
-		ArrowUp: false,
-		ArrowDown: false,
-		KeyW: false,
-		KeyS: false,
-	};
+	const keyMap = useKeyboard()
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -125,61 +143,26 @@ export default function ThreePongScene() {
 			});
 		};
 
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.code in keyStates) {
-				keyStates[event.code] = true;
-			}
-		};
-
-		const handleKeyUp = (event: KeyboardEvent) => {
-			if (event.code in keyStates) {
-				keyStates[event.code] = false;
-			}
-		};
-
-		const updatePaddlePositions = () => {
-			if (keyStates['ArrowUp']) {
-				setPaddleRightPosition((prevPosition) => prevPosition + paddleSpeed);
-			}
-			if (keyStates['ArrowDown']) {
-				setPaddleRightPosition((prevPosition) => prevPosition - paddleSpeed);
-			}
-			if (keyStates['KeyW']) {
-				setPaddleLeftPosition((prevPosition) => prevPosition + paddleSpeed);
-			}
-			if (keyStates['KeyS']) {
-				setPaddleLeftPosition((prevPosition) => prevPosition - paddleSpeed);
-			}
-		};
+		handleResize();
 
 		window.addEventListener('resize', handleResize);
-		window.addEventListener('keydown', handleKeyDown);
-		window.addEventListener('keyup', handleKeyUp);
-
-		const update = () => {
-			updatePaddlePositions();
-			requestAnimationFrame(update);
-		};
-
-		update();
 
 		return () => {
-			window.removeEventListener('keydown', handleKeyDown);
-			window.removeEventListener('keyup', handleKeyUp);
 			window.removeEventListener('resize', handleResize);
 		};
 	}, []);
 
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
-		  <Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Camera />
+		  <Canvas style={{ width: dimensions.width, height: dimensions.height }} camera={{ position: [0, 0, 300] }}>
+				{/* <Camera /> */}
 				<ambientLight />
 				<pointLight position={[10, 10, 10]} />
 				<Border position={[0,105,0]} />
 				<Border position={[0,-105,0]} />
-				<Paddle position={[152, paddleRightPosition, 0]} />
-				<Paddle position={[-152, paddleLeftPosition, 0]} />
+				{/* <Paddle position={[-150, 0, 0]} keyMap={keyMap} />
+				<Paddle position={[150, 0, 0]}  keyMap={keyMap} /> */}
+				<Paddle leftKey={keyMap['KeyW']} rightKey={keyMap['ArrowUp']} />
 				<Ball />
 				<MultipleCubeLine />
 				<GroundReflection />
