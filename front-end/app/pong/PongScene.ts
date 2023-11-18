@@ -178,7 +178,6 @@ export default class PongScene extends THREE.Scene {
 	}
 
 	update() {
-
 		this.updateInput();
 		this.updateBallPosition();
 	}
