@@ -10,7 +10,7 @@ const Camera = () => {
 			far={1000}
 			position={[0, 0, 300]}
 		/>
-	)
+	);
 }
 
 export default Camera

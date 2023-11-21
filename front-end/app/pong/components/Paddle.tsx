@@ -1,11 +1,9 @@
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
-import { Mesh } from "three";
+import { forwardRef } from "react";
 import * as THREE from 'three'
 
-export const RightPaddle = (props: any) => {
+export const RightPaddle = forwardRef((props, ref) => {
 	const keyMap = props.keyMap;
-	const ref = useRef<Mesh>(null!);
 	const paddleSpeed = 300;
 	const borderPositionY = 105;
 
@@ -15,7 +13,7 @@ export const RightPaddle = (props: any) => {
 		} else if (keyMap['ArrowDown']) {
 			ref.current.position.y = Math.max(ref.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
 		}
-	})
+	});
 
 	return (
 		<mesh ref={ref} {...props}>
@@ -27,12 +25,11 @@ export const RightPaddle = (props: any) => {
 				side={THREE.BackSide}
 			/>
 		</mesh>
-	)
-}
+	);
+});
 
-export const LeftPaddle = (props: any) => {
+export const LeftPaddle = forwardRef((props, ref) => {
 	const keyMap = props.keyMap;
-	const ref = useRef<Mesh>(null!);
 	const paddleSpeed = 300;
 	const borderPositionY = 105;
 
@@ -42,7 +39,7 @@ export const LeftPaddle = (props: any) => {
 		} else if (keyMap['KeyS']) {
 			ref.current.position.y = Math.max(ref.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
 		}
-	})
+	});
 
 	return (
 		<mesh ref={ref} {...props}>
@@ -54,5 +51,5 @@ export const LeftPaddle = (props: any) => {
 				side={THREE.BackSide}
 			/>
 		</mesh>
-	)
-}
+	);
+});

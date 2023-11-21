@@ -30,7 +30,7 @@ const GroundReflection = () => {
 				/>
 			</mesh>
 		</>
-	)
+	);
 }
 
 export default GroundReflection

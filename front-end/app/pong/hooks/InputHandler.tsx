@@ -20,5 +20,5 @@ export default function InputHandler () {
 		}
 	}, []);
 
-	return keyMap.current
+	return (keyMap.current);
 }

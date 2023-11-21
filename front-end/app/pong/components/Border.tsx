@@ -11,7 +11,7 @@ const Border = ({ position }: { position: [number, number, number] }) => {
 				side={THREE.BackSide}
 				/>
 		</mesh>
-	)
+	);
 }
 
 export default Border

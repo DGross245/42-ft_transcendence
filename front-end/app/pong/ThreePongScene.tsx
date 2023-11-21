@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Stats, OrbitControls } from '@react-three/drei'; 
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
@@ -15,6 +15,8 @@ import GroundReflection from './components/GroundReflection';
 export default function ThreePongScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const keyMap = InputHandler()
+	const rightPaddleRef = useRef<THREE.Mesh>(null!);
+	const leftPaddleRef = useRef<THREE.Mesh>(null!);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -35,15 +37,15 @@ export default function ThreePongScene() {
 
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
-		  <Canvas style={{ width: dimensions.width, height: dimensions.height }} camera={{ position: [0, 0, 300] }}>
+			<Canvas style={{ width: dimensions.width, height: dimensions.height }} camera={{ position: [0, 0, 300] }}>
 				{/*<Camera />*/}
 				<ambientLight />
 				<pointLight position={[10, 10, 10]} />
 				<Border position={[0,105,0]} />
 				<Border position={[0,-105,0]} />
-				<RightPaddle position={[151, 0, 0]} keyMap={keyMap} />
-				<LeftPaddle position={[-151, 0, 0]} keyMap={keyMap} />
-				<Ball />
+				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} keyMap={keyMap} />
+				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
+				<Ball rightPaddleRef={rightPaddleRef} leftPaddleRef={leftPaddleRef} />
 				<CubeLine />
 				<GroundReflection />
 				<EffectComposer>
@@ -55,8 +57,8 @@ export default function ThreePongScene() {
 					/>
 				</EffectComposer>
 				<OrbitControls />
-				<Stats />
+				{/* <Stats /> */}
 			</Canvas>
 		</div>
-	)
+	);
 }

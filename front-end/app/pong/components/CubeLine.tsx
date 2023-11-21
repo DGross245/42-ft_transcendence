@@ -9,7 +9,7 @@ const CubeLine = () => {
 	  const positionY = i * (105 * 2) / 20 - 105;
 	  const cube = (
 		<mesh key={i} geometry={cubeGeometry} material={cubeMaterial} position={[0, positionY, -4]} />
-	  );
+	  )
 	  cubes.push(cube);
 	}
   
@@ -17,7 +17,7 @@ const CubeLine = () => {
 		<group>
 			{cubes}
 		</group>
-	)
+	);
 }
 
 export default CubeLine
