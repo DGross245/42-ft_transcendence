@@ -11,7 +11,6 @@ import { RightPaddle, LeftPaddle } from './components/Paddle';
 import Ball from './components/Ball';
 import CubeLine from './components/CubeLine';
 import GroundReflection from './components/GroundReflection';
-import Scoreboard from './components/Scoreboard';
 
 export default function PongScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -44,7 +43,7 @@ export default function PongScene() {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Camera />
+				<Camera /> 
 				<ambientLight />
 				<pointLight position={[10, 10, 10]} />
 				<Border position={[0,105,0]} />
@@ -65,6 +64,7 @@ export default function PongScene() {
 				<OrbitControls />
 				{/*<Scoreboard score={score}/>*/}
 				{/* <Stats /> */}
+				{/*<gridHelper args={[100, 100]} />*/}
 			</Canvas>
 		</div>
 	);
