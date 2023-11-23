@@ -5,14 +5,17 @@ import * as THREE from 'three';
 const Fields = (props) => {
 	const [hovered, hover] = useState(false);
 	const [symbol, setSymbol] = useState(null);
-
 	useCursor(hovered);
 	useCursor(props.clicked);
 
 	const handleClick = () => {
 		if (!props.clicked && !symbol) {
-			props.click(true)
+			props.click(true);
 			setSymbol(props.turn);
+
+			const updatedBoard = [...props.board];
+			updatedBoard[props.i][props.j][props.k] = props.turn;
+			props.setCurrentBoardState(updatedBoard);
 		}
 	}
 
@@ -26,17 +29,17 @@ const Fields = (props) => {
 				onClick={(e) => {e.stopPropagation(), handleClick()}}
 			>
 				<boxGeometry args={[0.5, 5.5, 5.5]} />
-				<meshBasicMaterial color={0x111111} transparent={true} blending={THREE.AdditiveBlending} visible={hovered ? false : true }/>
+				<meshBasicMaterial color={0x111111} transparent={true} depthWrite={false}  blending={THREE.AdditiveBlending} visible={hovered ? false : true }/>
 			</mesh>
 
-			{hovered && !props.clicked && !symbol && props.turn == 'O' &&(
+			{hovered && !props.clicked && !symbol && props.turn == 'O' && (
 				<mesh {...props} rotation={[Math.PI / 2, 0, 0]}>
-					<torusGeometry args={[2, 0.3, 8, 24]} />
-					<meshBasicMaterial color={0x0000ffaa} transparent={true} blending={THREE.AdditiveBlending} />
+					<torusGeometry args={[2, 0.4, 8, 24]} />
+					<meshBasicMaterial color={0x1fcdff} transparent={true} blending={THREE.AdditiveBlending} depthWrite={true} />
 				</mesh>
 			)}
 
-			{hovered && !props.clicked && !symbol && props.turn == 'X' &&(
+			{hovered && !props.clicked && !symbol && props.turn == 'X' && (
 				<group>
 					<mesh {...props} rotation={[Math.PI / 2, 0, Math.PI / -4]}>
 						<boxGeometry args={[5, 1, 0.5]} />
@@ -52,8 +55,8 @@ const Fields = (props) => {
 
 			{symbol && symbol == 'O' && (
 				<mesh {...props} rotation={[Math.PI / 2, 0, 0]}>
-					<torusGeometry args={[2, 0.3, 8, 24]} />
-					<meshBasicMaterial color={0x0000ffff} transparent={false} />
+					<torusGeometry args={[2, 0.4, 8, 24]} />
+					<meshBasicMaterial color={0x1aabff} transparent={false} fog={true}/>
 				</mesh>
 			)}
 

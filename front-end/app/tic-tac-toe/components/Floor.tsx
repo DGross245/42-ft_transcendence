@@ -1,3 +1,4 @@
+import { EffectComposer } from '@react-three/postprocessing'
 import * as THREE from 'three'
 
 const Floor = (props) => {
@@ -7,7 +8,7 @@ const Floor = (props) => {
 			<boxGeometry args={[0.25, 19, 19]} />
 			<meshBasicMaterial
 					color={ 0x333333 }
-					transparent={false}
+					transparent={true}
 					blending={THREE.AdditiveBlending}
 					side={THREE.BackSide}
 				/>
