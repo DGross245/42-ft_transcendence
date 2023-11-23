@@ -4,23 +4,16 @@ import * as THREE from 'three';
 
 const Fields = (props) => {
 	const [hovered, hover] = useState(false);
-	const [clicked, click] = useState(false);
-	const [turn, setTurn] = useState('X');
-	const [taken, isTaken] = useState(false);
+	const [symbol, setSymbol] = useState(null);
 
 	useCursor(hovered);
-	useCursor(clicked);
+	useCursor(props.clicked);
 
-	const takenCheck = () => {
-		if (!taken)
-			isTaken(true);
-	}
-
-	const turnChange = () => {
-		if (turn == 'X')
-			setTurn('O');
-		else
-			setTurn('X');
+	const handleClick = () => {
+		if (!props.clicked && !symbol) {
+			props.click(true)
+			setSymbol(props.turn);
+		}
 	}
 
 	return (
@@ -30,20 +23,20 @@ const Fields = (props) => {
 				rotation={[0, 0, Math.PI / 2]}
 				onPointerOver={(e) => { e.stopPropagation(), hover(true) }}
 				onPointerOut={() => hover(false)}
-				onClick={(e) => {e.stopPropagation(), click(true), turnChange()}}
+				onClick={(e) => {e.stopPropagation(), handleClick()}}
 			>
 				<boxGeometry args={[0.5, 5.5, 5.5]} />
 				<meshBasicMaterial color={0x111111} transparent={true} blending={THREE.AdditiveBlending} visible={hovered ? false : true }/>
 			</mesh>
 
-			{hovered && !clicked && turn == 'O' &&(
+			{hovered && !props.clicked && !symbol && props.turn == 'O' &&(
 				<mesh {...props} rotation={[Math.PI / 2, 0, 0]}>
 					<torusGeometry args={[2, 0.3, 8, 24]} />
 					<meshBasicMaterial color={0x0000ffaa} transparent={true} blending={THREE.AdditiveBlending} />
 				</mesh>
 			)}
 
-			{hovered && !clicked  && turn == 'X' &&(
+			{hovered && !props.clicked && !symbol && props.turn == 'X' &&(
 				<group>
 					<mesh {...props} rotation={[Math.PI / 2, 0, Math.PI / -4]}>
 						<boxGeometry args={[5, 1, 0.5]} />
@@ -56,22 +49,22 @@ const Fields = (props) => {
 					</mesh>
 				</group>
 			)}
-			
-			{clicked && !taken && turn == 'O' && (
-				<mesh {...props} rotation={[Math.PI / 2, 0, 0]} onClick={takenCheck}>
+
+			{symbol && symbol == 'O' && (
+				<mesh {...props} rotation={[Math.PI / 2, 0, 0]}>
 					<torusGeometry args={[2, 0.3, 8, 24]} />
 					<meshBasicMaterial color={0x0000ffff} transparent={false} />
 				</mesh>
 			)}
 
-			{clicked && !taken && turn == 'X' && (
+			{symbol && symbol == 'X' && (
 				<group>
-					<mesh {...props} rotation={[Math.PI / 2, 0, Math.PI / -4]} onClick={takenCheck}>
+					<mesh {...props} rotation={[Math.PI / 2, 0, Math.PI / -4]}>
 						<boxGeometry args={[5, 1, 0.5]} />
 						<meshBasicMaterial color={0xff0000} transparent={false} />
 					</mesh>
 
-					<mesh {...props} rotation={[Math.PI / 2, 0, Math.PI / 4]} onClick={takenCheck}>
+					<mesh {...props} rotation={[Math.PI / 2, 0, Math.PI / 4]}>
 						<boxGeometry args={[5, 1, 0.5]} />
 						<meshBasicMaterial color={0xff0000} transparent={false} />
 					</mesh>
