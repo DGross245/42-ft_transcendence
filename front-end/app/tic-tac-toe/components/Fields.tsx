@@ -16,6 +16,10 @@ const Fields = (props) => {
 			const updatedBoard = [...props.board];
 			updatedBoard[props.i][props.j][props.k] = props.turn;
 			props.setCurrentBoardState(updatedBoard);
+
+			const updateSceneCoords = [...props.sceneCords];
+			updateSceneCoords[props.i][props.j][props.k] = props.position;
+			props.setSceneCords(updateSceneCoords);
 		}
 	}
 
