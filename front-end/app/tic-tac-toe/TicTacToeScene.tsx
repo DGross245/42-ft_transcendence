@@ -64,10 +64,11 @@ const TTTScene = () => {
 	const [colour, setColour] = useState(0xffffff)
 
 	const turnChange = () => {
-		if (turn == 'X')
-			setTurn('O');
-		else
-			setTurn('X');
+		// if (turn == 'X')
+		// 	setTurn('O');
+		// else
+		// 	setTurn('X');
+		setTurn(turn == 'X' ? 'O' : 'X');
 	}
 
 	const checkClick = () => {
