@@ -5,7 +5,7 @@ import { Canvas } from "@react-three/fiber"
 import React, { useEffect, useRef, useState } from 'react';
 import { Stats, OrbitControls } from '@react-three/drei'; 
 import Lines from "./components/Lines";
-import Fields from "./components/Fields";
+import Fields from "./components/Field";
 import Floor from "./components/Floor";
 import { gameValidation }  from "./components/GameValidation"
 import Table from "./components/Table";
@@ -13,6 +13,7 @@ import FinishLine from "./components/FinishLine";
 import { EffectComposer, SelectiveBloom } from '@react-three/postprocessing'
 import { BlurPass, Resizer, KernelSize } from 'postprocessing'
 import * as THREE from 'three'
+import { fieldGenerator, gridLineGenrator } from "./components/Grid";
 
 const initialBoardState = [
 	[
@@ -71,11 +72,7 @@ const TTTScene = () => {
 			const winner = gameValidation(board, sceneCords, coords, setCoords);
 			if (winner) {
 				setVisible(true);
-				if (winner == 'X')
-
-					setColour(0xff0000)
-				else
-					setColour(0x1aabff)
+				winner == 'X' ? setColour(0xff0000) : setColour(0x1aabff);
 				console.log(winner);
 			}
 		}
@@ -110,49 +107,10 @@ const TTTScene = () => {
 					far={1000}
 					position={[33, 25, 39]}
 				/>
-				<Lines	position={[ 3, 0, 0]}	rotation={[Math.PI / 2, 0, 0]} />
-				<Lines	position={[-3, 0, 0]}	rotation={[Math.PI / 2, 0, 0]} />
-				<Lines	position={[ 0, 0, 3]}	rotation={[0, 0, Math.PI / 2]} />
-				<Lines	position={[ 0, 0,-3]}	rotation={[0, 0, Math.PI / 2]} />
-				<Fields	position={[ 0, 0, 0]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={0} j={1} k={1} />
-				<Fields position={[-6, 0, 0]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={0} j={1} k={0} />
-				<Fields position={[ 6, 0, 0]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={0} j={1} k={2} />
-				<Fields	position={[ 0, 0,-6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={0} j={0} k={1} />
-				<Fields position={[-6, 0,-6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={0} j={0} k={0} />
-				<Fields position={[ 6, 0,-6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={0} j={0} k={2} />
-				<Fields position={[ 0, 0, 6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={0} j={2} k={1} />
-				<Fields position={[-6, 0, 6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={0} j={2} k={0} />
-				<Fields position={[ 6, 0, 6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={0} j={2} k={2} />
+				{gridLineGenrator()}
+				{fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords)}
 				<Floor	position={[ 0,-0.2, 0]}/> 
-
-				<Lines	position={[ 3, 6, 0]}	rotation={[Math.PI / 2, 0, 0]} />
-				<Lines	position={[-3, 6, 0]}	rotation={[Math.PI / 2, 0, 0]} />
-				<Lines	position={[ 0, 6, 3]}	rotation={[0, 0, Math.PI / 2]} />
-				<Lines	position={[ 0, 6, -3]}	rotation={[0, 0, Math.PI / 2]} />
-				<Fields position={[ 0, 6, 0]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={1} j={1} k={1} />
-				<Fields position={[-6, 6, 0]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={1} j={1} k={0} />
-				<Fields position={[ 6, 6, 0]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={1} j={1} k={2} />
-				<Fields position={[ 0, 6 -6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={1} j={0} k={1} />
-				<Fields position={[-6, 6,-6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={1} j={0} k={0} />
-				<Fields position={[ 6, 6,-6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={1} j={0} k={2} />
-				<Fields position={[ 0, 6, 6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={1} j={2} k={1} />
-				<Fields position={[-6, 6, 6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={1} j={2} k={0} />
-				<Fields position={[ 6, 6, 6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={1} j={2} k={2} />
 				<Floor	position={[ 0, 5.8, 0]}/>
-
-				<Lines	position={[ 3, 12, 0]}	rotation={[Math.PI / 2, 0, 0]} />
-				<Lines	position={[-3, 12, 0]}	rotation={[Math.PI / 2, 0, 0]} />
-				<Lines	position={[ 0, 12, 3]}	rotation={[0, 0, Math.PI / 2]} />
-				<Lines	position={[ 0, 12,-3]}	rotation={[0, 0, Math.PI / 2]} />
-				<Fields position={[ 0, 12, 0]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={2} j={1} k={1} />
-				<Fields position={[-6, 12, 0]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={2} j={1} k={0} />
-				<Fields position={[ 6, 12, 0]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={2} j={1} k={2} />
-				<Fields position={[ 0, 12,-6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={2} j={0} k={1} />
-				<Fields position={[-6, 12,-6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={2} j={0} k={0} />
-				<Fields position={[ 6, 12,-6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={2} j={0} k={2} />
-				<Fields position={[ 0, 12, 6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={2} j={2} k={1} />
-				<Fields position={[-6, 12, 6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={2} j={2} k={0} />
-				<Fields position={[ 6, 12, 6]}	rotation={[0, 0, Math.PI / 2]} clicked={clicked} click={click} turn={currentTurn} board={board} setCurrentBoardState={setCurrentBoardState} sceneCords={sceneCords} setSceneCords={setSceneCords} i={2} j={2} k={2} />
 				<Floor	position={[ 0, 11.8, 0]}/>
 				<FinishLine winningCoords={winningCoords} visible={visible} colour={colour} />
 				{/*<Table />*/}
@@ -165,14 +123,3 @@ const TTTScene = () => {
 }
 
 export default TTTScene
-
-//{/* f0 Middle */}
-//{/* f0 MID LEFT */}
-//{/* f0 MID RIGHT */}
-//{/* f0 TOP MID */}
-//{/* f0 TOP LEFT */}
-//{/* f0 TOP RIGHT*/}
-//{/* f0 BOTTOM MID */}
-//{/* f0 BOTTOM LEFT */}
-//{/* f0 BOTTOM RIGHT */}
-

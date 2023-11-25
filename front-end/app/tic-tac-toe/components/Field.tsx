@@ -3,7 +3,8 @@ import { useFrame } from '@react-three/fiber';
 import { useRef, useState } from 'react';
 import * as THREE from 'three';
 
-const Fields = (props) => {
+
+const Field = (props) => {
 	const [hovered, hover] = useState(false);
 	const [symbol, setSymbol] = useState(null);
 	useCursor(hovered);
@@ -41,7 +42,7 @@ const Fields = (props) => {
 			{hovered && !props.clicked && !symbol && props.turn == 'O' && (
 				<mesh {...props} rotation={[Math.PI / 2, 0, 0]}>
 					<torusGeometry args={[2, 0.4, 8, 24]} />
-					<meshBasicMaterial color={0x1fcdff} transparent={true} blending={THREE.AdditiveBlending} depthWrite={true} />
+					<meshBasicMaterial color={0x1fcdff} transparent={true} blending={THREE.AdditiveBlending}/>
 				</mesh>
 			)}
 
@@ -83,4 +84,4 @@ const Fields = (props) => {
 	);
 };
 
-export default Fields
+export default Field

@@ -3,7 +3,7 @@ import TTTScene from "./TicTacToeScene";
 
 export default function BlogPage() {
 	return (
-		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80svh' }}>
 			<div>
 				<h1 className={title()}>Tic Tac Toe</h1>
 					<TTTScene />
