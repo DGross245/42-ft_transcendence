@@ -1,5 +1,6 @@
 import { useCursor } from '@react-three/drei';
-import { useState } from 'react';
+import { useFrame } from '@react-three/fiber';
+import { useRef, useState } from 'react';
 import * as THREE from 'three';
 
 const Fields = (props) => {
@@ -7,6 +8,7 @@ const Fields = (props) => {
 	const [symbol, setSymbol] = useState(null);
 	useCursor(hovered);
 	useCursor(props.clicked);
+	const ref = useRef();
 
 	const handleClick = () => {
 		if (!props.clicked && !symbol) {
@@ -58,7 +60,7 @@ const Fields = (props) => {
 			)}
 
 			{symbol && symbol == 'O' && (
-				<mesh {...props} rotation={[Math.PI / 2, 0, 0]}>
+				<mesh {...props} ref={ref} rotation={[Math.PI / 2, 0, 0]}>
 					<torusGeometry args={[2, 0.4, 8, 24]} />
 					<meshBasicMaterial color={0x1aabff} transparent={false} fog={true}/>
 				</mesh>

@@ -1,19 +1,21 @@
-import { EffectComposer } from '@react-three/postprocessing'
-import * as THREE from 'three'
+import * as THREE from 'three';
 
 const Floor = (props) => {
-
 	return (
-		<mesh {...props } rotation={[0, 0, Math.PI / 2]}>
-			<boxGeometry args={[0.25, 19, 19]} />
-			<meshBasicMaterial
-					color={ 0x333333 }
+		<>
+			<mesh {...props} rotation={[0, 0, Math.PI / 2]}>
+				<boxGeometry args={[0.25, 17.5, 17.5]} />
+				<meshStandardMaterial
+					color={0x111111}
 					transparent={true}
-					blending={THREE.AdditiveBlending}
+					metalness={0.8}
 					side={THREE.BackSide}
-				/>
-		</mesh>
+					opacity={0.5}
+					roughness={0.9}
+					/>
+			</mesh>
+		</>
 	)
 }
 
-export default Floor
+export default Floor;
