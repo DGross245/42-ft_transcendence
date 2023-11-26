@@ -1,17 +1,22 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, MutableRefObject, SetStateAction } from "react";
 import Field from "./Field";
 import Lines from "./Lines";
 
 export const fieldGenerator = (
+	lightRef: MutableRefObject<undefined>,
+	coords: number [][],
+	setCoords: React.Dispatch<React.SetStateAction<number[][]>>,
 	clicked: boolean,
-	click: Dispatch<SetStateAction<boolean>>,
-	currentTurn: string, board: string[][][],
-	setCurrentBoardState: Dispatch<SetStateAction<string[][][]>>,
-	sceneCords: number[][][][], setSceneCords: Dispatch<SetStateAction<number[][][][]>>) => {
+	click: React.Dispatch<React.SetStateAction<boolean>>,
+	currentTurn: string,
+	board: string[][][],
+	setCurrentBoardState: React.Dispatch<React.SetStateAction<string[][][]>>,
+	sceneCords: number[][][][],
+	setSceneCords: Dispatch<SetStateAction<number[][][][]>>) => {
 
 	const fields = [];
 	let l = 0;
-	const coords = [
+	const arrayPosition = [
 		{ i: 0, j: 0, k: 0 }, { i: 0, j: 1, k: 0 }, { i: 0, j: 2, k: 0 },
 		{ i: 0, j: 0, k: 1 }, { i: 0, j: 1, k: 1 }, { i: 0, j: 2, k: 1 },
 		{ i: 0, j: 0, k: 2 }, { i: 0, j: 1, k: 2 }, { i: 0, j: 2, k: 2 },
@@ -29,7 +34,7 @@ export const fieldGenerator = (
 				let x = 6 * i;
 				let y = 6 * level;
 				let z = 6 * j;
-				const { i: fieldI, j: fieldJ, k: fieldK } = coords[l];
+				const { i: fieldI, j: fieldJ, k: fieldK } = arrayPosition[l];
 				fields.push(
 						<Field
 							key={`${fieldI}-${fieldJ}-${fieldK}`}
@@ -42,16 +47,17 @@ export const fieldGenerator = (
 							setCurrentBoardState={setCurrentBoardState}
 							sceneCords={sceneCords}
 							setSceneCords={setSceneCords}
+							glow={coords.some(_coords => coord[0] === fieldI && coord[1] === fieldJ && coord[2] === fieldK)}
 							i={fieldI}
 							j={fieldJ}
 							k={fieldK}
+							lightRef={lightRef}
 						/>
 				);
 				l++;
 			}
 		}
 	}
-
 	return fields
 }
 

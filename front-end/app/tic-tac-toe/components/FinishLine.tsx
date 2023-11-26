@@ -10,7 +10,7 @@ const FinishLine = (props) => {
 	return (
 		<mesh visible={props.visible}>
 			<Line
-				points={[props.winningCoords[0], props.winningCoords[1], props.winningCoords[2]]}
+				points={[props.coords[0], props.coords[1], props.coords[2]]}
 				color={props.colour}
 				lineWidth={15}
 			/>

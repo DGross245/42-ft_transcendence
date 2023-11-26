@@ -1,6 +1,10 @@
 import { Dispatch, SetStateAction } from "react";
 
-export const gameValidation = ( board: string[][][], SceneCoords: number [][][][], coords: number [][] , setCoords: Dispatch<SetStateAction<number[][]>>) => {
+export const gameValidation = ( 
+	board: string[][][],
+	SceneCoords: number [][][][],
+	coords: number [][],
+	setCoords: Dispatch<SetStateAction<number[][]>>) => {
 		const directions = [
 
 			[[ 1, 0, 0], [ 2, 0, 0]],

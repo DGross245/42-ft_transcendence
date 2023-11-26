@@ -1,8 +1,8 @@
 import { useCursor } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
+import { SelectiveBloom } from '@react-three/postprocessing';
 import { useRef, useState } from 'react';
 import * as THREE from 'three';
-
 
 const Field = (props) => {
 	const [hovered, hover] = useState(false);
@@ -79,6 +79,15 @@ const Field = (props) => {
 						<meshBasicMaterial color={0xff0000} transparent={false} />
 					</mesh>
 				</group>
+			)}
+
+			{props.glow && (
+				   	<SelectiveBloom
+						intensity={2.0}
+						luminanceThreshold={0.01}
+						luminanceSmoothing={0.025}
+						lights={[props.lightRef]}
+					/>
 			)}
 		</>
 	);
