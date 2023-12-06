@@ -45,7 +45,6 @@ export default function PongScene() {
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Camera /> 
 				<ambientLight />
-				<pointLight position={[10, 10, 10]} />
 				<Border position={[0,105,0]} />
 				<Border position={[0,-105,0]} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} keyMap={keyMap} />
@@ -62,9 +61,8 @@ export default function PongScene() {
 					/>
 				</EffectComposer>
 				<OrbitControls />
-				{/*<Scoreboard score={score}/>*/}
 				{/* <Stats /> */}
-				{/*<gridHelper args={[100, 100]} />*/}
+				{/* <gridHelper args={[100, 100]} /> */}
 			</Canvas>
 		</div>
 	);

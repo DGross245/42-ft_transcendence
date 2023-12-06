@@ -47,7 +47,6 @@ export const fieldGenerator = (
 							setCurrentBoardState={setCurrentBoardState}
 							sceneCords={sceneCords}
 							setSceneCords={setSceneCords}
-							glow={coords.some(_coords => coord[0] === fieldI && coord[1] === fieldJ && coord[2] === fieldK)}
 							i={fieldI}
 							j={fieldJ}
 							k={fieldK}
