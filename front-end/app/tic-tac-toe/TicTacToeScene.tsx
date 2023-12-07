@@ -13,6 +13,7 @@ import { BlurPass, Resizer, KernelSize } from 'postprocessing'
 import * as THREE from 'three'
 import { fieldGenerator, gridLineGenrator } from "./components/Grid";
 import EndModal from "./components/EndModal";
+import { useDisclosure } from "@nextui-org/react";
 
 const initialBoardState = [
 	[
@@ -55,6 +56,7 @@ const winningCoords = [
 ];
 
 const TTTScene = (props) => {
+	const {isOpen, onOpen, onOpenChange} = useDisclosure();
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const [clicked, click] = useState(false);
 	const [currentTurn, setTurn] = useState('X');
@@ -74,6 +76,7 @@ const TTTScene = (props) => {
 			if (winner) {
 				setVisible(true);
 				winner == 'X' ? setColour(0xff0000) : setColour(0x1aabff);
+				onOpen();
 			}
 		}
 	}
@@ -117,6 +120,7 @@ const TTTScene = (props) => {
 				{/*<Table />*/}
 				{/*<gridHelper args={[100, 100]} />*/}
 				<OrbitControls />
+				<EndModal />
 			</Canvas>
 		</div> 
 	)
