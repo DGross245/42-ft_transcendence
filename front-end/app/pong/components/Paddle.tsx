@@ -19,8 +19,8 @@ export const RightPaddle = forwardRef((props, ref) => {
 		<mesh ref={ref} {...props}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial
-				color={0xffffff}
-				transparent={false}
+				color={new THREE.Color(16, 16, 16)}
+				toneMapped={false}
 				blending={THREE.AdditiveBlending}
 				side={THREE.BackSide}
 			/>
@@ -45,7 +45,8 @@ export const LeftPaddle = forwardRef((props, ref) => {
 		<mesh ref={ref} {...props}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial
-				color={0xffffff}
+				color={new THREE.Color(16, 16, 16)}
+				toneMapped={false}
 				transparent={false}
 				blending={THREE.AdditiveBlending}
 				side={THREE.BackSide}

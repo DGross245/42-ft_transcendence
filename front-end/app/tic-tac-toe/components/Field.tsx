@@ -80,15 +80,6 @@ const Field = (props) => {
 					</mesh>
 				</group>
 			)}
-
-			{props.glow && (
-				   	<SelectiveBloom
-						intensity={2.0}
-						luminanceThreshold={0.01}
-						luminanceSmoothing={0.025}
-						lights={[props.lightRef]}
-					/>
-			)}
 		</>
 	);
 };

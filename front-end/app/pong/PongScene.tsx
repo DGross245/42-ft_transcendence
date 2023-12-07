@@ -17,11 +17,6 @@ export default function PongScene() {
 	const keyMap = InputHandler()
 	const rightPaddleRef = useRef<THREE.Mesh>(null!);
 	const leftPaddleRef = useRef<THREE.Mesh>(null!);
-	const [score, setScore] = useState({ p1: 0, p2: 0 });
-
-	const updateScore = (newScore) => {
-		setScore(newScore);
-	};
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -49,19 +44,19 @@ export default function PongScene() {
 				<Border position={[0,-105,0]} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} keyMap={keyMap} />
 				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
-				<Ball rightPaddleRef={rightPaddleRef} leftPaddleRef={leftPaddleRef} updateScore={updateScore} currentScore={score} />
+				<Ball rightPaddleRef={rightPaddleRef} leftPaddleRef={leftPaddleRef} />
 				<CubeLine />
 				<GroundReflection />
-				<EffectComposer>
+				{/*<EffectComposer>
 					<Bloom
 						mipmapBlur
-						luminanceThreshold={0}
-						intensity={0.5}
-						radius={0.72}
+						luminanceThreshold={0.5}
+						intensity={0.1}
+						radius={0.1}
 					/>
-				</EffectComposer>
+				</EffectComposer>*/}
 				<OrbitControls />
-				{/* <Stats /> */}
+				{/*<Stats />*/}
 				{/* <gridHelper args={[100, 100]} /> */}
 			</Canvas>
 		</div>

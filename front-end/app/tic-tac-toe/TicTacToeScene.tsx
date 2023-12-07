@@ -4,8 +4,6 @@ import { PerspectiveCamera, useAspect } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber"
 import React, { useEffect, useRef, useState } from 'react';
 import { Stats, OrbitControls } from '@react-three/drei'; 
-import Lines from "./components/Lines";
-import Fields from "./components/Field";
 import Floor from "./components/Floor";
 import { gameValidation }  from "./components/GameValidation"
 import Table from "./components/Table";
@@ -14,6 +12,7 @@ import { EffectComposer, SelectiveBloom } from '@react-three/postprocessing'
 import { BlurPass, Resizer, KernelSize } from 'postprocessing'
 import * as THREE from 'three'
 import { fieldGenerator, gridLineGenrator } from "./components/Grid";
+import EndModal from "./components/EndModal";
 
 const initialBoardState = [
 	[
@@ -55,7 +54,7 @@ const winningCoords = [
 	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
 ];
 
-const TTTScene = () => {
+const TTTScene = (props) => {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const [clicked, click] = useState(false);
 	const [currentTurn, setTurn] = useState('X');
@@ -64,6 +63,7 @@ const TTTScene = () => {
 	const [visible, setVisible] = useState(false);
 	const [coords, setCoords] = useState(winningCoords);
 	const [colour, setColour] = useState(0xffffff)
+	const [gameOver, setGameOver] = useState(false);
 	const lightRef = useRef()
 
 	const checkClick = () => {
@@ -74,7 +74,6 @@ const TTTScene = () => {
 			if (winner) {
 				setVisible(true);
 				winner == 'X' ? setColour(0xff0000) : setColour(0x1aabff);
-				console.log(winner);	
 			}
 		}
 	}
@@ -110,18 +109,17 @@ const TTTScene = () => {
 				/>
      			<spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} ref={lightRef} />
 				{gridLineGenrator()}
-				{fieldGenerator(lightRef, coords, setCoords, clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords)}
+				{fieldGenerator(lightRef, coords, setCoords, clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
 				<Floor	position={[ 0,-0.2, 0]}/> 
 				<Floor	position={[ 0, 5.8, 0]}/>
 				<Floor	position={[ 0, 11.8, 0]}/>
 				<FinishLine coords={coords} visible={visible} colour={colour} />
 				{/*<Table />*/}
 				{/*<gridHelper args={[100, 100]} />*/}
-				{/*<Stats/>*/}
 				<OrbitControls />
 			</Canvas>
-		</div>
+		</div> 
 	)
 }
 
-export default TTTScene
+export default TTTScene;

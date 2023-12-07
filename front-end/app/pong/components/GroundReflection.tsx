@@ -5,13 +5,13 @@ const GroundReflection = () => {
 	return (
 		<>
 			<mesh position={[0, 0, -4]}>
-				<planeGeometry args={[360, 230]}/>
+				<planeGeometry args={[500, 500]}/>
 					<MeshReflectorMaterial
 						mirror={0.1}
 						blur={[200, 100]}
 						resolution={1000}
 						mixBlur={1}
-						mixStrength={60}
+						mixStrength={5}
 						roughness={1}
 						depthScale={1.2}
 						minDepthThreshold={0.6}
@@ -21,7 +21,7 @@ const GroundReflection = () => {
 					/>
 			</mesh>
 			<mesh>
-				<planeGeometry args={[360, 230]}/>
+				<planeGeometry args={[500, 500]}/>
 				<meshBasicMaterial
 					color={ 0x111111 }
 					transparent={true}

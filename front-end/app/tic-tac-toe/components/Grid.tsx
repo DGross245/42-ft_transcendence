@@ -12,7 +12,8 @@ export const fieldGenerator = (
 	board: string[][][],
 	setCurrentBoardState: React.Dispatch<React.SetStateAction<string[][][]>>,
 	sceneCords: number[][][][],
-	setSceneCords: Dispatch<SetStateAction<number[][][][]>>) => {
+	setSceneCords: Dispatch<SetStateAction<number[][][][]>>,
+	gameOver: boolean) => {
 
 	const fields = [];
 	let l = 0;
@@ -40,7 +41,7 @@ export const fieldGenerator = (
 							key={`${fieldI}-${fieldJ}-${fieldK}`}
 							position={[x,y,z]}
 							rotation={[0, 0, Math.PI / 2]}
-							clicked={clicked}
+							clicked={gameOver ? gameOver : clicked}
 							click={click}
 							turn={currentTurn}
 							board={board}
@@ -51,6 +52,7 @@ export const fieldGenerator = (
 							j={fieldJ}
 							k={fieldK}
 							lightRef={lightRef}
+							gameOver={gameOver}
 						/>
 				);
 				l++;

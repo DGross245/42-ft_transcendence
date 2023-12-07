@@ -5,7 +5,7 @@ import * as THREE from 'three';
 const Ball = ({ rightPaddleRef, leftPaddleRef }) => {
 	let ref = useRef();
 
-	let ball = { x: 0, y: 0, velocityX: 1, velocityY: 1, speed: 1 };
+	let ball = { x: 0, y: 0, velocityX: 1.5, velocityY: 1.5, speed: 2 };
 	const halfPaddleWidth = 4 / 2;
 	const HalfPaddleHeight = 30 / 2;
 	const halfBall = 2;
@@ -14,7 +14,8 @@ const Ball = ({ rightPaddleRef, leftPaddleRef }) => {
 		const deltaY = ball.y - paddlePos.y;
 		const normalizedY = deltaY / HalfPaddleHeight;
 
-		ball.speed += 0.2;
+		if (ball.speed <= 4)
+			ball.speed += 0.2;
 		ball.velocityX = direction * ball.speed;
 		ball.velocityY = normalizedY * ball.speed;
 	}
@@ -46,6 +47,13 @@ const Ball = ({ rightPaddleRef, leftPaddleRef }) => {
 		else if (isCollidingWithPaddle(rightPaddlePos)) {
 			updateBall(rightPaddlePos, -1);
 		}
+		else if (ball.x > 200 || ball.x < -200) {
+			ball.x = 0;
+			ball.y = 0;
+			ball.velocityX = 1.5;
+			ball.velocityY = 1.5;
+			ball.speed = 2;
+		}
 
 	});
 
@@ -53,7 +61,8 @@ const Ball = ({ rightPaddleRef, leftPaddleRef }) => {
 		<mesh ref={ref}>
 			<boxGeometry args={[4, 4, 4]} />
 			<meshBasicMaterial
-				color={0xffffff}
+				color={new THREE.Color(16, 16, 16)}
+				toneMapped={false}
 				transparent={false}
 				blending={THREE.AdditiveBlending}
 				side={THREE.BackSide}

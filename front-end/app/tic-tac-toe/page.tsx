@@ -1,12 +1,15 @@
+"use client"
+
 import { title } from "@/components/primitives";
 import TTTScene from "./TicTacToeScene";
+import EndModal from "./components/EndModal";
+import { useState } from "react";
 
-export default function BlogPage() {
+export default function TicTacToePage() {
 	return (
 		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80svh' }}>
 			<div>
-				<h1 className={title()}>Tic Tac Toe</h1>
-					<TTTScene />
+				<TTTScene />
 			</div>
 		</div>
 	);
