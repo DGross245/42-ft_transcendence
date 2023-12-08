@@ -56,7 +56,6 @@ const winningCoords = [
 ];
 
 const TTTScene = (props) => {
-	const {isOpen, onOpen, onOpenChange} = useDisclosure();
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const [clicked, click] = useState(false);
 	const [currentTurn, setTurn] = useState('X');
@@ -65,7 +64,6 @@ const TTTScene = (props) => {
 	const [visible, setVisible] = useState(false);
 	const [coords, setCoords] = useState(winningCoords);
 	const [colour, setColour] = useState(0xffffff)
-	const [gameOver, setGameOver] = useState(false);
 	const lightRef = useRef()
 
 	const checkClick = () => {
@@ -76,7 +74,7 @@ const TTTScene = (props) => {
 			if (winner) {
 				setVisible(true);
 				winner == 'X' ? setColour(0xff0000) : setColour(0x1aabff);
-				onOpen();
+				props.setGameOver(true);
 			}
 		}
 	}
@@ -112,7 +110,7 @@ const TTTScene = (props) => {
 				/>
      			<spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} ref={lightRef} />
 				{gridLineGenrator()}
-				{fieldGenerator(lightRef, coords, setCoords, clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
+				{fieldGenerator(lightRef, coords, setCoords, clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, props.gameOver)}
 				<Floor	position={[ 0,-0.2, 0]}/> 
 				<Floor	position={[ 0, 5.8, 0]}/>
 				<Floor	position={[ 0, 11.8, 0]}/>

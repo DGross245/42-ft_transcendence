@@ -36,17 +36,17 @@ const Field = (props) => {
 				onClick={(e) => {e.stopPropagation(), handleClick()}}
 			>
 				<boxGeometry args={[0.5, 5.5, 5.5]} />
-				<meshBasicMaterial color={0x111111} transparent={true} depthWrite={false}  blending={THREE.AdditiveBlending} visible={hovered ? false : true }/>
+				<meshBasicMaterial color={0x111111} transparent={true} depthWrite={false}  blending={THREE.AdditiveBlending} visible={hovered && !props.gameOver ? false : true }/>
 			</mesh>
 
-			{hovered && !props.clicked && !symbol && props.turn == 'O' && (
+			{hovered && !props.clicked && !symbol && props.turn == 'O' && !props.gameOver && (
 				<mesh {...props} rotation={[Math.PI / 2, 0, 0]}>
 					<torusGeometry args={[2, 0.4, 8, 24]} />
 					<meshBasicMaterial color={0x1fcdff} transparent={true} blending={THREE.AdditiveBlending}/>
 				</mesh>
 			)}
 
-			{hovered && !props.clicked && !symbol && props.turn == 'X' && (
+			{hovered && !props.clicked && !symbol && props.turn == 'X' && !props.gameOver && (
 				<group>
 					<mesh {...props} rotation={[Math.PI / 2, 0, Math.PI / -4]}>
 						<boxGeometry args={[5, 1, 0.5]} />

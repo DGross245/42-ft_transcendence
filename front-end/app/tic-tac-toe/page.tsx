@@ -7,6 +7,8 @@ import EndModal from "./components/EndModal";
 
 export default function TicTacToePage() {
 	const [showModal, setShowModal] = useState(false);
+	const [gameOver, setGameOver] = useState(false);
+
 	const openModal = () => {
 		setShowModal(true);
 	};
@@ -16,19 +18,20 @@ export default function TicTacToePage() {
 	};
 
 	useEffect(() => {
-		// You can use some conditions or events to trigger the modal appearance
-		// For example, after a certain time delay, fetch data, or other events
-		const timeout = setTimeout(() => {
-		  openModal();
-		}, 3000); // Show modal after 3 seconds (for example)
-	
-		return () => clearTimeout(timeout);
-	}, []);
+		if (gameOver) {
+			const delay = 2000;
+			const modalTimeout = setTimeout(() => {
+				openModal();
+			}, delay);
+
+			return () => clearTimeout(modalTimeout);
+		}
+	}, [gameOver]);
 
 	return (
 		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80svh' }}>
 			<div>
-				<TTTScene />
+				<TTTScene gameOver={gameOver} setGameOver={setGameOver}/>
 				<EndModal isOpen={showModal} onClose={closeModal} />
 			</div>
 		</div>
