@@ -25,10 +25,8 @@ const Table = () => {
 				<boxGeometry args={[20, 4, 4]} />
 				<meshBasicMaterial color={0x8B4513}/>
 			</mesh>
-		
-		
 		</>
-	)
-} 
+	);
+}
 
 export default Table

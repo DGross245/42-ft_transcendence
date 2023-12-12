@@ -1,11 +1,8 @@
-import { Dispatch, MutableRefObject, SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 import Field from "./Field";
-import Lines from "./Lines";
+import GridLine from "./GridLine";
 
 export const fieldGenerator = (
-	lightRef: MutableRefObject<undefined>,
-	coords: number [][],
-	setCoords: React.Dispatch<React.SetStateAction<number[][]>>,
 	clicked: boolean,
 	click: React.Dispatch<React.SetStateAction<boolean>>,
 	currentTurn: string,
@@ -33,7 +30,7 @@ export const fieldGenerator = (
 		for (let i = -1; i < 2; i++) {
 			for (let j = -1; j < 2; j++) {
 				let x = 6 * i;
-				let y = 6 * level;
+				let y = 8 * level;
 				let z = 6 * j;
 				const { i: fieldI, j: fieldJ, k: fieldK } = arrayPosition[l];
 				fields.push(
@@ -51,7 +48,6 @@ export const fieldGenerator = (
 							i={fieldI}
 							j={fieldJ}
 							k={fieldK}
-							lightRef={lightRef}
 							gameOver={gameOver}
 						/>
 				);
@@ -59,7 +55,7 @@ export const fieldGenerator = (
 			}
 		}
 	}
-	return fields
+	return (fields);
 }
 
 export const gridLineGenrator = () => {
@@ -69,24 +65,24 @@ export const gridLineGenrator = () => {
 		{ position: [ 0, 0, 3], rotation: [0, 0, Math.PI / 2] },
 		{ position: [ 0, 0,-3], rotation: [0, 0, Math.PI / 2] },
 
-		{ position: [ 3, 6, 0], rotation: [Math.PI / 2, 0, 0] },
-		{ position: [-3, 6, 0], rotation: [Math.PI / 2, 0, 0] },
-		{ position: [ 0, 6, 3], rotation: [0, 0, Math.PI / 2] },
-		{ position: [ 0, 6,-3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 3, 8, 0], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [-3, 8, 0], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 0, 8, 3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 0, 8,-3], rotation: [0, 0, Math.PI / 2] },
 
-		{ position: [ 3, 12, 0], rotation: [Math.PI / 2, 0, 0] },
-		{ position: [-3, 12, 0], rotation: [Math.PI / 2, 0, 0] },
-		{ position: [ 0, 12, 3], rotation: [0, 0, Math.PI / 2] },
-		{ position: [ 0, 12,-3], rotation: [0, 0, Math.PI / 2] },
-	]
+		{ position: [ 3, 16, 0], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [-3, 16, 0], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 0, 16, 3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 0, 16,-3], rotation: [0, 0, Math.PI / 2] },
+	];
 
 	const lines = coords.map((line, index) => (
-		<Lines
+		<GridLine
 			key={index}
 			position={line.position}
 			rotation={line.rotation}
 		/>
 	));
 
-	return lines
+	return (lines);
 }

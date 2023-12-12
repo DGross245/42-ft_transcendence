@@ -2,8 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Stats, OrbitControls } from '@react-three/drei'; 
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
+import { OrbitControls } from '@react-three/drei'; 
 import InputHandler from './hooks/InputHandler';
 import Camera from './components/Camera';
 import Border from './components/Border';
@@ -11,12 +10,40 @@ import { RightPaddle, LeftPaddle } from './components/Paddle';
 import Ball from './components/Ball';
 import CubeLine from './components/CubeLine';
 import GroundReflection from './components/GroundReflection';
+import Scoreboard from './components/Scoreboard';
+import EndModal from './components/EndModal';
 
 export default function PongScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const keyMap = InputHandler()
 	const rightPaddleRef = useRef<THREE.Mesh>(null!);
 	const leftPaddleRef = useRef<THREE.Mesh>(null!);
+	const [p1Score, setP1Score] = useState(0);
+	const [p2Score, setP2Score] = useState(0);
+	const [showModal, setShowModal] = useState(false);
+	const [winner, setWinner] = useState('');
+	const [gameOver, setGameOver] = useState(false);
+
+	const closeModal = () => {
+		setShowModal(false);
+	}
+
+	const openModal = () => {
+		setShowModal(true);
+	}
+
+	useEffect(() => {
+		if (gameOver) {
+			const delay = 1000;
+			const modalTimeout = setTimeout(() => {
+				openModal();
+			}, delay);
+
+			return (() => {
+				clearTimeout(modalTimeout)
+			});
+		}
+	}, [gameOver]);
 
 	useEffect(() => {
 		const handleResize = () => {
@@ -44,21 +71,20 @@ export default function PongScene() {
 				<Border position={[0,-105,0]} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} keyMap={keyMap} />
 				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
-				<Ball rightPaddleRef={rightPaddleRef} leftPaddleRef={leftPaddleRef} />
+				<Ball
+					rightPaddleRef={rightPaddleRef}
+					leftPaddleRef={leftPaddleRef}
+					p1Score={p1Score} setP1Score={setP1Score}
+					p2Score={p2Score} setP2Score={setP2Score}
+					setWinner={setWinner}
+					gameOver={gameOver} setGameOver={setGameOver}
+				/>
 				<CubeLine />
 				<GroundReflection />
-				{/*<EffectComposer>
-					<Bloom
-						mipmapBlur
-						luminanceThreshold={0.5}
-						intensity={0.1}
-						radius={0.1}
-					/>
-				</EffectComposer>*/}
 				<OrbitControls />
-				{/*<Stats />*/}
-				{/* <gridHelper args={[100, 100]} /> */}
+				<Scoreboard player1={p1Score} player2={p2Score} />
 			</Canvas>
+			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div>
 	);
 }

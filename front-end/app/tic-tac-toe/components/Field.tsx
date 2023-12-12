@@ -1,6 +1,4 @@
 import { useCursor } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
-import { SelectiveBloom } from '@react-three/postprocessing';
 import { useRef, useState } from 'react';
 import * as THREE from 'three';
 
@@ -82,6 +80,6 @@ const Field = (props) => {
 			)}
 		</>
 	);
-};
+}
 
 export default Field

@@ -1,4 +1,4 @@
-const Lines = (props) => {
+const GridLine = (props) => {
 
 	return (
 		<mesh
@@ -9,7 +9,7 @@ const Lines = (props) => {
 			<boxGeometry args={[0.5, 17.5, 0.5]} />
 			<meshBasicMaterial color={0x333333} />
 		</mesh>
-	)
+	);
 }
 
-export default Lines
+export default GridLine;

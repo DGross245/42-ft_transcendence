@@ -1,9 +1,4 @@
 import { Line } from "@react-three/drei";
-import { useRef, useState } from "react";
-import { EffectComposer, SelectiveBloom } from '@react-three/postprocessing'
-import { BlurPass, Resizer, KernelSize } from 'postprocessing'
-import * as THREE  from 'three'
-import { Mesh, Object3D } from 'three'
 
 const FinishLine = (props) => {
 
@@ -15,7 +10,7 @@ const FinishLine = (props) => {
 				lineWidth={15}
 			/>
 		</mesh>
-	)
+	);
 }
 
 export default FinishLine

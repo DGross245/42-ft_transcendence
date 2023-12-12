@@ -6,9 +6,9 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from
 const EndModal = ({ isOpen, onClose, winner }) => {
 
 	const getWinnerImage = () => {
-		if (winner == 'O')
+		if (winner == 'P1')
 			return ('/o.png');
-		else if (winner == 'X')
+		else if (winner == 'P2')
 			return ('/x.png');
 		else
 			return ('/draw.png');
