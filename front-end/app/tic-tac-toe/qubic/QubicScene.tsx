@@ -5,30 +5,33 @@ import React, { useEffect, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'; 
 import Floor from "./components/Floor";
 import { gameValidation }  from "./components/GameValidation"
-import Table from "./components/Table";
+import Table from "./components/Triangle";
 import FinishLine from "./components/FinishLine";
 import { fieldGenerator, gridLineGenrator } from "./components/Grid";
 import EndModal from "./components/EndModal";
 import Camera from "./components/Camera";
 
 // Used to track user moves for validation
-// '' = empty position, 'X' or 'O' updated on user click
+// '' = empty position, 'X' or 'O' or 'Δ' updated on user click
 // Used to validate winning combinations
 const initialBoardState = [
 	[
-		['', '', ''],
-		['', '', ''],
-		['', '', ''],
+		['', '', '', ''],
+		['', '', '', ''],
+		['', '', '', ''],
+		['', '', '', ''],
 	],
 	[
-		['', '', ''],
-		['', '', ''],
-		['', '', ''],
+		['', '', '', ''],
+		['', '', '', ''],
+		['', '', '', ''],
+		['', '', '', ''],
 	],
 	[
-		['', '', ''],
-		['', '', ''],
-		['', '', ''],
+		['', '', '', ''],
+		['', '', '', ''],
+		['', '', '', ''],
+		['', '', '', ''],
 	],
 ];
 
@@ -37,19 +40,22 @@ const initialBoardState = [
 // Set on field creation
 const initialSceneCords = [
 	[
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
 	],
 	[
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
 	],
 	[
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
 	],
 ];
 
@@ -59,7 +65,7 @@ const winningCoords = [
 	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
 ];
 
-const TTTScene = () => {
+const QubicScene = () => {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const [clicked, click] = useState(false);
 	const [currentTurn, setTurn] = useState('X');
@@ -103,7 +109,12 @@ const TTTScene = () => {
 
 		const checkClick = () => {
 			if (clicked) {
-				setTurn(currentTurn === 'X' ? 'O' : 'X');
+				if (currentTurn == 'X')
+					setTurn('O');
+				else if (currentTurn == 'O')
+					setTurn('Δ');
+				else
+					setTurn('X');
 				click(false);
 				const winner = gameValidation(board, sceneCords, coords, setCoords);
 				if (winner) {
@@ -114,6 +125,10 @@ const TTTScene = () => {
 					else if (winner === 'O') {
 						setShowFinishLine(true);
 						setColour(0x1aabff)
+					}
+					else if (winner === 'Δ') {
+						setShowFinishLine(true);
+						setColour(0xffff00)
 					}
 					setWinner(winner);
 					setGameOver(true);
@@ -137,16 +152,16 @@ const TTTScene = () => {
 				<Camera dimensions={dimensions}/>
 				{gridLineGenrator()}
 				{fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
-				<Floor	position={[ 0,-0.2, 0]}/> 
-				<Floor	position={[ 0, 7.8, 0]}/>
-				<Floor	position={[ 0, 15.8, 0]}/>
+				<Floor	position={[ 3,-0.2, 3]}/> 
+				<Floor	position={[ 3, 7.8, 3]}/>
+				<Floor	position={[ 3, 15.8, 3]}/>
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
 				{/* <Table /> */}
-				<OrbitControls enableZoom={false} />
+				<OrbitControls enableZoom={true} />
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 
 	);
 }
 
-export default TTTScene;
+export default QubicScene;
