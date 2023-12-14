@@ -3,13 +3,12 @@
 import { Canvas } from "@react-three/fiber"
 import React, { useEffect, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'; 
-import Floor from "../qubic/components/Floor";
-import { gameValidation }  from "../qubic/components/GameValidation"
-import Table from "../qubic/components/Block";
-import FinishLine from "../qubic/components/FinishLine";
-import { fieldGenerator, gridLineGenrator } from "../qubic/components/Grid";
-import EndModal from "../qubic/components/EndModal";
-import Camera from "../qubic/components/Camera";
+import Floor from "./components/Floor";
+import { gameValidation }  from "./components/GameValidation"
+import FinishLine from "./components/FinishLine";
+import { fieldGenerator, gridLineGenrator } from "./components/Grid";
+import EndModal from "./components/EndModal";
+import Camera from "./components/Camera";
 
 // Used to track user moves for validation
 // '' = empty position, 'X' or 'O' updated on user click
