@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'; 
 import Floor from "../qubic/components/Floor";
 import { gameValidation }  from "../qubic/components/GameValidation"
-import Table from "../qubic/components/Triangle";
+import Table from "../qubic/components/Block";
 import FinishLine from "../qubic/components/FinishLine";
 import { fieldGenerator, gridLineGenrator } from "../qubic/components/Grid";
 import EndModal from "../qubic/components/EndModal";

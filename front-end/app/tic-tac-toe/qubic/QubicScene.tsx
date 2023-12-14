@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'; 
 import Floor from "./components/Floor";
 import { gameValidation }  from "./components/GameValidation"
-import Table from "./components/Triangle";
+import Table from "./components/Block";
 import FinishLine from "./components/FinishLine";
 import { fieldGenerator, gridLineGenrator } from "./components/Grid";
 import EndModal from "./components/EndModal";
@@ -112,7 +112,7 @@ const QubicScene = () => {
 				if (currentTurn == 'X')
 					setTurn('O');
 				else if (currentTurn == 'O')
-					setTurn('Δ');
+					setTurn('⬜️');
 				else
 					setTurn('X');
 				click(false);
@@ -126,9 +126,9 @@ const QubicScene = () => {
 						setShowFinishLine(true);
 						setColour(0x1aabff)
 					}
-					else if (winner === 'Δ') {
+					else if (winner === '⬜️') {
 						setShowFinishLine(true);
-						setColour(0xffff00)
+						setColour(0x008000)
 					}
 					setWinner(winner);
 					setGameOver(true);
@@ -157,7 +157,7 @@ const QubicScene = () => {
 				<Floor	position={[ 3, 15.8, 3]}/>
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
 				{/* <Table /> */}
-				<OrbitControls enableZoom={true} />
+				<OrbitControls enableZoom={true} target={[4, 1, 2]}/>
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 

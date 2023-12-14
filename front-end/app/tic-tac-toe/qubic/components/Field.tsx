@@ -1,7 +1,7 @@
 import { useCursor } from '@react-three/drei';
 import { useRef, useState } from 'react';
 import * as THREE from 'three';
-import Triangle from './Triangle';
+import Triangle from './Block';
 
 const Field = (props) => {
 	const [hovered, hover] = useState(false);
@@ -59,8 +59,8 @@ const Field = (props) => {
 				</group>
 			)}
 
-			{hovered && !props.clicked && !symbol && props.turn == 'Δ' && !props.gameOver && (
-				<Triangle {...props} color={0xffff00} transparent={true} blending={THREE.AdditiveBlending}/>
+			{hovered && !props.clicked && !symbol && props.turn == '⬜️' && !props.gameOver && (
+				<Triangle {...props} color={0x008000} transparent={true} blending={THREE.AdditiveBlending}/>
 			)}
 
 			{symbol && symbol == 'O' && (
@@ -84,8 +84,8 @@ const Field = (props) => {
 				</group>
 			)}
 
-			{symbol && symbol == 'Δ' && (
-				<Triangle {...props} color={0xffff00} transparent={false} blending={0} />
+			{symbol && symbol == '⬜️' && (
+				<Triangle {...props} color={0x008000} transparent={false} blending={0} />
 			)}
 		</>
 	);

@@ -10,7 +10,7 @@ const EndModal = ({ isOpen, onClose, winner }) => {
 			return ('/o.png');
 		else if (winner == 'X')
 			return ('/x.png');
-		else if (winner == 'Δ')
+		else if (winner == '⬜️')
 			return ('/triangle.tsx')
 		else
 			return ('/draw.png');
