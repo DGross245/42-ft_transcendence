@@ -18,10 +18,12 @@ export default function OneForAllScene() {
 	const keyMap = InputHandler()
 	const rightPaddleRef = useRef<THREE.Mesh>(null!);
 	const leftPaddleRef = useRef<THREE.Mesh>(null!);
-	const TopPaddleRef = useRef<THREE.Mesh>(null!);
-	const BottomPaddleRef = useRef<THREE.Mesh>(null!);
+	const topPaddleRef = useRef<THREE.Mesh>(null!);
+	const bottomPaddleRef = useRef<THREE.Mesh>(null!);
 	const [p1Score, setP1Score] = useState(0);
 	const [p2Score, setP2Score] = useState(0);
+	const [p3Score, setP3Score] = useState(0);
+	const [p4Score, setP4Score] = useState(0);
 	const [showModal, setShowModal] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [gameOver, setGameOver] = useState(false);
@@ -69,27 +71,28 @@ export default function OneForAllScene() {
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Camera /> 
 				<ambientLight />
-				<Border position={[130,151,0]} />
-				<Border position={[-130,151,0]}/>
-				<Border position={[-130,-151,0]} />
-				<Border position={[130,-151,0]}/>
-				<TopPaddle ref={TopPaddleRef} position={[0, 151, 0]} keyMap={keyMap} />
-				<BottomPaddle ref={BottomPaddleRef} position={[0, -151, 0]} keyMap={keyMap} />
+				<Border />
+				<TopPaddle ref={topPaddleRef} position={[0, 151, 0]} keyMap={keyMap} />
+				<BottomPaddle ref={bottomPaddleRef} position={[0, -151, 0]} keyMap={keyMap} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} keyMap={keyMap} />
 				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
-				{/* <Ball
+				<Ball
 					rightPaddleRef={rightPaddleRef}
 					leftPaddleRef={leftPaddleRef}
+					topPaddleRef={topPaddleRef}
+					bottomPaddleRef={bottomPaddleRef}
 					p1Score={p1Score} setP1Score={setP1Score}
 					p2Score={p2Score} setP2Score={setP2Score}
+					p3Score={p3Score} setP3Score={setP3Score}
+					p4Score={p4Score} setP4Score={setP4Score}
 					setWinner={setWinner}
 					gameOver={gameOver} setGameOver={setGameOver}
-				/> */}
+				/>
 				<CubeLineY />
 				<CubeLineX />
 				<GroundReflection />
 				<OrbitControls />
-				<Scoreboard player1={p1Score} player2={p2Score} />
+				<Scoreboard player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score}/>
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div>

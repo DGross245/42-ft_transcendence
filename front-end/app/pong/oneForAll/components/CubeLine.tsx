@@ -14,7 +14,7 @@ export const CubeLineY = (props) => {
 	}
   
 	return (
-		<group>
+		<group >
 			{cubes}
 		</group>
 	);
@@ -33,7 +33,7 @@ export const CubeLineX = (props) => {
 	}
   
 	return (
-		<group>
+		<group >
 			{cubes}
 		</group>
 	);
