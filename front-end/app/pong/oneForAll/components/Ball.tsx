@@ -7,10 +7,11 @@ import { BottomPaddle, TopPaddle } from "./Paddle";
 
 // TODO: ADD a count down of the game (shouldnt start right away)
 // TODO: Rework win detection
-// TODO: Fix the edge logic (if the ball hits the edge its movment is too fast)
+// TODO: Fix the edge logic (if the ball hits the edge it speeds up too fast)
 // FIXME: Ball resets after resizing
 // FIXME: brder have still problems when the ball hits them on the edges
 // FIXME: RandomDir for the ball is still doing weird stuff (maybe og stats overriding new stats)
+// FIXME: Ball feels laggy some times even with 60 fps
 
 const Ball = (props) => {
 	let ref = useRef();
