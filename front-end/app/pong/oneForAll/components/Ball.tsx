@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { BottomPaddle, TopPaddle } from "./Paddle";
@@ -12,13 +12,13 @@ import { BottomPaddle, TopPaddle } from "./Paddle";
 const Ball = (props) => {
 	let ref = useRef();
 	const [isVisible, setVisibility] = useState(true);
-
-	let ball = { x: 0, y: 0, velocityX: 0, velocityY: 1, speed: 2 };
+	let ball = { x: 0, y: 0, velocityX: 1.2, velocityY: 1.5, speed: 2 };
 	const halfPaddleWidth = 4 / 2;
 	const HalfPaddleHeight = 30 / 2;
 	const HalfBorderHeight = 40 / 2;
 	const HalfBorderWidth = 4 / 2;
 	const halfBall = 2;
+	let lastToutched = '';
 
 	const updateBall = (paddlePos, direction) => {
 		const deltaY = ball.y - paddlePos.y;
@@ -127,29 +127,40 @@ const Ball = (props) => {
 
 		if (isBorder())
 			ball.velocityX *= -1;
-		else if (isBorder2())
+		if (isBorder2())
 			ball.velocityY *= -1;
-		else if (isCollidingWithPaddle(leftPaddlePos))
+		else if (isCollidingWithPaddle(leftPaddlePos)) {
+			console.log("hit left");
+			lastToutched = 'left';
 			updateBall(leftPaddlePos, 1);
-		else if (isCollidingWithPaddle(rightPaddlePos))
+		}
+		else if (isCollidingWithPaddle(rightPaddlePos)) {
+			lastToutched = 'right';
 			updateBall(rightPaddlePos, -1);
-		else if (isCollidingWithPaddle2(TopPaddlePos))
+		}
+		else if (isCollidingWithPaddle2(TopPaddlePos)) {
+			lastToutched = 'top';
 			updateBall2(TopPaddlePos, -1);
-		else if (isCollidingWithPaddle2(BottomPaddlePos))
+		}
+		else if (isCollidingWithPaddle2(BottomPaddlePos)) {
+			lastToutched = 'bottom';
 			updateBall2(BottomPaddlePos, 1);
-		else if ((ball.x > 200 || ball.x < -200) && 
+		}
+		else if ((ball.x > 200 || ball.x < -200 || ball.y > 200 || ball.y < -200) && 
 			props.p2Score !== 7 &&
 			props.p1Score !== 7 &&
 			props.p3Score !== 7 &&
 			props.p4Score !== 7) {
-			if (ball.x < -200)
-				props.setP2Score(props.p2Score + 1);
-			else if (ball.x > 200)
-				props.setP1Score(props.p1Score + 1);
-			else if (ball.y < -200)
-				props.setP3Score(props.p3Score + 1);
-			else if (ball.y > 200)
-				props.setP4Score(props.p4Score + 1);
+			if (ball.x < -200 || ball.x > 200 || ball.y < -200 || ball.y > 200) {
+				if (lastToutched == 'left' && !(ball.x < -200))
+					props.setP1Score(props.p1Score + 1);
+				else if (lastToutched == 'right' && !(ball.x > 200))
+					props.setP2Score(props.p2Score + 1);
+				else if (lastToutched == 'top' && !(ball.y > 200))
+					props.setP3Score(props.p3Score + 1);
+				else if (lastToutched == 'bottom' && !(ball.y < 200))
+					props.setP4Score(props.p4Score + 1);
+			}
 			if (props.p2Score === 6) {
 				props.setGameOver(true);
 				props.setWinner('P2');
@@ -176,7 +187,7 @@ const Ball = (props) => {
 			}
 			ball.x = 0;
 			ball.y = 0;
-			ball.velocityX = 1.5;
+			ball.velocityX = 1.2;
 			ball.velocityY = 1.5;
 			ball.speed = 2;
 		}
