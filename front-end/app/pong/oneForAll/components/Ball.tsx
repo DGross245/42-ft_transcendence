@@ -5,14 +5,17 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { BottomPaddle, TopPaddle } from "./Paddle";
 
-// TODO: ADD a random ball dir
-// TODO: Rework win detection 
+// TODO: ADD a count down of the game (shouldnt start right away)
+// TODO: Rework win detection
+// TODO: Fix the edge logic (if the ball hits the edge its movment is too fast)
 // FIXME: Ball resets after resizing
- 
+// FIXME: brder have still problems when the ball hits them on the edges
+// FIXME: RandomDir for the ball is still doing weird stuff (maybe og stats overriding new stats)
+
 const Ball = (props) => {
 	let ref = useRef();
 	const [isVisible, setVisibility] = useState(true);
-	let ball = { x: 0, y: 0, velocityX: 1.2, velocityY: 1.5, speed: 2 };
+	let ball = { x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 2 };
 	const halfPaddleWidth = 4 / 2;
 	const HalfPaddleHeight = 30 / 2;
 	const HalfBorderHeight = 40 / 2;
@@ -38,6 +41,20 @@ const Ball = (props) => {
 			ball.speed += 0.2;
 		ball.velocityX = normalizedX * ball.speed;
 		ball.velocityY = direction * ball.speed;
+	}
+
+	const randomBallDir = () => {
+		ball.x = 0;
+		ball.y = 0;
+	
+		let randomNumber = Math.random();
+		console.log(randomNumber);
+		let angle = 360 * randomNumber;
+		ball.speed = 2;
+
+		ball.velocityX = ball.speed * Math.sin(angle);
+		ball.velocityY = ball.speed * Math.cos(angle);
+		console.log(ball.velocityX, ball.velocityY);
 	}
 
 	useFrame(() => {
@@ -127,10 +144,9 @@ const Ball = (props) => {
 
 		if (isBorder())
 			ball.velocityX *= -1;
-		if (isBorder2())
+		else if (isBorder2())
 			ball.velocityY *= -1;
 		else if (isCollidingWithPaddle(leftPaddlePos)) {
-			console.log("hit left");
 			lastToutched = 'left';
 			updateBall(leftPaddlePos, 1);
 		}
@@ -151,15 +167,40 @@ const Ball = (props) => {
 			props.p1Score !== 7 &&
 			props.p3Score !== 7 &&
 			props.p4Score !== 7) {
-			if (ball.x < -200 || ball.x > 200 || ball.y < -200 || ball.y > 200) {
-				if (lastToutched == 'left' && !(ball.x < -200))
+	
+			if (lastToutched == 'left') {
+				if (ball.x < -200)
+					props.setP1Score(props.p1Score - 1);
+				else
 					props.setP1Score(props.p1Score + 1);
-				else if (lastToutched == 'right' && !(ball.x > 200))
+			}
+			else if (lastToutched == 'right') {
+				if (ball.x > 200)
+					props.setP2Score(props.p2Score - 1);
+				else
 					props.setP2Score(props.p2Score + 1);
-				else if (lastToutched == 'top' && !(ball.y > 200))
+			}
+			else if (lastToutched == 'top' && !(ball.y > 200)) {
+				if (ball.y > 200)
+					props.setP3Score(props.p3Score - 1);
+				else
 					props.setP3Score(props.p3Score + 1);
-				else if (lastToutched == 'bottom' && !(ball.y < 200))
+			}
+			else if (lastToutched == 'bottom' && !(ball.y < 200)) {
+				if (ball.y < 200)
+					props.setP4Score(props.p4Score - 1);
+				else
 					props.setP4Score(props.p4Score + 1);
+			}
+			if (lastToutched == '') {
+				if (ball.x < -200 && props.p1Score !== 0 )
+					props.setP1Score(props.p1Score - 1);
+				else if (ball.x > 200 && props.p2Score !== 0)
+					props.setP2Score(props.p2Score - 1);
+				else if (ball.y > 200 && props.p3Score !== 0)
+					props.setP3Score(props.p3Score - 1);
+				else if (ball.x < 200 && props.p4Score !== 0)
+					props.setP4Score(props.p4Score - 1);
 			}
 			if (props.p2Score === 6) {
 				props.setGameOver(true);
@@ -185,11 +226,8 @@ const Ball = (props) => {
 				setVisibility(false);
 				return
 			}
-			ball.x = 0;
-			ball.y = 0;
-			ball.velocityX = 1.2;
-			ball.velocityY = 1.5;
-			ball.speed = 2;
+			randomBallDir();
+			lastToutched == '';
 		}
 	});
 

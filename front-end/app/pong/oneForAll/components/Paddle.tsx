@@ -61,9 +61,9 @@ export const TopPaddle = forwardRef((props, ref) => {
 	const borderPositionY = 110;
 
 	useFrame((_, delta) => {
-		if (keyMap['KeyT']) {
+		if (keyMap['KeyD']) {
 			ref.current.position.x = Math.min(ref.current.position.x + paddleSpeed * delta, borderPositionY - 15);
-		} else if (keyMap['KeyR']) {
+		} else if (keyMap['KeyA']) {
 			ref.current.position.x = Math.max(ref.current.position.x - paddleSpeed * delta, -borderPositionY + 15);
 		}
 	});
@@ -88,9 +88,9 @@ export const BottomPaddle = forwardRef((props, ref) => {
 	const borderPositionY = 110;
 
 	useFrame((_, delta) => {
-		if (keyMap['KeyN']) {
+		if (keyMap['ArrowRight']) {
 			ref.current.position.x = Math.min(ref.current.position.x + paddleSpeed * delta, borderPositionY - 15);
-		} else if (keyMap['KeyB']) {
+		} else if (keyMap['ArrowLeft']) {
 			ref.current.position.x = Math.max(ref.current.position.x - paddleSpeed * delta, -borderPositionY + 15);
 		}
 	});

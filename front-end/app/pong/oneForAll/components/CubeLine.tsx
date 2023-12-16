@@ -7,8 +7,10 @@ export const CubeLineY = (props) => {
   
 	for (let i = 1; i < 20; i++) {
 		const positionY = i * (151 * 2) / 20 - 151;
+		const positionX = i * (151 * 2) / 20 - 151;
+
 		const cube = (
-			<mesh key={i} geometry={cubeGeometry} material={cubeMaterial} position={[0, positionY, -4]} />
+			<mesh key={i} geometry={cubeGeometry} material={cubeMaterial} position={[positionX, positionY, -4]} />
 		)
 		cubes.push(cube);
 	}
@@ -26,8 +28,10 @@ export const CubeLineX = (props) => {
   
 	for (let i = 1; i < 20; i++) {
 		const positionX = i * (151 * 2) / 20 - 151;
+		const positionY = -i * (151 * 2) / 20 + 151;
+
 		const cube = (
-			<mesh key={i} geometry={cubeGeometry} material={cubeMaterial} position={[positionX, 0, -4]} />
+			<mesh key={i} geometry={cubeGeometry} material={cubeMaterial} position={[positionX, positionY, -4]} />
 		)
 		cubes.push(cube);
 	}
