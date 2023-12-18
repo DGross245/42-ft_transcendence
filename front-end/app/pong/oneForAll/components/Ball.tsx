@@ -17,6 +17,7 @@ const Ball = (props) => {
 	const halfPaddleWidth = 4 / 2;
 	const HalfPaddleHeight = 30 / 2;
 	const HalfBorderHeight = 40 / 2;
+	const HalfBorderHeight2 = 46 / 2;
 	const HalfBorderWidth = 4 / 2;
 	const halfBall = 2;
 	let lastToutched = '';
@@ -119,66 +120,33 @@ const Ball = (props) => {
 			);
 		}
 
-		const isBorder = () => {
-			if (		
-				(ball.x + halfBall > 151 - HalfBorderWidth &&
-				ball.x - halfBall < 151 + HalfBorderWidth &&
-				ball.y - halfBall < 130 + HalfBorderHeight &&
-				ball.y + halfBall > 130 - HalfBorderHeight) ||
-
-				(ball.x + halfBall > -151 - HalfBorderWidth &&
-				ball.x - halfBall < -151 + HalfBorderWidth &&
-				ball.y - halfBall < 130 + HalfBorderHeight &&
-				ball.y + halfBall > 130 - HalfBorderHeight) ||
-
-				(ball.x + halfBall > -151 - HalfBorderWidth &&
-				ball.x - halfBall < -151 + HalfBorderWidth &&
-				ball.y - halfBall < -130 + HalfBorderHeight &&
-				ball.y + halfBall > -130 - HalfBorderHeight) ||
-
-				(ball.x + halfBall > 151 - HalfBorderWidth &&
-				ball.x - halfBall < 151  + HalfBorderWidth &&
-				ball.y - halfBall < -130 + HalfBorderHeight &&
-				ball.y + halfBall > -130 - HalfBorderHeight)
-			)
-				return (true)
-			else
-				return (false)
+		const isCollidingWithBorder = ( borderX, borderY ) => {
+			return (
+				ball.x + halfBall >= borderX - HalfBorderWidth &&
+				ball.x - halfBall <= borderX + HalfBorderWidth &&
+				ball.y - halfBall <= borderY + HalfBorderHeight2 &&
+				ball.y + halfBall >= borderY - HalfBorderHeight2
+			);
 		}
 
-		const isBorder2 = () => {
-			if (
-				(ball.x + halfBall > 130 - HalfBorderHeight && 
-				ball.x - halfBall < 130 + HalfBorderHeight &&
-				ball.y - halfBall < 151 + HalfBorderWidth &&
-				ball.y + halfBall > 151 - HalfBorderWidth) ||
-
-				
-				(ball.x + halfBall > -130 - HalfBorderHeight &&
-				ball.x - halfBall < -130 + HalfBorderHeight &&
-				ball.y - halfBall < 151 + HalfBorderWidth &&
-				ball.y + halfBall > 151 - HalfBorderWidth) || 
-
-
-				(ball.x + halfBall > -130 - HalfBorderHeight &&
-				ball.x - halfBall < -130 + HalfBorderHeight &&
-				ball.y - halfBall < -151 + HalfBorderWidth &&
-				ball.y + halfBall > -151 - HalfBorderWidth) ||
-
-
-				(ball.x + halfBall > 130 - HalfBorderHeight && 
-				ball.x - halfBall < 130 + HalfBorderHeight &&
-				ball.y - halfBall < -151 + HalfBorderWidth &&
-				ball.y + halfBall > -151 - HalfBorderWidth)
-			)
-				return (true)
-			else
-				return (false)
+		const isCollidingWithBorder2 = ( borderX, borderY ) => {
+			return (
+				ball.x + halfBall >= borderX - HalfBorderHeight && 
+				ball.x - halfBall <= borderX + HalfBorderHeight &&
+				ball.y - halfBall <= borderY + HalfBorderWidth &&
+				ball.y + halfBall >= borderY - HalfBorderWidth
+			);
 		}
 
-		if (isBorder())
+		if (isCollidingWithBorder(151, 130) ||
+			isCollidingWithBorder(-151, 130) ||
+			isCollidingWithBorder(-151, -130) || 
+			isCollidingWithBorder(151, -130))
 			ball.velocityX *= -1;
-		else if (isBorder2())
+		else if (isCollidingWithBorder2(130, 151) ||
+			isCollidingWithBorder2(-130, 151) ||
+			isCollidingWithBorder2(-130, -151) ||
+			isCollidingWithBorder2(130, -151))
 			ball.velocityY *= -1;
 		else if (isCollidingWithPaddle(leftPaddlePos)) {
 			lastToutched = 'left';
