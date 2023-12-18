@@ -19,8 +19,8 @@ const block = (props) => {
 	boxShape.holes.push(holeShape);
 
 	const option = {
-	  depth: 0.75,
-	  bevelEnabled: false,
+		depth: 0.75,
+		bevelEnabled: false,
 	};
 
 	const geometry = new ExtrudeGeometry(boxShape, option);

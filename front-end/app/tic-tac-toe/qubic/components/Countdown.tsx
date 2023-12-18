@@ -9,7 +9,6 @@ extend({ TextGeometry })
 const Countdown = ({ countdownVisible, setCountdownVisible }) => {
 	const font = new FontLoader().parse(Silkscreen_Regular);
 	const [count, setCount] = useState(4);
-	const ref = useRef();
 
 	useEffect(() => {
 		const countdownInterval = setInterval(() => {
@@ -31,7 +30,7 @@ const Countdown = ({ countdownVisible, setCountdownVisible }) => {
 	}, []);
 	
 	return (
-		<mesh ref={ref} visible={countdownVisible} position={[10, 10, 20]} rotation={[0, Math.PI / 4, 0]}>
+		<mesh visible={countdownVisible} position={[10, 10, 20]} rotation={[0, Math.PI / 4, 0]}>
 			<textGeometry args={[String(count), {font, size: 10, height: 2}]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>

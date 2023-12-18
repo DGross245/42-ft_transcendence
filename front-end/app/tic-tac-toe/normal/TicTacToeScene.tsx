@@ -11,6 +11,8 @@ import EndModal from "./components/EndModal";
 import Camera from "./components/Camera";
 import Countdown from "@/app/tic-tac-toe/normal/components/Countdown";
 
+// TODO: Maybe add a botton like 1 that sets the camera to the original position (Not only for TTT)
+
 // Used to track user moves for validation
 // '' = empty position, 'X' or 'O' updated on user click
 // Used to validate winning combinations
@@ -138,7 +140,7 @@ const TTTScene = () => {
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
 				<Camera dimensions={dimensions} />
 				{gridLineGenrator()}
-				{ !countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
+				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
 				<Floor	position={[ 0,-0.2, 0]}/> 
 				<Floor	position={[ 0, 7.8, 0]}/>
 				<Floor	position={[ 0, 15.8, 0]}/>

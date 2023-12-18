@@ -28,8 +28,7 @@ export const gameValidation = (
 		];
 
 		let isDraw = true;
-		console.log(board.length);
-		console.log(board[0].length);
+
 		for (const direction of directions) {
 			const [start, end] = direction;
 			for (let i = 0; i < board.length; i++) {

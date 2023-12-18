@@ -1,5 +1,4 @@
 const GridLine = (props) => {
-
 	return (
 		<mesh
 			{...props}
