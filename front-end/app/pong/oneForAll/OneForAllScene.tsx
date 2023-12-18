@@ -90,6 +90,7 @@ export default function OneForAllScene() {
 					p4Score={p4Score} setP4Score={setP4Score}
 					setWinner={setWinner}
 					gameOver={gameOver} setGameOver={setGameOver}
+					ScoreVisible={ScoreVisible}
 				/>
 				<CubeLineY />
 				<CubeLineX />

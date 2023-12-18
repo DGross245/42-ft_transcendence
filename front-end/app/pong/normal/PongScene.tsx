@@ -81,6 +81,7 @@ export default function PongScene() {
 					p2Score={p2Score} setP2Score={setP2Score}
 					setWinner={setWinner}
 					gameOver={gameOver} setGameOver={setGameOver}
+					ScoreVisible={ScoreVisible}
 				/>
 				<CubeLine />
 				<GroundReflection />

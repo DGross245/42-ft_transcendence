@@ -34,7 +34,7 @@ const Countdown = ({ setScoreVisible }) => {
 	}, [setScoreVisible]);
 
 	return (
-		<mesh ref={ref} visible={visible} position={[-35, 0, 50]} rotation={[Math.PI / 2, 0, 0]}>
+		<mesh ref={ref} visible={visible} position={[-35, 0, 50]}>
 			<textGeometry args={[String(count), {font, size: 70, height: 6}]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>

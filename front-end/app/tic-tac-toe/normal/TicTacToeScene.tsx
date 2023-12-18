@@ -136,7 +136,7 @@ const TTTScene = () => {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
-				<Camera dimensions={dimensions} setCameraPosition={setCameraPosition} />
+				<Camera dimensions={dimensions} />
 				{gridLineGenrator()}
 				{ !countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
 				<Floor	position={[ 0,-0.2, 0]}/> 
