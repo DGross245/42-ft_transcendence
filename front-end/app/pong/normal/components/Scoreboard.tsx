@@ -6,16 +6,16 @@ import { extend } from '@react-three/fiber';
 
 extend({ TextGeometry })
 
-const Scoreboard = ({ player1, player2 }) => {
+const Scoreboard = ({ player1, player2, ScoreVisible }) => {
 	const font = new FontLoader().parse(Silkscreen_Regular);
 
 	return (
 		<>
-			<mesh position={[-64.5,40,-6]}>
+			<mesh visible={ScoreVisible} position={[-64.5,40,-6]}>
 				<textGeometry args={[String(player1), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ 0xffffff } />
 			</mesh>
-			<mesh position={[30,40,-6]}>
+			<mesh visible={ScoreVisible} position={[30,40,-6]}>
 				<textGeometry args={[String(player2), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ 0xffffff } />
 			</mesh>

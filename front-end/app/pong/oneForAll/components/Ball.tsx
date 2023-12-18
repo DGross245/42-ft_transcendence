@@ -5,7 +5,6 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { BottomPaddle, TopPaddle } from "./Paddle";
 
-// TODO: ADD a count down of the game (shouldnt start right away)
 // TODO: Rework win detection
 // TODO: Fix the edge logic (if the ball hits the edge it speeds up too fast)
 // FIXME: Ball resets after resizing
@@ -57,6 +56,11 @@ const Ball = (props) => {
 		ball.velocityY = ball.speed * Math.cos(angle);
 		console.log(ball.velocityX, ball.velocityY);
 	}
+
+	useEffect(() => {
+		// should update velo's to start the game.
+		// it waits on variable to change meaning game starts		
+	}, []);
 
 	useFrame(() => {
 		ball.x += ball.velocityX;

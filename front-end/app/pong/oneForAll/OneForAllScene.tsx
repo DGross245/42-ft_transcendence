@@ -12,6 +12,7 @@ import { CubeLineY, CubeLineX }from './components/CubeLine';
 import GroundReflection from './components/GroundReflection';
 import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
+import Countdown from './components/Countdown';
 
 export default function OneForAllScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -27,6 +28,7 @@ export default function OneForAllScene() {
 	const [showModal, setShowModal] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [gameOver, setGameOver] = useState(false);
+	const [ScoreVisible, setScoreVisible] = useState(false);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -69,6 +71,7 @@ export default function OneForAllScene() {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
+				<Countdown setScoreVisible={setScoreVisible} />
 				<Camera /> 
 				<ambientLight />
 				<Border />
@@ -92,7 +95,7 @@ export default function OneForAllScene() {
 				<CubeLineX />
 				<GroundReflection />
 				<OrbitControls />
-				<Scoreboard player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score}/>
+				<Scoreboard player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score} ScoreVisible={ScoreVisible} />
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div>

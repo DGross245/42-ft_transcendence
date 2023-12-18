@@ -9,6 +9,7 @@ import FinishLine from "./components/FinishLine";
 import { fieldGenerator, gridLineGenrator } from "./components/Grid";
 import EndModal from "./components/EndModal";
 import Camera from "./components/Camera";
+import Countdown from "@/app/tic-tac-toe/normal/components/Countdown";
 
 // Used to track user moves for validation
 // '' = empty position, 'X' or 'O' updated on user click
@@ -70,6 +71,7 @@ const TTTScene = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [gameOver, setGameOver] = useState(false);
 	const [winner, setWinner] = useState('');
+	const [countdownVisible, setCountdownVisible] = useState(true);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -133,14 +135,15 @@ const TTTScene = () => {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Camera dimensions={dimensions}/>
+				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
+				<Camera dimensions={dimensions} setCameraPosition={setCameraPosition} />
 				{gridLineGenrator()}
-				{fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
+				{ !countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
 				<Floor	position={[ 0,-0.2, 0]}/> 
 				<Floor	position={[ 0, 7.8, 0]}/>
 				<Floor	position={[ 0, 15.8, 0]}/>
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
-				<OrbitControls enableZoom={true} />
+				<OrbitControls enableZoom={true} enableRotate={!countdownVisible}/>
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 

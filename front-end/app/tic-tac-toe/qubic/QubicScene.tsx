@@ -10,6 +10,7 @@ import FinishLine from "./components/FinishLine";
 import { fieldGenerator, gridLineGenrator } from "./components/Grid";
 import EndModal from "./components/EndModal";
 import Camera from "./components/Camera";
+import Countdown from "./components/Countdown";
 
 // Used to track user moves for validation
 // '' = empty position, 'X' or 'O' or 'Δ' updated on user click
@@ -77,6 +78,7 @@ const QubicScene = () => {
 	const [showModal, setShowModal] = useState(false);
 	const [gameOver, setGameOver] = useState(false);
 	const [winner, setWinner] = useState('');
+	const [countdownVisible, setCountdownVisible] = useState(true);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -150,14 +152,15 @@ const QubicScene = () => {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Camera dimensions={dimensions}/>
+				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
 				{gridLineGenrator()}
-				{fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
+				{ !countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
 				<Floor	position={[ 3,-0.2, 3]}/> 
 				<Floor	position={[ 3, 7.8, 3]}/>
 				<Floor	position={[ 3, 15.8, 3]}/>
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
 				{/* <Table /> */}
-				<OrbitControls enableZoom={true} target={[4, 1, 2]}/>
+				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible}/>
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 

@@ -8,7 +8,7 @@ const Ball = (props) => {
 	let ref = useRef();
 	const [isVisible, setVisibility] = useState(true);
 
-	let ball = { x: 0, y: 0, velocityX: 1.5, velocityY: 1.5, speed: 2 };
+	let ball = { x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 2 };
 	const halfPaddleWidth = 4 / 2;
 	const HalfPaddleHeight = 30 / 2;
 	const halfBall = 2;

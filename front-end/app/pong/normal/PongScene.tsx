@@ -1,8 +1,8 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei'; 
+import { Canvas, useThree } from '@react-three/fiber';
+import { OrbitControls, useTrail } from '@react-three/drei'; 
 import InputHandler from './hooks/InputHandler';
 import Camera from './components/Camera';
 import Border from './components/Border';
@@ -12,6 +12,7 @@ import CubeLine from './components/CubeLine';
 import GroundReflection from './components/GroundReflection';
 import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
+import Countdown from './components/Countdown';
 
 export default function PongScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -23,6 +24,7 @@ export default function PongScene() {
 	const [showModal, setShowModal] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [gameOver, setGameOver] = useState(false);
+	const [ScoreVisible, setScoreVisible] = useState(false);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -65,6 +67,7 @@ export default function PongScene() {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
+				<Countdown setScoreVisible={setScoreVisible} />
 				<Camera /> 
 				<ambientLight />
 				<Border position={[0,105,0]} />
@@ -82,7 +85,7 @@ export default function PongScene() {
 				<CubeLine />
 				<GroundReflection />
 				<OrbitControls />
-				<Scoreboard player1={p1Score} player2={p2Score} />
+				<Scoreboard player1={p1Score} player2={p2Score} ScoreVisible={ScoreVisible} />
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div>
