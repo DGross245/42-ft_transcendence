@@ -6,7 +6,6 @@ import * as THREE from 'three';
 import { BottomPaddle, TopPaddle } from "./Paddle";
 
 // FIXME: Fix the edge logic (if the ball hits the edge it speeds up too fast)
-// FIXME: broder have still problems when the ball hits them on the edges
 // FIXME: Ball feels laggy some times even with 60 fps
 // FIXME: Ball direction can be bit shitty like when veloX/Y are both 1
 
@@ -20,6 +19,8 @@ const Ball = (props) => {
 	const HalfBorderHeight2 = 46 / 2;
 	const HalfBorderWidth = 4 / 2;
 	const halfBall = 2;
+	let oldX = 0;
+	let oldY = 0;
 	let lastToutched = '';
 
 	const updateBall = (paddlePos, direction) => {
@@ -91,7 +92,6 @@ const Ball = (props) => {
 	}, [props.p1Score, props.p2Score, props.p3Score, props.p4Score]);
 
 	useFrame(() => {
-		console.log(lastToutched);
 		const ball = ballRef.current;
 		ball.x += ball.velocityX;
 		ball.y += ball.velocityY;
@@ -122,32 +122,44 @@ const Ball = (props) => {
 
 		const isCollidingWithBorder = ( borderX, borderY ) => {
 			return (
-				ball.x + halfBall >= borderX - HalfBorderWidth &&
-				ball.x - halfBall <= borderX + HalfBorderWidth &&
-				ball.y - halfBall <= borderY + HalfBorderHeight2 &&
-				ball.y + halfBall >= borderY - HalfBorderHeight2
+				ball.x + halfBall > borderX - HalfBorderWidth &&
+				ball.x - halfBall < borderX + HalfBorderWidth &&
+				ball.y - halfBall < borderY + HalfBorderHeight &&
+				ball.y + halfBall > borderY - HalfBorderHeight
 			);
 		}
 
 		const isCollidingWithBorder2 = ( borderX, borderY ) => {
 			return (
-				ball.x + halfBall >= borderX - HalfBorderHeight && 
-				ball.x - halfBall <= borderX + HalfBorderHeight &&
-				ball.y - halfBall <= borderY + HalfBorderWidth &&
-				ball.y + halfBall >= borderY - HalfBorderWidth
+				ball.x + halfBall > borderX - HalfBorderHeight && 
+				ball.x - halfBall < borderX + HalfBorderHeight &&
+				ball.y - halfBall < borderY + HalfBorderWidth &&
+				ball.y + halfBall > borderY - HalfBorderWidth
 			);
 		}
 
-		if (isCollidingWithBorder(151, 130) ||
-			isCollidingWithBorder(-151, 130) ||
-			isCollidingWithBorder(-151, -130) || 
-			isCollidingWithBorder(151, -130))
-			ball.velocityX *= -1;
-		else if (isCollidingWithBorder2(130, 151) ||
-			isCollidingWithBorder2(-130, 151) ||
-			isCollidingWithBorder2(-130, -151) ||
-			isCollidingWithBorder2(130, -151))
-			ball.velocityY *= -1;
+		if (isCollidingWithBorder(154, 133) ||
+			isCollidingWithBorder(-154, 133) ||
+			isCollidingWithBorder(-154, -133) || 
+			isCollidingWithBorder(154, -133)) {
+				if (ball.x + halfBall >= 154 + HalfBorderWidth)
+					ball.velocityY *= -1;
+				else if (ball.x - halfBall <= -154 - HalfBorderWidth)
+					ball.velocityY *= -1;
+				else	
+					ball.velocityX *= -1;
+			}
+		else if (isCollidingWithBorder2(133, 151) ||
+			isCollidingWithBorder2(-133, 151) ||
+			isCollidingWithBorder2(-133, -151) ||
+			isCollidingWithBorder2(133, -151)){
+				if (ball.y + halfBall >= 151 + HalfBorderWidth)
+					ball.velocityX *= -1;
+				else if (ball.y - halfBall <= -151 - HalfBorderWidth)
+					ball.velocityX *= -1;
+				else	
+					ball.velocityY *= -1;
+			}
 		else if (isCollidingWithPaddle(leftPaddlePos)) {
 			lastToutched = 'left';
 			updateBall(leftPaddlePos, 1);

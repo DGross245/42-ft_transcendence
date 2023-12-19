@@ -37,7 +37,7 @@ export default function OneForAllScene() {
 	const openModal = () => {
 		setShowModal(true);
 	}
-
+	
 	useEffect(() => {
 		if (gameOver) {
 			const delay = 1000;
@@ -72,7 +72,7 @@ export default function OneForAllScene() {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown setScoreVisible={setScoreVisible} />
-				<Camera /> 
+				<Camera keyMap={keyMap} /> 
 				<ambientLight />
 				<Border />
 				<TopPaddle ref={topPaddleRef} position={[0, 151, 0]} keyMap={keyMap} />
@@ -91,6 +91,7 @@ export default function OneForAllScene() {
 					setWinner={setWinner}
 					gameOver={gameOver} setGameOver={setGameOver}
 					ScoreVisible={ScoreVisible}
+					keyMap={keyMap}
 				/>
 				<CubeLineY />
 				<CubeLineX />

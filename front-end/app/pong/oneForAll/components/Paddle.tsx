@@ -5,7 +5,7 @@ import * as THREE from 'three'
 export const RightPaddle = forwardRef((props, ref) => {
 	const keyMap = props.keyMap;
 	const paddleSpeed = 300;
-	const borderPositionY = 110;
+	const borderPositionY = 113;
 
 	useFrame((_, delta) => {
 		if (keyMap['ArrowUp']) {
@@ -31,7 +31,7 @@ export const RightPaddle = forwardRef((props, ref) => {
 export const LeftPaddle = forwardRef((props, ref) => {
 	const keyMap = props.keyMap;
 	const paddleSpeed = 300;
-	const borderPositionY = 110;
+	const borderPositionY = 113;
 
 	useFrame((_, delta) => {
 		if (keyMap['KeyW']) {
@@ -58,7 +58,7 @@ export const LeftPaddle = forwardRef((props, ref) => {
 export const TopPaddle = forwardRef((props, ref) => {
 	const keyMap = props.keyMap;
 	const paddleSpeed = 300;
-	const borderPositionY = 110;
+	const borderPositionY = 113;
 
 	useFrame((_, delta) => {
 		if (keyMap['KeyD']) {
@@ -85,7 +85,7 @@ export const TopPaddle = forwardRef((props, ref) => {
 export const BottomPaddle = forwardRef((props, ref) => {
 	const keyMap = props.keyMap;
 	const paddleSpeed = 300;
-	const borderPositionY = 110;
+	const borderPositionY = 113;
 
 	useFrame((_, delta) => {
 		if (keyMap['ArrowRight']) {

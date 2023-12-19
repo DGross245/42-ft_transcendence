@@ -15,7 +15,7 @@ const Scoreboard = ({ player1, player2, player3, player4, ScoreVisible }) => {
 				<textGeometry args={[String(player3), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ 0xffffff } />
 			</mesh>
-			<mesh visible={ScoreVisible} position={[-17,-170, 50]} rotation={[Math.PI / 2, 0, 0]}>
+			<mesh visible={ScoreVisible} position={[-17,-210, -5]}>
 				<textGeometry args={[String(player4), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ 0xffffff } />
 			</mesh>
