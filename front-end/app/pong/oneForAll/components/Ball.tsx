@@ -8,7 +8,7 @@ import { BottomPaddle, TopPaddle } from "./Paddle";
 // FIXME: Fix the edge logic (if the ball hits the edge it speeds up too fast)
 // FIXME: Ball feels laggy some times even with 60 fps
 // FIXME: Ball direction can be bit shitty like when veloX/Y are both 1
-
+// FIXME: something wrong with the walls
 const Ball = (props) => {
 	let ref = useRef();
 	const [isVisible, setVisibility] = useState(true);
@@ -16,7 +16,6 @@ const Ball = (props) => {
 	const halfPaddleWidth = 4 / 2;
 	const HalfPaddleHeight = 30 / 2;
 	const HalfBorderHeight = 40 / 2;
-	const HalfBorderHeight2 = 46 / 2;
 	const HalfBorderWidth = 4 / 2;
 	const halfBall = 2;
 	let oldX = 0;
@@ -54,8 +53,10 @@ const Ball = (props) => {
 		let angle = 360 * randomNumber;
 		ball.speed = 2;
 
-		ball.velocityX = ball.speed * Math.sin(angle);
-		ball.velocityY = ball.speed * Math.cos(angle);
+		//ball.velocityX = ball.speed * Math.sin(angle);
+		//ball.velocityY = ball.speed * Math.cos(angle);
+		ball.velocityX = 1
+		ball.velocityY = 1.2
 	}
 
 	useEffect(() => {
@@ -65,30 +66,20 @@ const Ball = (props) => {
 	}, [props.ScoreVisible]);
 
 	useEffect(() => {
-		if (props.p1Score === 7) {
-			props.setGameOver(true);
-			props.setWinner('P1');
-			setVisibility(false);
-			return
-		}
-		else if (props.p2Score === 7) {
-			props.setGameOver(true);
-			props.setWinner('P2');
-			setVisibility(false);
-			return
-		}
-		else if (props.p3Score === 7) {
-			props.setGameOver(true);
-			props.setWinner('P3');
-			setVisibility(false);
-			return
-		}
-		else if (props.p4Score === 7) {
-			props.setGameOver(true);
-			props.setWinner('P4');
-			setVisibility(false);
-			return
-		}
+		const checkWinner = (player, playerScore) => {
+			if (playerScore === 7) {
+				props.setGameOver(true);
+				props.setWinner(player);
+				setVisibility(false);
+			}
+
+		} 
+
+		checkWinner('P1', props.p1Score);
+		checkWinner('P2', props.p2Score);
+		checkWinner('P3', props.p3Score);
+		checkWinner('P4', props.p4Score);
+
 	}, [props.p1Score, props.p2Score, props.p3Score, props.p4Score]);
 
 	useFrame(() => {
@@ -102,21 +93,12 @@ const Ball = (props) => {
 		const TopPaddlePos = props.topPaddleRef.current.position;
 		const BottomPaddlePos = props.bottomPaddleRef.current.position;
 
-		const isCollidingWithPaddle = (paddle: { x: number; y: number; }) => {
+		const isCollidingWithPaddle = (paddle: { x: number; y: number; }, halfPaddleWidth: number, HalfPaddleHeight: number) => {
 			return (
 				ball.x + halfBall > paddle.x - halfPaddleWidth &&
 				ball.x - halfBall < paddle.x + halfPaddleWidth &&
 				ball.y - halfBall < paddle.y + HalfPaddleHeight &&
 				ball.y + halfBall > paddle.y - HalfPaddleHeight
-			);
-		}
-
-		const isCollidingWithPaddle2 = (paddle: { x: number; y: number; }) => {
-			return (
-				ball.x + halfBall > paddle.x - HalfPaddleHeight &&
-				ball.x - halfBall < paddle.x + HalfPaddleHeight &&
-				ball.y - halfBall < paddle.y + halfPaddleWidth &&
-				ball.y + halfBall > paddle.y - halfPaddleWidth
 			);
 		}
 
@@ -142,46 +124,43 @@ const Ball = (props) => {
 			isCollidingWithBorder(-154, 133) ||
 			isCollidingWithBorder(-154, -133) || 
 			isCollidingWithBorder(154, -133)) {
-				if (ball.x + halfBall >= 154 + HalfBorderWidth)
+				if (ball.x + halfBall >= 154)
 					ball.velocityY *= -1;
-				else if (ball.x - halfBall <= -154 - HalfBorderWidth)
+				else if (ball.x - halfBall <= -154)
 					ball.velocityY *= -1;
 				else	
 					ball.velocityX *= -1;
-			}
+		}
 		else if (isCollidingWithBorder2(133, 151) ||
 			isCollidingWithBorder2(-133, 151) ||
 			isCollidingWithBorder2(-133, -151) ||
 			isCollidingWithBorder2(133, -151)){
-				if (ball.y + halfBall >= 151 + HalfBorderWidth)
+				if (ball.y + halfBall >= 151)
 					ball.velocityX *= -1;
-				else if (ball.y - halfBall <= -151 - HalfBorderWidth)
+				else if (ball.y - halfBall <= -151)
 					ball.velocityX *= -1;
 				else	
 					ball.velocityY *= -1;
-			}
-		else if (isCollidingWithPaddle(leftPaddlePos)) {
+				console.log("kek");
+		}
+		else if (isCollidingWithPaddle(leftPaddlePos, 2, 15)) {
 			lastToutched = 'left';
 			updateBall(leftPaddlePos, 1);
 		}
-		else if (isCollidingWithPaddle(rightPaddlePos)) {
+		else if (isCollidingWithPaddle(rightPaddlePos, 2, 15)) {
 			lastToutched = 'right';
 			updateBall(rightPaddlePos, -1);
 		}
-		else if (isCollidingWithPaddle2(TopPaddlePos)) {
+		else if (isCollidingWithPaddle(TopPaddlePos, 15, 2)) {
 			lastToutched = 'top';
 			updateBall2(TopPaddlePos, -1);
 		}
-		else if (isCollidingWithPaddle2(BottomPaddlePos)) {
+		else if (isCollidingWithPaddle(BottomPaddlePos, 15, 2)) {
 			lastToutched = 'bottom';
 			updateBall2(BottomPaddlePos, 1);
 		}
 		else if ((ball.x > 200 || ball.x < -200 || ball.y > 200 || ball.y < -200) && 
-			props.p2Score !== 7 &&
-			props.p1Score !== 7 &&
-			props.p3Score !== 7 &&
-			props.p4Score !== 7) {
-	
+			props.p2Score !== 7 && props.p1Score !== 7 && props.p3Score !== 7 && props.p4Score !== 7) {
 			if (lastToutched === 'left') {
 				if (ball.x < -200 && props.p1Score !== 0)
 					props.setP1Score(props.p1Score - 1);

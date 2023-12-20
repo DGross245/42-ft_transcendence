@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei'; 
+import { OrbitControls, Stats } from '@react-three/drei'; 
 import InputHandler from './hooks/InputHandler';
 import Camera from './components/Camera';
 import Border from './components/Border';
@@ -98,6 +98,8 @@ export default function OneForAllScene() {
 				<GroundReflection />
 				<OrbitControls />
 				<Scoreboard player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score} ScoreVisible={ScoreVisible} />
+				<Stats />
+				{/*<gridHelper args={[400, 400]} rotation={[Math.PI / 2, 0, 0]}/>*/}
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div>
