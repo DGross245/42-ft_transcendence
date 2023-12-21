@@ -95,11 +95,11 @@ export default function OneForAllScene() {
 				/>
 				<CubeLineY />
 				<CubeLineX />
-				<GroundReflection />
+				{/* <GroundReflection /> */}
 				<OrbitControls />
 				<Scoreboard player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score} ScoreVisible={ScoreVisible} />
 				<Stats />
-				{/*<gridHelper args={[400, 400]} rotation={[Math.PI / 2, 0, 0]}/>*/}
+				{/* <gridHelper args={[400, 400]} position={[0,0,-4]} rotation={[Math.PI / 2, 0, 0]}/> */}
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div>

@@ -9,23 +9,20 @@ import { BottomPaddle, TopPaddle } from "./Paddle";
 // FIXME: Ball feels laggy some times even with 60 fps
 // FIXME: Ball direction can be bit shitty like when veloX/Y are both 1
 // FIXME: something wrong with the walls
+
 const Ball = (props) => {
 	let ref = useRef();
 	const [isVisible, setVisibility] = useState(true);
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 2 });
-	const halfPaddleWidth = 4 / 2;
-	const HalfPaddleHeight = 30 / 2;
-	const HalfBorderHeight = 40 / 2;
-	const HalfBorderWidth = 4 / 2;
 	const halfBall = 2;
 	let oldX = 0;
 	let oldY = 0;
 	let lastToutched = '';
 
-	const updateBall = (paddlePos, direction) => {
-		const ball = ballRef.current;
+	const updateBall = (paddlePos: { y: number; }, direction: number) => {
+		let ball = ballRef.current;
 		const deltaY = ball.y - paddlePos.y;
-		const normalizedY = deltaY / HalfPaddleHeight;
+		const normalizedY = deltaY / 15;
 
 		if (ball.speed <= 4)
 			ball.speed += 0.2;
@@ -33,10 +30,10 @@ const Ball = (props) => {
 		ball.velocityY = normalizedY * ball.speed;
 	}
 
-	const updateBall2 = (paddlePos, direction) => {
-		const ball = ballRef.current;
+	const updateBall2 = (paddlePos: { x: number; }, direction: number) => {
+		let ball = ballRef.current;
 		const deltaX = ball.x - paddlePos.x;
-		const normalizedX = deltaX / HalfPaddleHeight;
+		const normalizedX = deltaX / 15;
 
 		if (ball.speed <= 4)
 			ball.speed += 0.2;
@@ -45,7 +42,7 @@ const Ball = (props) => {
 	}
 
 	const randomBallDir = () => {
-		const ball = ballRef.current;
+		let ball = ballRef.current;
 		ball.x = 0;
 		ball.y = 0;
 	
@@ -56,7 +53,7 @@ const Ball = (props) => {
 		//ball.velocityX = ball.speed * Math.sin(angle);
 		//ball.velocityY = ball.speed * Math.cos(angle);
 		ball.velocityX = 1
-		ball.velocityY = 1.2
+		ball.velocityY = 1.33
 	}
 
 	useEffect(() => {
@@ -66,13 +63,12 @@ const Ball = (props) => {
 	}, [props.ScoreVisible]);
 
 	useEffect(() => {
-		const checkWinner = (player, playerScore) => {
+		const checkWinner = (player: string, playerScore: number) => {
 			if (playerScore === 7) {
 				props.setGameOver(true);
 				props.setWinner(player);
 				setVisibility(false);
 			}
-
 		} 
 
 		checkWinner('P1', props.p1Score);
@@ -83,7 +79,7 @@ const Ball = (props) => {
 	}, [props.p1Score, props.p2Score, props.p3Score, props.p4Score]);
 
 	useFrame(() => {
-		const ball = ballRef.current;
+		let ball = ballRef.current;
 		ball.x += ball.velocityX;
 		ball.y += ball.velocityY;
 		ref.current.position.x = ball.x;
@@ -102,7 +98,7 @@ const Ball = (props) => {
 			);
 		}
 
-		const isCollidingWithBorder = ( borderX, borderY ) => {
+		const isCollidingWithBorder = ( borderX: number, borderY: number, HalfBorderWidth: number, HalfBorderHeight: number) => {
 			return (
 				ball.x + halfBall > borderX - HalfBorderWidth &&
 				ball.x - halfBall < borderX + HalfBorderWidth &&
@@ -111,37 +107,31 @@ const Ball = (props) => {
 			);
 		}
 
-		const isCollidingWithBorder2 = ( borderX, borderY ) => {
-			return (
-				ball.x + halfBall > borderX - HalfBorderHeight && 
-				ball.x - halfBall < borderX + HalfBorderHeight &&
-				ball.y - halfBall < borderY + HalfBorderWidth &&
-				ball.y + halfBall > borderY - HalfBorderWidth
-			);
+		ball = ballRef.current;
+		if (isCollidingWithBorder(151, 133, 2, 20) ||
+			isCollidingWithBorder(-151, 133, 2, 20) ||
+			isCollidingWithBorder(-151, -133, 2, 20) || 
+			isCollidingWithBorder(151, -133, 2, 20)) {
+			if (ball.x + halfBall > 151 ||
+				ball.x - halfBall < -151)
+				ball.velocityY *= -1;
+			else
+				ball.velocityX *= -1;
+			// ball.velocityX = 0;
+			// ball.velocityY = 0;
 		}
-
-		if (isCollidingWithBorder(154, 133) ||
-			isCollidingWithBorder(-154, 133) ||
-			isCollidingWithBorder(-154, -133) || 
-			isCollidingWithBorder(154, -133)) {
-				if (ball.x + halfBall >= 154)
-					ball.velocityY *= -1;
-				else if (ball.x - halfBall <= -154)
-					ball.velocityY *= -1;
-				else	
-					ball.velocityX *= -1;
-		}
-		else if (isCollidingWithBorder2(133, 151) ||
-			isCollidingWithBorder2(-133, 151) ||
-			isCollidingWithBorder2(-133, -151) ||
-			isCollidingWithBorder2(133, -151)){
-				if (ball.y + halfBall >= 151)
-					ball.velocityX *= -1;
-				else if (ball.y - halfBall <= -151)
-					ball.velocityX *= -1;
-				else	
-					ball.velocityY *= -1;
-				console.log("kek");
+		ball = ballRef.current;
+		if (isCollidingWithBorder(133, 151, 20, 2) ||
+			isCollidingWithBorder(-133, 151, 20, 2) ||
+			isCollidingWithBorder(-133, -151, 20, 2) ||
+			isCollidingWithBorder(133, -151, 20, 2)) {
+			if (ball.y + halfBall > 151 ||
+				ball.y - halfBall < -151)
+				ball.velocityX *= -1;
+			else
+				ball.velocityY *= -1;
+			// ball.velocityX = 0;
+			// ball.velocityY = 0;
 		}
 		else if (isCollidingWithPaddle(leftPaddlePos, 2, 15)) {
 			lastToutched = 'left';
