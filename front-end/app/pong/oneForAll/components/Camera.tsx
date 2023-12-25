@@ -1,6 +1,9 @@
 import { PerspectiveCamera } from "@react-three/drei"
 
-const Camera = () => {
+const Camera = (props) => {
+
+	//const keyMap = props.keyMap;
+
 	return (
 		<PerspectiveCamera
 			makeDefault
@@ -8,7 +11,7 @@ const Camera = () => {
 			aspect={window.innerWidth / window.innerHeight}
 			near={0.1}
 			far={1000}
-			position={[0, -100, 300]}
+			position={[0, -350, 100]}
 		/>
 	);
 }
