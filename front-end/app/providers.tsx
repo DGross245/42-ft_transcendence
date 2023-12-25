@@ -5,6 +5,7 @@ import { NextUIProvider } from "@nextui-org/system";
 import { useRouter } from 'next/navigation'
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
+import { Web3ModalProvider } from "./web3Provider";
 
 export interface ProvidersProps {
 	children: React.ReactNode;
@@ -16,7 +17,11 @@ export function Providers({ children, themeProps }: ProvidersProps) {
 
 	return (
 		<NextUIProvider navigate={router.push}>
-			<NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
+			<NextThemesProvider {...themeProps}>
+				<Web3ModalProvider>
+					{children}
+				</Web3ModalProvider>
+			</NextThemesProvider>
 		</NextUIProvider>
 	);
 }

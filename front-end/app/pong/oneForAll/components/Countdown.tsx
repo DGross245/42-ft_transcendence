@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 
 extend({ TextGeometry })
 
-const Countdown = ({ setScoreVisible }) => {
+const Countdown = ({ setScoreVisible}) => {
 	const font = new FontLoader().parse(Silkscreen_Regular);
 	const [count, setCount] = useState(4);
 	const [visible, setVisibility] = useState(true);
