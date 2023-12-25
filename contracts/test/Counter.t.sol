@@ -12,7 +12,7 @@ contract ScoresTest is Test {
     }
 
     function test_addScore() public {
-        scores.addScore(0, 0, 42);
-        assertEq(scores.getScores(0)[0], 42);
+        scores.addScore(0, address(this), 42);
+        assertEq(scores.getScores(0)[0], 41);
     }
 }
