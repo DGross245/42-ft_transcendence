@@ -38,6 +38,7 @@
     "intl-messageformat": "^10.5.0",
     "next": "14.0.2",
     "next-themes": "^0.2.1",
+    "pino-pretty": "^10.3.0",
     "postcss": "8.4.31",
     "postprocessing": "^6.33.3",
     "react": "18.2.0",
