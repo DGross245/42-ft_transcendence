@@ -1,34 +1,28 @@
 "use client"
 
-import React, { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5/react'
 
-const projectId = 'YOUR_PROJECT_ID'
+const projectId = 'e724641375a102581d38c8ee62fc81dd'
 
 const goerli = {
-    chainId: 5,
-    name: 'Goerli',
-    currency: 'ETH',
-    explorerUrl: 'https://goerli.etherscan.io',
-    rpcUrl: 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
+	chainId: 5,
+	name: 'goerli',
+	currency: 'ETH',
+	explorerUrl: 'https://goerli.etherscan.io',
+	rpcUrl: 'https://eth-goerli.g.alchemy.com/v2/demo'
 }
 
 const metadata = {
-    name: 'My Website',
-    description: 'My Website description',
-    url: 'https://mywebsite.com',
-    icons: ['https://avatars.mywebsite.com/']
+	name: 'My Website',
+	description: 'My Website description',
+	url: 'https://localhost:3000',
+	icons: ['https://avatars.mywebsite.com/']
 }
-
-createWeb3Modal({
-    ethersConfig: defaultConfig({ metadata }),
-    chains: [goerli],
-    projectId
-})
 
 // @note typescript workaround to enable type any children prop in Web3ModalProvider component
 interface Web3ModalProviderProps {
-    children: ReactNode;
+	children: ReactNode;
 }
 
 // @note children is a property ( = parameter) of Web3ModalProvider component,
@@ -36,5 +30,12 @@ interface Web3ModalProviderProps {
 // possible for Web3ModalProvider component to act as a wrapper and provide its
 // web3modal properties to any component that is passed as a child.
 export function Web3ModalProvider({ children }: Web3ModalProviderProps) {
-    return children;
+	useEffect(() => {
+		createWeb3Modal({
+			ethersConfig: defaultConfig({ metadata }),
+			chains: [goerli],
+			projectId
+		});
+	  }, []);
+	return children;
 }
