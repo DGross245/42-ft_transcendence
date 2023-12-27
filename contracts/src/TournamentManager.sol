@@ -74,7 +74,7 @@ contract TournamentManager is Ownable {
 		uint256 score;
 	}
 
-	function getScoresForTournament(uint256 tournament_id) external view returns (PlayerScore[] memory) {
+	function getScoresOfTournament(uint256 tournament_id) external view returns (PlayerScore[] memory) {
 		require (tournament_id < next_tournament_id, "Tournament does not exist");
 
 		uint256 player_amount = tournaments[tournament_id].players.length;

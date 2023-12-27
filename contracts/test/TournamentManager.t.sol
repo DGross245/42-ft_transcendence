@@ -2,17 +2,17 @@
 pragma solidity ^0.8.13;
 
 import {Test, console2} from "forge-std/Test.sol";
-import {Scores} from "../src/Scores.sol";
+import {TournamentManager} from "../src/TournamentManager.sol";
 
-contract ScoresTest is Test {
-    Scores public scores;
+contract TournamentManagerTest is Test {
+    TournamentManager public tm;
 
-    function setUp() public {
-        scores = new Scores(address(this));
+    struct TestPlayerScore {
+        address player;
+        uint256 score;
     }
 
-    function test_addScore() public {
-        scores.addScore(0, address(this), 42);
-        assertEq(scores.getScores(0)[0], 41);
+    function setUp() public {
+        tm = new TournamentManager(address(this));
     }
 }
