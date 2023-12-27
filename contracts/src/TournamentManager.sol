@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 // @todo add events
-contract Scores is Ownable {
+contract TournamentManager is Ownable {
 	struct Player {
 		address addr;
 		string name;
