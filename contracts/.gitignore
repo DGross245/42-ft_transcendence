@@ -2,3 +2,4 @@ lib/*
 cache
 out
 .env
+node_modules
