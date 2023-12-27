@@ -23,16 +23,17 @@ contract TournamentManager is Ownable {
 
 	mapping (uint256 => mapping (address => uint256)) tournament_player_scores;
 
-	constructor(address owner) Ownable(owner) {}
+	constructor() Ownable(msg.sender) {}
 
 	function setNameAndColor(string memory name, uint256 color) external {
 		require (bytes(name).length > 0, "Name must not be empty");
 		require (color > 0, "Color must not be empty");
 		require (color <= 0xFFFFFF, "Color must be a valid hex color");
 
-		Player memory player = Player(msg.sender, name, color, 0);
 		if (players[msg.sender].addr == address(0)) {
-			players[msg.sender] = player;
+			players[msg.sender].addr = msg.sender;
+			players[msg.sender].name = name;
+			players[msg.sender].color = color;
 		}
 		else {
 			players[msg.sender].name = name;
@@ -43,10 +44,8 @@ contract TournamentManager is Ownable {
 	function startTournament(uint256 duration_in_blocks) external {
 		require (duration_in_blocks > 0, "Duration must be greater than 0");
 
-		Tournament memory tournament;
-		tournament.start_block = block.number;
-		tournament.end_block = block.number + duration_in_blocks;
-		tournaments[next_tournament_id] = tournament;
+		tournaments[next_tournament_id].start_block = block.number;
+		tournaments[next_tournament_id].end_block = block.number + duration_in_blocks;
 		next_tournament_id++;
 	}
 
@@ -62,8 +61,8 @@ contract TournamentManager is Ownable {
 				return;
 			}
 		}
-		if (!player_found)
-			tournaments[tournament_id].players.push(players[player_addr]);
+		// if (!player_found)
+		// 	tournaments[tournament_id].players.push(players[player_addr]);
 		tournament_player_scores[tournament_id][player_addr] += score;
 		players[player_addr].total_score += score;
 	}

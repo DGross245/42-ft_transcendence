@@ -13,6 +13,6 @@ contract TournamentManagerTest is Test {
     }
 
     function setUp() public {
-        tm = new TournamentManager(address(this));
+        tm = new TournamentManager();
     }
 }
