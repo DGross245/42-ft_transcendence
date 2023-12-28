@@ -7,7 +7,7 @@ import { title, subtitle } from "@/components/primitives";
 import { StrictMode } from 'react';
 import { Web3ModalProvider } from "./web3provider";
 
-import Scores from "./scores";
+import Scores from "./tournamentManager";
 
 export default function Home() {
 	return (
