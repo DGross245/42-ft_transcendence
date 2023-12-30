@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-
 // @todo add events
-contract TournamentManager is Ownable {
+contract TournamentManager {
 	struct Player {
 		address addr;
 		string name;
@@ -14,6 +12,7 @@ contract TournamentManager is Ownable {
 	mapping(address => Player) players;
 
 	struct Tournament {
+		address master;
 		uint256 start_block;
 		uint256 end_block;
 		Player[] players;
@@ -22,8 +21,6 @@ contract TournamentManager is Ownable {
 	uint256 next_tournament_id = 0;
 
 	mapping (uint256 => mapping (address => uint256)) tournament_player_scores;
-
-	constructor() Ownable(msg.sender) {}
 
 	function setNameAndColor(string memory name, uint256 color) external {
 		require (bytes(name).length > 0, "Name must not be empty");
@@ -49,7 +46,16 @@ contract TournamentManager is Ownable {
 		next_tournament_id++;
 	}
 
-	function addScoreToTournament(uint256 tournament_id, address player_addr, uint256 score) external onlyOwner {
+	// @todo master registers tournament
+	// @todo player set alias and color for tournament, join tournament
+	// @todo master starts tournament
+		// @todo calculate matchmaking
+	// @todo after game is played, one player submits scores of game
+		// @todo update tournament tree 
+		// @todo update player scores
+	
+
+	function addScoreToTournament(uint256 tournament_id, address player_addr, uint256 score) external {
 		require (tournament_id < next_tournament_id, "Tournament does not exist");
 		require (block.number >= tournaments[tournament_id].start_block, "Tournament not started");
 		require (block.number <= tournaments[tournament_id].end_block, "Tournament already ended");
@@ -61,8 +67,8 @@ contract TournamentManager is Ownable {
 				return;
 			}
 		}
-		// if (!player_found)
-		// 	tournaments[tournament_id].players.push(players[player_addr]);
+		if (!player_found)
+			tournaments[tournament_id].players.push(players[player_addr]);
 		tournament_player_scores[tournament_id][player_addr] += score;
 		players[player_addr].total_score += score;
 	}
@@ -72,6 +78,9 @@ contract TournamentManager is Ownable {
 		string name;
 		uint256 score;
 	}
+
+	// @todo get list of tournaments
+		// include flag for joinable or not
 
 	function getScoresOfTournament(uint256 tournament_id) external view returns (PlayerScore[] memory) {
 		require (tournament_id < next_tournament_id, "Tournament does not exist");
@@ -88,5 +97,12 @@ contract TournamentManager is Ownable {
 
 		return scoreboard;
 	}
-}
 
+	// @todo get tournament tree
+		// @todo include which game has been played
+
+	// @todo add result of ranked game to player profile
+
+	// @todo get player profile
+		// @todo include game history
+}

@@ -68,9 +68,9 @@ const winningCoords = [
 
 const QubicScene = () => {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const [clicked, click] = useState(false);
+	const [clicked, click] = useState(false); // @note set to true to trigger validation
 	const [currentTurn, setTurn] = useState('X');
-	const [board, setCurrentBoardState] = useState(initialBoardState);
+	const [board, setCurrentBoardState] = useState(initialBoardState); // @note setter and getter for board state
 	const [sceneCords, setSceneCords] = useState(initialSceneCords);
 	const [showFinishLine, setShowFinishLine] = useState(false);
 	const [coords, setCoords] = useState(winningCoords);
