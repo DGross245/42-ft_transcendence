@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { BottomPaddle, TopPaddle } from "./Paddle";
 
 // FIXME: Fix the edge logic (if the ball hits the edge it speeds up too fast)
 // FIXME: Ball feels laggy some times even with 60 fps
@@ -13,10 +12,8 @@ import { BottomPaddle, TopPaddle } from "./Paddle";
 const Ball = (props) => {
 	let ref = useRef();
 	const [isVisible, setVisibility] = useState(true);
-	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 2 });
+	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const halfBall = 2;
-	let oldX = 0;
-	let oldY = 0;
 	let lastToutched = '';
 
 	const updateBall = (paddlePos: { y: number; }, direction: number) => {
@@ -50,10 +47,11 @@ const Ball = (props) => {
 		let angle = 360 * randomNumber;
 		ball.speed = 2;
 
-		//ball.velocityX = ball.speed * Math.sin(angle);
-		//ball.velocityY = ball.speed * Math.cos(angle);
-		ball.velocityX = 1
-		ball.velocityY = 1.33
+		ball.velocityX = ball.speed * Math.sin(angle);
+		ball.velocityY = ball.speed * Math.cos(angle);
+
+		// ball.velocityX = 1
+		// ball.velocityY = 1.35
 	}
 
 	useEffect(() => {
@@ -78,8 +76,17 @@ const Ball = (props) => {
 
 	}, [props.p1Score, props.p2Score, props.p3Score, props.p4Score]);
 
+	// let currentTime = performance.now();
+
 	useFrame(() => {
+		// const newTime = performance.now();
+
+		// const deltaTime = (newTime - currentTime);
+		// currentTime = newTime;
+	
 		let ball = ballRef.current;
+		// ball.x += ball.velocityX * 0.1 * deltaTime;
+		// ball.y += ball.velocityY * 0.1 * deltaTime;
 		ball.x += ball.velocityX;
 		ball.y += ball.velocityY;
 		ref.current.position.x = ball.x;
@@ -88,50 +95,42 @@ const Ball = (props) => {
 		const leftPaddlePos = props.leftPaddleRef.current.position;
 		const TopPaddlePos = props.topPaddleRef.current.position;
 		const BottomPaddlePos = props.bottomPaddleRef.current.position;
-
+	
 		const isCollidingWithPaddle = (paddle: { x: number; y: number; }, halfPaddleWidth: number, HalfPaddleHeight: number) => {
 			return (
-				ball.x + halfBall > paddle.x - halfPaddleWidth &&
-				ball.x - halfBall < paddle.x + halfPaddleWidth &&
-				ball.y - halfBall < paddle.y + HalfPaddleHeight &&
-				ball.y + halfBall > paddle.y - HalfPaddleHeight
+				ball.x + halfBall >= paddle.x - halfPaddleWidth &&
+				ball.x - halfBall <= paddle.x + halfPaddleWidth &&
+				ball.y - halfBall <= paddle.y + HalfPaddleHeight &&
+				ball.y + halfBall >= paddle.y - HalfPaddleHeight
 			);
 		}
 
 		const isCollidingWithBorder = ( borderX: number, borderY: number, HalfBorderWidth: number, HalfBorderHeight: number) => {
 			return (
-				ball.x + halfBall > borderX - HalfBorderWidth &&
-				ball.x - halfBall < borderX + HalfBorderWidth &&
-				ball.y - halfBall < borderY + HalfBorderHeight &&
-				ball.y + halfBall > borderY - HalfBorderHeight
+				ball.x + halfBall >= borderX - HalfBorderWidth &&
+				ball.x - halfBall <= borderX + HalfBorderWidth &&
+				ball.y - halfBall <= borderY + HalfBorderHeight &&
+				ball.y + halfBall >= borderY - HalfBorderHeight
 			);
 		}
 
-		ball = ballRef.current;
-		if (isCollidingWithBorder(151, 133, 2, 20) ||
-			isCollidingWithBorder(-151, 133, 2, 20) ||
-			isCollidingWithBorder(-151, -133, 2, 20) || 
-			isCollidingWithBorder(151, -133, 2, 20)) {
-			if (ball.x + halfBall > 151 ||
-				ball.x - halfBall < -151)
+		if (isCollidingWithBorder(151, 131, 2, 20) ||
+			isCollidingWithBorder(-151, 131, 2, 20) ||
+			isCollidingWithBorder(-151, -131, 2, 20) || 
+			isCollidingWithBorder(151, -131, 2, 20)) {
+			if (ball.x + halfBall >= 151 || ball.x - halfBall <= -151)
 				ball.velocityY *= -1;
 			else
 				ball.velocityX *= -1;
-			// ball.velocityX = 0;
-			// ball.velocityY = 0;
 		}
-		ball = ballRef.current;
-		if (isCollidingWithBorder(133, 151, 20, 2) ||
-			isCollidingWithBorder(-133, 151, 20, 2) ||
-			isCollidingWithBorder(-133, -151, 20, 2) ||
-			isCollidingWithBorder(133, -151, 20, 2)) {
-			if (ball.y + halfBall > 151 ||
-				ball.y - halfBall < -151)
+		if (isCollidingWithBorder(131, 151, 20, 2) ||
+			isCollidingWithBorder(-131, 151, 20, 2) ||
+			isCollidingWithBorder(-131, -151, 20, 2) ||
+			isCollidingWithBorder(131, -151, 20, 2)) {
+			if (ball.y + halfBall >= 151 || ball.y - halfBall <= -151)
 				ball.velocityX *= -1;
 			else
 				ball.velocityY *= -1;
-			// ball.velocityX = 0;
-			// ball.velocityY = 0;
 		}
 		else if (isCollidingWithPaddle(leftPaddlePos, 2, 15)) {
 			lastToutched = 'left';
@@ -197,8 +196,6 @@ const Ball = (props) => {
 				color={new THREE.Color(16, 16, 16)}
 				toneMapped={false}
 				transparent={false}
-				blending={THREE.AdditiveBlending}
-				side={THREE.BackSide}
 			/>
 		</mesh>
 	);

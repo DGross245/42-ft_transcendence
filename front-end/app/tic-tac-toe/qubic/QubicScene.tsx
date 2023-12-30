@@ -1,8 +1,8 @@
 "use client"
 
-import { Canvas } from "@react-three/fiber"
-import React, { useEffect, useState } from 'react';
-import { OrbitControls } from '@react-three/drei'; 
+import { Canvas, useFrame } from "@react-three/fiber"
+import React, { useEffect, useRef, useState } from 'react';
+import { OrbitControls, Sphere } from '@react-three/drei'; 
 import Floor from "./components/Floor";
 import { gameValidation }  from "./components/GameValidation"
 import Table from "./components/Block";
@@ -65,6 +65,23 @@ const initialSceneCords = [
 const winningCoords = [
 	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
 ];
+
+const PointLightVisualizer = ({ position }) => {
+	const sphereRef = useRef();
+  
+	// Update sphere's position to match the point light
+	useFrame(() => {
+	  if (sphereRef.current) {
+		sphereRef.current.position.copy(position);
+	  }
+	});
+  
+	return (
+	  <Sphere args={[1, 16, 16]} position={position}>
+		<meshBasicMaterial color={0xffff00} wireframe />
+	  </Sphere>
+	);
+  };
 
 const QubicScene = () => {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -148,9 +165,12 @@ const QubicScene = () => {
 		});
 	}, [clicked]);
 
+	const position = [3, 20, 3];
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
+				{/* <PointLightVisualizer position={position} /> */}
+				<pointLight position={[3,30,3]} />
 				<Camera dimensions={dimensions}/>
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
 				{gridLineGenrator()}
