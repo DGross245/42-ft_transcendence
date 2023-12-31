@@ -15,7 +15,7 @@ contract TournamentManager {
 		address addr;
 		string name;
 		uint256 color;
-		Game[] ranked_games;
+		Game[] ranked_games; // @todo global game history more sensible?
 	}
 	mapping(address => Player) public players;
 	struct PlayerScore {
