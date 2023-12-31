@@ -15,7 +15,6 @@ contract TournamentManager {
 		address addr;
 		string name;
 		uint256 color;
-		Game[] ranked_games; // @todo global game history more sensible?
 	}
 	mapping(address => Player) public players;
 	struct PlayerScore {
@@ -39,6 +38,7 @@ contract TournamentManager {
 		PlayerScore[] player_scores;
 		bool finished;
 	}
+	Game[] public ranked_games;
 
 	/* -------------------------------------------------------------------------- */
 	/*                                  Modifiers                                 */
@@ -141,7 +141,7 @@ contract TournamentManager {
 		tournaments[tournament_id].end_block = block.number + tournaments[tournament_id].duration_in_blocks;
 	}
 
-	function submitGameResult(uint256 tournament_id, uint256 game_id, PlayerScore[] calldata player_scores)
+	function submitGameResultTournament(uint256 tournament_id, uint256 game_id, PlayerScore[] calldata player_scores)
 	external checkTournamentValid(tournament_id) checkTournamentOngoing(tournament_id) {
 		require (tournaments[tournament_id].games[game_id].finished == false, "Game already finished");
 		require (player_scores.length == 2, "Invalid number of players");
@@ -160,6 +160,28 @@ contract TournamentManager {
 	}
 
 	/* -------------------------------------------------------------------------- */
+	/*                              Ranked Functions                              */
+	/* -------------------------------------------------------------------------- */
+
+	function submitGameResultRanked(uint256 game_id, PlayerScore[] calldata player_scores)
+	external {
+		require (ranked_games[game_id].finished == false, "Game already finished");
+		require (player_scores.length == ranked_games[game_id].player_scores.length, "Invalid number of players");
+
+		for (uint256 i = 0; i < player_scores.length; i++) {
+			bool player_found = false;
+			for (uint256 j = 0; j < ranked_games[game_id].player_scores.length; j++) {
+				if (ranked_games[game_id].player_scores[j].addr == player_scores[i].addr) {
+					player_found = true;
+					ranked_games[game_id].player_scores[j].score == player_scores[i].score;
+				}
+			}
+			require (player_found, "Player not in tournament");
+		}
+		ranked_games[game_id].finished = true;
+	}
+
+	/* -------------------------------------------------------------------------- */
 	/*                                   Getter                                   */
 	/* -------------------------------------------------------------------------- */
 
@@ -175,8 +197,15 @@ contract TournamentManager {
 		return tournaments[tournament_id].games;
 	}
 
-	// @todo add result of ranked game to player profile
+	function getPlayer(address addr)
+	external view returns (Player memory) {
+		require (players[addr].addr != address(0), "Player does not exist");
 
-	// @todo get player profile
-		// @todo include game history
+		return players[addr];
+	}
+
+	function getRankedGames()
+	external view returns (Game[] memory) {
+		return ranked_games;
+	}
 }
