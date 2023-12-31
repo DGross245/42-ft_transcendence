@@ -31,7 +31,6 @@ contract TournamentManager {
 		uint256 end_block;
 		address[] players;
 		Game[] games;
-		uint256 players_per_game;
 	}
 	Tournament[] public tournaments;
 
@@ -60,6 +59,7 @@ contract TournamentManager {
 	/*                                  Internal                                  */
 	/* -------------------------------------------------------------------------- */
 
+	// @todo randomize game order
 	function createTournamentTree(uint256 tournament_id)
 	internal checkTournamentValid(tournament_id) {
 		uint256 num_players = tournaments[tournament_id].players.length;
@@ -119,9 +119,8 @@ contract TournamentManager {
 	/*                            Tournament Functions                            */
 	/* -------------------------------------------------------------------------- */
 
-	function createTournament(uint256 duration_in_blocks, uint256 players_per_game) external {
+	function createTournament(uint256 duration_in_blocks) external {
 		require (duration_in_blocks > 0, "Duration must be greater than 0");
-		require (players_per_game > 0, "Players per game must be greater than 0");
 
 		tournaments.push(Tournament({
 			master: msg.sender,
@@ -130,7 +129,6 @@ contract TournamentManager {
 			end_block: 0,
 			players: new address[](0),
 			games: new Game[](0),
-			players_per_game: players_per_game
 		}));
 	}
 
