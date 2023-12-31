@@ -128,7 +128,7 @@ contract TournamentManager {
 			start_block: 0,
 			end_block: 0,
 			players: new address[](0),
-			games: new Game[](0),
+			games: new Game[](0)
 		}));
 	}
 
@@ -144,7 +144,7 @@ contract TournamentManager {
 	function submitGameResult(uint256 tournament_id, uint256 game_id, PlayerScore[] calldata player_scores)
 	external checkTournamentValid(tournament_id) checkTournamentOngoing(tournament_id) {
 		require (tournaments[tournament_id].games[game_id].finished == false, "Game already finished");
-		require (player_scores.length == tournaments[tournament_id].players_per_game, "Invalid number of players");
+		require (player_scores.length == 2, "Invalid number of players");
 
 		for (uint256 i = 0; i < player_scores.length; i++) {
 			bool player_found = false;
