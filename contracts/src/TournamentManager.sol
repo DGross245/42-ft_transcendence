@@ -144,6 +144,7 @@ contract TournamentManager {
 	function submitGameResultTournament(uint256 tournament_id, uint256 game_id, PlayerScore[] calldata player_scores)
 	external checkTournamentValid(tournament_id) checkTournamentOngoing(tournament_id) {
 		require (tournaments[tournament_id].games[game_id].finished == false, "Game already finished");
+		require (game_id < tournaments[tournament_id].games.length, "Game does not exist");
 		require (player_scores.length == 2, "Invalid number of players");
 
 		for (uint256 i = 0; i < player_scores.length; i++) {
@@ -166,6 +167,7 @@ contract TournamentManager {
 	function submitGameResultRanked(uint256 game_id, PlayerScore[] calldata player_scores)
 	external {
 		require (ranked_games[game_id].finished == false, "Game already finished");
+		require (game_id < ranked_games.length, "Game does not exist");
 		require (player_scores.length == ranked_games[game_id].player_scores.length, "Invalid number of players");
 
 		for (uint256 i = 0; i < player_scores.length; i++) {
