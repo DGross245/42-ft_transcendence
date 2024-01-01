@@ -16,7 +16,7 @@ const Ball = (props) => {
 	const halfBall = 2;
 	let lastToutched = '';
 
-	const updateBall = (paddlePos: { y: number; }, direction: number) => {
+	const changeBallDir = (paddlePos: { y: number; }, direction: number) => {
 		let ball = ballRef.current;
 		const deltaY = ball.y - paddlePos.y;
 		const normalizedY = deltaY / 15;
@@ -27,7 +27,7 @@ const Ball = (props) => {
 		ball.velocityY = normalizedY * ball.speed;
 	}
 
-	const updateBall2 = (paddlePos: { x: number; }, direction: number) => {
+	const changeBallDir2 = (paddlePos: { x: number; }, direction: number) => {
 		let ball = ballRef.current;
 		const deltaX = ball.x - paddlePos.x;
 		const normalizedX = deltaX / 15;
@@ -47,11 +47,11 @@ const Ball = (props) => {
 		let angle = 360 * randomNumber;
 		ball.speed = 2;
 
-		ball.velocityX = ball.speed * Math.sin(angle);
-		ball.velocityY = ball.speed * Math.cos(angle);
+		// ball.velocityX = ball.speed * Math.sin(angle);
+		// ball.velocityY = ball.speed * Math.cos(angle);
 
-		// ball.velocityX = 1
-		// ball.velocityY = 1.35
+		ball.velocityX = 1.35
+		ball.velocityY = 1
 	}
 
 	useEffect(() => {
@@ -76,26 +76,12 @@ const Ball = (props) => {
 
 	}, [props.p1Score, props.p2Score, props.p3Score, props.p4Score]);
 
-	// let currentTime = performance.now();
-
-	useFrame(() => {
-		// const newTime = performance.now();
-
-		// const deltaTime = (newTime - currentTime);
-		// currentTime = newTime;
-	
-		let ball = ballRef.current;
-		// ball.x += ball.velocityX * 0.1 * deltaTime;
-		// ball.y += ball.velocityY * 0.1 * deltaTime;
-		ball.x += ball.velocityX;
-		ball.y += ball.velocityY;
-		ref.current.position.x = ball.x;
-		ref.current.position.y = ball.y;
+	const updateBallPosition = (ball, deltaTime) => {
 		const rightPaddlePos = props.rightPaddleRef.current.position;
 		const leftPaddlePos = props.leftPaddleRef.current.position;
 		const TopPaddlePos = props.topPaddleRef.current.position;
 		const BottomPaddlePos = props.bottomPaddleRef.current.position;
-	
+
 		const isCollidingWithPaddle = (paddle: { x: number; y: number; }, halfPaddleWidth: number, HalfPaddleHeight: number) => {
 			return (
 				ball.x + halfBall >= paddle.x - halfPaddleWidth &&
@@ -104,7 +90,7 @@ const Ball = (props) => {
 				ball.y + halfBall >= paddle.y - HalfPaddleHeight
 			);
 		}
-
+	
 		const isCollidingWithBorder = ( borderX: number, borderY: number, HalfBorderWidth: number, HalfBorderHeight: number) => {
 			return (
 				ball.x + halfBall >= borderX - HalfBorderWidth &&
@@ -122,6 +108,10 @@ const Ball = (props) => {
 				ball.velocityY *= -1;
 			else
 				ball.velocityX *= -1;
+			ball.x += ball.velocityX *  100 * deltaTime;
+			ball.y += ball.velocityY *  100 * deltaTime;
+			ref.current.position.x = ball.x;
+			ref.current.position.y = ball.y;
 		}
 		if (isCollidingWithBorder(131, 151, 20, 2) ||
 			isCollidingWithBorder(-131, 151, 20, 2) ||
@@ -131,22 +121,26 @@ const Ball = (props) => {
 				ball.velocityX *= -1;
 			else
 				ball.velocityY *= -1;
+			ball.x += ball.velocityX *  100 * deltaTime;
+			ball.y += ball.velocityY *  100 * deltaTime;
+			ref.current.position.x = ball.x;
+			ref.current.position.y = ball.y;
 		}
 		else if (isCollidingWithPaddle(leftPaddlePos, 2, 15)) {
 			lastToutched = 'left';
-			updateBall(leftPaddlePos, 1);
+			changeBallDir(leftPaddlePos, 1);
 		}
 		else if (isCollidingWithPaddle(rightPaddlePos, 2, 15)) {
 			lastToutched = 'right';
-			updateBall(rightPaddlePos, -1);
+			changeBallDir(rightPaddlePos, -1);
 		}
 		else if (isCollidingWithPaddle(TopPaddlePos, 15, 2)) {
 			lastToutched = 'top';
-			updateBall2(TopPaddlePos, -1);
+			changeBallDir2(TopPaddlePos, -1);
 		}
 		else if (isCollidingWithPaddle(BottomPaddlePos, 15, 2)) {
 			lastToutched = 'bottom';
-			updateBall2(BottomPaddlePos, 1);
+			changeBallDir2(BottomPaddlePos, 1);
 		}
 		else if ((ball.x > 200 || ball.x < -200 || ball.y > 200 || ball.y < -200) && 
 			props.p2Score !== 7 && props.p1Score !== 7 && props.p3Score !== 7 && props.p4Score !== 7) {
@@ -187,6 +181,21 @@ const Ball = (props) => {
 			randomBallDir();
 			lastToutched = '';
 		}
+	}
+
+	let previousTime = 0;
+
+	useFrame((state, delta) => {
+		const currentTime = state.clock.elapsedTime;
+		const deltaTime = currentTime - previousTime;
+
+		let ball = ballRef.current;
+		ball.x += ball.velocityX *  100 * deltaTime;
+		ball.y += ball.velocityY *  100 * deltaTime;
+		ref.current.position.x = ball.x;
+		ref.current.position.y = ball.y;
+		updateBallPosition(ball, deltaTime);
+		previousTime = currentTime;
 	});
 
 	return (
