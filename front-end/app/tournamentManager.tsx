@@ -59,6 +59,7 @@ function Scores() {
 
 	// sets name and color of the player (player = calling address)
 	// color is a hex string, e.g. '0xFF0000'
+	// this "player profile" will be stored permanently accross all games and tournaments
 	async function setNameAndColor(name: string, color: string) {
 		const tmContract = await prepareContract()
 		await tmContract.setNameAndColor(name, color)
@@ -115,6 +116,7 @@ function Scores() {
 	}
 
 	// returns information about a player
+	// match history not included, only name and color
 	async function getPlayer(address: string) {
 		const tmContract = await prepareContract()
 		const player = await tmContract.getPlayer(address)
@@ -122,6 +124,7 @@ function Scores() {
 	}
 
 	// returns array of all ranked games
+	// this can be used to display a leaderboard, as well as match history of a player
 	async function getRankedGames() {
 		const tmContract = await prepareContract()
 		const rankedGames = await tmContract.getRankedGames()
