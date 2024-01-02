@@ -7,13 +7,13 @@ const EndModal = ({ isOpen, onClose, winner }) => {
 
 	const getWinnerImage = () => {
 		if (winner == 'O')
-			return ('/o.png');
+			return ('/images/o.png');
 		else if (winner == 'X')
-			return ('/x.png');
+			return ('/images/x.png');
 		else if (winner == '⬜️')
-			return ('/block.png')
+			return ('/images/block.png')
 		else
-			return ('/draw.png');
+			return ('/images/draw.png');
 	}
 
 	return (

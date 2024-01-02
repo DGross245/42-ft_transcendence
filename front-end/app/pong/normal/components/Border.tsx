@@ -10,7 +10,7 @@ const Border = ({ position }: { position: [number, number, number] }) => {
 				transparent={false}
 				blending={THREE.AdditiveBlending}
 				side={THREE.BackSide}
-				/>
+			/>
 		</mesh>
 	);
 }

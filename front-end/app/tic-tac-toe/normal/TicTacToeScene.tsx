@@ -141,9 +141,9 @@ const TTTScene = () => {
 				<Camera dimensions={dimensions} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
-				<Floor	position={[ 0,-0.2, 0]}/> 
-				<Floor	position={[ 0, 7.8, 0]}/>
-				<Floor	position={[ 0, 15.8, 0]}/>
+				<Floor position={[ 0,-0.2, 0]}/> 
+				<Floor position={[ 0, 7.8, 0]}/>
+				<Floor position={[ 0, 15.8, 0]}/>
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
 				<OrbitControls enableZoom={true} enableRotate={!countdownVisible}/>
 			</Canvas>
