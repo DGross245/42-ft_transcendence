@@ -16,14 +16,15 @@ contract TournamentManagerTest is Test {
         tm = new TournamentManager();
     }
 
-    // function testCreateTournament() public {
-    //     uint256 tournament_id = tm.createTournament(10);
-    //     TournamentManager.Tournament memory tournament = tm.getTournament(tournament_id);
-    //     assertEq(tournament.master, address(this));
-    //     assertEq(tournament.duration_in_blocks, 10);
-    //     assertEq(tournament.start_block, block.number);
-    //     assertEq(tournament.end_block, block.number + 10);
-    //     assertEq(tournament.players.length, 0);
-    //     assertEq(tournament.games.length, 0);
-    // }
+    function testCreateTournament() public {
+        uint256 duration_in_blocks = 10;
+        uint256 tournament_id = tm.createTournament(duration_in_blocks);
+        TournamentManager.Tournament memory tournament = tm.getTournament(tournament_id);
+        assertEq(tournament.master, address(this));
+        assertEq(tournament.duration_in_blocks, duration_in_blocks);
+        assertEq(tournament.start_block, 0);
+        assertEq(tournament.end_block, 0);
+        assertEq(tournament.players.length, 0);
+        assertEq(tournament.games.length, 0);
+    }
 }

@@ -40,6 +40,13 @@ contract TournamentManager {
 	}
 	Game[] public ranked_games;
 
+	// helper data to evade memory to storage assignment errors
+	Game[] _games;
+	PlayerScore[] _player_scores;
+	Game _game;
+	PlayerScore _player_score;
+	Tournament _tournament;
+
 	/* -------------------------------------------------------------------------- */
 	/*                                  Modifiers                                 */
 	/* -------------------------------------------------------------------------- */
@@ -65,23 +72,25 @@ contract TournamentManager {
 		uint256 num_players = tournaments[tournament_id].players.length;
 		// uint256 num_games = num_players * (num_players - 1) / 2;
 
+		Game[] storage games = _games;
 		for (uint256 i = 0; i < num_players; i++) {
 			for (uint256 j = i + 1; j < num_players; j++) {
-				PlayerScore[] memory player_scores = new PlayerScore[](2);
-				player_scores[0] = PlayerScore({
-					addr: tournaments[tournament_id].players[i],
-					score: 0
-				});
-				player_scores[1] = PlayerScore({
-					addr: tournaments[tournament_id].players[j],
-					score: 0
-				});
-				tournaments[tournament_id].games.push(Game({
-					player_scores: player_scores,
-					finished: false
-				}));
+				PlayerScore[] storage player_scores = _player_scores;
+				PlayerScore storage first_player_score = _player_score;
+				first_player_score.addr = tournaments[tournament_id].players[i];
+				first_player_score.score = 0;
+				player_scores.push(first_player_score);
+				PlayerScore storage second_player_score = _player_score;
+				second_player_score.addr = tournaments[tournament_id].players[j];
+				second_player_score.score = 0;
+				player_scores.push(second_player_score);
+				Game storage game = _game;
+				game.player_scores = player_scores;
+				game.finished = false;
+				games.push(game);
 			}
 		}
+		tournaments[tournament_id].games = games;
 	}
 
 	/* -------------------------------------------------------------------------- */
@@ -119,17 +128,16 @@ contract TournamentManager {
 	/*                            Tournament Functions                            */
 	/* -------------------------------------------------------------------------- */
 
-	function createTournament(uint256 duration_in_blocks) external {
+	function createTournament(uint256 duration_in_blocks)
+	external
+	returns (uint256) {
 		require (duration_in_blocks > 0, "Duration must be greater than 0");
 
-		tournaments.push(Tournament({
-			master: msg.sender,
-			duration_in_blocks: duration_in_blocks,
-			start_block: 0,
-			end_block: 0,
-			players: new address[](0),
-			games: new Game[](0)
-		}));
+		Tournament storage tournament = _tournament;
+		tournament.master = msg.sender;
+		tournament.duration_in_blocks = duration_in_blocks;
+		tournaments.push(tournament);
+		return tournaments.length - 1;
 	}
 
 	function startTournament(uint256 tournament_id)
@@ -186,6 +194,12 @@ contract TournamentManager {
 	/* -------------------------------------------------------------------------- */
 	/*                                   Getter                                   */
 	/* -------------------------------------------------------------------------- */
+
+	function getTournament(uint256 tournament_id)
+	external view checkTournamentValid(tournament_id)
+	returns (Tournament memory) {
+		return tournaments[tournament_id];
+	}
 
 	function getTournaments()
 	external view
