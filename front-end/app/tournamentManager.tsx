@@ -5,14 +5,13 @@ import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers5/re
 import scoresAbi from '../public/tournamentManager_abi.json';
 import erc20Abi from '../public/erc20_abi.json';
 
-const contract_address = '0x7caAf92b911860Bc643C00981DAAc5616E05A3f5'
+const contract_address = '0xBC0657E28Ccac38597f6c417CA2996378935Db28'
 
 function Scores() {
 	const { address, chainId, isConnected } = useWeb3ModalAccount()
 	const { walletProvider } = useWeb3ModalProvider()
 
-	// @note how to make private?
-	async function prepareContract(){
+	async function prepareContract() {
 		if (!isConnected) throw Error("User disconnected")
 		if (!walletProvider) throw Error("No wallet provider found")
 		const provider =  new ethers.providers.Web3Provider(walletProvider)
@@ -21,42 +20,122 @@ function Scores() {
 		return tmContract
 	}
 
-	async function startTournament(){
-		const tmContract = await prepareContract()
-		const duration_in_blocks = 100
-		await tmContract.startTournament(duration_in_blocks)
+	// data structures for tournament manager contract
+	interface Player {
+		address: string
+		name: string
+		color: string
+	}
+	interface PlayerScore {
+		player: string
+		score: number
+	}
+	interface Game {
+		player_scores: PlayerScore[]
+		finished: boolean
+	}
+	interface Tournament {
+		master: string
+		duration_in_blocks: number
+		start_block: number
+		end_block: number
+		players: Player[]
+		games: Game[]
 	}
 
-	async function addScoreToTournament(){
+	// creates a new tournament and adds calling address as master
+	// the caller HAS to join separately as a player if he wants to participate
+	async function createTournament(duration_in_blocks: number) {
 		const tmContract = await prepareContract()
-		const tournament_id = 0
-		const player_addr = address
-		const score = 100
-		await tmContract.addScoreToTournament(tournament_id, player_addr, score)
+		await tmContract.createTournament(duration_in_blocks)
 	}
 
-	async function getScoresOfTournament(){
+	// starts a previously created tournament and creates game tree
+	// players cannot join after this
+	async function startTournament(tournament_id: number){
 		const tmContract = await prepareContract()
-		const tournament_id = 0
-		const scores = await tmContract.getScoresOfTournament(tournament_id)
-		console.log(scores)
+		await tmContract.startTournament(tournament_id)
 	}
 
-	async function setNameAndColor(){
+	// sets name and color of the player (player = calling address)
+	// color is a hex string, e.g. '0xFF0000'
+	async function setNameAndColor(name: string, color: string) {
 		const tmContract = await prepareContract()
-		const name = 'test'
-		const color = '0xFF0000'
 		await tmContract.setNameAndColor(name, color)
 	}
 
+	// calling address/player joins the specified tournament
+	async function joinTournament(tournament_id: number) {
+		const tmContract = await prepareContract()
+		await tmContract.joinTournament(tournament_id)
+	}
+
+	// tournament has to have at least 2 players for this to work
+	async function submitGameResultTournament(tournament_id: number, game_id: number, scores: PlayerScore[]) {
+		const tmContract = await prepareContract()
+		// const scores: PlayerScore[] = [
+		// 	// addresses HAVE to differ from each other, otherwise second score submission will overwrite the first one
+		// 	{ player: '0x0000000000', score: 1 },
+		// 	{ player: '0x4242424242', score: 2 },
+		// ]
+		await tmContract.submitGameResultTournament(tournament_id, game_id, scores)
+	}
+
+	// ranked games cannot be created beforehand, they will automatically be created upon submission of scores
+	// therefore, there are no error checks and arbitrary player_score arrays can be submitted
+	async function submitGameResultRanked(scores: PlayerScore[]) {
+		const tmContract = await prepareContract()
+		// const scores: PlayerScore[] = [
+		// 	// addresses HAVE to differ from each other, otherwise second score submission will overwrite the first one
+		// 	{ player: '0x0000000000', score: 1 },
+		// 	{ player: '0x4242424242', score: 2 },
+		// ]
+		await tmContract.submitGameResultRanked(scores)
+	}
+
+	// returns array of all available tournaments
+	async function getTournaments() {
+		const tmContract = await prepareContract()
+		const tournaments = await tmContract.getTournaments()
+		return tournaments as Tournament[]
+	}
+
+	// returns a single tournament
+	async function getTournament(tournament_id: number) {
+		const tmContract = await prepareContract()
+		const tournament = await tmContract.getTournament(tournament_id)
+		return tournament as Tournament
+	}
+
+	// returns tournament tree (array of games) of a single tournament
+	async function getTournamentTree(tournament_id: number) {
+		const tmContract = await prepareContract()
+		const tournamentTree = await tmContract.getTournamentTree(tournament_id)
+		return tournamentTree as Game[]
+	}
+
+	// returns information about a player
+	async function getPlayer(address: string) {
+		const tmContract = await prepareContract()
+		const player = await tmContract.getPlayer(address)
+		return player as Player
+	}
+
+	// returns array of all ranked games
+	async function getRankedGames() {
+		const tmContract = await prepareContract()
+		const rankedGames = await tmContract.getRankedGames()
+		return rankedGames as Game[]
+	}
+
 	return (
-		<section>
-			<button onClick={startTournament}>Start Tournament</button>
-			<br/>
-			<button onClick={addScoreToTournament}>Add Score</button>
-			<br/>
-			<button onClick={getScoresOfTournament}>Get Scores</button>
-		</section>
+		// <section>
+		// 	<button onClick={startTournament}>Start Tournament</button>
+		// 	<br/>
+		// 	<button onClick={addScoreToTournament}>Add Score</button>
+		// 	<br/>
+		// 	<button onClick={getScoresOfTournament}>Get Scores</button>
+		// </section>
 	)
 };
 
