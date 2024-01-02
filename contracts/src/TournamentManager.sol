@@ -115,7 +115,10 @@ contract TournamentManager {
 	}
 
 	function joinTournament(uint256 tournament_id)
-	external checkTournamentValid(tournament_id) checkTournamentOngoing(tournament_id) {
+	external checkTournamentValid(tournament_id) {
+		require (players[msg.sender].addr != address(0), "Player does not exist");
+		require (tournaments[tournament_id].start_block == 0, "Tournament already started");
+
 		for (uint256 i = 0; i < tournaments[tournament_id].players.length; i++) {
 			if (tournaments[tournament_id].players[i] == players[msg.sender].addr) {
 				revert("Player already joined tournament");
@@ -160,10 +163,10 @@ contract TournamentManager {
 			for (uint256 j = 0; j < tournaments[tournament_id].games[game_id].player_scores.length; j++) {
 				if (tournaments[tournament_id].games[game_id].player_scores[j].addr == player_scores[i].addr) {
 					player_found = true;
-					tournaments[tournament_id].games[game_id].player_scores[j].score == player_scores[i].score;
+					tournaments[tournament_id].games[game_id].player_scores[j].score = player_scores[i].score;
 				}
 			}
-			require (player_found, "Player not in tournament");
+			require (player_found, "Player not in game");
 		}
 		tournaments[tournament_id].games[game_id].finished = true;
 	}
@@ -172,23 +175,19 @@ contract TournamentManager {
 	/*                              Ranked Functions                              */
 	/* -------------------------------------------------------------------------- */
 
-	function submitGameResultRanked(uint256 game_id, PlayerScore[] calldata player_scores)
+	function submitGameResultRanked(PlayerScore[] calldata player_scores)
 	external {
-		require (ranked_games[game_id].finished == false, "Game already finished");
-		require (game_id < ranked_games.length, "Game does not exist");
-		require (player_scores.length == ranked_games[game_id].player_scores.length, "Invalid number of players");
-
+		Game storage game = _game;
+		PlayerScore[] storage scores = _player_scores;
 		for (uint256 i = 0; i < player_scores.length; i++) {
-			bool player_found = false;
-			for (uint256 j = 0; j < ranked_games[game_id].player_scores.length; j++) {
-				if (ranked_games[game_id].player_scores[j].addr == player_scores[i].addr) {
-					player_found = true;
-					ranked_games[game_id].player_scores[j].score == player_scores[i].score;
-				}
-			}
-			require (player_found, "Player not in tournament");
+			PlayerScore storage score = _player_score;
+			score.addr = player_scores[i].addr;
+			score.score = player_scores[i].score;
+			scores.push(score);
 		}
-		ranked_games[game_id].finished = true;
+		game.player_scores = scores;
+		game.finished = true;
+		ranked_games.push(game);
 	}
 
 	/* -------------------------------------------------------------------------- */
