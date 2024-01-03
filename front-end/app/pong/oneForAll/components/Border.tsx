@@ -4,10 +4,10 @@ import * as THREE from "three"
 const Border = () => {
 
 	const info = [
-		{ position: {x: 131, y: 151, z: 0}, rotation: {x: 0, y: 0, z: 0} },
-		{ position: {x: 151, y: 131, z: 0}, rotation: {x: 0, y: 0, z: Math.PI / 2} },
-		{ position: {x:-131, y: 151, z: 0}, rotation: {x: 0, y: 0, z: 0} },
-		{ position: {x:-151, y: 131, z: 0}, rotation: {x: 0, y: 0, z: Math.PI / 2} },
+		{ position: {x: 131, y:  151, z: 0}, rotation: {x: 0, y: 0, z: 0} },
+		{ position: {x: 151, y:  131, z: 0}, rotation: {x: 0, y: 0, z: Math.PI / 2} },
+		{ position: {x:-131, y:  151, z: 0}, rotation: {x: 0, y: 0, z: 0} },
+		{ position: {x:-151, y:  131, z: 0}, rotation: {x: 0, y: 0, z: Math.PI / 2} },
 		{ position: {x:-131, y: -151, z: 0}, rotation: {x: 0, y: 0, z: 0} },
 		{ position: {x:-151, y: -131, z: 0}, rotation: {x: 0, y: 0, z: Math.PI / 2} },
 		{ position: {x: 131, y: -151, z: 0}, rotation: {x: 0, y: 0, z: 0} },
