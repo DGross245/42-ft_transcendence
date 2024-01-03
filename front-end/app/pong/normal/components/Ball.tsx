@@ -34,11 +34,11 @@ const Ball = (props) => {
 		const ball = ballRef.current;
 		ball.x = 0;
 		ball.y = 0;
+		ball.speed = 1.2;
 
 		let randomNumber = Math.random();
 		let angle = 360 * randomNumber;
 		const angleOffset = 60; 
-		ball.speed = 1.2;
 
 		ball.velocityX = ball.speed * Math.sin(angle);
 		while (ball.velocityX <= 0.6 && ball.velocityX >= -0.6) {

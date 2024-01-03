@@ -33,15 +33,21 @@ const Ball = (props) => {
 		ball.velocityY = isHorizontal ? direction * ball.speed : normalized * ball.speed;
 	}
 
-	// FIXME: Adjust the random direction generation logic to prevent the direction from causing unnecessary wall bounces
 	const randomBallDir = () => {
 		let ball = ballRef.current;
 		ball.x = 0;
 		ball.y = 0;
-
-		let randomNumber = Math.random();
-		let angle = 360 * randomNumber;
 		ball.speed = 1.2;
+
+		const ranges = [
+			{min: -37.5, max: 37.5},
+			{min:  52.5, max: 127.5},
+			{min: 142.5, max: 218.5},
+			{min: 232.5, max: 308.5},
+		];
+
+		const { min, max } = ranges[Math.floor(Math.random() * ranges.length)];
+		const angle = (Math.random() * (max - min) + min) * (Math.PI / 180);
 
 		ball.velocityX = ball.speed * Math.sin(angle);
 		ball.velocityY = ball.speed * Math.cos(angle);

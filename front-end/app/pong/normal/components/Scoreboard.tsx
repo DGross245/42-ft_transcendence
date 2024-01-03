@@ -20,7 +20,7 @@ const Scoreboard = ({ player1, player2, scoreVisible }) => {
 				<meshBasicMaterial color={ 0xffffff } />
 			</mesh>
 		</>
-	)
+	);
 }
 
 export default Scoreboard;
