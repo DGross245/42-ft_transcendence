@@ -55,18 +55,18 @@ const Ball = (props) => {
 
 	const handleScore = (ball: { x: number; y: number; }) => {
 		const paddleCollision: CollisionInfo = {
-			left: { score: props.p1Score, setScore: props.setP1Score, isOwnGoal: ball.x <= -200 ? true : false },
-			right: {score: props.p2Score, setScore: props.setP2Score, isOwnGoal: ball.x >= 200 ? true : false },
-			top: { score: props.p3Score, setScore: props.setP3Score, isOwnGoal: ball.y >= 200 ? true : false },
-			bottom: { score: props.p3Score, setScore : props.setP4Score, isOwnGoal: ball.y <= -200 ? true : false },
+			left:   { score: props.p1Score, setScore: props.setP1Score, isOwnGoal: ball.x <= -200 ? true : false },
+			right:  { score: props.p2Score, setScore: props.setP2Score, isOwnGoal: ball.x >= 200 ? true : false },
+			top:    { score: props.p3Score, setScore: props.setP3Score, isOwnGoal: ball.y >= 200 ? true : false },
+			bottom: { score: props.p4Score, setScore: props.setP4Score, isOwnGoal: ball.y <= -200 ? true : false },
 		}
 
 		if (lastPaddleHit !== '') {
 			const { score, setScore, isOwnGoal } = paddleCollision[lastPaddleHit];
 
-			if (isOwnGoal)
+			if (isOwnGoal && score !== 0)
 				setScore(score - 1);
-			else
+			else if (!isOwnGoal)
 				setScore(score + 1);
 
 		} else {
