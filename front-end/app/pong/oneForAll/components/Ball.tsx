@@ -64,9 +64,9 @@ const Ball = (props) => {
 		if (lastPaddleHit !== '') {
 			const { score, setScore, isOwnGoal } = paddleCollision[lastPaddleHit];
 
-			if (isOwnGoal)
+			if (isOwnGoal && score !== 0)
 				setScore(score - 1);
-			else
+			else if (!isOwnGoal)
 				setScore(score + 1);
 
 		} else {
