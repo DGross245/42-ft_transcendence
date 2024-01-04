@@ -4,7 +4,7 @@ interface KeyMap {
 	[key: string]: boolean;
 }
 
-export default function InputHandler () {
+export default function inputHandler () {
 	const keyMap = useRef<KeyMap>({});
 
 	useEffect(() => {

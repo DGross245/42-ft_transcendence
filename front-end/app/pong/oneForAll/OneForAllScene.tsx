@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stats } from '@react-three/drei'; 
-import InputHandler from './hooks/InputHandler';
+import inputHandler from '@/components/inputHandler';
 import Camera from '../sharedComponents/Camera';
 import Border from './components/Border';
 import { RightPaddle, LeftPaddle, TopPaddle, BottomPaddle } from './components/Paddle';
@@ -16,7 +16,7 @@ import Countdown from '../sharedComponents/Countdown';
 
 export default function OneForAllScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const keyMap = InputHandler()
+	const keyMap = inputHandler();
 	const rightPaddleRef = useRef<THREE.Mesh>(null!);
 	const leftPaddleRef = useRef<THREE.Mesh>(null!);
 	const topPaddleRef = useRef<THREE.Mesh>(null!);
@@ -72,7 +72,7 @@ export default function OneForAllScene() {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown setScoreVisible={setScoreVisible} rotation={[Math.PI / 2, 0, 0]} />
-				<Camera position={[0, -350, 100]} /> 
+				<Camera position={[0, -350, 100]} keyMap={keyMap} /> 
 				<ambientLight />
 				<Border />
 				<TopPaddle ref={topPaddleRef} position={[0, 151, 0]} keyMap={keyMap} />
@@ -96,10 +96,9 @@ export default function OneForAllScene() {
 				<CubeLineY />
 				<CubeLineX />
 				{/* <GroundReflection /> */}
-				<OrbitControls />
+				<OrbitControls enablePan={false} />
 				<Scoreboard player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score} scoreVisible={scoreVisible} />
 				<Stats />
-				{/* <gridHelper args={[400, 400]} position={[0,0,-4]} rotation={[Math.PI / 2, 0, 0]}/> */}
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div>

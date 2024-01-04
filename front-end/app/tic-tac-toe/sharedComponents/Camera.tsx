@@ -8,8 +8,8 @@ const Camera = (props) => {
 
 	useFrame(() => {
 		if (keyMap['Digit1']) {
-			ref.current.position.set(...props.position);
-			ref.current.lookAt(0, 0, 0);
+			ref.current.position.set(...[33, 25, 39]);
+			ref.current.lookAt(...props.target);
 		}
 	});
 
@@ -18,10 +18,10 @@ const Camera = (props) => {
 			makeDefault
 			ref={ref}
 			fov={60}
-			aspect={window.innerWidth / window.innerHeight}
+			aspect={props.dimensions.innerWidth / props.dimensions.innerHeight}
 			near={0.1}
 			far={1000}
-			position={props.position}
+			position={[33, 25, 39]}
 		/>
 	);
 }

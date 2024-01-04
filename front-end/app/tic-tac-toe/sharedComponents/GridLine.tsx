@@ -1,11 +1,13 @@
 const GridLine = (props) => {
 	return (
 		<mesh
-			{...props}
+			key={props.key}
+			position={props.position}
+			rotation={props.rotation}
 			onPointerOver={(e) => { e.stopPropagation()}}
 			onClick={(e) => {e.stopPropagation()}}
 		>
-			<boxGeometry args={[0.5, 23.2, 0.5]} />
+			<boxGeometry args={props.args} />
 			<meshBasicMaterial color={0x333333} />
 		</mesh>
 	);

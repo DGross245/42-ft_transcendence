@@ -1,9 +1,8 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
-import { OrbitControls, useTrail } from '@react-three/drei'; 
-import InputHandler from './hooks/InputHandler';
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei'; 
 import Camera from '../sharedComponents/Camera';
 import Border from './components/Border';
 import { RightPaddle, LeftPaddle } from './components/Paddle';
@@ -13,10 +12,11 @@ import GroundReflection from './components/GroundReflection';
 import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
+import inputHandler from '@/components/inputHandler';
 
 export default function PongScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const keyMap = InputHandler()
+	const keyMap = inputHandler();
 	const rightPaddleRef = useRef<THREE.Mesh>(null!);
 	const leftPaddleRef = useRef<THREE.Mesh>(null!);
 	const [p1Score, setP1Score] = useState(0);
@@ -68,7 +68,7 @@ export default function PongScene() {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown setScoreVisible={setScoreVisible} rotation={[0, 0, 0]} />
-				<Camera position={[0, -100, 300]} /> 
+				<Camera position={[0, -100, 300]} keyMap={keyMap} />
 				<ambientLight />
 				<Border position={[0,105,0]} />
 				<Border position={[0,-105,0]} />
@@ -85,7 +85,7 @@ export default function PongScene() {
 				/>
 				<CubeLine />
 				<GroundReflection />
-				<OrbitControls />
+				<OrbitControls enablePan={false} />
 				<Scoreboard player1={p1Score} player2={p2Score} scoreVisible={scoreVisible} />
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />

@@ -2,8 +2,8 @@ import { useCursor } from '@react-three/drei';
 import { useState } from 'react';
 import * as THREE from 'three';
 import Block from './Block';
-import X from './X';
-import Torus from './Torus';
+import X from '../../sharedComponents/X';
+import Torus from '../../sharedComponents/Torus';
 
 const Field = (props) => {
 	const [hovered, hover] = useState(false);

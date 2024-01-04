@@ -9,7 +9,7 @@ const EndModal = ({ isOpen, onClose, winner }) => {
 		if (winner == 'O')
 			return ('/images/o.png');
 		else if (winner == 'X')
-			return ('//imagesx.png');
+			return ('/images/x.png');
 		else
 			return ('/images/draw.png');
 	}
