@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import Field from "./Field";
-import GridLine from "./GridLine";
+import GridLine from "../../sharedComponents/GridLine";
 
 export const fieldGenerator = (
 	clicked: boolean,
@@ -83,6 +83,7 @@ export const gridLineGenrator = () => {
 			key={index}
 			position={line.position}
 			rotation={line.rotation}
+			args={[0.5, 17.5, 0.5]}
 		/>
 	));
 

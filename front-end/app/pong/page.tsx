@@ -1,6 +1,5 @@
 import { title } from "@/components/primitives";
 import PongScene from "@/app/pong/normal/PongScene";
-import { StrictMode } from 'react';
 import OneForAllScene from "./oneForAll/OneForAllScene";
 
 export default function PongPage() {
@@ -9,7 +8,7 @@ export default function PongPage() {
 			<div>
 				<OneForAllScene />
 			</div>
-	 	 </div>
+		 </div>
 	);
 }
 

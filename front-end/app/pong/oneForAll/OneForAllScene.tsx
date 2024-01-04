@@ -3,8 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stats } from '@react-three/drei'; 
-import InputHandler from './hooks/InputHandler';
-import Camera from './components/Camera';
+import inputHandler from '@/components/inputHandler';
+import Camera from '../sharedComponents/Camera';
 import Border from './components/Border';
 import { RightPaddle, LeftPaddle, TopPaddle, BottomPaddle } from './components/Paddle';
 import Ball from './components/Ball';
@@ -12,11 +12,11 @@ import { CubeLineY, CubeLineX }from './components/CubeLine';
 import GroundReflection from './components/GroundReflection';
 import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
-import Countdown from './components/Countdown';
+import Countdown from '../sharedComponents/Countdown';
 
 export default function OneForAllScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const keyMap = InputHandler()
+	const keyMap = inputHandler();
 	const rightPaddleRef = useRef<THREE.Mesh>(null!);
 	const leftPaddleRef = useRef<THREE.Mesh>(null!);
 	const topPaddleRef = useRef<THREE.Mesh>(null!);
@@ -28,7 +28,7 @@ export default function OneForAllScene() {
 	const [showModal, setShowModal] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [gameOver, setGameOver] = useState(false);
-	const [ScoreVisible, setScoreVisible] = useState(false);
+	const [scoreVisible, setScoreVisible] = useState(false);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -71,8 +71,8 @@ export default function OneForAllScene() {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown setScoreVisible={setScoreVisible} />
-				<Camera keyMap={keyMap} /> 
+				<Countdown setScoreVisible={setScoreVisible} rotation={[Math.PI / 2, 0, 0]} />
+				<Camera position={[0, -350, 100]} keyMap={keyMap} /> 
 				<ambientLight />
 				<Border />
 				<TopPaddle ref={topPaddleRef} position={[0, 151, 0]} keyMap={keyMap} />
@@ -90,16 +90,15 @@ export default function OneForAllScene() {
 					p4Score={p4Score} setP4Score={setP4Score}
 					setWinner={setWinner}
 					gameOver={gameOver} setGameOver={setGameOver}
-					ScoreVisible={ScoreVisible}
+					scoreVisible={scoreVisible}
 					keyMap={keyMap}
 				/>
 				<CubeLineY />
 				<CubeLineX />
 				{/* <GroundReflection /> */}
-				<OrbitControls />
-				<Scoreboard player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score} ScoreVisible={ScoreVisible} />
+				<OrbitControls enablePan={false} />
+				<Scoreboard player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score} scoreVisible={scoreVisible} />
 				<Stats />
-				{/* <gridHelper args={[400, 400]} position={[0,0,-4]} rotation={[Math.PI / 2, 0, 0]}/> */}
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div>

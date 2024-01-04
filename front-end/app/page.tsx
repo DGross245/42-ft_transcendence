@@ -5,7 +5,6 @@ import { button as buttonStyles } from "@nextui-org/theme";
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import { StrictMode } from 'react';
-import { Web3ModalProvider } from "./web3provider";
 
 import Scores from "./tournamentManager";
 

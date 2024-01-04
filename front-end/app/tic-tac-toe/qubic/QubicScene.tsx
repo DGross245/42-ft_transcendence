@@ -3,14 +3,14 @@
 import { Canvas } from "@react-three/fiber"
 import React, { useEffect, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'; 
-import Floor from "./components/Floor";
-import { gameValidation }  from "./components/GameValidation"
-import Table from "./components/Block";
-import FinishLine from "./components/FinishLine";
+import Floor from "../sharedComponents/Floor";
+import { gameValidation }  from "../sharedComponents/GameValidation"
+import FinishLine from "../sharedComponents/FinishLine";
 import { fieldGenerator, gridLineGenrator } from "./components/Grid";
 import EndModal from "./components/EndModal";
-import Camera from "./components/Camera";
+import Camera from "../sharedComponents/Camera";
 import Countdown from "./components/Countdown";
+import inputHandler from "@/components/inputHandler";
 
 // Used to track user moves for validation
 // '' = empty position, 'X' or 'O' or 'Δ' updated on user click
@@ -79,6 +79,7 @@ const QubicScene = () => {
 	const [gameOver, setGameOver] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [countdownVisible, setCountdownVisible] = useState(true);
+	const keyMap = inputHandler();
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -148,19 +149,20 @@ const QubicScene = () => {
 		});
 	}, [clicked]);
 
+	const position = [3, 20, 3];
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Camera dimensions={dimensions}/>
+				<pointLight position={[3,30,3]} />
+				<Camera dimensions={dimensions} keyMap={keyMap} target={[4, 1, 2]} />
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
 				{gridLineGenrator()}
-				{ !countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
-				<Floor	position={[ 3,-0.2, 3]}/> 
-				<Floor	position={[ 3, 7.8, 3]}/>
-				<Floor	position={[ 3, 15.8, 3]}/>
+				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
+				<Floor	position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
+				<Floor	position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
+				<Floor	position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
-				{/* <Table /> */}
-				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible}/>
+				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={false} />
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 

@@ -1,7 +1,7 @@
 
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
-import Silkscreen_Regular from '../../../../public/Silkscreen_Regular.json';
+import Silkscreen_Regular from '../../../../public/fonts/Silkscreen_Regular.json';
 import { extend, useFrame } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
 extend({ TextGeometry })

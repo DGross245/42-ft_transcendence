@@ -1,14 +1,15 @@
 import { useCursor } from '@react-three/drei';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import * as THREE from 'three';
-import Triangle from './Block';
+import Block from './Block';
+import X from '../../sharedComponents/X';
+import Torus from '../../sharedComponents/Torus';
 
 const Field = (props) => {
 	const [hovered, hover] = useState(false);
 	const [symbol, setSymbol] = useState(null);
 	useCursor(hovered);
 	useCursor(props.clicked);
-	const ref = useRef();
 
 	const handleClick = () => {
 		if (!props.clicked && !symbol) {
@@ -39,53 +40,27 @@ const Field = (props) => {
 			</mesh>
 
 			{hovered && !props.clicked && !symbol && props.turn == 'O' && !props.gameOver && (
-				<mesh {...props} rotation={[Math.PI / 2, 0, 0]}>
-					<torusGeometry args={[2, 0.4, 8, 24]} />
-					<meshBasicMaterial color={0x1fcdff} transparent={true} blending={THREE.AdditiveBlending}/>
-				</mesh>
+				<Torus {...props} color={0x1fcdff} transparent={true} blending={THREE.AdditiveBlending}/>
 			)}
 
 			{hovered && !props.clicked && !symbol && props.turn == 'X' && !props.gameOver && (
-				<group>
-					<mesh {...props} rotation={[Math.PI / 2, 0, Math.PI / -4]}>
-						<boxGeometry args={[5, 1, 0.5]} />
-						<meshBasicMaterial color={0xff0000} transparent={true} blending={THREE.AdditiveBlending} />
-					</mesh>
-
-					<mesh {...props} rotation={[Math.PI / 2, 0, Math.PI / 4]}>
-						<boxGeometry args={[5, 1, 0.5]} />
-						<meshBasicMaterial color={0xff0000} transparent={true} blending={THREE.AdditiveBlending} />
-					</mesh>
-				</group>
+				<X {...props} color={0xff0000} transparent={true} opacity={0.8}/>
 			)}
 
 			{hovered && !props.clicked && !symbol && props.turn == '⬜️' && !props.gameOver && (
-				<Triangle {...props} color={0x008000} transparent={true} blending={THREE.AdditiveBlending}/>
+				<Block {...props} color={0x008000} transparent={true} blending={THREE.AdditiveBlending}/>
 			)}
 
 			{symbol && symbol == 'O' && (
-				<mesh {...props} ref={ref} rotation={[Math.PI / 2, 0, 0]}>
-					<torusGeometry args={[2, 0.4, 8, 24]} />
-					<meshBasicMaterial color={0x1aabff} transparent={false} fog={true}/>
-				</mesh>
+				<Torus {...props} color={0x1fcdff} transparent={false} />
 			)}
 
 			{symbol && symbol == 'X' && (
-				<group>
-					<mesh {...props} rotation={[Math.PI / 2, 0, Math.PI / -4]}>
-						<boxGeometry args={[5, 1, 0.5]} />
-						<meshBasicMaterial color={0xff0000} transparent={false} />
-					</mesh>
-
-					<mesh {...props} rotation={[Math.PI / 2, 0, Math.PI / 4]}>
-						<boxGeometry args={[5, 1, 0.5]} />
-						<meshBasicMaterial color={0xff0000} transparent={false} />
-					</mesh>
-				</group>
+				<X {...props} color={0xff0000} transparent={false}/>
 			)}
 
 			{symbol && symbol == '⬜️' && (
-				<Triangle {...props} color={0x008000} transparent={false} blending={0} />
+				<Block {...props} color={0x008800} transparent={false} />
 			)}
 		</>
 	);

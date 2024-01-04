@@ -5,7 +5,7 @@ import { NextUIProvider } from "@nextui-org/system";
 import { useRouter } from 'next/navigation'
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
-import { Web3ModalProvider } from "./web3provider";
+import { Web3ModalProvider } from "./web3Provider";
 
 export interface ProvidersProps {
 	children: React.ReactNode;
