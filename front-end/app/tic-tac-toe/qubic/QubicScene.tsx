@@ -1,11 +1,10 @@
 "use client"
 
-import { Canvas, useFrame } from "@react-three/fiber"
-import React, { useEffect, useRef, useState } from 'react';
-import { OrbitControls, Sphere } from '@react-three/drei'; 
+import { Canvas } from "@react-three/fiber"
+import React, { useEffect, useState } from 'react';
+import { OrbitControls } from '@react-three/drei'; 
 import Floor from "../sharedComponents/Floor";
 import { gameValidation }  from "../sharedComponents/GameValidation"
-import Table from "./components/Block";
 import FinishLine from "../sharedComponents/FinishLine";
 import { fieldGenerator, gridLineGenrator } from "./components/Grid";
 import EndModal from "./components/EndModal";
@@ -154,7 +153,6 @@ const QubicScene = () => {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				{/* <PointLightVisualizer position={position} /> */}
 				<pointLight position={[3,30,3]} />
 				<Camera dimensions={dimensions} keyMap={keyMap} target={[4, 1, 2]} />
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
@@ -164,7 +162,6 @@ const QubicScene = () => {
 				<Floor	position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<Floor	position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
-				{/* <Table /> */}
 				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={false} />
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
