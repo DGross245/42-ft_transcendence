@@ -131,7 +131,7 @@ function Scores() {
 		return rankedGames as Game[]
 	}
 
-	return (
+	return (<></>
 		// <section>
 		// 	<button onClick={startTournament}>Start Tournament</button>
 		// 	<br/>
