@@ -29,6 +29,8 @@ export default function OneForAllScene() {
 	const [winner, setWinner] = useState('');
 	const [gameOver, setGameOver] = useState(false);
 	const [scoreVisible, setScoreVisible] = useState(false);
+	const [reset, setReset] = useState(false);
+	const [isBallVisible, setBallVisibility] = useState(true);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -37,7 +39,22 @@ export default function OneForAllScene() {
 	const openModal = () => {
 		setShowModal(true);
 	}
-	
+
+	useEffect(() => {
+		if (reset) {
+			setBallVisibility(true);
+			setGameOver(false);
+			closeModal();
+			setReset(false);
+			setP1Score(0);
+			setP2Score(0);
+			setP3Score(0);
+			setP4Score(0);
+			setWinner('');
+			setScoreVisible(false);
+		}
+	}, [reset]);
+
 	useEffect(() => {
 		if (gameOver) {
 			const delay = 1000;
@@ -71,7 +88,7 @@ export default function OneForAllScene() {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown setScoreVisible={setScoreVisible} rotation={[Math.PI / 2, 0, 0]} />
+				<Countdown scoreVisible={scoreVisible} setScoreVisible={setScoreVisible} rotation={[Math.PI / 2, 0, 0]} />
 				<Camera position={[0, -350, 100]} keyMap={keyMap} /> 
 				<ambientLight />
 				<Border />
@@ -92,6 +109,7 @@ export default function OneForAllScene() {
 					gameOver={gameOver} setGameOver={setGameOver}
 					scoreVisible={scoreVisible}
 					keyMap={keyMap}
+					isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
 				/>
 				<CubeLineY />
 				<CubeLineX />
@@ -100,7 +118,7 @@ export default function OneForAllScene() {
 				<Scoreboard player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score} scoreVisible={scoreVisible} />
 				<Stats />
 			</Canvas>
-			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
+			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} setReset={setReset} />
 		</div>
 	);
 }

@@ -1,4 +1,3 @@
-
 const Torus = (props) => {
 	const [x, y, z] = props.position;
 	

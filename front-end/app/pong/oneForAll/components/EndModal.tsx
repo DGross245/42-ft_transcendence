@@ -3,8 +3,9 @@
 import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
-const EndModal = ({ isOpen, onClose, winner }) => {
+const EndModal = ({ isOpen, onClose, winner, setReset }) => {
 
+	// TODO: getWinnerImmage need to adjusted/replaced for OneForAll
 	const getWinnerImage = () => {
 		if (winner == 'P1')
 			return ('/o.png');
@@ -54,8 +55,8 @@ const EndModal = ({ isOpen, onClose, winner }) => {
 					<Button color="danger" variant="ghost" onClick={onClose}>
 						Close
 					</Button>
-					<Button color="primary" variant="ghost" onClick={onClose}>
-						Rematch
+					<Button color="primary" variant="ghost" onClick={() => setReset(true)}>
+						Play Again
 					</Button>
 					<Button color="success" variant="ghost" onClick={onClose}>
 						View

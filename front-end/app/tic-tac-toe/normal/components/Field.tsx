@@ -1,5 +1,5 @@
 import { useCursor } from '@react-three/drei';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import * as THREE from 'three';
 import Torus from '../../sharedComponents/Torus';
 import X from '../../sharedComponents/X';

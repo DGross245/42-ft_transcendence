@@ -1,10 +1,17 @@
 import { PerspectiveCamera } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const Camera = (props) => {
 	const ref = useRef();
 	const keyMap = props.keyMap;
+
+	useEffect(() => {
+		if (props.reset) {
+			ref.current.position.set(...[33, 25, 39]);
+			ref.current.lookAt(...props.target);
+		}
+	}, [props.reset]);
 
 	useFrame(() => {
 		if (keyMap['Digit1']) {

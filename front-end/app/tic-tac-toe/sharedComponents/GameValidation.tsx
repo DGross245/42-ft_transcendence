@@ -45,7 +45,7 @@ export const gameValidation = (
 							while (x >= 0 && x < board.length && y >= 0 && y < board[x].length && z >= 0 && z < board[x][y].length) {
 								if (board[x][y][z] === symbol) {
 									count++;
-									coords[p++] = SceneCoords[x][y][z];
+									coords[p++] = [...SceneCoords[x][y][z]];
 									if (count === 3) {
 										setCoords(coords);
 										return (symbol);

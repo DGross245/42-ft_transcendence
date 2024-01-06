@@ -10,7 +10,6 @@ extend({ TextGeometry })
 const Countdown = (props) => {
 	const font = new FontLoader().parse(Silkscreen_Regular);
 	const [count, setCount] = useState(4);
-	const [visible, setVisibility] = useState(true);
 
 	useEffect(() => {
 		const countdownInterval = setInterval(() => {
@@ -21,7 +20,7 @@ const Countdown = (props) => {
 				else {
 					clearInterval(countdownInterval);
 					props.setScoreVisible(true);
-					setVisibility(false);
+					setCount(4);
 					return (0);
 				}
 			});
@@ -30,10 +29,10 @@ const Countdown = (props) => {
 		return () => {
 			clearInterval(countdownInterval);
 		};
-	}, [props.setScoreVisible]);
+	}, [props.scoreVisible]);
 
 	return (
-		<mesh visible={visible} position={[-35, 0, 50]} rotation={props.rotation}>
+		<mesh visible={!props.scoreVisible} position={[-35, 0, 50]} rotation={props.rotation}>
 			<textGeometry args={[String(count), {font, size: 70, height: 6}]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>

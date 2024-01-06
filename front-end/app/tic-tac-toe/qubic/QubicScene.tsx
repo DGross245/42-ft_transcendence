@@ -9,32 +9,36 @@ import FinishLine from "../sharedComponents/FinishLine";
 import { fieldGenerator, gridLineGenrator } from "./components/Grid";
 import EndModal from "./components/EndModal";
 import Camera from "../sharedComponents/Camera";
-import Countdown from "./components/Countdown";
+import Countdown from "../sharedComponents/Countdown";
 import inputHandler from "@/components/inputHandler";
 
 // Used to track user moves for validation
 // '' = empty position, 'X' or 'O' or 'Δ' updated on user click
 // Used to validate winning combinations
-const initialBoardState = [
-	[
-		['', '', '', ''],
-		['', '', '', ''],
-		['', '', '', ''],
-		['', '', '', ''],
-	],
-	[
-		['', '', '', ''],
-		['', '', '', ''],
-		['', '', '', ''],
-		['', '', '', ''],
-	],
-	[
-		['', '', '', ''],
-		['', '', '', ''],
-		['', '', '', ''],
-		['', '', '', ''],
-	],
-];
+const initialBoard = () =>  {
+	return (
+		[
+			[
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+			],
+			[
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+			],
+			[
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+			],
+		]
+	);
+}
 
 // Initial coordinates for each field in the scene
 // Each [0, 0, 0] represents the coordinates of a field
@@ -70,15 +74,16 @@ const QubicScene = () => {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const [clicked, click] = useState(false); // @note set to true to trigger validation
 	const [currentTurn, setTurn] = useState('X');
-	const [board, setCurrentBoardState] = useState(initialBoardState); // @note setter and getter for board state
-	const [sceneCords, setSceneCords] = useState(initialSceneCords);
+	const [board, setCurrentBoardState] = useState(initialBoard()); // @note setter and getter for board state
+	const [sceneCords, setSceneCords] = useState([...initialSceneCords]);
 	const [showFinishLine, setShowFinishLine] = useState(false);
-	const [coords, setCoords] = useState(winningCoords);
+	const [coords, setCoords] = useState([...winningCoords]);
 	const [colour, setColour] = useState(0xffffff);
 	const [showModal, setShowModal] = useState(false);
 	const [gameOver, setGameOver] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [countdownVisible, setCountdownVisible] = useState(true);
+	const [reset, setReset] = useState(false);
 	const keyMap = inputHandler();
 
 	const closeModal = () => {
@@ -88,6 +93,21 @@ const QubicScene = () => {
 	const openModal = () => {
 		setShowModal(true);
 	}
+
+	useEffect(() => {
+		if (reset) {
+			closeModal();
+			setCurrentBoardState(initialBoard());
+			setTurn('X');
+			setShowFinishLine(false);
+			setCoords([...winningCoords]);
+			setColour(0xffffff);
+			setGameOver(false);
+			setWinner('');
+			setCountdownVisible(true);
+			setReset(false);
+		}
+	}, [reset]);
 
 	useEffect(() => {
 		if (gameOver) {
@@ -149,12 +169,11 @@ const QubicScene = () => {
 		});
 	}, [clicked]);
 
-	const position = [3, 20, 3];
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<pointLight position={[3,30,3]} />
-				<Camera dimensions={dimensions} keyMap={keyMap} target={[4, 1, 2]} />
+				<Camera dimensions={dimensions} keyMap={keyMap} target={[4, 1, 2]} reset={reset} />
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
@@ -164,7 +183,7 @@ const QubicScene = () => {
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
 				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={false} />
 			</Canvas>
-			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
+			<EndModal setReset={setReset} isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 
 	);
 }

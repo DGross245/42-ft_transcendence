@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -16,8 +16,7 @@ type CollisionInfo = {
 };
 
 const Ball = (props) => {
-	let ref = useRef<BallElement | null>(null);
-	const [isVisible, setVisibility] = useState(true);
+	let ref = useRef<BallElement>();
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const halfBall = 2;
 	let lastPaddleHit = '';
@@ -157,7 +156,13 @@ const Ball = (props) => {
 			if (playerScore === 7) {
 				props.setGameOver(true);
 				props.setWinner(player);
-				setVisibility(false);
+				let ball = ballRef.current;
+				ball.x = 0;
+				ball.y = 0;
+				ball.velocityX = 0;
+				ball.velocityY = 0;
+				ball.speed = 0.1;
+				props.setBallVisibility(false);
 			}
 		}
 
@@ -176,7 +181,7 @@ const Ball = (props) => {
 	});
 
 	return (
-		<mesh ref={ref} visible={isVisible}>
+		<mesh ref={ref} visible={props.isBallVisible}>
 			<boxGeometry args={[4, 4, 4]} />
 			<meshBasicMaterial color={new THREE.Color(16, 16, 16)}/>
 		</mesh>
