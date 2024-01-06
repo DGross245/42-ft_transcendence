@@ -1,28 +1,25 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Server } from 'Socket.IO';
-
-// https://piehost.com/socketio-tester
+import { Server } from "socket.io";
+import cache from "memory-cache";
 
 const SocketHandler = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
-	console.log('SocketHandler');
-	if ((res.socket as any).server.io) {
-	  console.log('Socket is already running');
-	} else {
-	  console.log('Socket is initializing');
-	  const io = new Server((res.socket as any).server, {
-		cors: {
-		  origin: "https://piehost.com",
-		  methods: ["GET","HEAD","PUT","PATCH","POST","DELETE"]
-		},
-	  });
+	if (!(res.socket as any).server.io) {
+	  const io = new Server((res.socket as any).server);
 	  (res.socket as any).server.io = io;
   
 	  io.on('connection', (socket) => {
 		socket.on('input-change', (msg: any) => {
-		  socket.broadcast.emit('update-input', msg);
+			cache.put('input', msg);
+			socket.broadcast.emit('update-input', msg);
+		});
+
+		socket.on('read-input', () => {
+			console.log('read-input');
+			socket.emit('update-input', cache.get('input'));
 		});
 	  });
 	}
+	res.send({status: 'OK'});
 	res.end();
 };
 

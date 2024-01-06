@@ -131,15 +131,15 @@ function Scores() {
 		return rankedGames as Game[]
 	}
 
-	return (<></>
-		// <section>
-		// 	<button onClick={startTournament}>Start Tournament</button>
-		// 	<br/>
-		// 	<button onClick={addScoreToTournament}>Add Score</button>
-		// 	<br/>
-		// 	<button onClick={getScoresOfTournament}>Get Scores</button>
-		// </section>
-	)
+	return (<>
+		{/* <section>
+			<button onClick={startTournament}>Start Tournament</button>
+			<br/>
+			<button onClick={addScoreToTournament}>Add Score</button>
+			<br/>
+			<button onClick={getScoresOfTournament}>Get Scores</button>
+		</section> */}
+	</>)
 };
 
 export default Scores;
