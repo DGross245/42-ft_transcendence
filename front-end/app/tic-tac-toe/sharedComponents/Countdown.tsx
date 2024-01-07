@@ -1,9 +1,8 @@
-
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
-import Silkscreen_Regular from '../../../../public/fonts/Silkscreen_Regular.json';
-import { extend, useFrame } from '@react-three/fiber';
-import { useEffect, useRef, useState } from 'react';
+import Silkscreen_Regular from '../../../public/fonts/Silkscreen_Regular.json';
+import { extend } from '@react-three/fiber';
+import { useEffect, useState } from 'react';
 extend({ TextGeometry })
 
 const Countdown = ({ countdownVisible, setCountdownVisible }) => {
@@ -19,6 +18,7 @@ const Countdown = ({ countdownVisible, setCountdownVisible }) => {
 				} else {
 					clearInterval(countdownInterval);
 					setCountdownVisible(false);
+					setCount(4);
 					return (0);
 				}
 			});
@@ -27,7 +27,7 @@ const Countdown = ({ countdownVisible, setCountdownVisible }) => {
 		return () => {
 			clearInterval(countdownInterval);
 		};
-	}, []);
+	}, [countdownVisible]);
 	
 	return (
 		<mesh visible={countdownVisible} position={[10, 10, 20]} rotation={[0, Math.PI / 4, 0]}>

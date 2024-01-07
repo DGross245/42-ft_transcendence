@@ -20,11 +20,13 @@ export default function PongScene() {
 	const rightPaddleRef = useRef<THREE.Mesh>(null!);
 	const leftPaddleRef = useRef<THREE.Mesh>(null!);
 	const [p1Score, setP1Score] = useState(0);
-	const [p2Score, setP2Score] = useState(0);
+	const [p2Score, setP2Score] = useState(6);
 	const [showModal, setShowModal] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [gameOver, setGameOver] = useState(false);
 	const [scoreVisible, setScoreVisible] = useState(false);
+	const [reset, setReset] = useState(false);
+	const [isBallVisible, setBallVisibility] = useState(true);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -33,6 +35,19 @@ export default function PongScene() {
 	const openModal = () => {
 		setShowModal(true);
 	}
+
+	useEffect(() => {
+		if (reset) {
+			setBallVisibility(true);
+			setGameOver(false);
+			closeModal();
+			setReset(false);
+			setP1Score(0);
+			setP2Score(0);
+			setWinner('');
+			setScoreVisible(false);
+		}
+	});
 
 	useEffect(() => {
 		if (gameOver) {
@@ -67,7 +82,7 @@ export default function PongScene() {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown setScoreVisible={setScoreVisible} rotation={[0, 0, 0]} />
+				<Countdown scoreVisible={scoreVisible} setScoreVisible={setScoreVisible} rotation={[0, 0, 0]} />
 				<Camera position={[0, -100, 300]} keyMap={keyMap} />
 				<ambientLight />
 				<Border position={[0,105,0]} />
@@ -82,13 +97,14 @@ export default function PongScene() {
 					setWinner={setWinner}
 					gameOver={gameOver} setGameOver={setGameOver}
 					scoreVisible={scoreVisible}
+					isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
 				/>
 				<CubeLine />
 				<GroundReflection />
 				<OrbitControls enablePan={false} />
 				<Scoreboard player1={p1Score} player2={p2Score} scoreVisible={scoreVisible} />
 			</Canvas>
-			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
+			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} setReset={setReset} />
 		</div>
 	);
 }

@@ -9,29 +9,33 @@ import FinishLine from "../sharedComponents/FinishLine";
 import { fieldGenerator, gridLineGenrator } from "./components/Grid";
 import EndModal from "./components/EndModal";
 import Camera from "../sharedComponents/Camera";
-import Countdown from "@/app/tic-tac-toe/normal/components/Countdown";
+import Countdown from "../sharedComponents/Countdown";
 import inputHandler from "@/components/inputHandler";
 
 // Used to track user moves for validation
 // '' = empty position, 'X' or 'O' updated on user click
 // Used to validate winning combinations
-const initialBoardState = [
-	[
-		['', '', ''],
-		['', '', ''],
-		['', '', ''],
-	],
-	[
-		['', '', ''],
-		['', '', ''],
-		['', '', ''],
-	],
-	[
-		['', '', ''],
-		['', '', ''],
-		['', '', ''],
-	],
-];
+const initialBoard = () =>  {
+	return (
+		[
+			[
+				['', '', ''],
+				['', '', ''],
+				['', '', ''],
+			],
+			[
+				['', '', ''],
+				['', '', ''],
+				['', '', ''],
+			],
+			[
+				['', '', ''],
+				['', '', ''],
+				['', '', ''],
+			],
+		]
+	)
+}
 
 // Initial coordinates for each field in the scene
 // Each [0, 0, 0] represents the coordinates of a field
@@ -64,15 +68,16 @@ const TTTScene = () => {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const [clicked, click] = useState(false);
 	const [currentTurn, setTurn] = useState('X');
-	const [board, setCurrentBoardState] = useState(initialBoardState);
-	const [sceneCords, setSceneCords] = useState(initialSceneCords);
+	const [board, setCurrentBoardState] = useState(initialBoard());
+	const [sceneCords, setSceneCords] = useState([...initialSceneCords]);
 	const [showFinishLine, setShowFinishLine] = useState(false);
-	const [coords, setCoords] = useState(winningCoords);
+	const [coords, setCoords] = useState([...winningCoords]);
 	const [colour, setColour] = useState(0xffffff);
 	const [showModal, setShowModal] = useState(false);
 	const [gameOver, setGameOver] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [countdownVisible, setCountdownVisible] = useState(true);
+	const [reset, setReset] = useState(false);
 	const keyMap = inputHandler();
 
 	const closeModal = () => {
@@ -82,6 +87,21 @@ const TTTScene = () => {
 	const openModal = () => {
 		setShowModal(true);
 	}
+
+	useEffect(() => {
+		if (reset) {
+			closeModal();
+			setCurrentBoardState(initialBoard());
+			setTurn('X');
+			setShowFinishLine(false);
+			setCoords([...winningCoords]);
+			setColour(0xffffff);
+			setGameOver(false);
+			setWinner('');
+			setCountdownVisible(true);
+			setReset(false);
+		}
+	}, [reset]);
 
 	useEffect(() => {
 		if (gameOver) {
@@ -138,7 +158,7 @@ const TTTScene = () => {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
-				<Camera dimensions={dimensions} keyMap={keyMap} target={[ 0, 0, 0]} />
+				<Camera dimensions={dimensions} keyMap={keyMap} target={[ 0, 0, 0]} reset={reset} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
 				<Floor position={[ 0, -0.2, 0]} args={[0.25, 17.5, 17.5]} /> 
@@ -147,7 +167,7 @@ const TTTScene = () => {
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
 				<OrbitControls enableZoom={true} enableRotate={!countdownVisible} enablePan={false} />
 			</Canvas>
-			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
+			<EndModal setReset={setReset} isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 
 	);
 }
