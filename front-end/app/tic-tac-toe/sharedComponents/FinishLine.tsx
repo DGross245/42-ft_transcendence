@@ -1,5 +1,11 @@
 import { Line } from "@react-three/drei";
 
+/**
+ * The `FinishLine` component renders a line in a 3D scene with specified coordinates, color, and
+ * visibility.
+ * @param props - props is an object that contains the properties passed to the FinishLine component.
+ * @returns A mesh component with a Line component inside it.
+ */
 const FinishLine = (props) => {
 	return (
 		<mesh visible={props.visible}>

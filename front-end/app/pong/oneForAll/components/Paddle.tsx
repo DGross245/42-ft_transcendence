@@ -2,6 +2,11 @@ import { useFrame } from "@react-three/fiber";
 import { forwardRef } from "react";
 import * as THREE from 'three'
 
+/**
+ * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
+ * @param ref - Forwarded reference for more control in parent component.
+ * @returns A Three.js mesh representing the paddle.
+ */
 export const RightPaddle = forwardRef((props, ref) => {
 	const keyMap = props.keyMap;
 	const paddleSpeed = 300;
@@ -28,6 +33,11 @@ export const RightPaddle = forwardRef((props, ref) => {
 	);
 });
 
+/**
+ * Creates a Three.js mesh representing the left paddle for the game scene and manages its movement.
+ * @param ref - Forwarded reference for more control in parent component.
+ * @returns A Three.js mesh representing the paddle.
+ */
 export const LeftPaddle = forwardRef((props, ref) => {
 	const keyMap = props.keyMap;
 	const paddleSpeed = 300;
@@ -55,6 +65,11 @@ export const LeftPaddle = forwardRef((props, ref) => {
 	);
 });
 
+/**
+ * Creates a Three.js mesh representing the top paddle for the game scene and manages its movement.
+ * @param ref - Forwarded reference for more control in parent component.
+ * @returns A Three.js mesh representing the paddle.
+ */
 export const TopPaddle = forwardRef((props, ref) => {
 	const keyMap = props.keyMap;
 	const paddleSpeed = 300;
@@ -82,6 +97,11 @@ export const TopPaddle = forwardRef((props, ref) => {
 	);
 });
 
+/**
+ * Creates a Three.js mesh representing the bottom paddle for the game scene and manages its movement.
+ * @param ref - Forwarded reference for more control in parent component.
+ * @returns A Three.js mesh representing the paddle.
+ */
 export const BottomPaddle = forwardRef((props, ref) => {
 	const keyMap = props.keyMap;
 	const paddleSpeed = 300;

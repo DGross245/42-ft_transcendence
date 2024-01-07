@@ -1,5 +1,10 @@
 import { BoxGeometry, MeshBasicMaterial } from 'three'
 
+/**
+ * Generates Three.js cube components arranged diagonally,
+ * representing a line splitting the game field into two parts along the Y-axis.
+ * @returns A group of cube meshes forming a diagonal line.
+ */
 export const CubeLineY = (props) => {
 	const cubeGeometry = new BoxGeometry(3, 3, 0.5);
 	const cubeMaterial = new MeshBasicMaterial({ color: 0x808080 });
@@ -22,6 +27,11 @@ export const CubeLineY = (props) => {
 	);
 }
 
+/**
+ * Generates Three.js cube components arranged diagonally,
+ * representing a line splitting the game field into two parts along the X-axis.
+ * @returns A group of cube meshes forming a diagonal line.
+ */
 export const CubeLineX = (props) => {
 	const cubeGeometry = new BoxGeometry(3, 3, 0.5);
 	const cubeMaterial = new MeshBasicMaterial({ color: 0x808080 });

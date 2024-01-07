@@ -14,13 +14,18 @@ import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
 import inputHandler from '@/components/inputHandler';
 
+/**
+ * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
+ * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.
+ * @returns The entire Three.js scene, including the modal.
+ */
 export default function PongScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const keyMap = inputHandler();
 	const rightPaddleRef = useRef<THREE.Mesh>(null!);
 	const leftPaddleRef = useRef<THREE.Mesh>(null!);
 	const [p1Score, setP1Score] = useState(0);
-	const [p2Score, setP2Score] = useState(6);
+	const [p2Score, setP2Score] = useState(0);
 	const [showModal, setShowModal] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [gameOver, setGameOver] = useState(false);
@@ -36,6 +41,7 @@ export default function PongScene() {
 		setShowModal(true);
 	}
 
+	// Handles the reset of the scene when the 'reset' state changes.
 	useEffect(() => {
 		if (reset) {
 			setBallVisibility(true);
@@ -47,8 +53,9 @@ export default function PongScene() {
 			setWinner('');
 			setScoreVisible(false);
 		}
-	});
+	}, [reset]);
 
+	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
 		if (gameOver) {
 			const delay = 1000;
@@ -62,6 +69,7 @@ export default function PongScene() {
 		}
 	}, [gameOver]);
 
+	// Updates window dimensions on window resizing.
 	useEffect(() => {
 		const handleResize = () => {
 			setDimensions({

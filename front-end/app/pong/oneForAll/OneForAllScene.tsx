@@ -14,6 +14,11 @@ import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
 
+/**
+ * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
+ * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.
+ * @returns The entire Three.js scene, including the modal.
+ */
 export default function OneForAllScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const keyMap = inputHandler();
@@ -40,6 +45,7 @@ export default function OneForAllScene() {
 		setShowModal(true);
 	}
 
+	// Handles the reset of the scene when the 'reset' state changes.
 	useEffect(() => {
 		if (reset) {
 			setBallVisibility(true);
@@ -55,6 +61,7 @@ export default function OneForAllScene() {
 		}
 	}, [reset]);
 
+	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
 		if (gameOver) {
 			const delay = 1000;
@@ -68,6 +75,7 @@ export default function OneForAllScene() {
 		}
 	}, [gameOver]);
 
+	// Updates window dimensions on window resizing.
 	useEffect(() => {
 		const handleResize = () => {
 			setDimensions({
@@ -90,7 +98,6 @@ export default function OneForAllScene() {
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown scoreVisible={scoreVisible} setScoreVisible={setScoreVisible} rotation={[Math.PI / 2, 0, 0]} />
 				<Camera position={[0, -350, 100]} keyMap={keyMap} /> 
-				<ambientLight />
 				<Border />
 				<TopPaddle ref={topPaddleRef} position={[0, 151, 0]} keyMap={keyMap} />
 				<BottomPaddle ref={bottomPaddleRef} position={[0, -151, 0]} keyMap={keyMap} />

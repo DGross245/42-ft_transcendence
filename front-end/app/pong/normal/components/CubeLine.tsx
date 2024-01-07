@@ -1,5 +1,10 @@
 import { BoxGeometry, MeshBasicMaterial } from 'three'
 
+/**
+ * Creates a line of Three.js cube components arranged vertically to represent
+ * the middle line, splitting the game field in two.
+ * @returns A group of cube mehses forming a line.
+ */
 const CubeLine = () => {
 	const cubeGeometry = new BoxGeometry(3, 3, 0.5);
 	const cubeMaterial = new MeshBasicMaterial({ color: 0x808080 });
