@@ -12,9 +12,9 @@ import Camera from "../sharedComponents/Camera";
 import Countdown from "../sharedComponents/Countdown";
 import inputHandler from "@/components/inputHandler";
 
-// Used to track user moves for validation
-// '' = empty position, 'X' or 'O' updated on user click
-// Used to validate winning combinations
+// Used to track user moves for validation.
+// '' = empty position, 'X' or 'O' updated on user click.
+// Used to validate winning combinations.
 const initialBoard = () =>  {
 	return (
 		[
@@ -37,10 +37,10 @@ const initialBoard = () =>  {
 	)
 }
 
-// Initial coordinates for each field in the scene
-// Each [0, 0, 0] represents the coordinates of a field
-// Set on field creation
-const initialSceneCords = [
+// Initial coordinates for each field in the scene.
+// Each [0, 0, 0] represents the coordinates of a field.
+// Set on field creation.
+const initialSceneCoords = [
 	[
 		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
 		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
@@ -58,18 +58,25 @@ const initialSceneCords = [
 	],
 ];
 
-// Represents the 3 coordinates forming a winning line
-// Extracted from initialSceneCords after finding a winner
+// Represents the 3 coordinates forming a winning line.
+// Extracted from initialSceneCords after finding a winner.
 const winningCoords = [
 	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
 ];
 
+/**
+ * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
+ * It handles game state, user interactions, and 3D rendering of the game board.
+ * Uses various hooks for state management and effects for handling game logic,
+ * resizing, modal display, and game completion.
+ * @returns The entire Three.js scene, including the modal.
+ */
 const TTTScene = () => {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const [clicked, click] = useState(false);
 	const [currentTurn, setTurn] = useState('X');
 	const [board, setCurrentBoardState] = useState(initialBoard());
-	const [sceneCords, setSceneCords] = useState([...initialSceneCords]);
+	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
 	const [showFinishLine, setShowFinishLine] = useState(false);
 	const [coords, setCoords] = useState([...winningCoords]);
 	const [colour, setColour] = useState(0xffffff);
@@ -88,6 +95,7 @@ const TTTScene = () => {
 		setShowModal(true);
 	}
 
+	// Handling the reset of the scene, resetting important states.
 	useEffect(() => {
 		if (reset) {
 			closeModal();
@@ -103,6 +111,7 @@ const TTTScene = () => {
 		}
 	}, [reset]);
 
+	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
 		if (gameOver) {
 			const delay = 2000;
@@ -116,6 +125,9 @@ const TTTScene = () => {
 		}
 	}, [gameOver]);
 
+	// Updates window dimensions on window resizing and
+	// changes the turn after a clicked field and checks if a winning condition
+	// is achived.
 	useEffect(() => {
 		const handleResize = () => {
 			setDimensions({
@@ -128,7 +140,7 @@ const TTTScene = () => {
 			if (clicked) {
 				setTurn(currentTurn === 'X' ? 'O' : 'X');
 				click(false);
-				const winner = gameValidation(board, sceneCords, coords, setCoords);
+				const winner = gameValidation(board, sceneCoords, coords, setCoords);
 				if (winner) {
 					if (winner === 'X') {
 						setShowFinishLine(true);
@@ -160,7 +172,7 @@ const TTTScene = () => {
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
 				<Camera dimensions={dimensions} keyMap={keyMap} target={[ 0, 0, 0]} reset={reset} />
 				{gridLineGenrator()}
-				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
+				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, gameOver)}
 				<Floor position={[ 0, -0.2, 0]} args={[0.25, 17.5, 17.5]} /> 
 				<Floor position={[ 0,  7.8, 0]} args={[0.25, 17.5, 17.5]} />
 				<Floor position={[ 0, 15.8, 0]} args={[0.25, 17.5, 17.5]} />

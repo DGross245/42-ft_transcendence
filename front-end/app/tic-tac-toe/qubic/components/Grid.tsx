@@ -2,14 +2,26 @@ import { Dispatch, SetStateAction } from "react";
 import Field from "./Field";
 import GridLine from "../../sharedComponents/GridLine";
 
+/**
+ * Generates an array of Field components for the game board.
+ * @param clicked - Indicates if the field was clicked (boolean).
+ * @param click - Setter function for the clicked state.
+ * @param currentTurn - Represents the current player's turn (X or O or ⬜️).
+ * @param board - Three-dimensional array of strings representing the game board.
+ * @param setCurrentBoardState - Setter for the board state.
+ * @param sceneCoords - Stores 3D coordinates for each field on the board.
+ * @param setSceneCoords - Setter for the sceneCoords state.
+ * @param gameOver - Indicates if the game is over (boolean).
+ * @returns Array of Field components.
+ */
 export const fieldGenerator = (
 	clicked: boolean,
 	click: React.Dispatch<React.SetStateAction<boolean>>,
 	currentTurn: string,
 	board: string[][][],
 	setCurrentBoardState: React.Dispatch<React.SetStateAction<string[][][]>>,
-	sceneCords: number[][][][],
-	setSceneCords: Dispatch<SetStateAction<number[][][][]>>,
+	sceneCoords: number[][][][],
+	setSceneCoords: Dispatch<SetStateAction<number[][][][]>>,
 	gameOver: boolean) => {
 
 	const fields = [];
@@ -48,8 +60,8 @@ export const fieldGenerator = (
 							turn={currentTurn}
 							board={board}
 							setCurrentBoardState={setCurrentBoardState}
-							sceneCords={sceneCords}
-							setSceneCords={setSceneCords}
+							sceneCoords={sceneCoords}
+							setSceneCoords={setSceneCoords}
 							i={fieldI}
 							j={fieldJ}
 							k={fieldK}
@@ -63,6 +75,11 @@ export const fieldGenerator = (
 	return (fields);
 }
 
+/**
+ * Generating mulitple grid lines in a 3D scene. Defines coordinates and rotations for grid lines at specific positions.
+ * Utilizes the GridLine component to create lines based on the coordinates and rotations.
+ * @returns The generated array of GridLine components for the grid.
+ */
 export const gridLineGenrator = () => {
 	const coords = [
 		{ position: [ 3, 0, 3], rotation: [Math.PI / 2, 0, 0] },

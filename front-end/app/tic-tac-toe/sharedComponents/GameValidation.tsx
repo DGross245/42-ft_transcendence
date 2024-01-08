@@ -1,12 +1,24 @@
 import { Dispatch, SetStateAction } from "react";
 
+/**
+ * The function `gameValidation` checks if there is a winning line or a draw in a 3D tic-tac-toe game.
+ * @param board - A 3-dimensional array representing the game board.
+ * Each element of the array represents a field on the board and can contain one of three (in qubic four) values:
+ * 'X', 'O', (⬜️) or an empty string ('').
+ * @param SceneCoords - SceneCoords is a 4-dimensional array that represents the
+ * coordinates of each symbol in the game board.
+ * @param coords - State 2D array of numbers that represents the coordinates of the three winning symbols.
+ * @param setCoords - State setter to update the state of coords.
+ * @returns either the symbol ('X' or 'O' (or '⬜️')) if there is a winning line formed, 'draw' if the game is a
+ * draw, or null if there is no winner yet.
+ */
 export const gameValidation = ( 
 	board: string[][][],
 	SceneCoords: number [][][][],
 	coords: number [][],
 	setCoords: Dispatch<SetStateAction<number[][]>>) => {
-		// Represents possible symbol positions to form a winning line from a given location
-		// Left column: second possible symbol locations. Right column: third possible symbol locations
+		// Represents possible symbol positions to form a winning line from a given location.
+		// Left column: second possible symbol locations. Right column: third possible symbol locations.
 		const directions = [
 			[[ 1, 0, 0], [ 2, 0, 0]],
 			[[ 0, 1, 0], [ 0, 2, 0]],

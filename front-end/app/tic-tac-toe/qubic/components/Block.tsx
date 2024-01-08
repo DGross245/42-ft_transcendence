@@ -2,6 +2,11 @@ import { Extrude } from '@react-three/drei';
 import { DoubleSide} from 'three';
 import * as THREE from 'three'
 
+/**
+ * Creates a 3D geometry similar to an 3D square frame using the Extrude component.
+ * @param
+ * @returns A mesh with this new block component.
+ */
 const Block = (props) => {
 	const [x, y, z] = props.position;
 

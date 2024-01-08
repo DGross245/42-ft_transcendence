@@ -8,7 +8,7 @@ import X from '../../sharedComponents/X';
  * The `Field` component represents a individual fields in a three-dimensional tic-tac-toe board.
  * It manages the rendering of the field and the placement of symbols (X or O).
  * @param props - 
- * @returns - A Three.js mesh representing the field with/without a symbol
+ * @returns - A Three.js mesh representing the field with/without a symbol.
  */
 const Field = (props) => {
 	const [hovered, hover] = useState(false);
@@ -21,15 +21,15 @@ const Field = (props) => {
 			props.click(true);
 			setSymbol(props.turn);
 
-			// Updates the board state by assigning the symbol to the corresponding position
+			// Updates the board state by assigning the symbol to the corresponding position.
 			const updatedBoard = [...props.board];
 			updatedBoard[props.i][props.j][props.k] = props.turn;
 			props.setCurrentBoardState(updatedBoard);
 
-			// Updates the scene coordinates for this field
-			const updateSceneCoords = [...props.sceneCords];
+			// Updates the scene coordinates for this field.
+			const updateSceneCoords = [...props.sceneCoords];
 			updateSceneCoords[props.i][props.j][props.k] = props.position;
-			props.setSceneCords(updateSceneCoords);
+			props.setSceneCoords(updateSceneCoords);
 		}
 	}
 

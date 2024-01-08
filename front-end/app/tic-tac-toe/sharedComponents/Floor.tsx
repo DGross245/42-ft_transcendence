@@ -1,5 +1,11 @@
 import * as THREE from 'three';
 
+/**
+ * The Floor component is a mesh that represents a floor in a 3D scene, with customizable position,
+ * size, and material properties.
+ * @param props
+ * @returns A mesh with a boxGeometry representing the floor.
+ */
 const Floor = (props) => {
 	return (
 		<mesh position={props.position} rotation={[0, 0, Math.PI / 2]}>

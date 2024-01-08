@@ -1,3 +1,9 @@
+
+/**
+ * Create a torusGeometry with specific position and rotation.
+ * @param props
+ * @returns 
+ */
 const Torus = (props) => {
 	const [x, y, z] = props.position;
 	
