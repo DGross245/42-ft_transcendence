@@ -7,15 +7,22 @@ import { useEffect, useState } from 'react';
 
 extend({ TextGeometry })
 
+interface CountdownProps {
+	setScoreVisibility: React.Dispatch<React.SetStateAction<boolean>>,
+	scoreVisible: boolean,
+	rotation: [number, number, number],
+}
+
 /**
  * The Countdown component is a timer that counts down from 4 to 0 and displays the count as a 3D text
  * in a React Three Fiber scene.
- * @param props -
+ * @param props - The `props` parameter is an object that contains the following properties:
+ * 				  `setScoreVisible`, `scoreVisible` and `rotation`.
  * @returns A mesh element that displays the current count value.
  * The visibility of the mesh is determined by the props.scoreVisible value. If props.scoreVisible is
  * false, the mesh will be visible, otherwise it will be hidden.
  */
-const Countdown = (props) => {
+const Countdown : React.FC<CountdownProps>= (props) => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 	const [count, setCount] = useState(4);
 
@@ -27,7 +34,7 @@ const Countdown = (props) => {
 					return (prevCount - 1);
 				else {
 					clearInterval(countdownInterval);
-					props.setScoreVisible(true);
+					props.setScoreVisibility(true);
 					setCount(4);
 					return (0);
 				}

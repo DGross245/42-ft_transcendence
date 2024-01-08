@@ -5,8 +5,12 @@ import { Vector3, extend } from '@react-three/fiber';
 
 extend({ TextGeometry })
 
-type ScoreType = {
-	[key: number]: { position: Vector3 };
+interface ScoreboardProps {
+	player1: number,
+	player2: number,
+	player3: number,
+	player4: number,
+	scoreVisible: boolean,
 }
 
 /**
@@ -19,7 +23,7 @@ type ScoreType = {
  * @returns A JSX fragment containing two mesh elements. Each
  * mesh element represents a player's score.
  */
-const Scoreboard = ({ player1, player2, player3, player4, scoreVisible }) => {
+const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, player3, player4, scoreVisible }) => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 
 	const position1 : Vector3 = player1 === 1 || player1 === 7 ? [-13,-210, -5] : [-21,-210, -5];

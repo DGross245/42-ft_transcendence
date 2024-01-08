@@ -4,24 +4,41 @@ import { useEffect, useRef } from "react";
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-type BallElement = {
-	position: {
-		x: number;
-		y: number;
-	}
-}
-
 type CollisionInfo = {
 	[key: string]: {score: any, setScore: any, isOwnGoal: boolean};
 };
 
+interface ballPorps {
+	rightPaddleRef: React.MutableRefObject<THREE.Mesh>,
+	leftPaddleRef: React.MutableRefObject<THREE.Mesh>,
+	bottomPaddleRef: React.MutableRefObject<THREE.Mesh>,
+	topPaddleRef: React.MutableRefObject<THREE.Mesh>,
+	p1Score: number,
+	setP1Score: React.Dispatch<React.SetStateAction<number>>,
+	p2Score: number,
+	setP2Score: React.Dispatch<React.SetStateAction<number>>,
+	p3Score: number,
+	setP3Score: React.Dispatch<React.SetStateAction<number>>,
+	p4Score: number,
+	setP4Score: React.Dispatch<React.SetStateAction<number>>,
+	setWinner: React.Dispatch<React.SetStateAction<string>>,
+	gameOver: boolean,
+	setGameOver: React.Dispatch<React.SetStateAction<boolean>>,
+	scoreVisible: boolean,
+	isBallVisible: boolean,
+	setBallVisibility: React.Dispatch<React.SetStateAction<boolean>>,
+}
+
 /**
  * Creates a ball Three.js mesh and handles its movement and collision behavior.
- * @param props 
+ * @param props - The `props` parameter is an object that contains the following properties:
+ * 				  `rightPaddleRef`, `leftPaddleRef`,`p1Score`,`setP1Score`,`p2Score`,`setP2Score`,
+ * 				  `topPaddleRef`, `bottomPaddleRef`, `p3Score`,`setP3Score`,`p4Score`,`setP4Score`,
+ * 				  `setWinner`, `gameOver`, `setGameOver`, `scoreVisible`, `isBallVisible` and `setBallVisibility`
  * @returns A Three.js mesh representing a ball.
  */
-const Ball = (props) => {
-	let ref = useRef<BallElement>();
+const Ball : React.FC<ballPorps> = (props) => {
+	let ref = useRef<THREE.Mesh>(null);
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const halfBall = 2;
 	let lastPaddleHit = '';

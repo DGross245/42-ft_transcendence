@@ -15,7 +15,6 @@ interface ScoreboardProps {
 	scoreVisible: boolean,
 }
 
-
 /* The `declare module` statement is used to extend the existing module declaration in TypeScript.
 Used for extending the `@react-three/fiber` module and adding to the ThreeElements interface the definition
 for textGeometry, because the property 'textGeometry' does not exist on type 'JSX.IntrinsicElements'*/

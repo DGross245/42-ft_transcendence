@@ -10,6 +10,8 @@ interface Paddle {
 /**
  * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
  * @param ref - Forwarded reference for more control in parent component.
+ * @param keyMap - An object mapping keyboard keys to their pressed/unpressed state.
+ * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
 export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
@@ -38,6 +40,9 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
 
 /**
  * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
+ * @param ref - Forwarded reference for more control in parent component.
+ * @param keyMap - An object mapping keyboard keys to their pressed/unpressed state.
+ * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
 export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {

@@ -5,7 +5,7 @@ import { BoxGeometry, MeshBasicMaterial } from 'three'
  * representing a line splitting the game field into two parts along the Y-axis.
  * @returns A group of cube meshes forming a diagonal line.
  */
-export const CubeLineY = (props) => {
+export const CubeLineY = () => {
 	const cubes = [];
   
 	for (let i = 1; i < 20; i++) {
@@ -33,7 +33,7 @@ export const CubeLineY = (props) => {
  * representing a line splitting the game field into two parts along the X-axis.
  * @returns A group of cube meshes forming a diagonal line.
  */
-export const CubeLineX = (props) => {
+export const CubeLineX = () => {
 	const cubes = [];
 
 	for (let i = 1; i < 20; i++) {

@@ -9,7 +9,6 @@ import Border from './components/Border';
 import { RightPaddle, LeftPaddle, TopPaddle, BottomPaddle } from './components/Paddle';
 import Ball from './components/Ball';
 import { CubeLineY, CubeLineX }from './components/CubeLine';
-import GroundReflection from './components/GroundReflection';
 import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
@@ -33,7 +32,7 @@ export default function OneForAllScene() {
 	const [showModal, setShowModal] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [gameOver, setGameOver] = useState(false);
-	const [scoreVisible, setScoreVisible] = useState(false);
+	const [scoreVisible, setScoreVisibility] = useState(false);
 	const [reset, setReset] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true);
 
@@ -57,7 +56,7 @@ export default function OneForAllScene() {
 			setP3Score(0);
 			setP4Score(0);
 			setWinner('');
-			setScoreVisible(false);
+			setScoreVisibility(false);
 		}
 	}, [reset]);
 
@@ -96,7 +95,7 @@ export default function OneForAllScene() {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown scoreVisible={scoreVisible} setScoreVisible={setScoreVisible} rotation={[Math.PI / 2, 0, 0]} />
+				<Countdown scoreVisible={scoreVisible} setScoreVisibility={setScoreVisibility} rotation={[Math.PI / 2, 0, 0]} />
 				<Camera position={[0, -350, 100]} keyMap={keyMap} /> 
 				<Border />
 				<TopPaddle ref={topPaddleRef} position={[0, 151, 0]} keyMap={keyMap} />
@@ -115,12 +114,10 @@ export default function OneForAllScene() {
 					setWinner={setWinner}
 					gameOver={gameOver} setGameOver={setGameOver}
 					scoreVisible={scoreVisible}
-					keyMap={keyMap}
 					isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
 				/>
 				<CubeLineY />
 				<CubeLineX />
-				{/* <GroundReflection /> */}
 				<OrbitControls enablePan={false} />
 				<Scoreboard player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score} scoreVisible={scoreVisible} />
 				<Stats />

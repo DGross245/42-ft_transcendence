@@ -6,14 +6,6 @@ import * as THREE from 'three';
 
 // FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
 
-//React.MutableRefObject<
-//		THREE.Mesh<
-//			THREE.BufferGeometry<THREE.NormalBufferAttributes>,
-//			THREE.Material | THREE.Material[],
-//			THREE.Object3DEventMap
-//		>
-//	>,
-
 interface ballPorps {
 	rightPaddleRef: React.MutableRefObject<THREE.Mesh>,
 	leftPaddleRef: React.MutableRefObject<THREE.Mesh>,
