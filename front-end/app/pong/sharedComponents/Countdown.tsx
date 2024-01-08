@@ -28,7 +28,7 @@ const Countdown = (props) => {
 				else {
 					clearInterval(countdownInterval);
 					props.setScoreVisible(true);
-					setCount(1);
+					setCount(4);
 					return (0);
 				}
 			});

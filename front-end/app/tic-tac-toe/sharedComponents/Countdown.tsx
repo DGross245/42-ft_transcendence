@@ -16,7 +16,7 @@ extend({ TextGeometry })
  */
 const Countdown = ({ countdownVisible, setCountdownVisible }) => {
 	const font = new FontLoader().parse(Silkscreen_Regular);
-	const [count, setCount] = useState(4);
+	const [count, setCount] = useState(3);
 
 	useEffect(() => {
 		const countdownInterval = setInterval(() => {
@@ -27,7 +27,7 @@ const Countdown = ({ countdownVisible, setCountdownVisible }) => {
 				} else {
 					clearInterval(countdownInterval);
 					setCountdownVisible(false);
-					setCount(4);
+					setCount(3);
 					return (0);
 				}
 			});

@@ -10,7 +10,7 @@ const Border = ({ position }: {position: [number, number, number]}) => {
 		<mesh position={position}>
 			<boxGeometry args={[306, 4, 4]}/>
 			<meshBasicMaterial
-				color={ new THREE.Color(16, 16, 16) }
+				color={ 0xffffff }
 				toneMapped={false}
 				transparent={false}
 				blending={THREE.AdditiveBlending}

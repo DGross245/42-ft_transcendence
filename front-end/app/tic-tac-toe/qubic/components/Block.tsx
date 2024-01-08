@@ -2,6 +2,7 @@ import { Extrude } from '@react-three/drei';
 import { DoubleSide} from 'three';
 import * as THREE from 'three'
 
+// TODO: Maybe switch back to useMemo
 /**
  * Creates a 3D geometry similar to an 3D square frame using the Extrude component.
  * @param

@@ -14,6 +14,7 @@ import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
 import inputHandler from '@/components/inputHandler';
 
+// TODO: change player order 4 = 1, 1 = 2, 2 = 3, 3 = 4
 /**
  * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
  * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.
@@ -22,8 +23,8 @@ import inputHandler from '@/components/inputHandler';
 export default function PongScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const keyMap = inputHandler();
-	const rightPaddleRef = useRef<THREE.Mesh>(null!);
-	const leftPaddleRef = useRef<THREE.Mesh>(null!);
+	const rightPaddleRef = useRef<THREE.Mesh>(null);
+	const leftPaddleRef = useRef<THREE.Mesh>(null);
 	const [p1Score, setP1Score] = useState(0);
 	const [p2Score, setP2Score] = useState(0);
 	const [showModal, setShowModal] = useState(false);

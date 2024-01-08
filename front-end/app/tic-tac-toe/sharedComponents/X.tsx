@@ -3,6 +3,7 @@ import { DoubleSide} from 'three';
 import { Extrude } from '@react-three/drei';
 import * as THREE from 'three'
 
+// TODO: maybe switch back to useMemo
 /**
  * Creates a custom X shape using the Extrude component with specific position and rotation.
  * @param props

@@ -232,7 +232,7 @@ const Ball = (props) => {
 	return (
 		<mesh ref={ref} visible={props.isBallVisible}>
 			<boxGeometry args={[4, 4, 4]} />
-			<meshBasicMaterial color={new THREE.Color(16, 16, 16)}/>
+			<meshBasicMaterial color={ 0xffffff }/>
 		</mesh>
 	);
 }

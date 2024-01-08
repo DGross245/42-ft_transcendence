@@ -1,23 +1,45 @@
 'use client'
 
-import { useEffect, useRef } from "react";
+import { Ref, useEffect, useRef } from "react";
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-type BallElement = {
-	position: {
-		x: number;
-		y: number;
-	}
+// FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
+
+//React.MutableRefObject<
+//		THREE.Mesh<
+//			THREE.BufferGeometry<THREE.NormalBufferAttributes>,
+//			THREE.Material | THREE.Material[],
+//			THREE.Object3DEventMap
+//		>
+//	>,
+
+interface ballPorps {
+	rightPaddleRef: React.MutableRefObject<THREE.Mesh>,
+	leftPaddleRef: React.MutableRefObject<THREE.Mesh>,
+	p1Score: number,
+	setP1Score: React.Dispatch<React.SetStateAction<number>>,
+	p2Score: number,
+	setP2Score: React.Dispatch<React.SetStateAction<number>>,
+	setWinner: React.Dispatch<React.SetStateAction<string>>,
+	gameOver: boolean,
+	setGameOver: React.Dispatch<React.SetStateAction<boolean>>,
+	scoreVisible: boolean,
+	isBallVisible: boolean,
+	setBallVisibility: React.Dispatch<React.SetStateAction<boolean>>,
 }
 
 /**
- * Creates a ball Three.js mesh and handles its movement and collision behavior.
- * @param props 
- * @returns A Three.js mesh representing a ball.
+ * Creates a ball Three.js mesh and handles its movement and collision logic.
+ * @param props - The `props` parameter is an object that contains the following properties:
+ * 				  `rightPaddleRef`, `leftPaddleRef`,`p1Score`,`setP1Score`,`p2Score`,`setP2Score`, `setWinner`, `gameOver`,
+ * 				  `setGameOver`, `scoreVisible`, `isBallVisible` and `setBallVisibility`
+ * @returns The Ball component is returning a mesh element that represents the ball in the game. It
+ * 			consists of a boxGeometry with dimensions of 4x4x4 and a meshBasicMaterial with a color of (16, 16, 16).
+ * 			The visibility of the mesh is determined by the isBallVisible prop.
  */
-const Ball = (props) => {
-	let ref = useRef<BallElement | null>(null);
+const Ball : React.FC<ballPorps> = (props) => {
+	let ref = useRef<THREE.Mesh>(null);
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
@@ -31,7 +53,7 @@ const Ball = (props) => {
 	 * 					  1: Collided with the left paddle.
 	 * 					 -1: Collided with the right paddle.
 	 */
-	const changeBallDir = (paddlePos, direction) => {
+	const changeBallDir = (paddlePos: THREE.Vector3, direction: number) => {
 		const ball = ballRef.current;
 		const deltaY = ball.y - paddlePos.y;
 		const normalizedY = deltaY / halfPaddleHeight;
@@ -77,8 +99,10 @@ const Ball = (props) => {
 	const updateBallPosition = (ball: { x: number; y: number; velocityX: number; velocityY: number; }, deltaTime: number) => {
 		ball.x += ball.velocityX * 100 * deltaTime;
 		ball.y += ball.velocityY * 100 * deltaTime;
-		ref.current!.position.x = ball.x;
-		ref.current!.position.y = ball.y;
+		if (ref.current) {
+			ref.current.position.x = ball.x;
+			ref.current.position.y = ball.y;
+		}
 	}
 
 	/**
@@ -151,7 +175,7 @@ const Ball = (props) => {
 	return (
 		<mesh ref={ref} visible={props.isBallVisible}>
 			<boxGeometry args={[4, 4, 4]} />
-			<meshBasicMaterial color={new THREE.Color(16, 16, 16)} />
+			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
 	);
 }

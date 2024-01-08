@@ -6,8 +6,6 @@ import { BoxGeometry, MeshBasicMaterial } from 'three'
  * @returns A group of cube meshes forming a diagonal line.
  */
 export const CubeLineY = (props) => {
-	const cubeGeometry = new BoxGeometry(3, 3, 0.5);
-	const cubeMaterial = new MeshBasicMaterial({ color: 0x808080 });
 	const cubes = [];
   
 	for (let i = 1; i < 20; i++) {
@@ -15,7 +13,10 @@ export const CubeLineY = (props) => {
 		const positionX = i * (151 * 2) / 20 - 151;
 
 		const cube = (
-			<mesh key={i} geometry={cubeGeometry} material={cubeMaterial} position={[positionX, positionY, -4]} />
+			<mesh key={i} position={[positionX, positionY, -4]}>
+				<boxGeometry args={[3, 3, 0.5]} />
+				<meshBasicMaterial color={ 0x808080 } />
+			</mesh>
 		)
 		cubes.push(cube);
 	}
@@ -33,8 +34,6 @@ export const CubeLineY = (props) => {
  * @returns A group of cube meshes forming a diagonal line.
  */
 export const CubeLineX = (props) => {
-	const cubeGeometry = new BoxGeometry(3, 3, 0.5);
-	const cubeMaterial = new MeshBasicMaterial({ color: 0x808080 });
 	const cubes = [];
 
 	for (let i = 1; i < 20; i++) {
@@ -42,7 +41,10 @@ export const CubeLineX = (props) => {
 		const positionY = -i * (151 * 2) / 20 + 151;
 
 		const cube = (
-			<mesh key={i} geometry={cubeGeometry} material={cubeMaterial} position={[positionX, positionY, -4]} />
+			<mesh key={i} position={[positionX, positionY, -4]}>
+				<boxGeometry args={[3, 3, 0.5]} />
+				<meshBasicMaterial color={ 0x808080 } />
+			</mesh>
 		)
 		cubes.push(cube);
 	}

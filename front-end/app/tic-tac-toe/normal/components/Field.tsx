@@ -4,6 +4,22 @@ import * as THREE from 'three';
 import Torus from '../../sharedComponents/Torus';
 import X from '../../sharedComponents/X';
 
+//interface FieldProps {
+//	key: string,
+//	position: Vector3,
+//	clicked: boolean,
+//	click: React.Dispatch<React.SetStateAction<boolean>>,
+//	turn: string,
+//	board: string[][][],
+//	setCurrentBoardState: React.Dispatch<React.SetStateAction<string[][][]>>,
+//	sceneCoords: number[][][][],
+//	setSceneCoords: React.Dispatch<React.SetStateAction<number[][][][]>>,
+//	i: number,
+//	j: number,
+//	k: number,
+//	gameOver: boolean,
+//}
+
 /**
  * The `Field` component represents a individual fields in a three-dimensional tic-tac-toe board.
  * It manages the rendering of the field and the placement of symbols (X or O).

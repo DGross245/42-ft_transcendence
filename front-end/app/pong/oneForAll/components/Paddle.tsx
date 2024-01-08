@@ -23,12 +23,7 @@ export const RightPaddle = forwardRef((props, ref) => {
 	return (
 		<mesh ref={ref} {...props}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial
-				color={new THREE.Color(16, 16, 16)}
-				toneMapped={false}
-				blending={THREE.AdditiveBlending}
-				side={THREE.BackSide}
-			/>
+			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
 	);
 });
@@ -55,7 +50,7 @@ export const LeftPaddle = forwardRef((props, ref) => {
 		<mesh ref={ref} {...props}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial
-				color={new THREE.Color(16, 16, 16)}
+				color={ 0xffffff }
 				toneMapped={false}
 				transparent={false}
 				blending={THREE.AdditiveBlending}
@@ -87,7 +82,7 @@ export const TopPaddle = forwardRef((props, ref) => {
 		<mesh ref={ref} {...props} rotation={[0, 0, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial
-				color={new THREE.Color(16, 16, 16)}
+				color={ 0xffffff }
 				toneMapped={false}
 				transparent={false}
 				blending={THREE.AdditiveBlending}
@@ -119,7 +114,7 @@ export const BottomPaddle = forwardRef((props, ref) => {
 		<mesh ref={ref} {...props} rotation={[0, 0, Math.PI / 2]} >
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial
-				color={new THREE.Color(16, 16, 16)}
+				color={ 0xffffff }
 				toneMapped={false}
 				transparent={false}
 				blending={THREE.AdditiveBlending}

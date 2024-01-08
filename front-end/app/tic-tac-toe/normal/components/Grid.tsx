@@ -51,7 +51,6 @@ export const fieldGenerator = (
 						<Field
 							key={`${fieldI}-${fieldJ}-${fieldK}`}
 							position={[x,y,z]}
-							rotation={[0, 0, Math.PI / 2]}
 							clicked={gameOver ? gameOver : clicked}
 							click={click}
 							turn={currentTurn}
