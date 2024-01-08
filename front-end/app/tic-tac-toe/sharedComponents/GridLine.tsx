@@ -3,10 +3,10 @@
  * @param props
  * @returns The GridLine component is returning a mesh element.
  */
-const GridLine = (props) => {
+const GridLine = (props, key) => {
 	return (
 		<mesh
-			key={props.key}
+			key={key}
 			position={props.position}
 			rotation={props.rotation}
 			onPointerOver={(e) => { e.stopPropagation()}}

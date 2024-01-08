@@ -82,10 +82,10 @@ const Ball = (props) => {
 	 */
 	const handleScore = (ball: { x: number; y: number; }) => {
 		const paddleCollision: CollisionInfo = {
-			left:   { score: props.p1Score, setScore: props.setP1Score, isOwnGoal: ball.x <= -200 ? true : false },
-			right:  { score: props.p2Score, setScore: props.setP2Score, isOwnGoal: ball.x >= 200 ? true : false },
+			bottom: { score: props.p1Score, setScore: props.setP1Score, isOwnGoal: ball.y <= -200 ? true : false },
+			left:   { score: props.p2Score, setScore: props.setP2Score, isOwnGoal: ball.x <= -200 ? true : false },
 			top:    { score: props.p3Score, setScore: props.setP3Score, isOwnGoal: ball.y >= 200 ? true : false },
-			bottom: { score: props.p4Score, setScore: props.setP4Score, isOwnGoal: ball.y <= -200 ? true : false },
+			right:  { score: props.p4Score, setScore: props.setP4Score, isOwnGoal: ball.x >= 200 ? true : false },
 		}
 
 		if (lastPaddleHit !== '') {
@@ -97,13 +97,13 @@ const Ball = (props) => {
 				setScore(score + 1);
 
 		} else {
-			if (ball.x <= -200 && props.p1Score !== 0 )
+			if (ball.y <= -200 && props.p1Score !== 0)
 				props.setP1Score(props.p1Score - 1);
-			else if (ball.x >= 200 && props.p2Score !== 0)
+			else if (ball.x <= -200 && props.p2Score !== 0 )
 				props.setP2Score(props.p2Score - 1);
 			else if (ball.y >= 200 && props.p3Score !== 0)
 				props.setP3Score(props.p3Score - 1);
-			else if (ball.y <= -200 && props.p4Score !== 0)
+			else if (ball.x >= 200 && props.p4Score !== 0)
 				props.setP4Score(props.p4Score - 1);
 		}
 		lastPaddleHit = '';

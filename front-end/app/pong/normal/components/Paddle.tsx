@@ -1,10 +1,10 @@
 import { useFrame } from "@react-three/fiber";
-import { forwardRef } from "react";
-import * as THREE from 'three'
+import { MutableRefObject, forwardRef } from "react";
+import { Mesh } from 'three';
 
 interface Paddle {
-	position: THREE.Vector3;
-	keyMap: {[key: string]: boolean};
+	keyMap: { [key: string]: boolean };
+	position: [number, number, number];
 }
 
 /**
@@ -12,24 +12,24 @@ interface Paddle {
  * @param ref - Forwarded reference for more control in parent component.
  * @returns A Three.js mesh representing the paddle.
  */
-export const RightPaddle = forwardRef<THREE.Mesh, Paddle>((props, ref) => {
-	const keyMap = props.keyMap;
+export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const paddleSpeed = 300;
 	const borderPositionY = 105;
+	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	// Moves the paddle based on pressed key for each frame.
 	useFrame((_, delta) => {
-		if (ref && ref.current) {
+		if (meshRef && meshRef.current) {
 			if (keyMap['ArrowUp']) {
-				ref.current.position.y = Math.min(ref.current.position.y + paddleSpeed * delta, borderPositionY - 15);
+				meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
 			} else if (keyMap['ArrowDown']) {
-				ref.current.position.y = Math.max(ref.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
+				meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
 			}
 		}
 	});
 
 	return (
-		<mesh ref={ref} {...props} >
+		<mesh ref={ref} position={position}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
@@ -40,24 +40,24 @@ export const RightPaddle = forwardRef<THREE.Mesh, Paddle>((props, ref) => {
  * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
  * @returns A Three.js mesh representing the paddle.
  */
-export const LeftPaddle = forwardRef((props, ref) => {
-	const keyMap = props.keyMap;
+export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const paddleSpeed = 300;
 	const borderPositionY = 105;
+	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	// Moves the paddle based on pressed key for each frame.
 	useFrame((_, delta) => {
-		if (ref && ref.current) {
+		if (meshRef && meshRef.current) {
 			if (keyMap['KeyW']) {
-				ref.current.position.y = Math.min(ref.current.position.y + paddleSpeed * delta, borderPositionY - 15);
+				meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
 			} else if (keyMap['KeyS']) {
-				ref.current.position.y = Math.max(ref.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
+				meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
 			}
 		}
 	});
 
 	return (
-		<mesh ref={ref} {...props}>
+		<mesh ref={ref} position={position}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>

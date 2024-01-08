@@ -1,12 +1,28 @@
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Orbitron_Regular from '../../../../public/fonts/Orbitron_Regular.json';
-import { Vector3, extend } from '@react-three/fiber';
+import { Object3DNode, Vector3, extend } from '@react-three/fiber';
 
 extend({ TextGeometry })
 
 type ScoreType = {
 	[key: number]: { position: Vector3 };
+}
+
+interface ScoreboardProps {
+	player1: number,
+	player2: number,
+	scoreVisible: boolean,
+}
+
+
+/* The `declare module` statement is used to extend the existing module declaration in TypeScript.
+Used for extending the `@react-three/fiber` module and adding to the ThreeElements interface the definition
+for textGeometry, because the property 'textGeometry' does not exist on type 'JSX.IntrinsicElements'*/
+declare module "@react-three/fiber" {
+	interface ThreeElements {
+	  textGeometry: Object3DNode<TextGeometry, typeof TextGeometry>;
+	}
 }
 
 /**
@@ -17,7 +33,7 @@ type ScoreType = {
  * @returns A JSX fragment containing two mesh elements. Each
  * mesh element represents a player's score.
  */
-const Scoreboard = ({ player1, player2, scoreVisible }) => {
+const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, scoreVisible }) => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 
 	// Reposition textGeometry based on score.
