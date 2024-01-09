@@ -1,4 +1,32 @@
+9. Jan 2024
+----------------------------
+Ich bin noch nicht ganz sicher was vom server schon besteht und ob er schon mehr oder weniger läuft sodass ich anfangen kann mit den clients zu testen oder ob noch was fehlt.
+Wie man den das programm für den server zum laufen bringt so dass ich test programme für die clients schreiben kann.
+
+ich sollte in den staus kommen der server läuft und ich kann anfangen, verschiedene
+sessions zu erstellen in denen ich mit einfachen tests informationen zwischen den
+clienets hin und her schicken kann und darauf aufbauend den rest machen.
+- Später muss man noch schauen wie man die clients kommunizieren lässt
+- wie man es hinbekommt das es ein flüssig die zwischen zeit im programm überbrückt wird bis die nächset positions daten geschickt werden (deshalb aktuelle position zum abgelich, und immer eine geschwindigkeit und winkel aus dem sich der client es selbst errechnen kann).
+
+Fragen Paul:
+- Implementierungsstatus des Servers: Ist der Server vollständig implementiert und läuft er automatisch beim Hochfahren des Programms, oder muss er manuell gestartet werden (wenn ja wie)?
+
+- Server-Startpunkt und Ausführungsort: In welcher Datei wird der Server gestartet, und wo genau läuft er? Wo finde ich die Initialisierung des Servers?
+
+- Wie läuft die herstellung der Verbindung von Client zum Server? ist bereits implemntiert (einfaches ping pong austausch von nachrichten)
+
+- Funktionalitäten in websocketsClient.tsx: Sind alle Funktionen in der Datei websocketsClient.tsx ausschließlich für den Client vorgesehen? Kommen noch weitere dazu?
+
+- Richtigkeit der Kommentare: Sind die Kommentare in dem websocketsClient.tsx korrekt und ausreichend verständlich oder müssen sie noch überarbeitet werden?
+
+- Zusätzliche Funktionalitäten: Gibt es noch weitere Funktionen oder files, die ich berücksichtigen sollte, um Sessions zu erstellen und Daten zwischen den Clients auszutauschen?
+
+fragen daniel:
+- wo sind die files die, die geänderten variablen handeln?
+
 8. Jan 2024
+----------------------------
 groben überblick verschafft und ein paar fragen an paul im meeting stellt auf
 die ich in den nächsten tagen aufbauen kann.
 
@@ -24,7 +52,8 @@ Welches Datenformat wird verwendet? (z. B. JSON)
 - Am besten wahrscheinlich mit string mal sehen was am besten passt
 
 Codeumfang:
-Ist der vorhandene Code vollständig oder gibt es mehr? pages/sockets.tsx
+Ist der vorhandene Code vollständig oder gibt es mehr?
+pages/sockets.tsx
 App/websocketsClient
 Helpers/wsclient
 
