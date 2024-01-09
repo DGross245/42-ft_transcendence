@@ -88,8 +88,6 @@ const Ball : React.FC<ballPorps> = (props) => {
 		ball.velocityY = ball.speed * Math.cos(angle);
 	}
 
-
-	// TODO: Address score inaccuracy by potentially adjusting the area considered as 'out' ( < 200).
 	/**
 	 * Updates the scores based on the ball's position and the last paddle hit.
 	 * Determines if a player loses a point or gains a point based on the ball's position
@@ -99,10 +97,10 @@ const Ball : React.FC<ballPorps> = (props) => {
 	 */
 	const handleScore = (ball: { x: number; y: number; }) => {
 		const paddleCollision: CollisionInfo = {
-			bottom: { score: props.p1Score, setScore: props.setP1Score, isOwnGoal: ball.y <= -200 ? true : false },
-			left:   { score: props.p2Score, setScore: props.setP2Score, isOwnGoal: ball.x <= -200 ? true : false },
-			top:    { score: props.p3Score, setScore: props.setP3Score, isOwnGoal: ball.y >= 200 ? true : false },
-			right:  { score: props.p4Score, setScore: props.setP4Score, isOwnGoal: ball.x >= 200 ? true : false },
+			bottom: { score: props.p1Score, setScore: props.setP1Score, isOwnGoal: ball.y <= -170 ? true : false },
+			left:   { score: props.p2Score, setScore: props.setP2Score, isOwnGoal: ball.x <= -170 ? true : false },
+			top:    { score: props.p3Score, setScore: props.setP3Score, isOwnGoal: ball.y >= 170 ? true : false },
+			right:  { score: props.p4Score, setScore: props.setP4Score, isOwnGoal: ball.x >= 170 ? true : false },
 		}
 
 		if (lastPaddleHit !== '') {
@@ -114,13 +112,13 @@ const Ball : React.FC<ballPorps> = (props) => {
 				setScore(score + 1);
 
 		} else {
-			if (ball.y <= -200 && props.p1Score !== 0)
+			if (ball.y <= -170 && props.p1Score !== 0)
 				props.setP1Score(props.p1Score - 1);
-			else if (ball.x <= -200 && props.p2Score !== 0 )
+			else if (ball.x <= -170 && props.p2Score !== 0 )
 				props.setP2Score(props.p2Score - 1);
-			else if (ball.y >= 200 && props.p3Score !== 0)
+			else if (ball.y >= 170 && props.p3Score !== 0)
 				props.setP3Score(props.p3Score - 1);
-			else if (ball.x >= 200 && props.p4Score !== 0)
+			else if (ball.x >= 170 && props.p4Score !== 0)
 				props.setP4Score(props.p4Score - 1);
 		}
 		lastPaddleHit = '';
@@ -203,7 +201,7 @@ const Ball : React.FC<ballPorps> = (props) => {
 			changeBallDir(BottomPaddlePos, 1, true);
 		}
 		// Handling scoring when the ball is outside of the play area.
-		else if (( ball.x <= -200 || ball.x >= 200 || ball.y >= 200 || ball.y <= -200) && 
+		else if (( ball.x <= -170 || ball.x >= 170 || ball.y >= 170 || ball.y <= -170) && 
 			props.p1Score !== 7 && props.p2Score !== 7 && props.p3Score !== 7 && props.p4Score !== 7) {
 			handleScore(ball);
 			randomBallDir();
