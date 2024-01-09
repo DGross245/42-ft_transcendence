@@ -1,0 +1,39 @@
+8. Jan 2024
+groben überblick verschafft und ein paar fragen an paul im meeting stellt auf
+die ich in den nächsten tagen aufbauen kann.
+
+project starten: npm run dev
+
+notes meeting:
+Daniel committed zur main mit commentaren für alle Funktionen
+
+Server erstellt raum und id
+- Ich muss die Kommunikation in der Gruppe unter den clients erstellen sodass jeder mitbekommt
+- Herausfinden wer der master der die position  bei pong vorgibt ist woran sich die anderen Orientiren können
+
+Funktionalitäten der WebSockets:
+Aktionen, die unterstützt werden sollen?
+- Übertragung von positions Daten von kreuzen kreisen und Dreiecken bei tic tac toe
+- Übertragung der Position des balls und des Paddels bei pong
+- Staus der spieler ob sie noch aktiv sind
+- möglichkeit für eine Schnittstelle erstelle wie ich die position Daten an Daniel übergeben
+- —> Daniels code lesen die er die Positionen setzt
+
+Datenfluss über Sockets:
+Welches Datenformat wird verwendet? (z. B. JSON)
+- Am besten wahrscheinlich mit string mal sehen was am besten passt
+
+Codeumfang:
+Ist der vorhandene Code vollständig oder gibt es mehr? pages/sockets.tsx
+App/websocketsClient
+Helpers/wsclient
+
+Verwendete Libraries und Dokumentation:
+Welche Bibliotheken oder Dokumentationen werden genutzt?
+socket.io
+Event emitter -> anschauen
+Next’s
+
+Projektintegration:
+Wie wird die WebSocket-Funktionalität in die Ordnerstruktur des Projekts eingebunden? (z. B. neuer Ordner)
+- für jedes game eigene Ordner Struktur anlegen

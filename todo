@@ -1,0 +1,21 @@
+GOALS FOR THE WEEK
+- websockets verstehen
+- ersten zeilen coden
+- jeden tag das examen anschauen und versuchen zu verstehen
+
+TO-DO
+- was sind websockets?
+  -wie funktioniert die server seite?
+- Examen vorbereiten
+  - subject verstehen
+  - code anschauen
+
+INBOX
+- Daniels code lesen, wie und wo er die Positionen für paddel, ball und kreuze setzt
+  (ganzen code grob verstehen)
+- App/websocketsClient (anschauen und verstehen)
+- Helpers/wsclient (anschauen und verstehen)
+- socket.io docu anschauen
+- Event emitter -> anschauen
+- was ist next.js?
+- konzept/logik erarbeiten wie die clients auf dem server kommunizieren
