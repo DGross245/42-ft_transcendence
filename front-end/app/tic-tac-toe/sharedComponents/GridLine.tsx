@@ -1,9 +1,15 @@
+interface GridLineProps {
+	position: [number, number, number],
+	rotation: [number, number, number],
+	args: [number, number, number],
+}
+
 /**
  * Creates a boxGeometry representing the grid line in a 3D scene with specified position and rotation.
  * @param props
  * @returns The GridLine component is returning a mesh element.
  */
-const GridLine = (props, key) => {
+const GridLine : React.FC<GridLineProps> = (props, key) => {
 	return (
 		<mesh
 			key={key}

@@ -2,8 +2,8 @@ import { Line } from "@react-three/drei";
 
 interface FinishLineProps {
 	colour: number,
-	coords: number[][],
 	visible: boolean;
+	coords: [number, number, number][];
 }
 /**
  * The `FinishLine` component renders a line in a 3D scene with specified coordinates, color, and

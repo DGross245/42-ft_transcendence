@@ -5,6 +5,12 @@ import { extend } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
 
 extend({ TextGeometry })
+
+interface CountdownProps {
+	setCountdownVisible: React.Dispatch<React.SetStateAction<boolean>>,
+	countdownVisible: boolean,
+}
+
 //TODO: Fix position of textGeometry
 /**
  * The Countdown component is a timer that counts down from 4 to 0 and displays the count as a 3D text
@@ -14,7 +20,7 @@ extend({ TextGeometry })
  * The visibility of the mesh is determined by the props.scoreVisible value. If props.scoreVisible is
  * false, the mesh will be visible, otherwise it will be hidden.
  */
-const Countdown = ({ countdownVisible, setCountdownVisible }) => {
+const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVisible }) => {
 	const font = new FontLoader().parse(Silkscreen_Regular);
 	const [count, setCount] = useState(3);
 

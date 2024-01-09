@@ -1,10 +1,17 @@
 
+interface TorusProps {
+	position: [number, number, number],
+	transparent: boolean;
+	blending?: THREE.Blending,
+	color: number,
+}
+
 /**
  * Create a torusGeometry with specific position and rotation.
  * @param props
  * @returns 
  */
-const Torus = (props) => {
+const Torus : React.FC<TorusProps> = (props) => {
 	const [x, y, z] = props.position;
 	
 	return (

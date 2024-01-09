@@ -15,8 +15,8 @@ import { Dispatch, SetStateAction } from "react";
 export const gameValidation = ( 
 	board: string[][][],
 	SceneCoords: number [][][][],
-	coords: number [][],
-	setCoords: Dispatch<SetStateAction<number[][]>>) => {
+	coords: [number, number, number][],
+	setCoords: Dispatch<SetStateAction<[number, number, number][]>>) => {
 		// Represents possible symbol positions to form a winning line from a given location.
 		// Left column: second possible symbol locations. Right column: third possible symbol locations.
 		const directions = [
@@ -49,7 +49,7 @@ export const gameValidation = (
 						const symbol = board[i][j][k];
 						if (symbol !== '') {
 							let p = 0;
-							coords[p++] = SceneCoords[i][j][k];
+							coords[p++] = SceneCoords[i][j][k] as [number, number, number];;
 							let count = 1;
 							let x = i + start[0];
 							let y = j + start[1];
@@ -57,7 +57,7 @@ export const gameValidation = (
 							while (x >= 0 && x < board.length && y >= 0 && y < board[x].length && z >= 0 && z < board[x][y].length) {
 								if (board[x][y][z] === symbol) {
 									count++;
-									coords[p++] = [...SceneCoords[x][y][z]];
+									coords[p++] = SceneCoords[x][y][z] as [number, number, number];;
 									if (count === 3) {
 										setCoords(coords);
 										return (symbol);

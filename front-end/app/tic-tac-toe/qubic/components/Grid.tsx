@@ -21,7 +21,7 @@ export const fieldGenerator = (
 	board: string[][][],
 	setCurrentBoardState: React.Dispatch<React.SetStateAction<string[][][]>>,
 	sceneCoords: number[][][][],
-	setSceneCoords: Dispatch<SetStateAction<number[][][][]>>,
+	setSceneCoords: React.Dispatch<React.SetStateAction<number[][][][]>>,
 	gameOver: boolean) => {
 
 	const fields = [];
@@ -54,7 +54,6 @@ export const fieldGenerator = (
 						<Field
 							key={`${fieldI}-${fieldJ}-${fieldK}`}
 							position={[x,y,z]}
-							rotation={[0, 0, Math.PI / 2]}
 							clicked={gameOver ? gameOver : clicked}
 							click={click}
 							turn={currentTurn}
@@ -75,13 +74,18 @@ export const fieldGenerator = (
 	return (fields);
 }
 
+interface CoordsInfo {
+	position: [number, number, number];
+	rotation: [number, number, number];
+}
+
 /**
  * Generating mulitple grid lines in a 3D scene. Defines coordinates and rotations for grid lines at specific positions.
  * Utilizes the GridLine component to create lines based on the coordinates and rotations.
  * @returns The generated array of GridLine components for the grid.
  */
 export const gridLineGenrator = () => {
-	const coords = [
+	const coords : CoordsInfo[] = [
 		{ position: [ 3, 0, 3], rotation: [Math.PI / 2, 0, 0] },
 		{ position: [-3, 0, 3], rotation: [Math.PI / 2, 0, 0] },
 		{ position: [ 3, 0, 3], rotation: [0, 0, Math.PI / 2] },

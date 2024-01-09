@@ -71,13 +71,18 @@ export const fieldGenerator = (
 	return (fields);
 }
 
+interface CoordsInfo {
+	position: [number, number, number];
+	rotation: [number, number, number];
+}
+
 /**
  * Generating mulitple grid lines in a 3D scene. Defines coordinates and rotations for grid lines at specific positions.
  * Utilizes the GridLine component to create lines based on the coordinates and rotations.
  * @returns The generated array of GridLine components for the grid.
  */
 export const gridLineGenrator = () => {
-	const coords = [
+	const coords : CoordsInfo[] = [
 		{ position: [ 3, 0, 0], rotation: [Math.PI / 2, 0, 0] },
 		{ position: [-3, 0, 0], rotation: [Math.PI / 2, 0, 0] },
 		{ position: [ 0, 0, 3], rotation: [0, 0, Math.PI / 2] },

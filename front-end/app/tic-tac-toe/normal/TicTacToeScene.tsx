@@ -60,7 +60,7 @@ const initialSceneCoords = [
 
 // Represents the 3 coordinates forming a winning line.
 // Extracted from initialSceneCords after finding a winner.
-const winningCoords = [
+const winningCoords : [number, number, number][] = [
 	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
 ];
 
@@ -170,7 +170,7 @@ const TTTScene = () => {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
-				<Camera dimensions={dimensions} keyMap={keyMap} target={[ 0, 0, 0]} reset={reset} />
+				<Camera keyMap={keyMap} target={[ 0, 0, 0]} reset={reset} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, gameOver)}
 				<Floor position={[ 0, -0.2, 0]} args={[0.25, 17.5, 17.5]} /> 

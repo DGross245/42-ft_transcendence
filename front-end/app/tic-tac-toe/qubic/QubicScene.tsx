@@ -66,7 +66,7 @@ const initialSceneCoords = [
 
 // Represents the 3 coordinates forming a winning line.
 // Extracted from initialSceneCords after finding a winner.
-const winningCoords = [
+const winningCoords : [number, number, number][]= [
 	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
 ];
 
@@ -185,7 +185,7 @@ const QubicScene = () => {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<pointLight position={[3,30,3]} />
-				<Camera dimensions={dimensions} keyMap={keyMap} target={[4, 1, 2]} reset={reset} />
+				<Camera keyMap={keyMap} target={[4, 1, 2]} reset={reset} />
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, gameOver)}

@@ -2,13 +2,20 @@ import { Extrude } from '@react-three/drei';
 import { DoubleSide} from 'three';
 import * as THREE from 'three'
 
+interface BlockProps {
+	position: [number, number, number],
+	transparent: boolean;
+	color: number,
+}
+
 // TODO: Maybe switch back to useMemo
 /**
  * Creates a 3D geometry similar to an 3D square frame using the Extrude component.
- * @param
+ * @param props - The `props` parameter is an object that contains the following properties:
+ * 				  `position`, `transparent` and `color`.
  * @returns A mesh with this new block component.
  */
-const Block = (props) => {
+const Block : React.FC<BlockProps> = (props) => {
 	const [x, y, z] = props.position;
 
 	const extrudeSettings = {

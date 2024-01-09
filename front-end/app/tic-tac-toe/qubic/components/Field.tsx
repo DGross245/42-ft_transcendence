@@ -5,15 +5,31 @@ import Block from './Block';
 import X from '../../sharedComponents/X';
 import Torus from '../../sharedComponents/Torus';
 
+interface FieldProps {
+	key: string,
+	position: [number, number, number],
+	clicked: boolean,
+	click: React.Dispatch<React.SetStateAction<boolean>>,
+	turn: string,
+	board: string [][][],
+	setCurrentBoardState: React.Dispatch<React.SetStateAction<string[][][]>>,
+	sceneCoords: number[][][][],
+	setSceneCoords: React.Dispatch<React.SetStateAction<number[][][][]>>,
+	i: number,
+	j: number,
+	k: number,
+	gameOver: boolean,
+}
+
 /**
  * The `Field` component represents a individual fields in a three-dimensional tic-tac-toe board.
  * It manages the rendering of the field and the placement of symbols (X or O or ⬜️).
  * @param props
  * @returns - A Three.js mesh representing the field with/without a symbol.
  */
-const Field = (props) => {
+const Field : React.FC<FieldProps> = (props, key) => {
 	const [hovered, hover] = useState(false);
-	const [symbol, setSymbol] = useState(null);
+	const [symbol, setSymbol] = useState<string>();
 	useCursor(hovered);
 	useCursor(props.clicked);
 
@@ -53,11 +69,11 @@ const Field = (props) => {
 			)}
 
 			{hovered && !props.clicked && !symbol && props.turn == 'X' && !props.gameOver && (
-				<X {...props} color={0xff0000} transparent={true} opacity={0.8}/>
+				<X {...props} color={0xff0000} transparent={true} />
 			)}
 
 			{hovered && !props.clicked && !symbol && props.turn == '⬜️' && !props.gameOver && (
-				<Block {...props} color={0x008000} transparent={true} blending={THREE.AdditiveBlending}/>
+				<Block {...props} color={0x008000} transparent={true} />
 			)}
 
 			{/* Projects the symbol on the field the user click on based on the turn the player clicked (symbol) */}

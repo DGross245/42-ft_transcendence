@@ -3,13 +3,19 @@ import { DoubleSide} from 'three';
 import { Extrude } from '@react-three/drei';
 import * as THREE from 'three'
 
+interface XProps {
+	position: [number, number, number],
+	color: number,
+	transparent: boolean,
+}
+
 // TODO: maybe switch back to useMemo
 /**
  * Creates a custom X shape using the Extrude component with specific position and rotation.
  * @param props
  * @returns A mesh representing an X shape using Extrude.
  */
-const X = (props) => {
+const X : React.FC<XProps> = (props) => {
 	const [x, y, z] = props.position;
 
 	const extrudeSettings = {

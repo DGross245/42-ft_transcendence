@@ -4,31 +4,33 @@ import * as THREE from 'three';
 import Torus from '../../sharedComponents/Torus';
 import X from '../../sharedComponents/X';
 
-//interface FieldProps {
-//	key: string,
-//	position: Vector3,
-//	clicked: boolean,
-//	click: React.Dispatch<React.SetStateAction<boolean>>,
-//	turn: string,
-//	board: string[][][],
-//	setCurrentBoardState: React.Dispatch<React.SetStateAction<string[][][]>>,
-//	sceneCoords: number[][][][],
-//	setSceneCoords: React.Dispatch<React.SetStateAction<number[][][][]>>,
-//	i: number,
-//	j: number,
-//	k: number,
-//	gameOver: boolean,
-//}
+interface FieldProps {
+	key: string,
+	position: [number, number, number],
+	clicked: boolean,
+	click: React.Dispatch<React.SetStateAction<boolean>>,
+	turn: string,
+	board: string[][][],
+	setCurrentBoardState: React.Dispatch<React.SetStateAction<string[][][]>>,
+	sceneCoords: number[][][][],
+	setSceneCoords: React.Dispatch<React.SetStateAction<number[][][][]>>,
+	i: number,
+	j: number,
+	k: number,
+	gameOver: boolean,
+}
 
 /**
  * The `Field` component represents a individual fields in a three-dimensional tic-tac-toe board.
  * It manages the rendering of the field and the placement of symbols (X or O).
- * @param props - 
+ * @param props - The `props` parameter is an object that contains the following properties:
+ * 				  `key`, `position`,`clicked`,`click`,`turn`,`board`, `setCurrentBoardState`, `sceneCoords`,
+ * 				  `setSceneCoords`, `i`, `j`, `k` and `gameOver`
  * @returns - A Three.js mesh representing the field with/without a symbol.
  */
-const Field = (props) => {
+const Field : React.FC<FieldProps> = (props) => {
 	const [hovered, hover] = useState(false);
-	const [symbol, setSymbol] = useState(null);
+	const [symbol, setSymbol] = useState<string>();
 	useCursor(hovered);
 	useCursor(props.clicked);
 
