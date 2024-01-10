@@ -11,7 +11,6 @@ interface CountdownProps {
 	countdownVisible: boolean,
 }
 
-//TODO: Fix position of textGeometry
 /**
  * The Countdown component is a timer that counts down from 4 to 0 and displays the count as a 3D text
  * in a React Three Fiber scene.
@@ -45,7 +44,7 @@ const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVi
 	}, [countdownVisible]);
 	
 	return (
-		<mesh visible={countdownVisible} position={[10, 10, 20]} rotation={[0, Math.PI / 4, 0]}>
+		<mesh visible={countdownVisible} position={[11, 10, 20]} rotation={[0, Math.PI / 4, 0]}>
 			<textGeometry args={[String(count), {font, size: 10, height: 2}]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>

@@ -56,29 +56,26 @@ const Ball : React.FC<ballPorps> = (props) => {
 		ball.velocityY = normalizedY * ball.speed;
 	}
 
-	// TODO: Maybe rework the randomBallDir: remove the while causing unnecessary loops
-	// TODO: Maybe explain more how the function works
 	/**
 	 * Sets the ball back to the middle and generates a random direction for the ball.
+	 * It randomly takes one specified range and calculates with it a angle to determin the ball's direction.
 	 */
 	const randomBallDir = () => {
-		const ball = ballRef.current;
+		let ball = ballRef.current;
 		ball.x = 0;
 		ball.y = 0;
 		ball.speed = 1.2;
 
-		let randomNumber = Math.random();
-		let angle = 360 * randomNumber;
-		const angleOffset = 60; 
+		const ranges = [
+			{min: -37.5, max: 37.5},
+			{min: 142.5, max: 218.5},
+		];
 
-		ball.velocityX = ball.speed * Math.sin(angle);
-		while (ball.velocityX <= 0.6 && ball.velocityX >= -0.6) {
-			randomNumber = Math.random();
-			angle = 360 * randomNumber;
-			ball.velocityX = ball.speed * Math.sin(angle);
-		}
+		const { min, max } = ranges[Math.floor(Math.random() * ranges.length)];
+		const angle = (Math.random() * (max - min) + min) * (Math.PI / 180);
 
-		ball.velocityY = ball.speed * Math.cos(angle + angleOffset);
+		ball.velocityX = ball.speed * Math.sin(angle + (Math.PI / 2));
+		ball.velocityY = ball.speed * Math.cos(angle + (Math.PI / 2));
 	}
 
 	/**
