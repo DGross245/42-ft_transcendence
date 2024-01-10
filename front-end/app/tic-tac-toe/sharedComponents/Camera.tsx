@@ -21,7 +21,7 @@ const Camera : React.FC<CameraProps>= (props) => {
 	useEffect(() => {
 		if (ref && ref.current) {
 			if (props.reset) {
-				ref.current.position.set(...[33, 25, 39]);
+				ref.current.position.set(...[43, 33, 52]);
 				ref.current.lookAt(...props.target);
 			}
 		}
@@ -31,10 +31,11 @@ const Camera : React.FC<CameraProps>= (props) => {
 	useFrame(() => {
 		if (ref && ref.current) {
 			if (keyMap['Digit1']) {
-				ref.current.position.set(...[33, 25, 39]);
+				ref.current.position.set(...[43, 33, 52]);
 				ref.current.lookAt(...props.target);
 			}
 		}
+		console.log(ref.current?.position);
 	});
 
 	return (
@@ -45,7 +46,7 @@ const Camera : React.FC<CameraProps>= (props) => {
 			aspect={window.innerWidth / window.innerHeight}
 			near={0.1}
 			far={1000}
-			position={[33, 25, 39]}
+			position={[43, 33, 52]}
 		/>
 	);
 }

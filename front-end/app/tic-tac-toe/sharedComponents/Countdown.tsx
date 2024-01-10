@@ -44,7 +44,7 @@ const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVi
 	}, [countdownVisible]);
 	
 	return (
-		<mesh visible={countdownVisible} position={[11, 10, 20]} rotation={[0, Math.PI / 4, 0]}>
+		<mesh visible={countdownVisible} position={[11, 13, 20]} rotation={[0, Math.PI / 4, 0]}>
 			<textGeometry args={[String(count), {font, size: 10, height: 2}]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>

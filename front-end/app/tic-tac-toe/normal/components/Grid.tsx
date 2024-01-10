@@ -27,22 +27,30 @@ export const fieldGenerator = (
 	const fields = [];
 	let l = 0;
 	const arrayPosition = [
-		{ i: 0, j: 0, k: 0 }, { i: 0, j: 1, k: 0 }, { i: 0, j: 2, k: 0 },
-		{ i: 0, j: 0, k: 1 }, { i: 0, j: 1, k: 1 }, { i: 0, j: 2, k: 1 },
-		{ i: 0, j: 0, k: 2 }, { i: 0, j: 1, k: 2 }, { i: 0, j: 2, k: 2 },
+		{ i: 0, j: 0, k: 0 }, { i: 0, j: 1, k: 0 }, { i: 0, j: 2, k: 0 }, { i: 0, j: 3, k: 0 },
+		{ i: 0, j: 0, k: 1 }, { i: 0, j: 1, k: 1 }, { i: 0, j: 2, k: 1 }, { i: 0, j: 3, k: 1 },
+		{ i: 0, j: 0, k: 2 }, { i: 0, j: 1, k: 2 }, { i: 0, j: 2, k: 2 }, { i: 0, j: 3, k: 2 },
+		{ i: 0, j: 0, k: 3 }, { i: 0, j: 1, k: 3 }, { i: 0, j: 2, k: 3 }, { i: 0, j: 3, k: 3 },
 
-		{ i: 1, j: 0, k: 0 }, { i: 1, j: 1, k: 0 }, { i: 1, j: 2, k: 0 },
-		{ i: 1, j: 0, k: 1 }, { i: 1, j: 1, k: 1 }, { i: 1, j: 2, k: 1 },
-		{ i: 1, j: 0, k: 2 }, { i: 1, j: 1, k: 2 }, { i: 1, j: 2, k: 2 },
+		{ i: 1, j: 0, k: 0 }, { i: 1, j: 1, k: 0 }, { i: 1, j: 2, k: 0 }, { i: 1, j: 3, k: 0 },
+		{ i: 1, j: 0, k: 1 }, { i: 1, j: 1, k: 1 }, { i: 1, j: 2, k: 1 }, { i: 1, j: 3, k: 1 },
+		{ i: 1, j: 0, k: 2 }, { i: 1, j: 1, k: 2 }, { i: 1, j: 2, k: 2 }, { i: 1, j: 3, k: 2 },
+		{ i: 1, j: 0, k: 3 }, { i: 1, j: 1, k: 3 }, { i: 1, j: 2, k: 3 }, { i: 1, j: 3, k: 3 },
 
-		{ i: 2, j: 0, k: 0 }, { i: 2, j: 1, k: 0 }, { i: 2, j: 2, k: 0 },
-		{ i: 2, j: 0, k: 1 }, { i: 2, j: 1, k: 1 }, { i: 2, j: 2, k: 1 },
-		{ i: 2, j: 0, k: 2 }, { i: 2, j: 1, k: 2 }, { i: 2, j: 2, k: 2 },
+		{ i: 2, j: 0, k: 0 }, { i: 2, j: 1, k: 0 }, { i: 2, j: 2, k: 0 }, { i: 2, j: 3, k: 0 },
+		{ i: 2, j: 0, k: 1 }, { i: 2, j: 1, k: 1 }, { i: 2, j: 2, k: 1 }, { i: 2, j: 3, k: 1 },
+		{ i: 2, j: 0, k: 2 }, { i: 2, j: 1, k: 2 }, { i: 2, j: 2, k: 2 }, { i: 2, j: 3, k: 2 },
+		{ i: 2, j: 0, k: 3 }, { i: 2, j: 1, k: 3 }, { i: 2, j: 2, k: 3 }, { i: 2, j: 3, k: 3 },
+
+		{ i: 3, j: 0, k: 0 }, { i: 3, j: 1, k: 0 }, { i: 3, j: 2, k: 0 }, { i: 3, j: 3, k: 0 },
+		{ i: 3, j: 0, k: 1 }, { i: 3, j: 1, k: 1 }, { i: 3, j: 2, k: 1 }, { i: 3, j: 3, k: 1 },
+		{ i: 3, j: 0, k: 2 }, { i: 3, j: 1, k: 2 }, { i: 3, j: 2, k: 2 }, { i: 3, j: 3, k: 2 },
+		{ i: 3, j: 0, k: 3 }, { i: 3, j: 1, k: 3 }, { i: 3, j: 2, k: 3 }, { i: 3, j: 3, k: 3 },
 	];
 
-	for (let level = 0; level < 3; level++) {
-		for (let i = -1; i < 2; i++) {
-			for (let j = -1; j < 2; j++) {
+	for (let level = 0; level < 4; level++) {
+		for (let i = -1; i < 3; i++) {
+			for (let j = -1; j < 3; j++) {
 				let x = 6 * i;
 				let y = 8 * level;
 				let z = 6 * j;
@@ -83,20 +91,33 @@ interface CoordsInfo {
  */
 export const gridLineGenrator = () => {
 	const coords : CoordsInfo[] = [
-		{ position: [ 3, 0, 0], rotation: [Math.PI / 2, 0, 0] },
-		{ position: [-3, 0, 0], rotation: [Math.PI / 2, 0, 0] },
-		{ position: [ 0, 0, 3], rotation: [0, 0, Math.PI / 2] },
-		{ position: [ 0, 0,-3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 3, 0, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [-3, 0, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 3, 0, 3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 3, 0,-3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 9, 0, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 3, 0, 9], rotation: [0, 0, Math.PI / 2] },
 
-		{ position: [ 3, 8, 0], rotation: [Math.PI / 2, 0, 0] },
-		{ position: [-3, 8, 0], rotation: [Math.PI / 2, 0, 0] },
-		{ position: [ 0, 8, 3], rotation: [0, 0, Math.PI / 2] },
-		{ position: [ 0, 8,-3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 3, 8, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [-3, 8, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 3, 8, 3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 3, 8,-3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 9, 8, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 3, 8, 9], rotation: [0, 0, Math.PI / 2] },
 
-		{ position: [ 3, 16, 0], rotation: [Math.PI / 2, 0, 0] },
-		{ position: [-3, 16, 0], rotation: [Math.PI / 2, 0, 0] },
-		{ position: [ 0, 16, 3], rotation: [0, 0, Math.PI / 2] },
-		{ position: [ 0, 16,-3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 3, 16, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [-3, 16, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 3, 16, 3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 3, 16,-3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 9, 16, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 3, 16, 9], rotation: [0, 0, Math.PI / 2] },
+	
+		{ position: [ 3, 24, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [-3, 24, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 3, 24, 3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 3, 24,-3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 9, 24, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 3, 24, 9], rotation: [0, 0, Math.PI / 2] },
 	];
 
 	const lines = coords.map((line, index) => (
@@ -104,7 +125,7 @@ export const gridLineGenrator = () => {
 			key={index}
 			position={line.position}
 			rotation={line.rotation}
-			args={[0.5, 17.5, 0.5]}
+			args={[0.5, 23.2, 0.5]}
 		/>
 	));
 

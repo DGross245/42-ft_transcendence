@@ -20,29 +20,29 @@ export const gameValidation = (
 		// Represents possible symbol positions to form a winning line from a given location.
 		// Left column: second possible symbol locations. Right column: third possible symbol locations.
 		const directions = [
-			[[ 1, 0, 0], [ 2, 0, 0]],
-			[[ 0, 1, 0], [ 0, 2, 0]],
-			[[ 0, 0, 1], [ 0, 0, 2]],
-			[[ 1, 1, 0], [ 2, 2, 0]],
-			[[-1, 1, 0], [-2, 2, 0]],
-			[[ 1,-1, 0], [ 2,-2, 0]],
-			[[ 1, 0, 1], [ 2, 0, 2]],
-			[[-1, 0, 1], [-2, 0, 2]],
-			[[ 0, 1, 0], [ 0, 2, 0]],
-			[[ 0, 1, 1], [ 0, 2, 2]],
-			[[ 0,-1, 1], [ 0,-2, 2]],
-			[[ 0, 0,-1], [ 0, 0,-2]],
-			[[ 0, 1,-1], [ 0, 2,-2]],
-			[[ 1, 1,-1], [ 2, 2,-2]],
-			[[ 1,-1,-1], [ 2,-2,-2]],
-			[[-1,-1,-1], [-2,-2,-2]],
-			[[-1, 1,-1], [-2, 2,-2]],
+			[[ 1, 0, 0], [ 2, 0, 0],[ 1, 0, 0]],
+			[[ 0, 1, 0], [ 0, 2, 0],[ 0, 1, 0]],
+			[[ 0, 0, 1], [ 0, 0, 2],[ 0, 0, 1]],
+			[[ 1, 1, 0], [ 2, 2, 0],[ 1, 1, 0]],
+			[[-1, 1, 0], [-2, 2, 0],[-1, 1, 0]],
+			[[ 1,-1, 0], [ 2,-2, 0],[ 1,-1, 0]],
+			[[ 1, 0, 1], [ 2, 0, 2],[ 1, 0, 1]],
+			[[-1, 0, 1], [-2, 0, 2],[-1, 0, 1]],
+			[[ 0, 1, 0], [ 0, 2, 0],[ 0, 1, 0]],
+			[[ 0, 1, 1], [ 0, 2, 2],[ 0, 1, 1]],
+			[[ 0,-1, 1], [ 0,-2, 2],[ 0,-1, 1]],
+			[[ 0, 0,-1], [ 0, 0,-2],[ 0, 0,-1]],
+			[[ 0, 1,-1], [ 0, 2,-2],[ 0, 1,-1]],
+			[[ 1, 1,-1], [ 2, 2,-2],[ 1, 1,-1]],
+			[[ 1,-1,-1], [ 2,-2,-2],[ 1,-1,-1]],
+			[[-1,-1,-1], [-2,-2,-2],[-1,-1,-1]],
+			[[-1, 1,-1], [-2, 2,-2],[-1, 1,-1]],
 		];
 
 		let isDraw = true;
 
 		for (const direction of directions) {
-			const [start, end] = direction;
+			const [start] = direction;
 			for (let i = 0; i < board.length; i++) {
 				for (let j = 0; j < board[i].length; j++) {
 					for (let k = 0; k < board[i][j].length; k++) {
@@ -57,8 +57,8 @@ export const gameValidation = (
 							while (x >= 0 && x < board.length && y >= 0 && y < board[x].length && z >= 0 && z < board[x][y].length) {
 								if (board[x][y][z] === symbol) {
 									count++;
-									coords[p++] = SceneCoords[x][y][z] as [number, number, number];;
-									if (count === 3) {
+									coords[p++] = [...SceneCoords[x][y][z]] as [number, number, number];;
+									if (count === 4) {
 										setCoords(coords);
 										return (symbol);
 									}

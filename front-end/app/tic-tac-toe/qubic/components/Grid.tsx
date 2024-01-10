@@ -41,9 +41,14 @@ export const fieldGenerator = (
 		{ i: 2, j: 0, k: 1 }, { i: 2, j: 1, k: 1 }, { i: 2, j: 2, k: 1 }, { i: 2, j: 3, k: 1 },
 		{ i: 2, j: 0, k: 2 }, { i: 2, j: 1, k: 2 }, { i: 2, j: 2, k: 2 }, { i: 2, j: 3, k: 2 },
 		{ i: 2, j: 0, k: 3 }, { i: 2, j: 1, k: 3 }, { i: 2, j: 2, k: 3 }, { i: 2, j: 3, k: 3 },
+
+		{ i: 3, j: 0, k: 0 }, { i: 3, j: 1, k: 0 }, { i: 3, j: 2, k: 0 }, { i: 3, j: 3, k: 0 },
+		{ i: 3, j: 0, k: 1 }, { i: 3, j: 1, k: 1 }, { i: 3, j: 2, k: 1 }, { i: 3, j: 3, k: 1 },
+		{ i: 3, j: 0, k: 2 }, { i: 3, j: 1, k: 2 }, { i: 3, j: 2, k: 2 }, { i: 3, j: 3, k: 2 },
+		{ i: 3, j: 0, k: 3 }, { i: 3, j: 1, k: 3 }, { i: 3, j: 2, k: 3 }, { i: 3, j: 3, k: 3 },
 	];
 
-	for (let level = 0; level < 3; level++) {
+	for (let level = 0; level < 4; level++) {
 		for (let i = -1; i < 3; i++) {
 			for (let j = -1; j < 3; j++) {
 				let x = 6 * i;
@@ -106,6 +111,13 @@ export const gridLineGenrator = () => {
 		{ position: [ 3, 16,-3], rotation: [0, 0, Math.PI / 2] },
 		{ position: [ 9, 16, 3], rotation: [Math.PI / 2, 0, 0] },
 		{ position: [ 3, 16, 9], rotation: [0, 0, Math.PI / 2] },
+	
+		{ position: [ 3, 24, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [-3, 24, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 3, 24, 3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 3, 24,-3], rotation: [0, 0, Math.PI / 2] },
+		{ position: [ 9, 24, 3], rotation: [Math.PI / 2, 0, 0] },
+		{ position: [ 3, 24, 9], rotation: [0, 0, Math.PI / 2] },
 	];
 
 	const lines = coords.map((line, index) => (

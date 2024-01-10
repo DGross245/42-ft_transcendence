@@ -70,7 +70,7 @@ const Field : React.FC<FieldProps> = (props) => {
 			)}
 
 			{hovered && !props.clicked && !symbol && props.turn == 'X' && !props.gameOver && (
-				<X {...props} color={0xff0000} transparent={true} opacity={0.8}/>
+				<X {...props} color={0xff0000} transparent={true} />
 			)}
 
 			{/* Projects the symbol on the field the user click on based on the turn the player clicked (symbol) */}

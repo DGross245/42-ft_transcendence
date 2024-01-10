@@ -19,22 +19,31 @@ const initialBoard = () =>  {
 	return (
 		[
 			[
-				['', '', ''],
-				['', '', ''],
-				['', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
 			],
 			[
-				['', '', ''],
-				['', '', ''],
-				['', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
 			],
 			[
-				['', '', ''],
-				['', '', ''],
-				['', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+			],
+			[
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
 			],
 		]
-	)
+	);
 }
 
 // Initial coordinates for each field in the scene.
@@ -42,19 +51,28 @@ const initialBoard = () =>  {
 // Set on field creation.
 const initialSceneCoords = [
 	[
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
 	],
 	[
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
 	],
 	[
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+	],
+	[
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
 	],
 ];
 
@@ -170,14 +188,14 @@ const TTTScene = () => {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
-				<Camera keyMap={keyMap} target={[ 0, 0, 0]} reset={reset} />
+				<Camera keyMap={keyMap} target={[4, 1, 2]} reset={reset} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, gameOver)}
-				<Floor position={[ 0, -0.2, 0]} args={[0.25, 17.5, 17.5]} /> 
-				<Floor position={[ 0,  7.8, 0]} args={[0.25, 17.5, 17.5]} />
-				<Floor position={[ 0, 15.8, 0]} args={[0.25, 17.5, 17.5]} />
+				<Floor	position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
+				<Floor	position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
+				<Floor	position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
-				<OrbitControls enableZoom={true} enableRotate={!countdownVisible} enablePan={false} />
+				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={false} />
 			</Canvas>
 			<EndModal setReset={setReset} isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 
