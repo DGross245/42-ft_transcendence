@@ -3,11 +3,25 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Silkscreen_Regular from '../../../public/fonts/Silkscreen_Regular.json';
 import { extend } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
+
 extend({ TextGeometry })
 
-const Countdown = ({ countdownVisible, setCountdownVisible }) => {
+interface CountdownProps {
+	setCountdownVisible: React.Dispatch<React.SetStateAction<boolean>>,
+	countdownVisible: boolean,
+}
+
+/**
+ * The Countdown component is a timer that counts down from 4 to 0 and displays the count as a 3D text
+ * in a React Three Fiber scene.
+ * @param props -
+ * @returns A mesh element that displays the current count value.
+ * The visibility of the mesh is determined by the props.scoreVisible value. If props.scoreVisible is
+ * false, the mesh will be visible, otherwise it will be hidden.
+ */
+const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVisible }) => {
 	const font = new FontLoader().parse(Silkscreen_Regular);
-	const [count, setCount] = useState(4);
+	const [count, setCount] = useState(3);
 
 	useEffect(() => {
 		const countdownInterval = setInterval(() => {
@@ -18,7 +32,7 @@ const Countdown = ({ countdownVisible, setCountdownVisible }) => {
 				} else {
 					clearInterval(countdownInterval);
 					setCountdownVisible(false);
-					setCount(4);
+					setCount(3);
 					return (0);
 				}
 			});
@@ -30,7 +44,7 @@ const Countdown = ({ countdownVisible, setCountdownVisible }) => {
 	}, [countdownVisible]);
 	
 	return (
-		<mesh visible={countdownVisible} position={[10, 10, 20]} rotation={[0, Math.PI / 4, 0]}>
+		<mesh visible={countdownVisible} position={[11, 13, 20]} rotation={[0, Math.PI / 4, 0]}>
 			<textGeometry args={[String(count), {font, size: 10, height: 2}]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>

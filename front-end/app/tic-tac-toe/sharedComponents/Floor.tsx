@@ -1,6 +1,17 @@
 import * as THREE from 'three';
 
-const Floor = (props) => {
+interface FloorProps {
+	position: [number, number, number],
+	args: [number, number, number],
+}
+
+/**
+ * The Floor component is a mesh that represents a floor in a 3D scene, with customizable position,
+ * size, and material properties.
+ * @param props
+ * @returns A mesh with a boxGeometry representing the floor.
+ */
+const Floor : React.FC<FloorProps> = (props) => {
 	return (
 		<mesh position={props.position} rotation={[0, 0, Math.PI / 2]}>
 			<boxGeometry args={props.args} />
