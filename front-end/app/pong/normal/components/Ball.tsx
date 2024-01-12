@@ -3,7 +3,7 @@
 import { Ref, useEffect, useRef } from "react";
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-
+import { pong } from "../../../../components/Sound"
 // FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
 
 interface ballPorps {
@@ -146,10 +146,14 @@ const Ball : React.FC<ballPorps> = (props) => {
 			updateBallPosition(ball, deltaTime);
 		}
 		// Handling ball collision with paddles.
-		else if (isCollidingWithPaddle(leftPaddlePos))
+		else if (isCollidingWithPaddle(leftPaddlePos)) {
+			pong();
 			changeBallDir(leftPaddlePos, 1);
-		else if (isCollidingWithPaddle(rightPaddlePos))
+		}
+		else if (isCollidingWithPaddle(rightPaddlePos)) {
+			pong();
 			changeBallDir(rightPaddlePos, -1);
+		}
 		// Handling scoring when the ball is outside of the play area.
 		else if ((ball.x > 200 || ball.x < -200) && 
 				props.p2Score !== 7 && props.p1Score !== 7) {

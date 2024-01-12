@@ -14,6 +14,8 @@ import Countdown from '../sharedComponents/Countdown';
 import inputHandler from '@/components/inputHandler';
 import { Mesh } from 'three'
 
+// TODO: Look if re-renders can be minimized
+
 /**
  * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
  * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.

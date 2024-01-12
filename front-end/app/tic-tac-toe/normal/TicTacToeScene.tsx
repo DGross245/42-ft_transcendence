@@ -11,6 +11,9 @@ import EndModal from "./components/EndModal";
 import Camera from "../sharedComponents/Camera";
 import Countdown from "../sharedComponents/Countdown";
 import inputHandler from "@/components/inputHandler";
+import { losing1, losing2, tictactoe, win } from "@/components/Sound";
+
+// TODO: Add a lose function, that displays losing modal + plays random lose sound
 
 // Used to track user moves for validation.
 // '' = empty position, 'X' or 'O' updated on user click.
@@ -110,6 +113,9 @@ const TTTScene = () => {
 	}
 
 	const openModal = () => {
+		win();
+		//losing1();
+		//losing2();
 		setShowModal(true);
 	}
 
@@ -156,6 +162,7 @@ const TTTScene = () => {
 
 		const checkClick = () => {
 			if (clicked) {
+				tictactoe();
 				setTurn(currentTurn === 'X' ? 'O' : 'X');
 				click(false);
 				const winner = gameValidation(board, sceneCoords, coords, setCoords);
@@ -191,11 +198,11 @@ const TTTScene = () => {
 				<Camera keyMap={keyMap} target={[4, 1, 2]} reset={reset} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, gameOver)}
-				<Floor	position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
-				<Floor	position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
-				<Floor	position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
+				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
+				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
+				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
-				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={false} />
+				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={true} />
 			</Canvas>
 			<EndModal setReset={setReset} isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 
