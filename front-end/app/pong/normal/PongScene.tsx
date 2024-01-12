@@ -1,12 +1,12 @@
 "use client"
 
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei'; 
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, useFBO } from '@react-three/drei'; 
 import Camera from '../sharedComponents/Camera';
 import Border from './components/Border';
 import { RightPaddle, LeftPaddle } from './components/Paddle';
-import Ball from './components/Ball';
+import { Ball } from './components/Ball';
 import CubeLine from './components/CubeLine';
 import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
@@ -23,9 +23,6 @@ import { Mesh } from 'three'
  */
 export default function PongScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const keyMap = inputHandler();
-	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
-	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const [p1Score, setP1Score] = useState(0);
 	const [p2Score, setP2Score] = useState(0);
 	const [showModal, setShowModal] = useState(false);
@@ -34,6 +31,11 @@ export default function PongScene() {
 	const [scoreVisible, setScoreVisibility] = useState(false);
 	const [reset, setReset] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true);
+	
+	const keyMap = inputHandler();
+	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+	const ballRef = useRef<Mesh>(null);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -108,6 +110,7 @@ export default function PongScene() {
 					gameOver={gameOver} setGameOver={setGameOver}
 					scoreVisible={scoreVisible}
 					isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
+					ref={ballRef}
 				/>
 				<CubeLine />
 				<OrbitControls enablePan={false} />

@@ -1,9 +1,10 @@
 'use client'
 
-import { Ref, useEffect, useRef } from "react";
+import { MutableRefObject, forwardRef, useEffect, useRef } from "react";
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import { pong } from "../../../../components/Sound"
+
 // FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
 
 interface ballPorps {
@@ -30,8 +31,8 @@ interface ballPorps {
  * 			consists of a boxGeometry with dimensions of 4x4x4 and a meshBasicMaterial with a color of (16, 16, 16).
  * 			The visibility of the mesh is determined by the isBallVisible prop.
  */
-const Ball : React.FC<ballPorps> = (props) => {
-	let ref = useRef<THREE.Mesh>(null);
+export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
+	const meshRef = ref as MutableRefObject<THREE.Mesh | null>;
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
@@ -88,9 +89,9 @@ const Ball : React.FC<ballPorps> = (props) => {
 	const updateBallPosition = (ball: { x: number; y: number; velocityX: number; velocityY: number; }, deltaTime: number) => {
 		ball.x += ball.velocityX * 100 * deltaTime;
 		ball.y += ball.velocityY * 100 * deltaTime;
-		if (ref.current) {
-			ref.current.position.x = ball.x;
-			ref.current.position.y = ball.y;
+		if (meshRef.current) {
+			meshRef.current.position.x = ball.x;
+			meshRef.current.position.y = ball.y;
 		}
 	}
 
@@ -166,11 +167,11 @@ const Ball : React.FC<ballPorps> = (props) => {
 	});
 
 	return (
-		<mesh ref={ref} visible={props.isBallVisible}>
+		<mesh ref={meshRef} visible={props.isBallVisible}>
 			<boxGeometry args={[4, 4, 4]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
 	);
-}
+})
 
-export default Ball;
+// export default Ball;

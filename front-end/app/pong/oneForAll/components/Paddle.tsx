@@ -31,7 +31,7 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
 	});
 
 	return (
-		<mesh ref={ref} position={position}>
+		<mesh ref={meshRef} position={position}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
@@ -61,7 +61,7 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	});
 
 	return (
-		<mesh ref={ref} position={position}>
+		<mesh ref={meshRef} position={position}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
@@ -91,7 +91,7 @@ export const TopPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =>
 	});
 
 	return (
-		<mesh ref={ref} position={position} rotation={[0, 0, Math.PI / 2]}>
+		<mesh ref={meshRef} position={position} rotation={[0, 0, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
@@ -121,7 +121,7 @@ export const BottomPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref)
 	});
 
 	return (
-		<mesh ref={ref} position={position} rotation={[0, 0, Math.PI / 2]} >
+		<mesh ref={meshRef} position={position} rotation={[0, 0, Math.PI / 2]} >
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>

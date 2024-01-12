@@ -62,7 +62,7 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	});
 
 	return (
-		<mesh ref={ref} position={position}>
+		<mesh ref={meshRef} position={position}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
