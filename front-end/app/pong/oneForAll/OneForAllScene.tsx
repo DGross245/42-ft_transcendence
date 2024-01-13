@@ -1,17 +1,18 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stats } from '@react-three/drei'; 
 import inputHandler from '@/components/inputHandler';
 import Camera from '../sharedComponents/Camera';
 import Border from './components/Border';
 import { RightPaddle, LeftPaddle, TopPaddle, BottomPaddle } from './components/Paddle';
-import Ball from './components/Ball';
+import { Ball } from './components/Ball';
 import { CubeLineY, CubeLineX }from './components/CubeLine';
 import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
+import { convertToObject } from 'typescript';
 
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
@@ -21,10 +22,6 @@ import Countdown from '../sharedComponents/Countdown';
 export default function OneForAllScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const keyMap = inputHandler();
-	const rightPaddleRef = useRef<THREE.Mesh>(null!);
-	const leftPaddleRef = useRef<THREE.Mesh>(null!);
-	const topPaddleRef = useRef<THREE.Mesh>(null!);
-	const bottomPaddleRef = useRef<THREE.Mesh>(null!);
 	const [p1Score, setP1Score] = useState(0);
 	const [p2Score, setP2Score] = useState(0);
 	const [p3Score, setP3Score] = useState(0);
@@ -35,6 +32,12 @@ export default function OneForAllScene() {
 	const [scoreVisible, setScoreVisibility] = useState(false);
 	const [reset, setReset] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true);
+	
+	const rightPaddleRef = useRef<THREE.Mesh>(null) as MutableRefObject<THREE.Mesh>;
+	const leftPaddleRef = useRef<THREE.Mesh>(null) as MutableRefObject<THREE.Mesh>;
+	const topPaddleRef = useRef<THREE.Mesh>(null) as MutableRefObject<THREE.Mesh>;
+	const bottomPaddleRef = useRef<THREE.Mesh>(null) as MutableRefObject<THREE.Mesh>;
+	const ballRef = useRef<THREE.Mesh>(null);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -115,6 +118,7 @@ export default function OneForAllScene() {
 					gameOver={gameOver} setGameOver={setGameOver}
 					scoreVisible={scoreVisible}
 					isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
+					ref={ballRef}
 				/>
 				<CubeLineY />
 				<CubeLineX />

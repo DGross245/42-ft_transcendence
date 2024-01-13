@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from "react";
+import { MutableRefObject, forwardRef, useEffect, useRef } from "react";
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -37,8 +37,8 @@ interface ballPorps {
  * 				  `setWinner`, `gameOver`, `setGameOver`, `scoreVisible`, `isBallVisible` and `setBallVisibility`
  * @returns A Three.js mesh representing a ball.
  */
-const Ball : React.FC<ballPorps> = (props) => {
-	let ref = useRef<THREE.Mesh>(null);
+export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
+	const meshRef = ref as MutableRefObject<THREE.Mesh | null>;
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const halfBall = 2;
 	let lastPaddleHit = '';
@@ -134,8 +134,10 @@ const Ball : React.FC<ballPorps> = (props) => {
 	const updateBallPosition = (ball: { x: number; y: number; velocityX: number; velocityY: number; }, deltaTime: number) => {
 		ball.x += ball.velocityX * 100 * deltaTime;
 		ball.y += ball.velocityY * 100 * deltaTime;
-		ref.current!.position.x = ball.x;
-		ref.current!.position.y = ball.y;
+		if (meshRef.current) {
+			meshRef.current.position.x = ball.x;
+			meshRef.current.position.y = ball.y;
+		}
 	}
 
 	const handleBallMovement = (ball: { x: any; y: any; velocityX: any; velocityY: any; speed: number; }, deltaTime: number) => {
@@ -245,11 +247,9 @@ const Ball : React.FC<ballPorps> = (props) => {
 	});
 
 	return (
-		<mesh ref={ref} visible={props.isBallVisible}>
+		<mesh ref={meshRef} visible={props.isBallVisible}>
 			<boxGeometry args={[4, 4, 4]} />
 			<meshBasicMaterial color={ 0xffffff }/>
 		</mesh>
 	);
-}
-
-export default Ball;
+})

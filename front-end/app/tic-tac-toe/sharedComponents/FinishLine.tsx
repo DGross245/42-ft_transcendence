@@ -1,10 +1,13 @@
+import { finish } from "@/components/Sound";
 import { Line } from "@react-three/drei";
+import { useEffect } from "react";
 
 interface FinishLineProps {
 	colour: number,
 	visible: boolean;
 	coords: [number, number, number][];
 }
+
 /**
  * The `FinishLine` component renders a line in a 3D scene with specified coordinates, color, and
  * visibility.
@@ -12,6 +15,11 @@ interface FinishLineProps {
  * @returns A mesh component with a Line component inside it.
  */
 const FinishLine: React.FC<FinishLineProps> = (props) => {
+	useEffect(() => {
+		if (props.visible)
+			finish();
+	}, [props.visible]);
+
 	return (
 		<mesh visible={props.visible}>
 			<Line

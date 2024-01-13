@@ -3,6 +3,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Silkscreen_Regular from '../../../public/fonts/Silkscreen_Regular.json';
 import { extend } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
+import { countSound, end } from '@/components/Sound';
 
 extend({ TextGeometry })
 
@@ -24,23 +25,28 @@ const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVi
 	const [count, setCount] = useState(3);
 
 	useEffect(() => {
-		const countdownInterval = setInterval(() => {
-
-			setCount((prevCount) => {
-				if (prevCount > 0) {
-					return (prevCount - 1);
-				} else {
-					clearInterval(countdownInterval);
-					setCountdownVisible(false);
-					setCount(3);
-					return (0);
-				}
-			});
-		}, 1000);
-
-		return () => {
-			clearInterval(countdownInterval);
-		};
+		if (countdownVisible) {
+			countSound();
+			const countdownInterval = setInterval(() => {
+	
+				setCount((prevCount) => {
+					if (prevCount > 0) {
+						countSound();
+						return (prevCount - 1);
+					} else {
+						clearInterval(countdownInterval);
+						setCountdownVisible(false);
+						end();
+						setCount(3);
+						return (0);
+					}
+				});
+			}, 1000);
+	
+			return () => {
+				clearInterval(countdownInterval);
+			};
+		}
 	}, [countdownVisible]);
 	
 	return (

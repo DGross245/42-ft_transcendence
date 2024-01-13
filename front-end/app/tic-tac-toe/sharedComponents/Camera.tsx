@@ -8,6 +8,8 @@ interface CameraProps {
 	reset: boolean,
 }
 
+// TODO: change Camera position so that there is more room on top
+
 /**
  * Ceates a perspective camera for a 3D scene and updates its position and orientation based on a key map.
  * @param props -
@@ -21,7 +23,7 @@ const Camera : React.FC<CameraProps>= (props) => {
 	useEffect(() => {
 		if (ref && ref.current) {
 			if (props.reset) {
-				ref.current.position.set(...[43, 33, 52]);
+				ref.current.position.set(...[44, 35, 47]);
 				ref.current.lookAt(...props.target);
 			}
 		}
@@ -31,11 +33,10 @@ const Camera : React.FC<CameraProps>= (props) => {
 	useFrame(() => {
 		if (ref && ref.current) {
 			if (keyMap['Digit1']) {
-				ref.current.position.set(...[43, 33, 52]);
+				ref.current.position.set(...[44, 35, 47]);
 				ref.current.lookAt(...props.target);
 			}
 		}
-		console.log(ref.current?.position);
 	});
 
 	return (
@@ -46,7 +47,7 @@ const Camera : React.FC<CameraProps>= (props) => {
 			aspect={window.innerWidth / window.innerHeight}
 			near={0.1}
 			far={1000}
-			position={[43, 33, 52]}
+			position={[44, 35, 47]}
 		/>
 	);
 }
