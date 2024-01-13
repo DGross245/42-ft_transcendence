@@ -16,6 +16,7 @@ import { Mesh } from "three"
 import { useSound } from "@/components/Sound";
 
 // TODO: Add a lose function, that displays losing modal + plays random lose sound
+// TODO: Add maybe a minimap where you can see the board better
 
 // Used to track user moves for validation.
 // '' = empty position, 'X' or 'O' updated on user click.

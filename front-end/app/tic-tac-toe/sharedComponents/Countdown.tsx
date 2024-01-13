@@ -12,6 +12,8 @@ interface CountdownProps {
 	countdownVisible: boolean,
 }
 
+// TODO: Bind it to the camera
+
 /**
  * The Countdown component is a timer that counts down from 4 to 0 and displays the count as a 3D text
  * in a React Three Fiber scene.

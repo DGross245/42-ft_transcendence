@@ -3,6 +3,8 @@ import { DoubleSide, Shape, Mesh } from 'three';
 import { Extrude } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 
+// TODO: Bind it to the camera
+
 const TurnDisplay = ( camera: MutableRefObject<Mesh> ) => {
 	const extrudeSettings = {
 		steps: 2,
