@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber"
-import React, { useEffect, useState } from 'react';
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'; 
 import Floor from "../sharedComponents/Floor";
 import { gameValidation }  from "../sharedComponents/GameValidation"
@@ -11,7 +11,9 @@ import EndModal from "./components/EndModal";
 import Camera from "../sharedComponents/Camera";
 import Countdown from "../sharedComponents/Countdown";
 import inputHandler from "@/components/inputHandler";
-import { losing1, losing2, tictactoe, win } from "@/components/Sound";
+import TurnDisplay from "./components/TurnDisplay";
+import { Mesh } from "three"
+import { useSound } from "@/components/Sound";
 
 // TODO: Add a lose function, that displays losing modal + plays random lose sound
 
@@ -106,14 +108,17 @@ const TTTScene = () => {
 	const [winner, setWinner] = useState('');
 	const [countdownVisible, setCountdownVisible] = useState(true);
 	const [reset, setReset] = useState(false);
+	const soundEngine = useSound();
+
 	const keyMap = inputHandler();
+	const CameraRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 
 	const closeModal = () => {
 		setShowModal(false);
 	}
 
 	const openModal = () => {
-		win();
+		soundEngine?.playSound("win");
 		//losing1();
 		//losing2();
 		setShowModal(true);
@@ -162,7 +167,7 @@ const TTTScene = () => {
 
 		const checkClick = () => {
 			if (clicked) {
-				tictactoe();
+				soundEngine?.playSound("tictactoe");
 				setTurn(currentTurn === 'X' ? 'O' : 'X');
 				click(false);
 				const winner = gameValidation(board, sceneCoords, coords, setCoords);
@@ -195,12 +200,13 @@ const TTTScene = () => {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
-				<Camera keyMap={keyMap} target={[4, 1, 2]} reset={reset} />
+				<Camera keyMap={keyMap} target={[4, 1, 2]} reset={reset} ref={CameraRef} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, gameOver)}
 				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
 				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
+				{/*<TurnDisplay camera={CameraRef} />*/}
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
 				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={true} />
 			</Canvas>

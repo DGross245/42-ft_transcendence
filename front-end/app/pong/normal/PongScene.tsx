@@ -1,12 +1,12 @@
 "use client"
 
 import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, useFBO } from '@react-three/drei'; 
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei'; 
 import Camera from '../sharedComponents/Camera';
 import Border from './components/Border';
 import { RightPaddle, LeftPaddle } from './components/Paddle';
-import { Ball } from './components/Ball';
+import { Ball } from './components/Ball';
 import CubeLine from './components/CubeLine';
 import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';

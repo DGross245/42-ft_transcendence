@@ -1,4 +1,4 @@
-import { finish } from "@/components/Sound";
+import { useSound } from "@/components/Sound";
 import { Line } from "@react-three/drei";
 import { useEffect } from "react";
 
@@ -15,9 +15,11 @@ interface FinishLineProps {
  * @returns A mesh component with a Line component inside it.
  */
 const FinishLine: React.FC<FinishLineProps> = (props) => {
+	const soundEngine = useSound();
+
 	useEffect(() => {
 		if (props.visible)
-			finish();
+			soundEngine?.playSound("finish");
 	}, [props.visible]);
 
 	return (

@@ -3,7 +3,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Silkscreen_Regular from '../../../public/fonts/Silkscreen_Regular.json';
 import { extend } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
-import { countSound, end } from '@/components/Sound';
+import { useSound } from '@/components/Sound';
 
 extend({ TextGeometry })
 
@@ -23,20 +23,21 @@ interface CountdownProps {
 const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVisible }) => {
 	const font = new FontLoader().parse(Silkscreen_Regular);
 	const [count, setCount] = useState(3);
+	const soundEngine = useSound();
 
 	useEffect(() => {
 		if (countdownVisible) {
-			countSound();
+			soundEngine?.playSound("countSound");
 			const countdownInterval = setInterval(() => {
 	
 				setCount((prevCount) => {
 					if (prevCount > 0) {
-						countSound();
+						soundEngine?.playSound("countSound");
 						return (prevCount - 1);
 					} else {
 						clearInterval(countdownInterval);
 						setCountdownVisible(false);
-						end();
+						soundEngine?.playSound("end");
 						setCount(3);
 						return (0);
 					}
@@ -47,7 +48,7 @@ const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVi
 				clearInterval(countdownInterval);
 			};
 		}
-	}, [countdownVisible]);
+	}, [countdownVisible, soundEngine]);
 	
 	return (
 		<mesh visible={countdownVisible} position={[11, 13, 20]} rotation={[0, Math.PI / 4, 0]}>
