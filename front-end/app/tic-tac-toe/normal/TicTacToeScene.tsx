@@ -99,7 +99,7 @@ const winningCoords : [number, number, number][] = [
 const TTTScene = () => {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const [clicked, click] = useState(false);
-	const [currentTurn, setTurn] = useState('X');
+	const [currentTurn, setTurn] = useState('');
 	const [board, setCurrentBoardState] = useState(initialBoard());
 	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
 	const [showFinishLine, setShowFinishLine] = useState(false);
@@ -112,8 +112,6 @@ const TTTScene = () => {
 	const [reset, setReset] = useState(false);
 	const soundEngine = useSound();
 	const keyMap = inputHandler();
-
-	const TurnRef = useRef<THREE.Mesh>(null) as MutableRefObject<THREE.Mesh>;
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -131,7 +129,7 @@ const TTTScene = () => {
 		if (reset) {
 			closeModal();
 			setCurrentBoardState(initialBoard());
-			setTurn('X');
+			setTurn('');
 			setShowFinishLine(false);
 			setCoords([...winningCoords]);
 			setColour(0xffffff);
@@ -141,6 +139,11 @@ const TTTScene = () => {
 			setReset(false);
 		}
 	}, [reset]);
+
+	useEffect(() => {
+		if (!countdownVisible)
+			setTurn('X');
+	}, [countdownVisible]);
 
 	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
@@ -170,7 +173,6 @@ const TTTScene = () => {
 		const checkClick = () => {
 			if (clicked) {
 				soundEngine?.playSound("tictactoe");
-				setTurn(currentTurn === 'X' ? 'O' : 'X');
 				click(false);
 				const winner = gameValidation(board, sceneCoords, coords, setCoords);
 				if (winner) {
@@ -184,7 +186,9 @@ const TTTScene = () => {
 					}
 					setWinner(winner);
 					setGameOver(true);
+					return;
 				}
+				setTurn(currentTurn === 'X' ? 'O' : 'X');
 			}
 		}
 
@@ -202,15 +206,15 @@ const TTTScene = () => {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
-				<Camera keyMap={keyMap} target={[4, 1, 2]} reset={reset} TurnRef={TurnRef} />
+				<Camera keyMap={keyMap} target={[4, 10, 2]} reset={reset} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, gameOver)}
 				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
 				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
-				<TurnDisplay ref={TurnRef} />
+				<TurnDisplay turn={currentTurn} />
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
-				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={true} />
+				<OrbitControls enableZoom={false} target={[4, 10, 2]} enableRotate={true} enablePan={false} />
 			</Canvas>
 			<EndModal setReset={setReset} isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 

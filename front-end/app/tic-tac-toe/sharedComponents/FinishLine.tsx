@@ -25,7 +25,7 @@ const FinishLine: React.FC<FinishLineProps> = (props) => {
 	return (
 		<mesh visible={props.visible}>
 			<Line
-				points={[props.coords[0], props.coords[1], props.coords[2], props.coords[3]]}
+				points={[props.coords[0], props.coords[1], props.coords[3]]}
 				color={props.colour}
 				lineWidth={15}
 			/>

@@ -6,17 +6,13 @@ interface CameraProps {
 	target: [number, number, number],
 	keyMap: { [key: string]: boolean },
 	reset: boolean,
-	TurnRef: React.MutableRefObject<THREE.Mesh>,
 }
-// TODO: change Camera position so that there is more room on top
-// TODO: Move ref into parent component
 
 /**
  * Ceates a perspective camera for a 3D scene and updates its position and orientation based on a key map.
  * @param props -
  * @returns The PerspectiveCamera component from the Three.js library.
  */
-
 const Camera : React.FC<CameraProps>= (props) => {
 	const ref = useRef<THREE.PerspectiveCamera>(null);
 	const keyMap = props.keyMap;
@@ -38,9 +34,6 @@ const Camera : React.FC<CameraProps>= (props) => {
 				ref.current.position.set(...[44, 35, 47]);
 				ref.current.lookAt(...props.target);
 			}
-		}
-		if (ref && ref.current) {
-			props.TurnRef.current.position.copy(ref.current.position)
 		}
 	});
 
