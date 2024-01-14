@@ -86,7 +86,7 @@ const initialSceneCoords = [
 // Represents the 3 coordinates forming a winning line.
 // Extracted from initialSceneCords after finding a winner.
 const winningCoords : [number, number, number][] = [
-	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
+	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
 ];
 
 /**
