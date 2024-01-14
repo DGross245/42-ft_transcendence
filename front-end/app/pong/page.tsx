@@ -1,7 +1,6 @@
-import { title } from "@/components/primitives";
-import PongScene from "@/app/pong/normal/PongScene";
 import OneForAllScene from "./oneForAll/OneForAllScene";
 import { PongProvider } from "./normal/PongProvider";
+import PongScene from "@/app/pong/normal/PongScene";
 
 export default function PongPage() {
 	return (
