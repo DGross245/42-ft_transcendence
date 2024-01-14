@@ -1,4 +1,4 @@
-import { Navbar } from "@/components/navbar";
+import { Navbar } from "@/components/Navbar";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Providers } from "./providers";
