@@ -1,8 +1,9 @@
 'use client'
 
-import { MutableRefObject, forwardRef, useEffect, useRef } from "react";
+import { MutableRefObject, forwardRef, useEffect, useRef, useState } from "react";
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { LeftPaddle } from "./Paddle";
 
 type CollisionInfo = {
 	[key: string]: {score: any, setScore: any, isOwnGoal: boolean};
@@ -239,7 +240,7 @@ export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
 	}, [props.p1Score, props.p2Score, props.p3Score, props.p4Score]);
 
 	// Game/render loop for the ball.
-	useFrame((state, deltaTime) => {
+	useFrame((_, deltaTime) => {
 		let ball = ballRef.current;
 
 		updateBallPosition(ball, deltaTime);

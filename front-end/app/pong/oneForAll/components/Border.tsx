@@ -24,13 +24,7 @@ const Border = () => {
 			position={[border.position.x, border.position.y, border.position.z]}
 			rotation={[border.rotation.x, border.rotation.y, border.rotation.z]} >
 			<boxGeometry args={[40, 4, 4]} />
-			<meshBasicMaterial
-				color={ 0xffffff }
-				toneMapped={false}
-				transparent={false}
-				blending={THREE.AdditiveBlending}
-				side={THREE.BackSide}
-			/>
+			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
 	));
 

@@ -3,6 +3,9 @@ import { MutableRefObject, forwardRef } from "react";
 import * as THREE from 'three'
 import { Mesh } from 'three';
 
+// TODO: add later a getter/setter that sets the color for the player
+// FIXME: paddle move range is a bit to long, paddle can glitch into the borders.
+
 interface Paddle {
 	keyMap: { [key: string]: boolean };
 	position: [number, number, number];
@@ -17,7 +20,7 @@ interface Paddle {
  */
 export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const paddleSpeed = 300;
-	const borderPositionY = 113;
+	const borderPositionY = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	useFrame((_, delta) => {
@@ -33,7 +36,7 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
 	return (
 		<mesh ref={meshRef} position={position}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ 0xffffff } />
+			<meshBasicMaterial color={ 0xff0000 } />
 		</mesh>
 	);
 });
@@ -47,7 +50,7 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
  */
 export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const paddleSpeed = 300;
-	const borderPositionY = 113;
+	const borderPositionY = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	useFrame((_, delta) => {
@@ -63,7 +66,7 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	return (
 		<mesh ref={meshRef} position={position}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ 0xffffff } />
+			<meshBasicMaterial color={ 0x00ff00 } />
 		</mesh>
 	);
 });
@@ -77,7 +80,7 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
  */
 export const TopPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const paddleSpeed = 300;
-	const borderPositionY = 113;
+	const borderPositionY = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	useFrame((_, delta) => {
@@ -93,7 +96,7 @@ export const TopPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =>
 	return (
 		<mesh ref={meshRef} position={position} rotation={[0, 0, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ 0xffffff } />
+			<meshBasicMaterial color={ 0x00F5FF11 } />
 		</mesh>
 	);
 });
@@ -107,7 +110,7 @@ export const TopPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =>
  */
 export const BottomPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const paddleSpeed = 300;
-	const borderPositionY = 113;
+	const borderPositionY = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	useFrame((_, delta) => {
@@ -123,7 +126,7 @@ export const BottomPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref)
 	return (
 		<mesh ref={meshRef} position={position} rotation={[0, 0, Math.PI / 2]} >
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ 0xffffff } />
+			<meshBasicMaterial color={ 0x1874CD } />
 		</mesh>
 	);
 });

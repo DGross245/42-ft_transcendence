@@ -74,10 +74,10 @@ const TurnDisplay = ({ turn } : { turn: string }) => {
 	}, [camera, ref.current]);
 	
 	return (
-		<group ref={ref}>
+		<group ref={ref} scale={[0.4, 0.4, 0.4]}>
 			<mesh 
 				position={turn === 'X' ? [-5.5, 15.5, -30] : [-5.5, 15, -30]}
-				scale={turn === 'X' ? [0.7, 0.7, 0.7] : [0.5, 0.5, 0.5]}
+				scale={turn === 'X' ? [0.6, 0.6, 0.6] : [0.5, 0.5, 0.5]}
 			>
 				<Extrude args={[xShape, extrudeSettings]}>
 					<meshBasicMaterial 
@@ -100,7 +100,7 @@ const TurnDisplay = ({ turn } : { turn: string }) => {
 
 			<mesh
 				position={turn === 'O' ? [-0.5, 13.6, -30] : [-0.5, 13.6, -30]}
-				scale={turn === 'O' ? [0.8, 0.8, 0.8] : [0.6, 0.6, 0.6]}>
+				scale={turn === 'O' ? [0.65, 0.65, 0.65] : [0.6, 0.6, 0.6]}>
 				<torusGeometry args={[2, 0.4, 8, 24]} />
 				<meshBasicMaterial
 					color={0x1aabff}
@@ -120,7 +120,7 @@ const TurnDisplay = ({ turn } : { turn: string }) => {
 
 			<mesh
 				position={[4.5, 13.5, -30]}
-				scale={turn === '⬜️' ? [0.7, 0.7, 0.7] : [0.5, 0.5, 0.5]}
+				scale={turn === '⬜️' ? [0.6, 0.6, 0.6] : [0.5, 0.5, 0.5]}
 			>
 				<Extrude args={[boxShape, extrudeSettings]}>
 					<meshBasicMaterial

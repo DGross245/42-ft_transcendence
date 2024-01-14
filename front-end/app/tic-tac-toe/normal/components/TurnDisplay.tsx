@@ -3,6 +3,8 @@ import { DoubleSide, Shape } from 'three';
 import { Extrude } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 
+// TODO: Change scaling of symbols
+
 /**
  * The TurnDisplay component renders a 3D representation of the current turn in a game, either an 'X'
  * or an 'O'.
