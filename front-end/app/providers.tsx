@@ -29,7 +29,7 @@ const goerli = {
 	name: 'goerli',
 	currency: 'ETH',
 	explorerUrl: 'https://goerli.etherscan.io',
-	rpcUrl: 'https://eth-goerli.g.alchemy.com/v2/demo'
+	rpcUrl: 'https://ethereum-goerli.publicnode.com'
 };
 
 /* ---------------------------------- Modal --------------------------------- */
