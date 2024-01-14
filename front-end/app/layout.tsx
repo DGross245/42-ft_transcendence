@@ -1,11 +1,18 @@
-import "@/styles/globals.css";
-import { Metadata } from "next";
+import { Navbar } from "@/components/navbar";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Providers } from "./providers";
-import { Navbar } from "@/components/navbar";
-import { Link } from "@nextui-org/link";
+import { Metadata } from "next";
 import clsx from "clsx";
+
+import favicon from "@/assets/favicon.ico";
+import logo from "@/assets/logo.png";
+
+import "@/styles/globals.css";
+
+/* -------------------------------------------------------------------------- */
+/*                                    Meta                                    */
+/* -------------------------------------------------------------------------- */
 
 export const metadata: Metadata = {
 	title: {
@@ -13,16 +20,16 @@ export const metadata: Metadata = {
 		template: `%s - ${siteConfig.name}`,
 	},
 	description: siteConfig.description,
-	//themeColor: [
-	//	{ media: "(prefers-color-scheme: light)", color: "white" },
-	//	{ media: "(prefers-color-scheme: dark)", color: "black" },
-	//],
-	//icons: {
-	//	icon: "/favicon.ico",
-	//	shortcut: "/favicon-16x16.png",
-	//	apple: "/apple-touch-icon.png",
-	//},
+	icons: {
+		icon: favicon.src,
+		shortcut: logo.src,
+		apple: logo.src,
+	},
 };
+
+/* -------------------------------------------------------------------------- */
+/*                                    Root                                    */
+/* -------------------------------------------------------------------------- */
 
 export default function RootLayout({
 	children,
@@ -30,23 +37,18 @@ export default function RootLayout({
 	children: React.ReactNode;
 }) {
 	return (
-		<html lang="en" suppressHydrationWarning>
-			<head />
+		<html lang="en">
 			<body
 				className={clsx(
-					"min-h-screen bg-background font-sans antialiased",
-					fontSans.variable
+					"font-sans antialiased",
+					fontSans.className
 				)}
 			>
 				<Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-					<div className="relative flex flex-col h-screen">
-						<Navbar />
-						<main className="container mx-auto max-w-7xl pt-16 px-6 flex-grow">
-							{children}
-						</main>
-						<footer className="w-full flex items-center justify-center py-3">
-						</footer>
-					</div>
+					<Navbar />
+					<main className="mx-auto max-w-7xl pt-16 px-6 h-full">
+						{children}
+					</main>
 				</Providers>
 			</body>
 		</html>

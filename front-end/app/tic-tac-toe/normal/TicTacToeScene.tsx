@@ -198,7 +198,7 @@ const TTTScene = () => {
 
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
-			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
+			{/* <Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
 				<Camera keyMap={keyMap} target={[4, 1, 2]} reset={reset} ref={CameraRef} />
 				{gridLineGenrator()}
@@ -206,10 +206,10 @@ const TTTScene = () => {
 				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
 				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
-				{/*<TurnDisplay camera={CameraRef} />*/}
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
 				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={true} />
-			</Canvas>
+			</Canvas> */}
+			<iframe width="560" height="315" src="https://www.youtube.com/embed/d1YBv2mWll0?autoplay=1&loop=1" allow="autoplay"></iframe>
 			<EndModal setReset={setReset} isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 
 	);

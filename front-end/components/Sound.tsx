@@ -14,20 +14,38 @@ const sounds = {
 }
 
 class SoundEngine {
-	soundElement: HTMLAudioElement | undefined = undefined;
+	soundEngineDiv: HTMLDivElement;
 
 	constructor() {
-		this.soundElement = new Audio();
-		document.body.appendChild(this.soundElement);
-		this.soundElement.volume = 0.5;
+		if (document.getElementById("soundEngine")) {
+			document.body.removeChild(document.getElementById("soundEngine") as HTMLAudioElement);
+		}
+		const newDiv = document.createElement("div");
+		newDiv.id = "soundEngine";
+		document.body.appendChild(newDiv);
+		this.soundEngineDiv = newDiv;
+	}
+
+	private addAndPlaySoundElement(src: string) {
+		const soundElement = new Audio(src);
+		soundElement.volume = 0.5;
+		soundElement.autoplay = true;
+		soundElement.muted = true;
+		// const buttonElement = document.createElement("button");
+		// buttonElement.style.display = "none";
+		// buttonElement.onclick = () => {
+		// 	buttonElement.remove();
+		// 	soundElement.play();
+		// }
+		// this.soundEngineDiv.appendChild(buttonElement);
+		// buttonElement.click();
 	}
 
 	playSound(sound: string) {
-		if (!this.soundElement || !(sound in sounds)) {
+		if (!this.soundEngineDiv || !(sound in sounds)) {
 			return;
 		}
-		this.soundElement.src = (sounds as any)[sound];
-		this.soundElement.play();
+		this.addAndPlaySoundElement((sounds as any)[sound]);
 	}
 }
 
