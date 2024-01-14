@@ -1,9 +1,8 @@
 "use client";
 
 import { Navbar as NextUINavbar, NavbarContent, NavbarItem } from "@nextui-org/navbar";
-import { useRouter, usePathname } from 'next/navigation';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { useEffect, useState } from "react";
+import { useRouter, usePathname } from 'next/navigation';
 
 import CustomW3Button from "./CustomW3Button";
 import IconButton from "./IconButton";
@@ -19,7 +18,7 @@ export const Navbar = () => {
 	const previousRoutes = (pathname !== "/" || pathname.length == 0);
 
 	return (
-		<NextUINavbar maxWidth="xl" position="sticky">
+		<NextUINavbar maxWidth="xl" position="static">
 			<NavbarContent justify="start">
 				{previousRoutes && <IconButton onClick={() => router.back()}>
 					<ArrowLeftIcon color="white" className="w-10"/>
