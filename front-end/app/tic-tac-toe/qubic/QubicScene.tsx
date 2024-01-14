@@ -11,6 +11,7 @@ import EndModal from "./components/EndModal";
 import Camera from "../sharedComponents/Camera";
 import Countdown from "../sharedComponents/Countdown";
 import inputHandler from "@/components/inputHandler";
+import TurnDisplay from "./components/TurnDisplay";
 
 // Used to track user moves for validation
 // '' = empty position, 'X' or 'O' or '⬜️' updated on user click
@@ -93,7 +94,7 @@ const winningCoords : [number, number, number][]= [
 const QubicScene = () => {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const [clicked, click] = useState(false); // @note set to true to trigger validation
-	const [currentTurn, setTurn] = useState('X');
+	const [currentTurn, setTurn] = useState('');
 	const [board, setCurrentBoardState] = useState(initialBoard()); // @note setter and getter for board state
 	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
 	const [showFinishLine, setShowFinishLine] = useState(false);
@@ -114,12 +115,17 @@ const QubicScene = () => {
 		setShowModal(true);
 	}
 
+	useEffect(() => {
+		if (!countdownVisible)
+			setTurn('X');
+	}, [countdownVisible]);
+
 	// Handling the reset of the scene.
 	useEffect(() => {
 		if (reset) {
 			closeModal();
 			setCurrentBoardState(initialBoard());
-			setTurn('X');
+			setTurn('');
 			setShowFinishLine(false);
 			setCoords([...winningCoords]);
 			setColour(0xffffff);
@@ -157,12 +163,6 @@ const QubicScene = () => {
 
 		const checkClick = () => {
 			if (clicked) {
-				if (currentTurn == 'X')
-					setTurn('O');
-				else if (currentTurn == 'O')
-					setTurn('⬜️');
-				else
-					setTurn('X');
 				click(false);
 				const winner = gameValidation(board, sceneCoords, coords, setCoords);
 				if (winner) {
@@ -180,7 +180,14 @@ const QubicScene = () => {
 					}
 					setWinner(winner);
 					setGameOver(true);
+					return ;
 				}
+				if (currentTurn == 'X')
+					setTurn('O');
+				else if (currentTurn == 'O')
+					setTurn('⬜️');
+				else
+					setTurn('X');
 			}
 		}
 
@@ -197,7 +204,7 @@ const QubicScene = () => {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Camera keyMap={keyMap} target={[4, 1, 2]} reset={reset} />
+				<Camera keyMap={keyMap} target={[4, 10, 2]} reset={reset} />
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, gameOver)}
@@ -205,7 +212,8 @@ const QubicScene = () => {
 				<Floor	position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<Floor	position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
-				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={false} />
+				<OrbitControls enableZoom={false} target={[4, 10, 2]} enableRotate={!countdownVisible} enablePan={false} />
+				<TurnDisplay turn={currentTurn} />
 			</Canvas>
 			<EndModal setReset={setReset} isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 
