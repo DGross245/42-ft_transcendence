@@ -5,6 +5,10 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 // FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
+// TODO: Ball should change its color to match the color of the last paddle it hit
+// TODO: Refactor code for remote play
+// TODO: find good solution for client communication in terms of sending data (Serialization)
+// TODO: Fix update logic by also taking into account remote communication, implementing client-side prediction, lag compensation and synchronization.
 
 interface ballPorps {
 	rightPaddleRef: React.MutableRefObject<THREE.Mesh>,
