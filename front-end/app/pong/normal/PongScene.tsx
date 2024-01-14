@@ -14,8 +14,6 @@ import Countdown from '../sharedComponents/Countdown';
 import inputHandler from '@/components/inputHandler';
 import { Mesh } from 'three'
 
-// TODO: Look if re-renders can be minimized
-
 /**
  * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
  * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.
@@ -30,7 +28,7 @@ export default function PongScene() {
 	const [gameOver, setGameOver] = useState(false);
 	const [scoreVisible, setScoreVisibility] = useState(false);
 	const [reset, setReset] = useState(false);
-	const [isBallVisible, setBallVisibility] = useState(true);
+	const [isBallVisible, setBallVisibility] = useState(true)
 	
 	const keyMap = inputHandler();
 	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;

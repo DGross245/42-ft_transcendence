@@ -15,6 +15,7 @@ import TurnDisplay from "./components/TurnDisplay";
 import { Mesh } from "three"
 import { useSound } from "@/components/Sound";
 
+
 // TODO: Add a lose function, that displays losing modal + plays random lose sound
 // TODO: Add maybe a minimap where you can see the board better
 
@@ -110,9 +111,9 @@ const TTTScene = () => {
 	const [countdownVisible, setCountdownVisible] = useState(true);
 	const [reset, setReset] = useState(false);
 	const soundEngine = useSound();
-
 	const keyMap = inputHandler();
-	const CameraRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+
+	const TurnRef = useRef<THREE.Mesh>(null) as MutableRefObject<THREE.Mesh>;
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -201,13 +202,13 @@ const TTTScene = () => {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
-				<Camera keyMap={keyMap} target={[4, 1, 2]} reset={reset} ref={CameraRef} />
+				<Camera keyMap={keyMap} target={[4, 1, 2]} reset={reset} TurnRef={TurnRef} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, gameOver)}
 				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
 				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
-				{/*<TurnDisplay camera={CameraRef} />*/}
+				<TurnDisplay ref={TurnRef} />
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
 				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={true} />
 			</Canvas>

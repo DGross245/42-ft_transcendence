@@ -32,7 +32,7 @@ const EndModal = ({ isOpen, onClose, winner, setReset }) => {
 			>
 				<ModalContent style={{ position: 'relative', overflow: 'visible' }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-					{isOpen && (
+					{/* {isOpen && (
 						<div style={{ marginTop: '20px' }}>
 							<img
 								src={getWinnerImage()}
@@ -43,7 +43,7 @@ const EndModal = ({ isOpen, onClose, winner, setReset }) => {
 								alt="Image"
 							/>
 						</div>
-					)}
+					)} */}
 					<ModalHeader className="flex flex-col gap-1 items-center justify-center">
 						{winner === 'draw' ? 'Draw' : 'Wins' }
 					</ModalHeader>

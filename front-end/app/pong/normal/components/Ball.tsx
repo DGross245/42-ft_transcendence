@@ -3,7 +3,6 @@
 import { MutableRefObject, forwardRef, useEffect, useRef } from "react";
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { pong } from "../../../../components/Sound"
 
 // FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
 
@@ -148,11 +147,11 @@ export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
 		}
 		// Handling ball collision with paddles.
 		else if (isCollidingWithPaddle(leftPaddlePos)) {
-			pong();
+			// pong();
 			changeBallDir(leftPaddlePos, 1);
 		}
 		else if (isCollidingWithPaddle(rightPaddlePos)) {
-			pong();
+			// pong();
 			changeBallDir(rightPaddlePos, -1);
 		}
 		// Handling scoring when the ball is outside of the play area.

@@ -4,7 +4,6 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Orbitron_Regular from '../../../public/fonts/Orbitron_Regular.json';
 import { extend } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
-import { pongCountdown } from '@/components/Sound';
 
 extend({ TextGeometry })
 
@@ -33,7 +32,7 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 	
 				setCount((prevCount) => {
 					if (prevCount > 0) {
-						pongCountdown();
+						// pongCountdown();
 						return (prevCount - 1);
 					} else {
 						clearInterval(countdownInterval);

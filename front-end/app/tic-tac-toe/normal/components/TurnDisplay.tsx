@@ -1,11 +1,12 @@
-import { MutableRefObject, useMemo, useRef } from "react";
+import { MutableRefObject, forwardRef, useMemo, useRef } from "react";
 import { DoubleSide, Shape, Mesh } from 'three';
 import { Extrude } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
+import { user } from "@nextui-org/theme";
 
-// TODO: Bind it to the camera
+const TurnDisplay = forwardRef<THREE.Mesh>((ref) => {
+	const meshRef = useRef<THREE.Mesh | null>(null);
 
-const TurnDisplay = ( camera: MutableRefObject<Mesh> ) => {
 	const extrudeSettings = {
 		steps: 2,
 		depth: 0.75,
@@ -33,7 +34,7 @@ const TurnDisplay = ( camera: MutableRefObject<Mesh> ) => {
 	}, []);
 
 	return (
-		<mesh position={[0,30,0]}>
+		<mesh position={[0,30,0]} ref={meshRef}>
 			<Extrude args={[xShape, extrudeSettings]}>
 				<meshBasicMaterial 
 					color={0xff0000}
@@ -43,6 +44,6 @@ const TurnDisplay = ( camera: MutableRefObject<Mesh> ) => {
 			</Extrude>
 		</mesh>
 	);
-}
+})
 
 export default TurnDisplay
