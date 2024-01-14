@@ -5,6 +5,8 @@ import Orbitron_Regular from '../../../public/fonts/Orbitron_Regular.json';
 import { extend } from '@react-three/fiber';
 import { useContext, useEffect, useState } from 'react';
 import { PongContext } from '../normal/PongProvider';
+import { useEffect, useState } from 'react';
+import { useSound } from '@/components/Sound';
 
 extend({ TextGeometry })
 
@@ -27,6 +29,7 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 	const [count, setCount] = useState(4);
 	const { gameState } = useContext(PongContext)!;
+	const soundEngine = useSound();
 
 	useEffect(() => {
 		if (gameState.pause)
@@ -37,6 +40,7 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 				setCount((prevCount) => {
 					if (prevCount > 0) {
 						// pongCountdown();
+						soundEngine?.playSound("pongCountdown");
 						return (prevCount - 1);
 					} else {
 						clearInterval(countdownInterval);
@@ -51,7 +55,7 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 				clearInterval(countdownInterval);
 			};
 		}
-	}, [props.scoreVisible, gameState.pause]);
+	}, [props.scoreVisible, soundEngine]);
 
 	return (
 		<mesh visible={!props.scoreVisible} position={ count === 1 ? [-23, 0, 50] : [-35, 0, 50]} rotation={props.rotation}>

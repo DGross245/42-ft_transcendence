@@ -9,7 +9,7 @@ import { Button } from "@nextui-org/button";
 
 const CustomW3Button: React.FC = () => {
 	const { open: modalOpen } = useWeb3ModalState();
-	const { isConnected } = useWeb3ModalAccount()
+	const { isConnected } = useWeb3ModalAccount();
 	const { open: openModal } = useWeb3Modal();
 
 	const connecting = !isConnected && modalOpen;
@@ -21,7 +21,7 @@ const CustomW3Button: React.FC = () => {
 	}
 
 	return (
-		<Button color="primary" variant="flat" onClick={() => openModal()} isLoading={connecting}>
+		<Button size="lg" color="primary" variant="shadow" onClick={() => openModal()} isLoading={connecting}>
 			{connecting ? "Connecting..." : "Connect Wallet"}
 		</Button>
 	);

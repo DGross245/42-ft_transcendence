@@ -214,7 +214,7 @@ const TTTScene = () => {
 				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<TurnDisplay turn={currentTurn} />
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
-				<OrbitControls enableZoom={false} target={[4, 10, 2]} enableRotate={true} enablePan={false} />
+				<OrbitControls enableZoom={true} target={[4, 1, 2]} enableRotate={!countdownVisible} enablePan={true} />
 			</Canvas>
 			<EndModal setReset={setReset} isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 
