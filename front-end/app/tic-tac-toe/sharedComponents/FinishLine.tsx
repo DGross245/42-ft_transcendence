@@ -9,10 +9,14 @@ interface FinishLineProps {
 }
 
 /**
- * The `FinishLine` component renders a line in a 3D scene with specified coordinates, color, and
- * visibility.
- * @param props
- * @returns A mesh component with a Line component inside it.
+ * The `FinishLine` component renders a line with specified coordinates and color, and plays a sound
+ * when it becomes visible.
+ * @param props - The `props` parameter is an object that contains the properties passed to the
+ * `FinishLine` component. These properties can be accessed using dot notation, such as
+ * `props.visible`, `props.coords`, and `props.colour`.
+ * @returns The component is returning a `<mesh>` element with a `<Line>` component inside it. The
+ * visibility of the `<mesh>` element is determined by the `props.visible` value. The `<Line>`
+ * component is rendered with the specified `points`, `color`, and `lineWidth` props.
  */
 const FinishLine: React.FC<FinishLineProps> = (props) => {
 	const soundEngine = useSound();

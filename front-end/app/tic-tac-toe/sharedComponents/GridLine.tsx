@@ -5,9 +5,15 @@ interface GridLineProps {
 }
 
 /**
- * Creates a boxGeometry representing the grid line in a 3D scene with specified position and rotation.
- * @param props
- * @returns The GridLine component is returning a mesh element.
+ * The GridLine component is a functional component in TypeScript React that renders a mesh with a box
+ * geometry and a mesh basic material.
+ * @param props - The `props` parameter is an object that contains the properties passed to the
+ * `GridLine` component. These properties can be accessed using dot notation, for example
+ * `props.position` and `props.rotation`.
+ * @param key - The key parameter is used to uniquely identify each element in a list. It helps React
+ * efficiently update and re-render the list when changes occur.
+ * @returns The GridLine component is returning a mesh element with a boxGeometry and
+ * meshBasicMaterial.
  */
 const GridLine : React.FC<GridLineProps> = (props, key) => {
 	return (

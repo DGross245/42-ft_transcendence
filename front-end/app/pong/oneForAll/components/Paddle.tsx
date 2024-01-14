@@ -4,7 +4,6 @@ import * as THREE from 'three'
 import { Mesh } from 'three';
 
 // TODO: add later a getter/setter that sets the color for the player
-// FIXME: paddle move range is a bit to long, paddle can glitch into the borders.
 
 interface Paddle {
 	keyMap: { [key: string]: boolean };

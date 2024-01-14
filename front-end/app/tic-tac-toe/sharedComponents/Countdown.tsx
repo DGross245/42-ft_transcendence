@@ -13,12 +13,15 @@ interface CountdownProps {
 }
 
 /**
- * The Countdown component is a timer that counts down from 4 to 0 and displays the count as a 3D text
+ * The Countdown component is a timer that counts down from 3 to 1 and displays the count as a 3D text
  * in a React Three Fiber scene.
- * @param props -
- * @returns A mesh element that displays the current count value.
- * The visibility of the mesh is determined by the props.scoreVisible value. If props.scoreVisible is
- * false, the mesh will be visible, otherwise it will be hidden.
+ * @param  - - `countdownVisible`: a boolean value indicating whether the countdown should be visible
+ *				or not.
+ *		   - - `setCountdownVisible`: a state setter for setting the countdown state.
+ * @returns The Countdown component is returning a mesh that contains a textGeometry and a
+ * meshBasicMaterial. The textGeometry displays the value of the count variable, which is initially set
+ * to 3 and decrements by 1 every second until it reaches 1. The meshBasicMaterial sets the color of
+ * the text to white. The mesh is only visible when the countdownVisible prop is true.
  */
 const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVisible }) => {
 	const font = new FontLoader().parse(Silkscreen_Regular);
@@ -45,7 +48,7 @@ const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVi
 						clearInterval(countdownInterval);
 						setCountdownVisible(false);
 						soundEngine?.playSound("end");
-						return (0);
+						return (1);
 					}
 				});
 			}, 1000);

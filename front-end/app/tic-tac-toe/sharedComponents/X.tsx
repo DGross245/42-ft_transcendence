@@ -9,8 +9,6 @@ interface XProps {
 	transparent: boolean,
 }
 
-// TODO: Change X so thats reusable in other components like minimap or in TurnDisplay
-
 /**
  * Creates a custom X shape using the Extrude component with specific position and rotation.
  * @param props

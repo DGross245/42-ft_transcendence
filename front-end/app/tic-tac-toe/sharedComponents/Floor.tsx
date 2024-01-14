@@ -6,10 +6,13 @@ interface FloorProps {
 }
 
 /**
- * The Floor component is a mesh that represents a floor in a 3D scene, with customizable position,
- * size, and material properties.
- * @param props
- * @returns A mesh with a boxGeometry representing the floor.
+ * The Floor component is a React functional component that renders a box mesh with a transparent
+ * material.
+ * @param props - The `props` parameter is an object that contains the properties passed to the `Floor`
+ * component. These properties can be accessed using dot notation, for example `props.position` and
+ * `props.args`.
+ * @returns The `Floor` component is returning a `mesh` element with a `boxGeometry` and a
+ * `meshStandardMaterial`.
  */
 const Floor : React.FC<FloorProps> = (props) => {
 	return (

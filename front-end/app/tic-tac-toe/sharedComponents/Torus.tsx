@@ -8,8 +8,11 @@ interface TorusProps {
 
 /**
  * Create a torusGeometry with specific position and rotation.
- * @param props
- * @returns 
+ * @param props - The `props` parameter is an object that contains the properties passed to the `Torus`
+ * component. These properties can be accessed using dot notation, for example `props.position`, `props.transparent`,
+ * `props.blending` and `props.color`.
+ * @returns The Torus component is returning a mesh element with a torusGeometry and
+ * meshBasicMaterial.
  */
 const Torus : React.FC<TorusProps> = (props) => {
 	const [x, y, z] = props.position;
