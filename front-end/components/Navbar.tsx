@@ -20,7 +20,7 @@ export const Navbar = () => {
 	return (
 		<NextUINavbar maxWidth="xl" position="static">
 			<NavbarContent justify="start">
-				{previousRoutes && <IconButton onClick={() => router.back()}>
+				{previousRoutes && <IconButton onClick={() => router.replace("/")}>
 					<ArrowLeftIcon color="white" className="w-10"/>
 				</IconButton>}
 			</NavbarContent>

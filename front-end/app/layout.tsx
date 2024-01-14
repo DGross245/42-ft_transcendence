@@ -31,6 +31,8 @@ export const metadata: Metadata = {
 /*                                    Root                                    */
 /* -------------------------------------------------------------------------- */
 
+// @todo fix "Warning: Extra attributes from the server: class,style"
+
 export default function RootLayout({
 	children,
 }: {

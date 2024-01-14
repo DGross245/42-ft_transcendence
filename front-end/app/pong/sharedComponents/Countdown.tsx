@@ -4,7 +4,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Orbitron_Regular from '../../../public/fonts/Orbitron_Regular.json';
 import { extend } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
-import { pongCountdown } from '@/components/Sound';
+import { useSound } from '@/components/Sound';
 
 extend({ TextGeometry })
 
@@ -26,6 +26,7 @@ interface CountdownProps {
 const Countdown : React.FC<CountdownProps>= (props) => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 	const [count, setCount] = useState(4);
+	const soundEngine = useSound();
 
 	useEffect(() => {
 		if (!props.scoreVisible) {
@@ -33,7 +34,7 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 	
 				setCount((prevCount) => {
 					if (prevCount > 0) {
-						pongCountdown();
+						soundEngine?.playSound("pongCountdown");
 						return (prevCount - 1);
 					} else {
 						clearInterval(countdownInterval);
@@ -48,7 +49,7 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 				clearInterval(countdownInterval);
 			};
 		}
-	}, [props.scoreVisible]);
+	}, [props.scoreVisible, soundEngine]);
 
 	return (
 		<mesh visible={!props.scoreVisible} position={ count === 1 ? [-23, 0, 50] : [-35, 0, 50]} rotation={props.rotation}>
