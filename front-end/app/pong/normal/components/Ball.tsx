@@ -46,8 +46,8 @@ export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
 	 * @param paddlePos - the position of the paddle.
 	 * 					  Contains 'x' and 'y' properties.
 	 * @param direction - The direction (1 or -1) indicating the side of the paddle the ball collided with:
-	 * 					  1: Collided with the left paddle.
-	 * 					 -1: Collided with the right paddle.
+	 * 					  -  1: Collided with the left paddle.
+	 * 					  - -1: Collided with the right paddle.
 	 */
 	const changeBallDir = (paddlePos: THREE.Vector3, direction: number) => {
 		const ball = ballRef.current;
@@ -176,5 +176,3 @@ export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
 		</mesh>
 	);
 })
-
-// export default Ball;
