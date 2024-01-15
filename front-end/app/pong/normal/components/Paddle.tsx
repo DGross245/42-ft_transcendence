@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber";
-import { MutableRefObject, forwardRef } from "react";
+import { MutableRefObject, forwardRef, useEffect } from "react";
 import { Mesh } from 'three';
 
 interface Paddle {
@@ -18,6 +18,12 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
 	const paddleSpeed = 300;
 	const borderPositionY = 105;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
+
+	useFrame(() => {
+		if (meshRef && meshRef.current) {
+			meshRef.current.position.y = position[1];
+		}
+	});
 
 	// Moves the paddle based on pressed key for each frame.
 	useFrame((_, delta) => {
