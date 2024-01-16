@@ -24,6 +24,10 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 		res.socket.server!.io = io;
   
 		io.on('connection', (socket) => {
+			// socket.on('init', (walletId: string) => {
+			// 	cache.put(walletId, socket);
+			// })
+
 			socket.on('create-game', (msg: string) => {
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 				socket.emit(`game-created-${msg}`, id);
@@ -31,6 +35,8 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 
 			socket.on('send-message-to-game', (msg: string, gameId: string) => {
 				socket.emit(`message-${gameId}`, msg);
+				// cache.get(gameId);
+				// cache.del(gameId);
 			});
 	  });
 	}
