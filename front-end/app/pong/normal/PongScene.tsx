@@ -13,6 +13,7 @@ import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
 import inputHandler from '@/components/inputHandler';
 import { Mesh } from 'three'
+import { PongProvider } from './PongProvider';
 
 /**
  * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
@@ -96,19 +97,23 @@ export default function PongScene() {
 				<Camera position={[0, -100, 300]} keyMap={keyMap} />
 				<Border position={[0,105,0]} />
 				<Border position={[0,-105,0]} />
-				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} keyMap={keyMap} />
-				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
-				<Ball
-					rightPaddleRef={rightPaddleRef}
-					leftPaddleRef={leftPaddleRef}
-					p1Score={p1Score} setP1Score={setP1Score}
-					p2Score={p2Score} setP2Score={setP2Score}
-					setWinner={setWinner}
-					gameOver={gameOver} setGameOver={setGameOver}
-					scoreVisible={scoreVisible}
-					isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
-					ref={ballRef}
-				/>
+
+				<PongProvider>
+					<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} keyMap={keyMap} />
+					<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
+					<Ball
+						rightPaddleRef={rightPaddleRef}
+						leftPaddleRef={leftPaddleRef}
+						p1Score={p1Score} setP1Score={setP1Score}
+						p2Score={p2Score} setP2Score={setP2Score}
+						setWinner={setWinner}
+						gameOver={gameOver} setGameOver={setGameOver}
+						scoreVisible={scoreVisible}
+						isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
+						ref={ballRef}
+					/>
+				</PongProvider>
+
 				<CubeLine />
 				<OrbitControls enablePan={false} />
 				<Scoreboard

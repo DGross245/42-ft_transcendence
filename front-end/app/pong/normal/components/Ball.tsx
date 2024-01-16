@@ -5,7 +5,6 @@ import { useFrame } from '@react-three/fiber';
 import { Mesh, MeshBasicMaterial } from 'three';
 
 // FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
-// TODO: Ball should change its color to match the color of the last paddle it hit
 // TODO: Refactor code for remote play
 // TODO: find good solution for client communication in terms of sending data (Serialization)
 // TODO: Fix update logic by also taking into account remote communication, implementing client-side prediction, lag compensation and synchronization.
@@ -40,7 +39,7 @@ export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
 	const halfBall = 2;
-
+	//
 	/**
 	 * Changes the ball's direction after it collided with a paddle.
 	 * @param paddlePos - the position of the paddle.
