@@ -16,7 +16,7 @@ interface Paddle {
  */
 export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const paddleSpeed = 300;
-	const borderPositionY = 105;
+	const borderPositionY = 103;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	// Moves the paddle based on pressed key for each frame.
@@ -33,7 +33,7 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
 	return (
 		<mesh ref={ref} position={position}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ 0xffffff } />
+			<meshBasicMaterial color={ 0x00ff00 } />
 		</mesh>
 	);
 });
@@ -47,7 +47,7 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
  */
 export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const paddleSpeed = 300;
-	const borderPositionY = 105;
+	const borderPositionY = 103;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	// Moves the paddle based on pressed key for each frame.
@@ -64,7 +64,7 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	return (
 		<mesh ref={meshRef} position={position}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ 0xffffff } />
+			<meshBasicMaterial color={ 0xff0000 } />
 		</mesh>
 	);
 });

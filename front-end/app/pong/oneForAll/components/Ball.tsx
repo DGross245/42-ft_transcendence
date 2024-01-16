@@ -1,33 +1,39 @@
 'use client'
 
-import { MutableRefObject, forwardRef, useEffect, useRef, useState } from "react";
+import {
+	MutableRefObject,
+	SetStateAction,
+	forwardRef,
+	useEffect,
+	useRef,
+	useState,
+	Dispatch } from "react";
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
-import { LeftPaddle } from "./Paddle";
+import { Mesh, MeshBasicMaterial } from 'three';
 
 type CollisionInfo = {
 	[key: string]: {score: any, setScore: any, isOwnGoal: boolean};
 };
 
 interface ballPorps {
-	rightPaddleRef: React.MutableRefObject<THREE.Mesh>,
-	leftPaddleRef: React.MutableRefObject<THREE.Mesh>,
-	bottomPaddleRef: React.MutableRefObject<THREE.Mesh>,
-	topPaddleRef: React.MutableRefObject<THREE.Mesh>,
+	rightPaddleRef: MutableRefObject<Mesh>,
+	leftPaddleRef: MutableRefObject<Mesh>,
+	bottomPaddleRef: MutableRefObject<Mesh>,
+	topPaddleRef: MutableRefObject<Mesh>,
 	p1Score: number,
-	setP1Score: React.Dispatch<React.SetStateAction<number>>,
+	setP1Score: Dispatch<SetStateAction<number>>,
 	p2Score: number,
-	setP2Score: React.Dispatch<React.SetStateAction<number>>,
+	setP2Score: Dispatch<SetStateAction<number>>,
 	p3Score: number,
-	setP3Score: React.Dispatch<React.SetStateAction<number>>,
+	setP3Score: Dispatch<SetStateAction<number>>,
 	p4Score: number,
-	setP4Score: React.Dispatch<React.SetStateAction<number>>,
-	setWinner: React.Dispatch<React.SetStateAction<string>>,
+	setP4Score: Dispatch<SetStateAction<number>>,
+	setWinner: Dispatch<SetStateAction<string>>,
 	gameOver: boolean,
-	setGameOver: React.Dispatch<React.SetStateAction<boolean>>,
+	setGameOver: Dispatch<SetStateAction<boolean>>,
 	scoreVisible: boolean,
 	isBallVisible: boolean,
-	setBallVisibility: React.Dispatch<React.SetStateAction<boolean>>,
+	setBallVisibility: Dispatch<SetStateAction<boolean>>,
 }
 
 /**
@@ -38,11 +44,12 @@ interface ballPorps {
  * 				  `setWinner`, `gameOver`, `setGameOver`, `scoreVisible`, `isBallVisible` and `setBallVisibility`
  * @returns A Three.js mesh representing a ball.
  */
-export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
-	const meshRef = ref as MutableRefObject<THREE.Mesh | null>;
+export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
+	const [color, setColor] = useState( 0xffffff );
+	const [lastPaddleHit, setLastPaddleHit] = useState('');
+	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const halfBall = 2;
-	let lastPaddleHit = '';
 
 	/**
 	 * Changes the ball's direction after it collided with a paddle.
@@ -63,6 +70,12 @@ export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
 			ball.speed += 0.2;
 		ball.velocityX = isHorizontal ? normalized * ball.speed : direction * ball.speed;
 		ball.velocityY = isHorizontal ? direction * ball.speed : normalized * ball.speed;
+	}
+
+	const changeColor = ( ref:  MutableRefObject<Mesh>) => {
+		const material = ref.current.material as MeshBasicMaterial;
+		const currentColor = material.color.getHex();
+		setColor(currentColor);
 	}
 
 	/**
@@ -122,7 +135,7 @@ export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
 			else if (ball.x >= 170 && props.p4Score !== 0)
 				props.setP4Score(props.p4Score - 1);
 		}
-		lastPaddleHit = '';
+		setLastPaddleHit('');
 	}
 
 	/**
@@ -188,26 +201,31 @@ export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
 		}
 		// Handling ball collision with paddles.
 		else if (isColliding(leftPaddlePos.x, leftPaddlePos.y, 2, 15)) {
-			lastPaddleHit = 'left';
+			setLastPaddleHit('left');
 			changeBallDir(leftPaddlePos, 1, false);
+			changeColor(props.leftPaddleRef);
 		}
 		else if (isColliding(rightPaddlePos.x, rightPaddlePos.y, 2, 15)) {
-			lastPaddleHit = 'right';
+			setLastPaddleHit('right');
 			changeBallDir(rightPaddlePos, -1, false);
+			changeColor(props.rightPaddleRef);
 		}
 		else if (isColliding(TopPaddlePos.x, TopPaddlePos.y, 15, 2)) {
-			lastPaddleHit = 'top';
+			setLastPaddleHit('top');
 			changeBallDir(TopPaddlePos, -1, true);
+			changeColor(props.topPaddleRef);
 		}
 		else if (isColliding(BottomPaddlePos.x, BottomPaddlePos.y, 15, 2)) {
-			lastPaddleHit = 'bottom';
+			setLastPaddleHit('bottom');
 			changeBallDir(BottomPaddlePos, 1, true);
+			changeColor(props.bottomPaddleRef);
 		}
 		// Handling scoring when the ball is outside of the play area.
 		else if (( ball.x <= -170 || ball.x >= 170 || ball.y >= 170 || ball.y <= -170) && 
-			props.p1Score !== 7 && props.p2Score !== 7 && props.p3Score !== 7 && props.p4Score !== 7) {
+		props.p1Score !== 7 && props.p2Score !== 7 && props.p3Score !== 7 && props.p4Score !== 7) {
 			handleScore(ball);
 			randomBallDir();
+			setColor( 0xffffff );
 		}
 	}
 
@@ -250,7 +268,7 @@ export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
 	return (
 		<mesh ref={meshRef} visible={props.isBallVisible}>
 			<boxGeometry args={[4, 4, 4]} />
-			<meshBasicMaterial color={ 0xffffff }/>
+			<meshBasicMaterial color={ color }/>
 		</mesh>
 	);
 })

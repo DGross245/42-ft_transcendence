@@ -79,15 +79,15 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
  */
 export const TopPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const paddleSpeed = 300;
-	const borderPositionY = 111;
+	const borderPositionX = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
 			if (keyMap['KeyD']) {
-				meshRef.current.position.x = Math.min(meshRef.current.position.x + paddleSpeed * delta, borderPositionY - 15);
+				meshRef.current.position.x = Math.min(meshRef.current.position.x + paddleSpeed * delta, borderPositionX - 15);
 			} else if (keyMap['KeyA']) {
-				meshRef.current.position.x = Math.max(meshRef.current.position.x - paddleSpeed * delta, -borderPositionY + 15);
+				meshRef.current.position.x = Math.max(meshRef.current.position.x - paddleSpeed * delta, -borderPositionX + 15);
 			}
 		}
 	});
@@ -109,21 +109,21 @@ export const TopPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =>
  */
 export const BottomPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const paddleSpeed = 300;
-	const borderPositionY = 111;
+	const borderPositionX = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
 			if (keyMap['ArrowRight']) {
-				meshRef.current.position.x = Math.min(meshRef.current.position.x + paddleSpeed * delta, borderPositionY - 15);
+				meshRef.current.position.x = Math.min(meshRef.current.position.x + paddleSpeed * delta, borderPositionX - 15);
 			} else if (keyMap['ArrowLeft']) {
-				meshRef.current.position.x = Math.max(meshRef.current.position.x - paddleSpeed * delta, -borderPositionY + 15);
+				meshRef.current.position.x = Math.max(meshRef.current.position.x - paddleSpeed * delta, -borderPositionX + 15);
 			}
 		}
 	});
 
 	return (
-		<mesh ref={meshRef} position={position} rotation={[0, 0, Math.PI / 2]} >
+		<mesh ref={ref} position={position} rotation={[0, 0, Math.PI / 2]} >
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0x1874CD } />
 		</mesh>

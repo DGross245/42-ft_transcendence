@@ -1,6 +1,6 @@
 "use client"
 
-import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stats } from '@react-three/drei'; 
 import inputHandler from '@/components/inputHandler';
@@ -12,7 +12,7 @@ import { CubeLineY, CubeLineX }from './components/CubeLine';
 import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
-import { convertToObject } from 'typescript';
+import { Mesh } from 'three'
 
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
@@ -33,11 +33,11 @@ export default function OneForAllScene() {
 	const [reset, setReset] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true);
 	
-	const rightPaddleRef = useRef<THREE.Mesh>(null) as MutableRefObject<THREE.Mesh>;
-	const leftPaddleRef = useRef<THREE.Mesh>(null) as MutableRefObject<THREE.Mesh>;
-	const topPaddleRef = useRef<THREE.Mesh>(null) as MutableRefObject<THREE.Mesh>;
-	const bottomPaddleRef = useRef<THREE.Mesh>(null) as MutableRefObject<THREE.Mesh>;
-	const ballRef = useRef<THREE.Mesh>(null);
+	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+	const topPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+	const bottomPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+	const ballRef = useRef<Mesh>(null);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -123,7 +123,11 @@ export default function OneForAllScene() {
 				<CubeLineY />
 				<CubeLineX />
 				<OrbitControls enablePan={false} />
-				<Scoreboard player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score} scoreVisible={scoreVisible} />
+				<Scoreboard 
+					player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score}
+					rightPaddleRef={rightPaddleRef} leftPaddleRef={leftPaddleRef}
+					topPaddleRef={topPaddleRef} bottomPaddleRef={bottomPaddleRef}
+					scoreVisible={scoreVisible} />
 				<Stats />
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} setReset={setReset} />

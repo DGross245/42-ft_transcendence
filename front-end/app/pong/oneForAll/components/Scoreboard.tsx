@@ -2,6 +2,8 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Orbitron_Regular from '../../../../public/fonts/Orbitron_Regular.json';
 import { Vector3, extend } from '@react-three/fiber';
+import { MutableRefObject } from 'react';
+import { Mesh, MeshBasicMaterial } from 'three';
 
 extend({ TextGeometry })
 
@@ -10,6 +12,10 @@ interface ScoreboardProps {
 	player2: number,
 	player3: number,
 	player4: number,
+	rightPaddleRef: MutableRefObject<Mesh>,
+	leftPaddleRef: MutableRefObject<Mesh>,
+	bottomPaddleRef: MutableRefObject<Mesh>,
+	topPaddleRef: MutableRefObject<Mesh>,
 	scoreVisible: boolean,
 }
 
@@ -23,7 +29,10 @@ interface ScoreboardProps {
  * @returns A JSX fragment containing two mesh elements. Each
  * mesh element represents a player's score.
  */
-const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, player3, player4, scoreVisible }) => {
+const Scoreboard : React.FC<ScoreboardProps> = ({ 
+	player1, player2, player3, player4, 
+	rightPaddleRef, leftPaddleRef, bottomPaddleRef, topPaddleRef,
+	scoreVisible }) => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 
 	const position1 : Vector3 = player1 === 1 || player1 === 7 ? [-13,-210, -5] : [-21,-210, -5];
@@ -31,23 +40,33 @@ const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, player3, pla
 	const position3 : Vector3 = player3 === 1 || player3 === 7 ? [-13, 170, 50] : [-21, 170, 50];
 	const position4 : Vector3 = player4 === 1 || player4 === 7 ? [170, 13, 50] : [170, 21, 50];
 
+	const getColor = ( ref:  MutableRefObject<Mesh>) => {
+		if (ref && ref.current) {
+			const material = ref.current.material as MeshBasicMaterial;
+			const currentColor = material.color.getHex();
+			return (currentColor);
+		}
+		else
+			return ( 0xffffff );
+	}
+
 	return (
 		<>
 			<mesh visible={scoreVisible} position={position1}>
 				<textGeometry args={[String(player1), {font, size: 35, height: 3}]} />
-				<meshBasicMaterial color={ 0xffffff } />
+				<meshBasicMaterial color={ getColor(bottomPaddleRef) } />
 			</mesh>
 			<mesh visible={scoreVisible} position={position2} rotation={[Math.PI / 2, Math.PI / 2, 0]}>
 				<textGeometry args={[String(player2), {font, size: 35, height: 3}]} />
-				<meshBasicMaterial color={ 0xffffff } />
+				<meshBasicMaterial color={ getColor(leftPaddleRef) } />
 			</mesh>
 			<mesh visible={scoreVisible} position={position3} rotation={[Math.PI / 2, 0, 0]}>
 				<textGeometry args={[String(player3), {font, size: 35, height: 3}]} />
-				<meshBasicMaterial color={ 0xffffff } />
+				<meshBasicMaterial color={ getColor(topPaddleRef) } />
 			</mesh>
 			<mesh visible={scoreVisible} position={position4} rotation={[Math.PI / 2, -Math.PI / 2, 0]}>
 				<textGeometry args={[String(player4), {font, size: 35, height: 3}]} />
-				<meshBasicMaterial color={ 0xffffff } />
+				<meshBasicMaterial color={ getColor(rightPaddleRef) } />
 			</mesh>
 		</>
 	)

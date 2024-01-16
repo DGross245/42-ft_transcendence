@@ -1,8 +1,8 @@
 'use client'
 
-import { MutableRefObject, forwardRef, useEffect, useRef } from "react";
+import { MutableRefObject, SetStateAction, forwardRef, useEffect, useRef, Dispatch, useState } from "react";
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import { Mesh, MeshBasicMaterial } from 'three';
 
 // FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
 // TODO: Ball should change its color to match the color of the last paddle it hit
@@ -11,18 +11,18 @@ import * as THREE from 'three';
 // TODO: Fix update logic by also taking into account remote communication, implementing client-side prediction, lag compensation and synchronization.
 
 interface ballPorps {
-	rightPaddleRef: React.MutableRefObject<THREE.Mesh>,
-	leftPaddleRef: React.MutableRefObject<THREE.Mesh>,
+	rightPaddleRef: MutableRefObject<Mesh>,
+	leftPaddleRef: MutableRefObject<Mesh>,
 	p1Score: number,
-	setP1Score: React.Dispatch<React.SetStateAction<number>>,
+	setP1Score: Dispatch<SetStateAction<number>>,
 	p2Score: number,
-	setP2Score: React.Dispatch<React.SetStateAction<number>>,
-	setWinner: React.Dispatch<React.SetStateAction<string>>,
+	setP2Score: Dispatch<SetStateAction<number>>,
+	setWinner: Dispatch<SetStateAction<string>>,
 	gameOver: boolean,
-	setGameOver: React.Dispatch<React.SetStateAction<boolean>>,
+	setGameOver: Dispatch<SetStateAction<boolean>>,
 	scoreVisible: boolean,
 	isBallVisible: boolean,
-	setBallVisibility: React.Dispatch<React.SetStateAction<boolean>>,
+	setBallVisibility: Dispatch<SetStateAction<boolean>>,
 }
 
 /**
@@ -34,8 +34,8 @@ interface ballPorps {
  * 			consists of a boxGeometry with dimensions of 4x4x4 and a meshBasicMaterial with a color of (16, 16, 16).
  * 			The visibility of the mesh is determined by the isBallVisible prop.
  */
-export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
-	const meshRef = ref as MutableRefObject<THREE.Mesh | null>;
+export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
+	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
@@ -151,11 +151,9 @@ export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
 		}
 		// Handling ball collision with paddles.
 		else if (isCollidingWithPaddle(leftPaddlePos)) {
-			// pong();
 			changeBallDir(leftPaddlePos, 1);
 		}
 		else if (isCollidingWithPaddle(rightPaddlePos)) {
-			// pong();
 			changeBallDir(rightPaddlePos, -1);
 		}
 		// Handling scoring when the ball is outside of the play area.

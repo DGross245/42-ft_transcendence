@@ -94,7 +94,6 @@ export default function PongScene() {
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown scoreVisible={scoreVisible} setScoreVisibility={setScoreVisibility} rotation={[0, 0, 0]} />
 				<Camera position={[0, -100, 300]} keyMap={keyMap} />
-				<ambientLight />
 				<Border position={[0,105,0]} />
 				<Border position={[0,-105,0]} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} keyMap={keyMap} />
@@ -112,7 +111,13 @@ export default function PongScene() {
 				/>
 				<CubeLine />
 				<OrbitControls enablePan={false} />
-				<Scoreboard player1={p1Score} player2={p2Score} scoreVisible={scoreVisible} />
+				<Scoreboard
+					player1={p1Score}
+					player2={p2Score}
+					rightPaddleRef={rightPaddleRef}
+					leftPaddleRef={leftPaddleRef}
+					scoreVisible={scoreVisible} 
+				/>
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} setReset={setReset} />
 		</div>

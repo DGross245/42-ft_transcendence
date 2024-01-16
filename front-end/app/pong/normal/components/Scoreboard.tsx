@@ -2,6 +2,9 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Orbitron_Regular from '../../../../public/fonts/Orbitron_Regular.json';
 import { Object3DNode, Vector3, extend } from '@react-three/fiber';
+import { MutableRefObject } from 'react';
+import { Mesh, MeshBasicMaterial } from 'three';
+import { LeftPaddle, RightPaddle } from './Paddle';
 
 extend({ TextGeometry })
 
@@ -12,6 +15,8 @@ type ScoreType = {
 interface ScoreboardProps {
 	player1: number,
 	player2: number,
+	rightPaddleRef: MutableRefObject<Mesh>,
+	leftPaddleRef: MutableRefObject<Mesh>,
 	scoreVisible: boolean,
 }
 
@@ -32,7 +37,7 @@ declare module "@react-three/fiber" {
  * @returns A JSX fragment containing two mesh elements. Each
  * mesh element represents a player's score.
  */
-const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, scoreVisible }) => {
+const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, leftPaddleRef, rightPaddleRef, scoreVisible }) => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 
 	// Reposition textGeometry based on score.
@@ -61,15 +66,25 @@ const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, scoreVisible
 	const position1 : Vector3 = Score1[player1]?.position;
 	const position2 : Vector3 = Score2[player2]?.position;
 
+	const getColor = ( ref:  MutableRefObject<Mesh>) => {
+		if (ref && ref.current) {
+			const material = ref.current.material as MeshBasicMaterial;
+			const currentColor = material.color.getHex();
+			return (currentColor);
+		}
+		else
+			return ( 0xffffff );
+	}
+
 	return (
 		<>
 			<mesh visible={scoreVisible} position={position1} rotation={[0, 0, 0]}>
 				<textGeometry args={[String(player1), {font, size: 35, height: 3}]} />
-				<meshBasicMaterial color={ 0xffffff } />
+				<meshBasicMaterial color={ getColor(leftPaddleRef) } />
 			</mesh>
 			<mesh visible={scoreVisible} position={position2}>
 				<textGeometry args={[String(player2), {font, size: 35, height: 3}]} />
-				<meshBasicMaterial color={ 0xffffff } />
+				<meshBasicMaterial color={ getColor(rightPaddleRef) } />
 			</mesh>
 		</>
 	);
