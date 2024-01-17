@@ -1,8 +1,11 @@
 import { BoxGeometry, MeshBasicMaterial } from 'three'
 
-export const CubeLineY = (props) => {
-	const cubeGeometry = new BoxGeometry(3, 3, 0.5);
-	const cubeMaterial = new MeshBasicMaterial({ color: 0x808080 });
+/**
+ * Generates Three.js cube components arranged diagonally,
+ * representing a line splitting the game field into two parts along the Y-axis.
+ * @returns A group of cube meshes forming a diagonal line.
+ */
+export const CubeLineY = () => {
 	const cubes = [];
   
 	for (let i = 1; i < 20; i++) {
@@ -10,7 +13,10 @@ export const CubeLineY = (props) => {
 		const positionX = i * (151 * 2) / 20 - 151;
 
 		const cube = (
-			<mesh key={i} geometry={cubeGeometry} material={cubeMaterial} position={[positionX, positionY, -4]} />
+			<mesh key={i} position={[positionX, positionY, -4]}>
+				<boxGeometry args={[3, 3, 0.5]} />
+				<meshBasicMaterial color={ 0x808080 } />
+			</mesh>
 		)
 		cubes.push(cube);
 	}
@@ -22,9 +28,12 @@ export const CubeLineY = (props) => {
 	);
 }
 
-export const CubeLineX = (props) => {
-	const cubeGeometry = new BoxGeometry(3, 3, 0.5);
-	const cubeMaterial = new MeshBasicMaterial({ color: 0x808080 });
+/**
+ * Generates Three.js cube components arranged diagonally,
+ * representing a line splitting the game field into two parts along the X-axis.
+ * @returns A group of cube meshes forming a diagonal line.
+ */
+export const CubeLineX = () => {
 	const cubes = [];
 
 	for (let i = 1; i < 20; i++) {
@@ -32,7 +41,10 @@ export const CubeLineX = (props) => {
 		const positionY = -i * (151 * 2) / 20 + 151;
 
 		const cube = (
-			<mesh key={i} geometry={cubeGeometry} material={cubeMaterial} position={[positionX, positionY, -4]} />
+			<mesh key={i} position={[positionX, positionY, -4]}>
+				<boxGeometry args={[3, 3, 0.5]} />
+				<meshBasicMaterial color={ 0x808080 } />
+			</mesh>
 		)
 		cubes.push(cube);
 	}

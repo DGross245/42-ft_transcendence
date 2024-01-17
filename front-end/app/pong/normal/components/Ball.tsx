@@ -1,28 +1,57 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react";
+import { MutableRefObject, SetStateAction, forwardRef, useEffect, useRef, Dispatch, useState } from "react";
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
+import { Mesh, MeshBasicMaterial } from 'three';
 
-type BallElement = {
-	position: {
-		x: number;
-		y: number;
-	}
+// FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
+// TODO: Refactor code for remote play
+// TODO: find good solution for client communication in terms of sending data (Serialization)
+// TODO: Fix update logic by also taking into account remote communication, implementing client-side prediction, lag compensation and synchronization.
+
+interface ballPorps {
+	rightPaddleRef: MutableRefObject<Mesh>,
+	leftPaddleRef: MutableRefObject<Mesh>,
+	p1Score: number,
+	setP1Score: Dispatch<SetStateAction<number>>,
+	p2Score: number,
+	setP2Score: Dispatch<SetStateAction<number>>,
+	setWinner: Dispatch<SetStateAction<string>>,
+	gameOver: boolean,
+	setGameOver: Dispatch<SetStateAction<boolean>>,
+	scoreVisible: boolean,
+	isBallVisible: boolean,
+	setBallVisibility: Dispatch<SetStateAction<boolean>>,
 }
 
-const Ball = (props) => {
-	let ref = useRef<BallElement | null>(null);
-	const [isVisible, setVisibility] = useState(true);
+/**
+ * Creates a ball Three.js mesh and handles its movement and collision logic.
+ * @param props - The `props` parameter is an object that contains the following properties:
+ * 				  `rightPaddleRef`, `leftPaddleRef`,`p1Score`,`setP1Score`,`p2Score`,`setP2Score`, `setWinner`, `gameOver`,
+ * 				  `setGameOver`, `scoreVisible`, `isBallVisible` and `setBallVisibility`
+ * @returns The Ball component is returning a mesh element that represents the ball in the game. It
+ * 			consists of a boxGeometry with dimensions of 4x4x4 and a meshBasicMaterial with a color of (16, 16, 16).
+ * 			The visibility of the mesh is determined by the isBallVisible prop.
+ */
+export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
+	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const halfPaddleWidth = 4 / 2;
-	const HalfPaddleHeight = 30 / 2;
+	const halfPaddleHeight = 30 / 2;
 	const halfBall = 2;
-
-	const changeBallDir = (paddlePos, direction) => {
+	//
+	/**
+	 * Changes the ball's direction after it collided with a paddle.
+	 * @param paddlePos - the position of the paddle.
+	 * 					  Contains 'x' and 'y' properties.
+	 * @param direction - The direction (1 or -1) indicating the side of the paddle the ball collided with:
+	 * 					  -  1: Collided with the left paddle.
+	 * 					  - -1: Collided with the right paddle.
+	 */
+	const changeBallDir = (paddlePos: THREE.Vector3, direction: number) => {
 		const ball = ballRef.current;
 		const deltaY = ball.y - paddlePos.y;
-		const normalizedY = deltaY / HalfPaddleHeight;
+		const normalizedY = deltaY / halfPaddleHeight;
 
 		if (ball.speed <= 2)
 			ball.speed += 0.2;
@@ -30,35 +59,48 @@ const Ball = (props) => {
 		ball.velocityY = normalizedY * ball.speed;
 	}
 
+	/**
+	 * Sets the ball back to the middle and generates a random direction for the ball.
+	 * It randomly takes one specified range and calculates with it a angle to determin the ball's direction.
+	 */
 	const randomBallDir = () => {
-		const ball = ballRef.current;
+		let ball = ballRef.current;
 		ball.x = 0;
 		ball.y = 0;
 		ball.speed = 1.2;
 
-		let randomNumber = Math.random();
-		let angle = 360 * randomNumber;
-		const angleOffset = 60; 
+		const ranges = [
+			{min: -37.5, max: 37.5},
+			{min: 142.5, max: 218.5},
+		];
 
-		ball.velocityX = ball.speed * Math.sin(angle);
-		while (ball.velocityX <= 0.6 && ball.velocityX >= -0.6) {
-			randomNumber = Math.random();
-			angle = 360 * randomNumber;
-			ball.velocityX = ball.speed * Math.sin(angle);
-		}
+		const { min, max } = ranges[Math.floor(Math.random() * ranges.length)];
+		const angle = (Math.random() * (max - min) + min) * (Math.PI / 180);
 
-		ball.velocityY = ball.speed * Math.cos(angle + angleOffset);
+		ball.velocityX = ball.speed * Math.sin(angle + (Math.PI / 2));
+		ball.velocityY = ball.speed * Math.cos(angle + (Math.PI / 2));
 	}
 
+	/**
+	 * Updates the new position of the ball based on its velocity and the time passed since last frame (deltaTime).
+	 * @param ball - The ball object containing position and velocity properties.
+	 * 				 Contains 'x', 'y', 'velocityX', and 'velocityY' fields.
+	 * @param deltaTime - The time passed since the last frame, in seconds.
+	 * 					  Used to ensure independence from the frame rate.
+	 */
 	const updateBallPosition = (ball: { x: number; y: number; velocityX: number; velocityY: number; }, deltaTime: number) => {
 		ball.x += ball.velocityX * 100 * deltaTime;
 		ball.y += ball.velocityY * 100 * deltaTime;
-		ref.current!.position.x = ball.x;
-		ref.current!.position.y = ball.y;
+		if (meshRef.current) {
+			meshRef.current.position.x = ball.x;
+			meshRef.current.position.y = ball.y;
+		}
 	}
 
-	// Initiates the game by providing a random direction to the ball after the countdown 
-	// sets the score visibility to true
+	/**
+	 * Initiates the game by providing a random direction to the ball after the countdown 
+	 * sets the score visibility to true.
+	 */
 	useEffect(() => {
 		if (props.scoreVisible)
 			randomBallDir();
@@ -67,9 +109,15 @@ const Ball = (props) => {
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
 			if (playerScore === 7) {
+				let ball = ballRef.current;
+				ball.x = 0;
+				ball.y = 0;
+				ball.velocityX = 0;
+				ball.velocityY = 0;
+				ball.speed = 0.1;
 				props.setGameOver(true);
 				props.setWinner(player);
-				setVisibility(false);
+				props.setBallVisibility(false);
 			}
 		}
 
@@ -77,7 +125,7 @@ const Ball = (props) => {
 		checkWinner('P2', props.p2Score);
 	}, [props.p1Score, props.p2Score]);
 
-	// Game/Render loop
+	// Game/render loop for the ball.
 	useFrame((state, deltaTime) => {
 		const ball = ballRef.current;
 
@@ -90,19 +138,24 @@ const Ball = (props) => {
 			return (
 				ball.x + halfBall >= paddle.x - halfPaddleWidth &&
 				ball.x - halfBall <= paddle.x + halfPaddleWidth &&
-				ball.y - halfBall <= paddle.y + HalfPaddleHeight &&
-				ball.y + halfBall >= paddle.y - HalfPaddleHeight
+				ball.y - halfBall <= paddle.y + halfPaddleHeight &&
+				ball.y + halfBall >= paddle.y - halfPaddleHeight
 			);
 		}
 
+		// Handling ball collision with top and bottom boarders.
 		if (ball.y > 100 || ball.y < -100) {
 			ball.velocityY *= -1;
 			updateBallPosition(ball, deltaTime);
 		}
-		else if (isCollidingWithPaddle(leftPaddlePos))
+		// Handling ball collision with paddles.
+		else if (isCollidingWithPaddle(leftPaddlePos)) {
 			changeBallDir(leftPaddlePos, 1);
-		else if (isCollidingWithPaddle(rightPaddlePos))
+		}
+		else if (isCollidingWithPaddle(rightPaddlePos)) {
 			changeBallDir(rightPaddlePos, -1);
+		}
+		// Handling scoring when the ball is outside of the play area.
 		else if ((ball.x > 200 || ball.x < -200) && 
 				props.p2Score !== 7 && props.p1Score !== 7) {
 			if (ball.x < -200)
@@ -114,11 +167,9 @@ const Ball = (props) => {
 	});
 
 	return (
-		<mesh ref={ref} visible={isVisible}>
+		<mesh ref={meshRef} visible={props.isBallVisible}>
 			<boxGeometry args={[4, 4, 4]} />
-			<meshBasicMaterial color={new THREE.Color(16, 16, 16)} />
+			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
 	);
-}
-
-export default Ball;
+})

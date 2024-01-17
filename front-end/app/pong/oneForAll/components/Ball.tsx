@@ -1,27 +1,66 @@
 'use client'
 
-import { useEffect, useRef, useState } from "react";
+import {
+	MutableRefObject,
+	SetStateAction,
+	forwardRef,
+	useEffect,
+	useRef,
+	useState,
+	Dispatch } from "react";
 import { useFrame } from '@react-three/fiber';
-import * as THREE from 'three';
-
-type BallElement = {
-	position: {
-		x: number;
-		y: number;
-	}
-}
+import { Mesh, MeshBasicMaterial } from 'three';
 
 type CollisionInfo = {
 	[key: string]: {score: any, setScore: any, isOwnGoal: boolean};
 };
 
-const Ball = (props) => {
-	let ref = useRef<BallElement | null>(null);
-	const [isVisible, setVisibility] = useState(true);
+interface ballPorps {
+	rightPaddleRef: MutableRefObject<Mesh>,
+	leftPaddleRef: MutableRefObject<Mesh>,
+	bottomPaddleRef: MutableRefObject<Mesh>,
+	topPaddleRef: MutableRefObject<Mesh>,
+	p1Score: number,
+	setP1Score: Dispatch<SetStateAction<number>>,
+	p2Score: number,
+	setP2Score: Dispatch<SetStateAction<number>>,
+	p3Score: number,
+	setP3Score: Dispatch<SetStateAction<number>>,
+	p4Score: number,
+	setP4Score: Dispatch<SetStateAction<number>>,
+	setWinner: Dispatch<SetStateAction<string>>,
+	gameOver: boolean,
+	setGameOver: Dispatch<SetStateAction<boolean>>,
+	scoreVisible: boolean,
+	isBallVisible: boolean,
+	setBallVisibility: Dispatch<SetStateAction<boolean>>,
+}
+
+/**
+ * Creates a ball Three.js mesh and handles its movement and collision behavior.
+ * @param props - The `props` parameter is an object that contains the following properties:
+ * 				  `rightPaddleRef`, `leftPaddleRef`,`p1Score`,`setP1Score`,`p2Score`,`setP2Score`,
+ * 				  `topPaddleRef`, `bottomPaddleRef`, `p3Score`,`setP3Score`,`p4Score`,`setP4Score`,
+ * 				  `setWinner`, `gameOver`, `setGameOver`, `scoreVisible`, `isBallVisible` and `setBallVisibility`
+ * @returns A Three.js mesh representing a ball.
+ */
+export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
+	const [color, setColor] = useState( 0xffffff );
+	const [lastPaddleHit, setLastPaddleHit] = useState('');
+	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const halfBall = 2;
-	let lastPaddleHit = '';
 
+	/**
+	 * Changes the ball's direction after it collided with a paddle.
+	 * @param paddlePos - the position of the paddle.
+	 * 					  Contains 'x' and 'y' properties.
+	 * @param direction - The direction (1 or -1) indicating the side of the paddle it collided with:
+	 * 					  1: Collided with the left paddle.
+	 * 					 -1: Collided with the right paddle.
+	 * @param isHorizontal - A boolean indicating if the collision is with a horizontal (true) or vertical (false) oriented paddle.
+	 * 						 If true, the collision is considered in the horizontal axis; if false, in the vertical axis.
+	 */
 	const changeBallDir = (paddlePos: { x: number; y: number}, direction: number, isHorizontal: boolean) => {
 		let ball = ballRef.current;
 		const delta = isHorizontal ? ball.x - paddlePos.x : ball.y - paddlePos.y;
@@ -33,6 +72,16 @@ const Ball = (props) => {
 		ball.velocityY = isHorizontal ? direction * ball.speed : normalized * ball.speed;
 	}
 
+	const changeColor = ( ref:  MutableRefObject<Mesh>) => {
+		const material = ref.current.material as MeshBasicMaterial;
+		const currentColor = material.color.getHex();
+		setColor(currentColor);
+	}
+
+	/**
+	 * Sets the ball back to the middle and generates a random direction for the ball.
+	 * It randomly takes one specified range and calculates with it a angle to determin the ball's direction.
+	 */
 	const randomBallDir = () => {
 		let ball = ballRef.current;
 		ball.x = 0;
@@ -53,12 +102,19 @@ const Ball = (props) => {
 		ball.velocityY = ball.speed * Math.cos(angle);
 	}
 
+	/**
+	 * Updates the scores based on the ball's position and the last paddle hit.
+	 * Determines if a player loses a point or gains a point based on the ball's position
+	 * relative to the paddles. If the player hits its own goal (lastPaddleHit = player), the player loses a point;
+	 * otherwise, the player scores a point.
+	 * @param ball - An object representing the position of the ball with 'x' and 'y' properties.
+	 */
 	const handleScore = (ball: { x: number; y: number; }) => {
 		const paddleCollision: CollisionInfo = {
-			left:   { score: props.p1Score, setScore: props.setP1Score, isOwnGoal: ball.x <= -200 ? true : false },
-			right:  { score: props.p2Score, setScore: props.setP2Score, isOwnGoal: ball.x >= 200 ? true : false },
-			top:    { score: props.p3Score, setScore: props.setP3Score, isOwnGoal: ball.y >= 200 ? true : false },
-			bottom: { score: props.p4Score, setScore: props.setP4Score, isOwnGoal: ball.y <= -200 ? true : false },
+			bottom: { score: props.p1Score, setScore: props.setP1Score, isOwnGoal: ball.y <= -170 ? true : false },
+			left:   { score: props.p2Score, setScore: props.setP2Score, isOwnGoal: ball.x <= -170 ? true : false },
+			top:    { score: props.p3Score, setScore: props.setP3Score, isOwnGoal: ball.y >= 170 ? true : false },
+			right:  { score: props.p4Score, setScore: props.setP4Score, isOwnGoal: ball.x >= 170 ? true : false },
 		}
 
 		if (lastPaddleHit !== '') {
@@ -70,23 +126,32 @@ const Ball = (props) => {
 				setScore(score + 1);
 
 		} else {
-			if (ball.x <= -200 && props.p1Score !== 0 )
+			if (ball.y <= -170 && props.p1Score !== 0)
 				props.setP1Score(props.p1Score - 1);
-			else if (ball.x >= 200 && props.p2Score !== 0)
+			else if (ball.x <= -170 && props.p2Score !== 0 )
 				props.setP2Score(props.p2Score - 1);
-			else if (ball.y >= 200 && props.p3Score !== 0)
+			else if (ball.y >= 170 && props.p3Score !== 0)
 				props.setP3Score(props.p3Score - 1);
-			else if (ball.y <= -200 && props.p4Score !== 0)
+			else if (ball.x >= 170 && props.p4Score !== 0)
 				props.setP4Score(props.p4Score - 1);
 		}
-		lastPaddleHit = '';
+		setLastPaddleHit('');
 	}
 
+	/**
+	 * Updates the new position of the ball based on its velocity and the time passed since last frame (deltaTime).
+	 * @param ball - The ball object containing position and velocity properties.
+	 * 				 Contains 'x', 'y', 'velocityX', and 'velocityY' fields.
+	 * @param deltaTime - The time passed since the last frame, in seconds.
+	 * 					  Used to ensure independence from the frame rate.
+	 */
 	const updateBallPosition = (ball: { x: number; y: number; velocityX: number; velocityY: number; }, deltaTime: number) => {
 		ball.x += ball.velocityX * 100 * deltaTime;
 		ball.y += ball.velocityY * 100 * deltaTime;
-		ref.current!.position.x = ball.x;
-		ref.current!.position.y = ball.y;
+		if (meshRef.current) {
+			meshRef.current.position.x = ball.x;
+			meshRef.current.position.y = ball.y;
+		}
 	}
 
 	const handleBallMovement = (ball: { x: any; y: any; velocityX: any; velocityY: any; speed: number; }, deltaTime: number) => {
@@ -95,6 +160,14 @@ const Ball = (props) => {
 		const TopPaddlePos = props.topPaddleRef.current.position;
 		const BottomPaddlePos = props.bottomPaddleRef.current.position;
 
+		/**
+		 * The function checks if a ball is colliding with a rectangle given its position, width, and height.
+		 * @param x - The x-coordinate of the object you want to check.
+		 * @param y - The y-coordinate of the object you want to check.
+		 * @param width - The width of the object you are checking.
+		 * @param height - The height of the object you are checking.
+		 * @returns a boolean value determing a hit or not.
+		 */
 		const isColliding = ( x: number, y: number, width: number, height: number) => {
 			return (
 				ball.x + halfBall >= x - width &&
@@ -104,49 +177,60 @@ const Ball = (props) => {
 			);
 		}
 
-		// Handle collision with the vertical walls
+		// Handle collision with the vertical walls.
 		if (isColliding(-151, 131, 2, 20) || isColliding(151, 131, 2, 20) ||
 			isColliding(-151, -131, 2, 20) || isColliding(151, -131, 2, 20)) {
+			// Handling top or bottom side collision trajectory.
 			if (ball.x + halfBall >= 151 || ball.x - halfBall <= -151)
 				ball.velocityY *= -1;
+			// Normal collition trajectory.
 			else
 				ball.velocityX *= -1;
 			updateBallPosition(ball, deltaTime);
 		}
-		// Handle collision with the horizontal walls
+		// Handle collision with the horizontal walls.
 		if (isColliding(-131, 151, 20, 2) || isColliding(131, 151, 20, 2)||
 			isColliding(-131, -151, 20, 2) || isColliding(131, -151, 20, 2)) {
+			// Handling left and right side collision.
 			if (ball.y + halfBall >= 151 || ball.y - halfBall <= -151)
 				ball.velocityX *= -1;
+			// Normal collition trajectory.
 			else
 				ball.velocityY *= -1;
 			updateBallPosition(ball, deltaTime);
 		}
+		// Handling ball collision with paddles.
 		else if (isColliding(leftPaddlePos.x, leftPaddlePos.y, 2, 15)) {
-			lastPaddleHit = 'left';
+			setLastPaddleHit('left');
 			changeBallDir(leftPaddlePos, 1, false);
+			changeColor(props.leftPaddleRef);
 		}
 		else if (isColliding(rightPaddlePos.x, rightPaddlePos.y, 2, 15)) {
-			lastPaddleHit = 'right';
+			setLastPaddleHit('right');
 			changeBallDir(rightPaddlePos, -1, false);
+			changeColor(props.rightPaddleRef);
 		}
 		else if (isColliding(TopPaddlePos.x, TopPaddlePos.y, 15, 2)) {
-			lastPaddleHit = 'top';
+			setLastPaddleHit('top');
 			changeBallDir(TopPaddlePos, -1, true);
+			changeColor(props.topPaddleRef);
 		}
 		else if (isColliding(BottomPaddlePos.x, BottomPaddlePos.y, 15, 2)) {
-			lastPaddleHit = 'bottom';
+			setLastPaddleHit('bottom');
 			changeBallDir(BottomPaddlePos, 1, true);
+			changeColor(props.bottomPaddleRef);
 		}
-		else if (( ball.x <= -200 || ball.x >= 200 || ball.y >= 200 || ball.y <= -200) && 
-			props.p1Score !== 7 && props.p2Score !== 7 && props.p3Score !== 7 && props.p4Score !== 7) {
+		// Handling scoring when the ball is outside of the play area.
+		else if (( ball.x <= -170 || ball.x >= 170 || ball.y >= 170 || ball.y <= -170) && 
+		props.p1Score !== 7 && props.p2Score !== 7 && props.p3Score !== 7 && props.p4Score !== 7) {
 			handleScore(ball);
 			randomBallDir();
+			setColor( 0xffffff );
 		}
 	}
 
 	// Initiates the game by providing a random direction to the ball after the countdown
-	// sets the score visibility to true
+	// sets the score visibility to true.
 	useEffect(() => {
 		if (props.scoreVisible)
 			randomBallDir();
@@ -157,7 +241,13 @@ const Ball = (props) => {
 			if (playerScore === 7) {
 				props.setGameOver(true);
 				props.setWinner(player);
-				setVisibility(false);
+				let ball = ballRef.current;
+				ball.x = 0;
+				ball.y = 0;
+				ball.velocityX = 0;
+				ball.velocityY = 0;
+				ball.speed = 0.1;
+				props.setBallVisibility(false);
 			}
 		}
 
@@ -167,8 +257,8 @@ const Ball = (props) => {
 		checkWinner('P4', props.p4Score);
 	}, [props.p1Score, props.p2Score, props.p3Score, props.p4Score]);
 
-	// Game/Render loop
-	useFrame((state, deltaTime) => {
+	// Game/render loop for the ball.
+	useFrame((_, deltaTime) => {
 		let ball = ballRef.current;
 
 		updateBallPosition(ball, deltaTime);
@@ -176,11 +266,9 @@ const Ball = (props) => {
 	});
 
 	return (
-		<mesh ref={ref} visible={isVisible}>
+		<mesh ref={meshRef} visible={props.isBallVisible}>
 			<boxGeometry args={[4, 4, 4]} />
-			<meshBasicMaterial color={new THREE.Color(16, 16, 16)}/>
+			<meshBasicMaterial color={ color }/>
 		</mesh>
 	);
-}
-
-export default Ball;
+})

@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber"
-import React, { useEffect, useState } from 'react';
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'; 
 import Floor from "../sharedComponents/Floor";
 import { gameValidation }  from "../sharedComponents/GameValidation"
@@ -9,70 +9,108 @@ import FinishLine from "../sharedComponents/FinishLine";
 import { fieldGenerator, gridLineGenrator } from "./components/Grid";
 import EndModal from "./components/EndModal";
 import Camera from "../sharedComponents/Camera";
-import Countdown from "@/app/tic-tac-toe/normal/components/Countdown";
+import Countdown from "../sharedComponents/Countdown";
 import inputHandler from "@/components/inputHandler";
+import TurnDisplay from "./components/TurnDisplay";
+import { Mesh } from "three"
+import { useSound } from "@/components/Sound";
 
-// Used to track user moves for validation
-// '' = empty position, 'X' or 'O' updated on user click
-// Used to validate winning combinations
-const initialBoardState = [
+
+// TODO: Add a lose function, that displays losing modal + plays random lose sound
+// TODO: Add maybe a minimap where you can see the board better
+
+// Used to track user moves for validation.
+// '' = empty position, 'X' or 'O' updated on user click.
+// Used to validate winning combinations.
+const initialBoard = () =>  {
+	return (
+		[
+			[
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+			],
+			[
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+			],
+			[
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+			],
+			[
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+				['', '', '', ''],
+			],
+		]
+	);
+}
+
+// Initial coordinates for each field in the scene.
+// Each [0, 0, 0] represents the coordinates of a field.
+// Set on field creation.
+const initialSceneCoords = [
 	[
-		['', '', ''],
-		['', '', ''],
-		['', '', ''],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
 	],
 	[
-		['', '', ''],
-		['', '', ''],
-		['', '', ''],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
 	],
 	[
-		['', '', ''],
-		['', '', ''],
-		['', '', ''],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+	],
+	[
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
+		[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
 	],
 ];
 
-// Initial coordinates for each field in the scene
-// Each [0, 0, 0] represents the coordinates of a field
-// Set on field creation
-const initialSceneCords = [
-	[
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-	],
-	[
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-	],
-	[
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-		[[0, 0, 0], [0, 0, 0], [0, 0, 0]],
-	],
+// Represents the 3 coordinates forming a winning line.
+// Extracted from initialSceneCords after finding a winner.
+const winningCoords : [number, number, number][] = [
+	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
 ];
 
-// Represents the 3 coordinates forming a winning line
-// Extracted from initialSceneCords after finding a winner
-const winningCoords = [
-	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
-];
-
+/**
+ * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
+ * It handles game state, user interactions, and 3D rendering of the game board.
+ * Uses various hooks for state management and effects for handling game logic,
+ * resizing, modal display, and game completion.
+ * @returns The entire Three.js scene, including the modal.
+ */
 const TTTScene = () => {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const [clicked, click] = useState(false);
-	const [currentTurn, setTurn] = useState('X');
-	const [board, setCurrentBoardState] = useState(initialBoardState);
-	const [sceneCords, setSceneCords] = useState(initialSceneCords);
+	const [currentTurn, setTurn] = useState('');
+	const [board, setCurrentBoardState] = useState(initialBoard());
+	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
 	const [showFinishLine, setShowFinishLine] = useState(false);
-	const [coords, setCoords] = useState(winningCoords);
+	const [coords, setCoords] = useState([...winningCoords]);
 	const [colour, setColour] = useState(0xffffff);
 	const [showModal, setShowModal] = useState(false);
 	const [gameOver, setGameOver] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [countdownVisible, setCountdownVisible] = useState(true);
+	const [reset, setReset] = useState(false);
+	const soundEngine = useSound();
 	const keyMap = inputHandler();
 
 	const closeModal = () => {
@@ -80,9 +118,34 @@ const TTTScene = () => {
 	}
 
 	const openModal = () => {
+		soundEngine?.playSound("win");
+		//losing1();
+		//losing2();
 		setShowModal(true);
 	}
 
+	// Handling the reset of the scene, resetting important states.
+	useEffect(() => {
+		if (reset) {
+			closeModal();
+			setCurrentBoardState(initialBoard());
+			setTurn('');
+			setShowFinishLine(false);
+			setCoords([...winningCoords]);
+			setColour(0xffffff);
+			setGameOver(false);
+			setWinner('');
+			setCountdownVisible(true);
+			setReset(false);
+		}
+	}, [reset]);
+
+	useEffect(() => {
+		if (!countdownVisible)
+			setTurn('X');
+	}, [countdownVisible]);
+
+	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
 		if (gameOver) {
 			const delay = 2000;
@@ -96,6 +159,9 @@ const TTTScene = () => {
 		}
 	}, [gameOver]);
 
+	// Updates window dimensions on window resizing and
+	// changes the turn after a clicked field and checks if a winning condition
+	// is achived.
 	useEffect(() => {
 		const handleResize = () => {
 			setDimensions({
@@ -106,9 +172,9 @@ const TTTScene = () => {
 
 		const checkClick = () => {
 			if (clicked) {
-				setTurn(currentTurn === 'X' ? 'O' : 'X');
+				soundEngine?.playSound("tictactoe");
 				click(false);
-				const winner = gameValidation(board, sceneCords, coords, setCoords);
+				const winner = gameValidation(board, sceneCoords, coords, setCoords);
 				if (winner) {
 					if (winner === 'X') {
 						setShowFinishLine(true);
@@ -120,7 +186,9 @@ const TTTScene = () => {
 					}
 					setWinner(winner);
 					setGameOver(true);
+					return;
 				}
+				setTurn(currentTurn === 'X' ? 'O' : 'X');
 			}
 		}
 
@@ -138,16 +206,17 @@ const TTTScene = () => {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
-				<Camera dimensions={dimensions} keyMap={keyMap} target={[ 0, 0, 0]} />
+				<Camera keyMap={keyMap} target={[4, 10, 2]} reset={reset} />
 				{gridLineGenrator()}
-				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCords, setSceneCords, gameOver)}
-				<Floor position={[ 0, -0.2, 0]} args={[0.25, 17.5, 17.5]} /> 
-				<Floor position={[ 0,  7.8, 0]} args={[0.25, 17.5, 17.5]} />
-				<Floor position={[ 0, 15.8, 0]} args={[0.25, 17.5, 17.5]} />
+				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, gameOver)}
+				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
+				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
+				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
+				<TurnDisplay turn={currentTurn} />
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
-				<OrbitControls enableZoom={true} enableRotate={!countdownVisible} enablePan={false} />
+				<OrbitControls enableZoom={false} target={[4, 10, 2]} enableRotate={true} enablePan={false} />
 			</Canvas>
-			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} />
+			<EndModal setReset={setReset} isOpen={showModal} onClose={closeModal} winner={winner} />
 		</div> 
 	);
 }
