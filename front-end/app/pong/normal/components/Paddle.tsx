@@ -25,7 +25,8 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
 			// RECEIVE PRESSED KEY = SET IT WITH updatePaddleState
-			meshRef.current.position.y = paddleState.position.y;
+			const receivedPos = paddleState.position.y;
+			meshRef.current.position.y = ((receivedPos - meshRef.current.position.y) * 0.1)
 		}
 	});
 

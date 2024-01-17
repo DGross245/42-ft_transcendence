@@ -1,6 +1,9 @@
 import { ReactNode, createContext, useState } from 'react';
 import { Dispatch, SetStateAction } from 'react';
 
+
+// TODO: Add masterState
+
 const initialBallState = {
 	position: { x: 0, y: 0 },
 	velocity: { x: 0, y: 0 },
