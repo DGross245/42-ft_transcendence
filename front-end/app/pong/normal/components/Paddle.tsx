@@ -17,8 +17,8 @@ interface Paddle {
  */
 export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const { paddleState, updatePaddleState, opponentState } = useContext(PongContext)!;
-	const paddleSpeed = 300;
-	const borderPositionY = 103;
+	//const paddleSpeed = 300;
+	//const borderPositionY = 103;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	// Moves the paddle based on pressed key for each frame.
@@ -52,6 +52,7 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
 	// Moves the paddle based on pressed key for each frame.
+	
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
 			// SEND PRESSED KEY

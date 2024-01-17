@@ -15,13 +15,13 @@ const initialPaddleState = {
 
 const initialPlayerState = {
 	// socket
-	// name?
+	name: "None",
 	color: 0xffffff,
 };
 
 const initialOpponentState = {
 	// socket
-	// name?
+	name: "None",
 	color: 0xffffff,
 };
 
@@ -35,10 +35,12 @@ interface PongContextProps {
 	}
 	playerState: {
 		// socket
+		name: string,
 		color: number;
 	}
 	opponentState: {
 		// socket
+		name: string,
 		color: number;
 	}
 	updateBallState: Dispatch<SetStateAction<typeof initialBallState>>;
