@@ -33,8 +33,12 @@ class WSClient {
 		});
 	}
 
+	joinGame(gameId: string): void {
+		this.socket!.emit('join-game', gameId);
+	}
+
 	emitMessageToGame(msg: string, topic: string, gameId: string): void {
-		this.socket!.emit('message', gameId, topic, msg);
+		this.socket!.emit('send-message-to-game', msg, topic, gameId);
 	}
 
 	addMessageListener(topic: string, gameId: string, callback: (msg: string) => void): void {

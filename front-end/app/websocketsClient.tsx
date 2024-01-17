@@ -2,7 +2,7 @@
 
 import useWSClient from '@/helpers/wsclient';
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const WebSocketClient = () => {
 	const [gameId, setGameId] = useState('');
@@ -21,6 +21,7 @@ const WebSocketClient = () => {
 			setMessage(msg);
 		});
 	}
+
 	const onSendMesage = () => {
 		if (!wsclient) return;
 		wsclient.emitMessageToGame(message, topic, gameId);
@@ -32,8 +33,22 @@ const WebSocketClient = () => {
 		wsclient.removeMessageListener(topic, gameId);
 	}
 
-  	return (<>
+	const onJoinGame = () => {
+		if (!wsclient) return;
+		wsclient.joinGame(gameId);
+		console.log("joining...")
+	}
+
+	return (<>
 		<section className='flex flex-col'>
+			<div className='flex'>
+				<input
+					placeholder="GameJoin"
+					value={gameId}
+					onChange={(e) => setGameId(e.target.value)}
+				/>
+				<button onClick={onJoinGame}>Join Game</button>
+			</div>
 			<div className='flex'>
 				<input
 					placeholder="GameId"

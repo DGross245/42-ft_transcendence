@@ -28,13 +28,18 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			// 	cache.put(walletId, socket);
 			// })
 
+			socket.on('join-game', ( gameId: string ) => {
+				socket.join(gameId);
+			});
+
 			socket.on('create-game', (msg: string) => {
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 				socket.emit(`game-created-${msg}`, id);
 			});
 
-			socket.on('send-message-to-game', (msg: string, gameId: string) => {
-				socket.emit(`message-${gameId}`, msg);
+			socket.on('send-message-to-game', (msg: string, topic: string, gameId: string) => {
+				console.log("sending msg to game");
+				io.to(gameId).emit(`message-${gameId}-${topic}`, msg);
 				// cache.get(gameId);
 				// cache.del(gameId);
 			});
