@@ -38,7 +38,6 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			});
 
 			socket.on('send-message-to-game', (msg: string, topic: string, gameId: string) => {
-				console.log("sending msg to game");
 				io.to(gameId).emit(`message-${gameId}-${topic}`, msg);
 				// cache.get(gameId);
 				// cache.del(gameId);

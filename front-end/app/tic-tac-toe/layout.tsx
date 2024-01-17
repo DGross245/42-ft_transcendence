@@ -1,4 +1,4 @@
-export default function PongLayout({
+export default function TTTLayout({
 	children,
 }: {
 	children: React.ReactNode;

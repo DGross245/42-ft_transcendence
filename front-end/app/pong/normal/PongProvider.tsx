@@ -14,15 +14,15 @@ const initialPaddleState = {
 };
 
 const initialPlayerState = {
-	// socket
 	name: "None",
 	color: 0xffffff,
+	master: false,
 };
 
 const initialOpponentState = {
-	// socket
 	name: "None",
 	color: 0xffffff,
+	master: false,
 };
 
 interface PongContextProps {
@@ -34,19 +34,19 @@ interface PongContextProps {
 		position: { x: number, y: number },
 	}
 	playerState: {
-		// socket
 		name: string,
 		color: number;
 	}
 	opponentState: {
-		// socket
 		name: string,
 		color: number;
 	}
+	gameId: string,
 	updateBallState: Dispatch<SetStateAction<typeof initialBallState>>;
 	updatePaddleState: Dispatch<SetStateAction<typeof initialPaddleState>>;
 	updatePlayerState :  Dispatch<SetStateAction<typeof initialPlayerState>>;
 	updateOpponentState :  Dispatch<SetStateAction<typeof initialOpponentState>> 
+	updateGameId :  Dispatch<SetStateAction<string>> 
 }
 
 const PongContext = createContext<PongContextProps | undefined>(undefined);
@@ -56,6 +56,11 @@ const PongProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 	const [paddleState, setPaddleState] = useState( initialPaddleState );
 	const [playerState, setPlayerState] = useState( initialPlayerState ); // could be moved to another provider, like for all games
 	const [opponentState, setOpponentState] = useState( initialOpponentState );  // this too
+	const [gameId, setGameId] = useState('');
+
+	const updateGameId : Dispatch<SetStateAction<string>> = ( newState ) => {
+		setGameId(newState);
+	}
 
 	const updateBallState : Dispatch<SetStateAction<typeof initialBallState>> = ( newState ) => {
 		setBallState(prevState => ({
@@ -92,6 +97,7 @@ const PongProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 				paddleState, updatePaddleState, 
 				playerState, updatePlayerState,
 				opponentState, updateOpponentState,
+				gameId, updateGameId,
 			}}
 		>
 			{children}

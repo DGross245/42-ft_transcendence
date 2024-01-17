@@ -1,8 +1,10 @@
 'use client'
 
-import { MutableRefObject, SetStateAction, forwardRef, useEffect, useRef, Dispatch, useState } from "react";
+import { MutableRefObject, SetStateAction, forwardRef, useEffect, useRef, Dispatch, useState, useContext } from "react";
 import { useFrame } from '@react-three/fiber';
 import { Mesh, MeshBasicMaterial } from 'three';
+import { PongContext } from "../PongProvider";
+import useWSClient from "@/helpers/wsclient";
 
 // FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
 // TODO: Refactor code for remote play
@@ -39,6 +41,9 @@ export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
 	const halfBall = 2;
+	const { gameId, ballState, updateBallState} = useContext(PongContext)!;
+	const wsclient = useWSClient();
+
 	//
 	/**
 	 * Changes the ball's direction after it collided with a paddle.
