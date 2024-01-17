@@ -36,7 +36,7 @@ export default function PongScene() {
 	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const ballRef = useRef<Mesh>(null);
-	const { active, direction, ballAidsHook } = usePongBot(true, rightPaddleRef.current?.position);
+	const { active, direction, ballAidsHook } = usePongBot(true, 100, rightPaddleRef.current?.position);
 
 	const closeModal = () => {
 		setShowModal(false);
