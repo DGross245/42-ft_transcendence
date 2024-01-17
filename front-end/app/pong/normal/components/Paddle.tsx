@@ -25,11 +25,7 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
 			// RECEIVE PRESSED KEY = SET IT WITH updatePaddleState
-			if (paddleState.keyMap['ArrowUp']) {
-				meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
-			} else if (paddleState.keyMap['ArrowDown']) {
-				meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
-			}
+			meshRef.current.position.y = paddleState.position.y;
 		}
 	});
 

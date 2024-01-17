@@ -7,10 +7,7 @@ const initialBallState = {
 };
 
 const initialPaddleState = {
-	keyMap: {
-		'KeyW': false,
-		'KeyS': false,
-	},
+	position: { x: 0, y: 0 },
 };
 
 const initialPlayerState = {
@@ -31,7 +28,7 @@ interface PongContextProps {
 		velocity: { x: number, y: number },
 	};
 	paddleState: {
-		keyMap: { [key: string]: boolean };
+		position: { x: number, y: number },
 	}
 	playerState: {
 		// socket
