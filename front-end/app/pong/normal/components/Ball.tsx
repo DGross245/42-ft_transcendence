@@ -20,6 +20,7 @@ interface ballPorps {
 	scoreVisible: boolean,
 	isBallVisible: boolean,
 	setBallVisibility: React.Dispatch<React.SetStateAction<boolean>>,
+	onPositionChange?: (position: THREE.Vector3) => void
 }
 
 /**
@@ -92,6 +93,9 @@ export const Ball = forwardRef<THREE.Mesh, ballPorps>((props, ref) => {
 		if (meshRef.current) {
 			meshRef.current.position.x = ball.x;
 			meshRef.current.position.y = ball.y;
+		}
+		if (props.onPositionChange && meshRef.current) {
+			props.onPositionChange(meshRef.current.position);
 		}
 	}
 

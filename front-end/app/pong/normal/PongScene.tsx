@@ -12,9 +12,8 @@ import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
 import inputHandler from '@/components/inputHandler';
+import { usePongBot } from './hooks/PongBot';
 import { Mesh } from 'three'
-import { Vector } from 'three-csg-ts/lib/esm/Vector';
-import * as THREE from 'three';
 
 // TODO: Look if re-renders can be minimized
 
@@ -33,13 +32,11 @@ export default function PongScene() {
 	const [scoreVisible, setScoreVisibility] = useState(false);
 	const [reset, setReset] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true);
-
-	const [botY, setBotY] = useState(0);
-	
 	const keyMap = inputHandler();
 	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const ballRef = useRef<Mesh>(null);
+	const { active, direction, ballAidsHook } = usePongBot(true, rightPaddleRef.current?.position);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -48,30 +45,6 @@ export default function PongScene() {
 	const openModal = () => {
 		setShowModal(true);
 	}
-
-	// Calculates the bot's paddle position based on the ball's position.
-	const calculateBotMove = (ballPosition: Vector3 | undefined, botPaddlePosition: Vector3 | undefined) => {
-		const result = new THREE.Vector3(0, 0, 0);
-		return result;
-	}
-	
-	const setBotPaddlePosition = (newPosition: Vector3 | undefined) => {
-	}
-	
-	// Bot
-	// @todo setInterval each frame instead of 50ms
-		// useFrame
-	useEffect(() => {
-		const ballPosition = ballRef.current?.position;
-		const botPaddlePosition = rightPaddleRef.current?.position;
-		const interval = setInterval(() => {
-			setBotY(ballRef.current?.position.y as number);
-			// const newPaddlePosition = calculateBotMove(ballPosition, botPaddlePosition);
-			// setBotPaddlePosition(newPaddlePosition);
-		}, 10); // adjust interval as needed
-
-		return () => clearInterval(interval);
-	}, [ballRef, rightPaddleRef]);
 
 	// Handles the reset of the scene when the 'reset' state changes.
 	useEffect(() => {
@@ -128,7 +101,7 @@ export default function PongScene() {
 				<ambientLight />
 				<Border position={[0,105,0]} />
 				<Border position={[0,-105,0]} />
-				<RightPaddle ref={rightPaddleRef} position={[151, botY, 0]} keyMap={keyMap} />
+				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} keyMap={keyMap} botActive={active} botDirection={direction} />
 				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
 				<Ball
 					rightPaddleRef={rightPaddleRef}
@@ -140,6 +113,7 @@ export default function PongScene() {
 					scoreVisible={scoreVisible}
 					isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
 					ref={ballRef}
+					onPositionChange={ballAidsHook}
 				/>
 				<CubeLine />
 				<OrbitControls enablePan={false} />

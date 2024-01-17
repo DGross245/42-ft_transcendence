@@ -1,10 +1,13 @@
 import { useFrame } from "@react-three/fiber";
 import { MutableRefObject, forwardRef, useEffect } from "react";
 import { Mesh } from 'three';
+import { Direction } from "../hooks/PongBot";
 
 interface Paddle {
 	keyMap: { [key: string]: boolean };
 	position: [number, number, number];
+	botActive?: boolean;
+	botDirection?: Direction;
 }
 
 /**
@@ -14,27 +17,38 @@ interface Paddle {
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
+export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position, botActive, botDirection }, ref) => {
 	const paddleSpeed = 300;
 	const borderPositionY = 105;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
-	useFrame(() => {
-		if (meshRef && meshRef.current) {
-			meshRef.current.position.y = position[1];
-		}
-	});
-
-	// Moves the paddle based on pressed key for each frame.
-	useFrame((_, delta) => {
-		if (meshRef && meshRef.current) {
-			if (keyMap['ArrowUp']) {
-				meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
-			} else if (keyMap['ArrowDown']) {
-				meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
+	if (botActive) {
+		useFrame((_, delta) => {
+			if (meshRef && meshRef.current) {
+				if (meshRef && meshRef.current) {
+					if (botDirection === Direction.Up) {
+						meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
+					}
+					else if (botDirection === Direction.Down) {
+						meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
+					}
+				}
 			}
-		}
-	});
+		});
+	}
+
+	if (!botActive) {
+		// Moves the paddle based on pressed key for each frame.
+		useFrame((_, delta) => {
+			if (meshRef && meshRef.current) {
+				if (keyMap['ArrowUp']) {
+					meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
+				} else if (keyMap['ArrowDown']) {
+					meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
+				}
+			}
+		});
+	} 
 
 	return (
 		<mesh ref={ref} position={position}>
