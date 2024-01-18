@@ -4,16 +4,25 @@ import io, { Socket } from 'socket.io-client';
 import { useEffect, useState } from 'react';
 import crypto from 'crypto';
 
+export type WSClientType = {
+	createGame: () => Promise<string>;
+	joinGame: (gameId: string) => void;
+	emitMessageToGame: (msg: string, topic: string, gameId: string) => void;
+	addMessageListener: (topic: string, gameId: string, callback: (msg: string) => void) => void;
+	removeMessageListener: (topic: string, gameId: string) => void;
+};
+
 /* -------------------------------------------------------------------------- */
 /*                                  WSClient                                  */
 /* -------------------------------------------------------------------------- */
 
 class WSClient {
 	private socket: typeof Socket | undefined;
+	private socketInitialized: Promise<void>;
 
 	constructor() {
 		console.log('WSClient constructor');
-		this.socketInitializer();
+		this.socketInitialized = this.socketInitializer();
 	}
 
 	private async socketInitializer(): Promise<void> {
@@ -21,6 +30,11 @@ class WSClient {
 		this.socket = io();
 	}
 
+	private async waitForSocket(): Promise<void> {
+		if (!this.socket) {
+		  await this.socketInitialized;
+		}
+	}
 
 	async createGame(): Promise<string> {
 		return new Promise((resolve, reject) => {
@@ -34,19 +48,26 @@ class WSClient {
 	}
 
 	joinGame(gameId: string): void {
-		this.socket!.emit('join-game', gameId);
+		this.waitForSocket().then(() => {
+			if (this.socket) {
+				this.socket.emit('join-game', gameId);
+			}
+		});
 	}
 
 	emitMessageToGame(msg: string, topic: string, gameId: string): void {
-		this.socket!.emit('send-message-to-game', msg, topic, gameId);
+		if (this.socket)
+			this.socket!.emit('send-message-to-game', msg, topic, gameId);
 	}
 
 	addMessageListener(topic: string, gameId: string, callback: (msg: string) => void): void {
-		this.socket!.on(`message-${gameId}-${topic}`, callback);
+		if (this.socket)
+			this.socket!.on(`message-${gameId}-${topic}`, callback);
 	}
 
 	removeMessageListener(topic: string, gameId: string): void {
-		this.socket!.removeListener(`message-${gameId}-${topic}`);
+		if (this.socket)
+			this.socket!.removeListener(`message-${gameId}-${topic}`);
 	}
 }
 
@@ -55,9 +76,11 @@ class WSClient {
 /* -------------------------------------------------------------------------- */
 const useWSClient = () => {
 	const [wsclient, setWsclient] = useState<WSClient | null>(null);
+
 	useEffect(() => {
 		if (window !== undefined) {
 			setWsclient(new WSClient());
+			console.log("created client");
 		}
 	},[]);
 

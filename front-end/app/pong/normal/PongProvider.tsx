@@ -1,8 +1,8 @@
+"use client"
+
+import { WSClientType } from '@/helpers/wsclient';
 import { ReactNode, createContext, useState } from 'react';
 import { Dispatch, SetStateAction } from 'react';
-
-
-// TODO: Add masterState
 
 const initialBallState = {
 	position: { x: 0, y: 0 },
@@ -25,6 +25,11 @@ const initialOpponentState = {
 	master: false,
 };
 
+const initialGameState = {
+	gameId: '',
+	wsclient: null as WSClientType | null,
+};
+
 interface PongContextProps {
 	ballState: {
 		position: { x: number, y: number },
@@ -41,25 +46,34 @@ interface PongContextProps {
 		name: string,
 		color: number;
 	}
-	gameId: string,
+	gameState: {
+		gameId: string,
+		wsclient: WSClientType | null,
+	}
 	updateBallState: Dispatch<SetStateAction<typeof initialBallState>>;
 	updatePaddleState: Dispatch<SetStateAction<typeof initialPaddleState>>;
 	updatePlayerState :  Dispatch<SetStateAction<typeof initialPlayerState>>;
 	updateOpponentState :  Dispatch<SetStateAction<typeof initialOpponentState>> 
-	updateGameId :  Dispatch<SetStateAction<string>> 
+	updateGameState :  Dispatch<SetStateAction<typeof initialGameState>> 
 }
 
-const PongContext = createContext<PongContextProps | undefined>(undefined);
+const PongContext = createContext<PongContextProps>({} as PongContextProps);
 
-const PongProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+const PongProvider: React.FC<{ children: ReactNode, initialWsClient?: WSClientType | null }> = ({ children, initialWsClient }) => {
 	const [ballState, setBallState] = useState( initialBallState );
 	const [paddleState, setPaddleState] = useState( initialPaddleState );
 	const [playerState, setPlayerState] = useState( initialPlayerState ); // could be moved to another provider, like for all games
 	const [opponentState, setOpponentState] = useState( initialOpponentState );  // this too
-	const [gameId, setGameId] = useState('');
+	const [gameState, setGameState] = useState({
+		...initialGameState,
+		wsclient: initialWsClient !== undefined ? initialWsClient : null,
+	});
 
-	const updateGameId : Dispatch<SetStateAction<string>> = ( newState ) => {
-		setGameId(newState);
+	const updateGameState : Dispatch<SetStateAction<typeof initialGameState>> = ( newState ) => {
+		setGameState(prevState => ({
+			...prevState,
+			...newState,
+		}));
 	}
 
 	const updateBallState : Dispatch<SetStateAction<typeof initialBallState>> = ( newState ) => {
@@ -97,7 +111,7 @@ const PongProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 				paddleState, updatePaddleState, 
 				playerState, updatePlayerState,
 				opponentState, updateOpponentState,
-				gameId, updateGameId,
+				gameState, updateGameState,
 			}}
 		>
 			{children}

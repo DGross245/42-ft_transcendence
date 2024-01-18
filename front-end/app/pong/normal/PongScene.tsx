@@ -13,7 +13,7 @@ import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
 import inputHandler from '@/components/inputHandler';
 import { Mesh } from 'three'
-import { PongContext, PongProvider } from './PongProvider';
+import { PongContext } from './PongProvider';
 import useWSClient from '@/helpers/wsclient';
 
 /**
@@ -36,10 +36,31 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const ballRef = useRef<Mesh>(null);
+	const { gameState, updateGameState } = useContext(PongContext)!;
+	const wsClient = useWSClient();
 
-	const wsclient = useWSClient();
-	const { updateGameId } = useContext(PongContext)!;
-	updateGameId(""); // set gameId here
+	// Just for testing, need to be moved somewhere else (matchmaking ?)
+	useEffect(() => {
+		const newGameState = {
+			...gameState,
+			gameId: "1",
+			wsclient: wsClient,
+		  };
+		  updateGameState(newGameState);
+	}, [wsClient]);
+
+	// maybe also move to somewhere else
+	useEffect(() => {
+		const joinGameIfNeeded = async () => {
+			if (gameState.wsclient) {
+				gameState.wsclient.joinGame(gameState.gameId);
+				console.log("joining game...");
+			}
+		};
+
+		console.log(gameState);
+		joinGameIfNeeded();
+	}, [gameState.wsclient]);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -77,6 +98,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 		}
 	}, [gameOver]);
 
+
 	// Updates window dimensions on window resizing.
 	useEffect(() => {
 		const handleResize = () => {
@@ -103,7 +125,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 				<Border position={[0,105,0]} />
 				<Border position={[0,-105,0]} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
-				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
+				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap}/>
 				<Ball
 					rightPaddleRef={rightPaddleRef}
 					leftPaddleRef={leftPaddleRef}

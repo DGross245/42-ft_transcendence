@@ -29,16 +29,22 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			// })
 
 			socket.on('join-game', ( gameId: string ) => {
+				console.log("Player Joined the Game");
 				socket.join(gameId);
+				const room = io.sockets.adapter.rooms.get(gameId);
+				const numClients = room ? room.size : 0;
+
+				console.log(`Number of people in room ${room}: ${numClients}`);
 			});
 
 			socket.on('create-game', (msg: string) => {
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 				socket.emit(`game-created-${msg}`, id);
+				console.log("Create a Game");
 			});
 
 			socket.on('send-message-to-game', (msg: string, topic: string, gameId: string) => {
-				io.to(gameId).emit(`message-${gameId}-${topic}`, msg);
+				socket.to(gameId).emit(`message-${gameId}-${topic}`, msg);
 				// cache.get(gameId);
 				// cache.del(gameId);
 			});
