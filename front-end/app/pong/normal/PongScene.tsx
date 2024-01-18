@@ -12,7 +12,7 @@ import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
 import inputHandler from '@/components/inputHandler';
-import { usePongBot } from './hooks/PongBot';
+import { usePongBot } from '../hooks/PongBot';
 import { Mesh } from 'three'
 
 // TODO: Look if re-renders can be minimized

@@ -1,7 +1,7 @@
 import { useFrame } from "@react-three/fiber";
 import { MutableRefObject, forwardRef, useEffect } from "react";
 import { Mesh } from 'three';
-import { Direction } from "../hooks/PongBot";
+import { Direction } from "../../hooks/PongBot";
 
 interface Paddle {
 	keyMap: { [key: string]: boolean };
