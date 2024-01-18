@@ -36,7 +36,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const ballRef = useRef<Mesh>(null);
-	const { gameState, updateGameState } = useContext(PongContext)!;
+	const { gameState, updateGameState, playerState } = useContext(PongContext)!;
 	const wsClient = useWSClient();
 
 	// Just for testing, need to be moved somewhere else (matchmaking ?)
@@ -49,16 +49,18 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 		  updateGameState(newGameState);
 	}, [wsClient]);
 
+	const joinGameIfNeeded = async () => {
+		if (gameState.wsclient) {
+			const clients =  await gameState.wsclient.joinGame(gameState.gameId);
+			console.log(clients);
+			if (clients === 1)
+				playerState.master = true
+		}
+	};
+	
 	// maybe also move to somewhere else
 	useEffect(() => {
-		const joinGameIfNeeded = async () => {
-			if (gameState.wsclient) {
-				gameState.wsclient.joinGame(gameState.gameId);
-				console.log("joining game...");
-			}
-		};
-
-		console.log(gameState);
+		console.log(gameState, playerState.master);
 		joinGameIfNeeded();
 	}, [gameState.wsclient]);
 

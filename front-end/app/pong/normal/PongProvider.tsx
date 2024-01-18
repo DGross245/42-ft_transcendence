@@ -40,11 +40,13 @@ interface PongContextProps {
 	}
 	playerState: {
 		name: string,
-		color: number;
+		color: number,
+		master: boolean,
 	}
 	opponentState: {
 		name: string,
-		color: number;
+		color: number,
+		master: boolean,
 	}
 	gameState: {
 		gameId: string,

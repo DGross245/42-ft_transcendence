@@ -26,6 +26,18 @@ interface ballPorps {
 	setBallVisibility: Dispatch<SetStateAction<boolean>>,
 }
 
+interface BallPackage {
+	position: {
+		x: number;
+		y: number;
+	};
+	velocity: {
+		x: number;
+		y: number;
+	};
+	deltaTime: number;
+}
+
 /**
  * Creates a ball Three.js mesh and handles its movement and collision logic.
  * @param props - The `props` parameter is an object that contains the following properties:
@@ -36,13 +48,13 @@ interface ballPorps {
  * 			The visibility of the mesh is determined by the isBallVisible prop.
  */
 export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
+	const { playerState, gameState, ballState, updateBallState} = useContext(PongContext)!;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
+	const PositionRef = useRef({position: ballState.position, velocity: ballState.velocity, deltaTime: 0});
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
 	const halfBall = 2;
-	const { gameId, ballState, updateBallState} = useContext(PongContext)!;
-	const wsclient = useWSClient();
 
 	//
 	/**
@@ -86,6 +98,11 @@ export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
 		ball.velocityY = ball.speed * Math.cos(angle + (Math.PI / 2));
 	}
 
+	const stringConvert = (msg: BallPackage ) => {
+		const stringPos = JSON.stringify(msg);
+		return (stringPos);
+	}
+
 	/**
 	 * Updates the new position of the ball based on its velocity and the time passed since last frame (deltaTime).
 	 * @param ball - The ball object containing position and velocity properties.
@@ -94,13 +111,37 @@ export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
 	 * 					  Used to ensure independence from the frame rate.
 	 */
 	const updateBallPosition = (ball: { x: number; y: number; velocityX: number; velocityY: number; }, deltaTime: number) => {
-		ball.x += ball.velocityX * 100 * deltaTime;
-		ball.y += ball.velocityY * 100 * deltaTime;
+		if (playerState.master) {
+			ball.x += ball.velocityX * 100 * deltaTime;
+			ball.y += ball.velocityY * 100 * deltaTime;
+			const msg = { position: { x: ball.x, y: ball.y },
+							  velocity: { x: ball.velocityX, y: ball.velocityY },
+							  deltaTime: deltaTime}
+			const stringPos = stringConvert(msg);
+			gameState.wsclient?.emitMessageToGame(stringPos, 'ballUpdate', gameState.gameId);
+		} else {
+			const { position, velocity, deltaTime } = PositionRef.current;
+			ball.x = -position.x + -velocity.x * deltaTime;
+			ball.y = position.y + velocity.y * deltaTime;
+		}
+
 		if (meshRef.current) {
 			meshRef.current.position.x = ball.x;
 			meshRef.current.position.y = ball.y;
 		}
 	}
+
+	useEffect(() => {
+		const setNewCoords = (msg: string) => {
+			const newPosition = JSON.parse(msg);
+			PositionRef.current = newPosition;
+		};
+		gameState.wsclient?.addMessageListener('ballUpdate', gameState.gameId, setNewCoords);
+
+		return () => {
+			gameState.wsclient?.removeMessageListener('ballUpdate', gameState.gameId);
+		};
+	}, []);
 
 	/**
 	 * Initiates the game by providing a random direction to the ball after the countdown 
@@ -131,7 +172,7 @@ export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
 	}, [props.p1Score, props.p2Score]);
 
 	// Game/render loop for the ball.
-	useFrame((state, deltaTime) => {
+	useFrame((_, deltaTime) => {
 		const ball = ballRef.current;
 
 		updateBallPosition(ball, deltaTime);

@@ -27,7 +27,7 @@ export const RightPaddle = forwardRef<Mesh, { position: [number, number, number]
 	useEffect(() => {
 		const setNewCoords = (msg: string) => {
 			const newPosition = JSON.parse(msg);
-			console.log(newPosition);
+			console.log(newPosition, 'paddleUpdate', gameState.gameId);
 			PositionRef.current = newPosition;
 		};
 
@@ -71,7 +71,6 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 		if (meshRef && meshRef.current) {
 			const stringPos = stringConvert(meshRef.current.position.y);
 			gameState.wsclient?.emitMessageToGame(stringPos, 'paddleUpdate', gameState.gameId);
-			// remove listener
 			if (keyMap['KeyW']) {
 				meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
 			} else if (keyMap['KeyS']) {
