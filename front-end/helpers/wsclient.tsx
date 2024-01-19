@@ -49,6 +49,7 @@ class WSClient {
 		});
 	}
 
+	// TODO: Change back after modal implementation
 	async joinGame(gameId: string): Promise<number> {
 		await this.waitForSocket();
 

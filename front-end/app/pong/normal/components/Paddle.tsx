@@ -20,9 +20,9 @@ const stringConvert = (y: number ) => {
  * @returns A Three.js mesh representing the paddle.
  */
 export const RightPaddle = forwardRef<Mesh, { position: [number, number, number] }>(({ position }, ref) => {
-	const { gameState, paddleState, opponentState } = useContext(PongContext)!;
+	const { gameState, opponentState } = useContext(PongContext)!;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
-	const PositionRef = useRef<number>(paddleState.position.y);
+	const PositionRef = useRef<number>(0);
 
 	useEffect(() => {
 		const setNewCoords = (msg: string) => {

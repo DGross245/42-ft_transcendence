@@ -4,6 +4,8 @@ interface KeyMap {
 	[key: string]: boolean;
 }
 
+// TODO: change inputHandler
+
 export default function inputHandler () {
 	const keyMap = useRef<KeyMap>({});
 

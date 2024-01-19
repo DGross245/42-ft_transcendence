@@ -21,7 +21,6 @@ import useWSClient from '@/helpers/wsclient';
 
 // TODO: maybe move all Game related handler to another component for handling all inportant changes like reset, paus etc.
 
-
 /**
  * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
  * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.
@@ -50,7 +49,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 		updateGameState({ ...gameState, gameId: "1", wsclient: wsClient });
 	}, [wsClient]);
 
-	// FIXME: KeyMap doesnt get Updated in parent, why?
+	// FIXME: move function to another component that handles logic
 	// Listening for Pause from Opponent
 	useEffect(() => {
 		const setPause = (msg: string) => {
@@ -67,7 +66,6 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 
 	// Set Pause on Key press and send it to opponent
 	useEffect(() => {
-		console.log("test");
 		if (keyMap['Escape']) {
 			console.log("Pause");
 			updateGameState({ ...gameState, pause: true })
@@ -75,11 +73,21 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 		}
 	}, [keyMap]);
 
+	useEffect(() => {
+		const endGame = (msg: string) => {
+			setGameOver(true);
+		};
+
+		gameState.wsclient?.addMessageListener(`player-disconnected-1}`, gameState.gameId, endGame)
+	
+		return () => {
+			gameState.wsclient?.removeMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId);
+		}
+	}, []);
+
 	const joinGameIfNeeded = async () => {
 		if (gameState.wsclient) {
 			const clients =  await gameState.wsclient.joinGame(gameState.gameId);
-			console.log(clients);
-			console.log(playerState.master);
 			if (clients === 1) {
 				const newPlayerState = {
 					...playerState,
