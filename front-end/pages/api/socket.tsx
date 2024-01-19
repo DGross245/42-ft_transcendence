@@ -55,5 +55,3 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 };
 
 export default SocketHandler;
-
-// @todo make message redirects work

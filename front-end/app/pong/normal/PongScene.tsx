@@ -16,6 +16,12 @@ import { Mesh } from 'three'
 import { PongContext } from './PongProvider';
 import useWSClient from '@/helpers/wsclient';
 
+// TODO: ADD Paus screen for handling disconnections/pausing etc..
+// TODO: Matchmaking, should handle the sockets and joining for games, at setting player info
+
+// TODO: maybe move all Game related handler to another component for handling all inportant changes like reset, paus etc.
+
+
 /**
  * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
  * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.
@@ -31,30 +37,56 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	const [scoreVisible, setScoreVisibility] = useState(false);
 	const [reset, setReset] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true)
+	const { gameState, updateGameState, playerState, updatePlayerState } = useContext(PongContext)!; // FIXME: probably also move
 
 	const keyMap = inputHandler();
 	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const ballRef = useRef<Mesh>(null);
-	const { gameState, updateGameState, playerState } = useContext(PongContext)!;
-	const wsClient = useWSClient();
+	const wsClient = useWSClient(); // FIXME: Move to somewhere else
 
 	// Just for testing, need to be moved somewhere else (matchmaking ?)
 	useEffect(() => {
-		const newGameState = {
-			...gameState,
-			gameId: "1",
-			wsclient: wsClient,
-		  };
-		  updateGameState(newGameState);
+		updateGameState({ ...gameState, gameId: "1", wsclient: wsClient });
 	}, [wsClient]);
+
+	// FIXME: KeyMap doesnt get Updated in parent, why?
+	// Listening for Pause from Opponent
+	useEffect(() => {
+		const setPause = (msg: string) => {
+			if (msg === "true")
+				updateGameState({ ... gameState, pause: true });
+		};
+
+		gameState.wsclient?.addMessageListener('Pause', gameState.gameId, setPause)
+	
+		return () => {
+			gameState.wsclient?.removeMessageListener('Pause', gameState.gameId);
+		}
+	}, []);
+
+	// Set Pause on Key press and send it to opponent
+	useEffect(() => {
+		console.log("test");
+		if (keyMap['Escape']) {
+			console.log("Pause");
+			updateGameState({ ...gameState, pause: true })
+			gameState.wsclient?.emitMessageToGame("true", 'Pause', gameState.gameId);
+		}
+	}, [keyMap]);
 
 	const joinGameIfNeeded = async () => {
 		if (gameState.wsclient) {
 			const clients =  await gameState.wsclient.joinGame(gameState.gameId);
 			console.log(clients);
-			if (clients === 1)
-				playerState.master = true
+			console.log(playerState.master);
+			if (clients === 1) {
+				const newPlayerState = {
+					...playerState,
+					master: true,
+				}
+				updatePlayerState(newPlayerState);
+			}
 		}
 	};
 	

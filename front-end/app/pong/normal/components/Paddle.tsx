@@ -27,8 +27,8 @@ export const RightPaddle = forwardRef<Mesh, { position: [number, number, number]
 	useEffect(() => {
 		const setNewCoords = (msg: string) => {
 			const newPosition = JSON.parse(msg);
-			console.log(newPosition, 'paddleUpdate', gameState.gameId);
 			PositionRef.current = newPosition;
+			//console.log(newPosition, 'paddleUpdate', gameState.gameId);
 		};
 
 		gameState.wsclient?.addMessageListener('paddleUpdate', gameState.gameId, setNewCoords);
@@ -68,6 +68,10 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	
 	// Moves the paddle based on pressed key for each frame.
 	useFrame((_, delta) => {
+		if (gameState.pause) {
+			console.log("PAUSE");
+			return ;
+		}
 		if (meshRef && meshRef.current) {
 			const stringPos = stringConvert(meshRef.current.position.y);
 			gameState.wsclient?.emitMessageToGame(stringPos, 'paddleUpdate', gameState.gameId);

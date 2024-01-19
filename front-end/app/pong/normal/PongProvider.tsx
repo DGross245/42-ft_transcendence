@@ -4,6 +4,9 @@ import { WSClientType } from '@/helpers/wsclient';
 import { ReactNode, createContext, useState } from 'react';
 import { Dispatch, SetStateAction } from 'react';
 
+// TODO: Remove stuff I dont use
+// TODO: re-think this Provider, maybe is not needed
+
 const initialBallState = {
 	position: { x: 0, y: 0 },
 	velocity: { x: 0, y: 0 },
@@ -28,6 +31,7 @@ const initialOpponentState = {
 const initialGameState = {
 	gameId: '',
 	wsclient: null as WSClientType | null,
+	pause: false,
 };
 
 interface PongContextProps {
@@ -51,6 +55,7 @@ interface PongContextProps {
 	gameState: {
 		gameId: string,
 		wsclient: WSClientType | null,
+		pause: boolean,
 	}
 	updateBallState: Dispatch<SetStateAction<typeof initialBallState>>;
 	updatePaddleState: Dispatch<SetStateAction<typeof initialPaddleState>>;

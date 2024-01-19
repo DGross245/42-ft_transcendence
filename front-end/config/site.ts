@@ -2,7 +2,7 @@ export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
 	name: "ft_transcendence",
-	description: "Make beautiful websites regardless of your design experience.",
+	description: "",
 	navItems: [
 		{
 			label: "Home",

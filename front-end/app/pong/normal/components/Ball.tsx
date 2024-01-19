@@ -8,8 +8,7 @@ import useWSClient from "@/helpers/wsclient";
 
 // FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
 // TODO: Refactor code for remote play
-// TODO: find good solution for client communication in terms of sending data (Serialization)
-// TODO: Fix update logic by also taking into account remote communication, implementing client-side prediction, lag compensation and synchronization.
+// FIXME: Fix update logic by also taking into account remote communication, implementing client-side prediction, lag compensation and synchronization.
 
 interface ballPorps {
 	rightPaddleRef: MutableRefObject<Mesh>,
@@ -111,6 +110,8 @@ export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
 	 * 					  Used to ensure independence from the frame rate.
 	 */
 	const updateBallPosition = (ball: { x: number; y: number; velocityX: number; velocityY: number; }, deltaTime: number) => {
+		if (gameState.pause)
+			return ;
 		if (playerState.master) {
 			ball.x += ball.velocityX * 100 * deltaTime;
 			ball.y += ball.velocityY * 100 * deltaTime;

@@ -24,6 +24,12 @@ const Camera : React.FC<CameraProps> = (props) => {
 				ref.current.position.set(...props.position);
 				ref.current.lookAt(0, 0, 0);
 			}
+			// for testing
+			if (keyMap['Digit2']) {
+				const [x, y, z] = [...props.position];
+				ref.current.position.set(x, y, z + 300);
+				ref.current.lookAt(0, 0, 0);
+			}
 		}
 	});
 
