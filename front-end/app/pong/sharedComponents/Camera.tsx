@@ -16,6 +16,7 @@ interface CameraProps {
 const Camera : React.FC<CameraProps> = (props) => {
 	const ref = useRef<THREE.PerspectiveCamera>(null);
 	const keyMap = props.keyMap;
+	const [x, y, z] = [...props.position]; // TODO: REMOVE THIS LATER AFTER TESTING
 
 	// Pressing on the Digit1 key, resets the camera back to its original spot.
 	useFrame(() => {
@@ -41,7 +42,7 @@ const Camera : React.FC<CameraProps> = (props) => {
 			aspect={window.innerWidth / window.innerHeight}
 			near={0.1}
 			far={1000}
-			position={props.position}
+			position={[x, y, z + 300]}
 		/>
 	);
 }

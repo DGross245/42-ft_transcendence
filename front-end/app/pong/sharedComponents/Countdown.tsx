@@ -3,7 +3,8 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Orbitron_Regular from '../../../public/fonts/Orbitron_Regular.json';
 import { extend } from '@react-three/fiber';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { PongContext } from '../normal/PongProvider';
 
 extend({ TextGeometry })
 
@@ -25,8 +26,11 @@ interface CountdownProps {
 const Countdown : React.FC<CountdownProps>= (props) => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 	const [count, setCount] = useState(4);
+	const { gameState } = useContext(PongContext)!;
 
 	useEffect(() => {
+		if (gameState.pause)
+			return ;
 		if (!props.scoreVisible) {
 			const countdownInterval = setInterval(() => {
 	

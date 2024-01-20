@@ -15,6 +15,7 @@ import inputHandler from '@/components/inputHandler';
 import { Mesh } from 'three'
 import { PongContext } from './PongProvider';
 import useWSClient from '@/helpers/wsclient';
+import { useGameState } from './components/GameState';
 
 // TODO: ADD Paus screen for handling disconnections/pausing etc..
 // TODO: Matchmaking, should handle the sockets and joining for games, at setting player info
@@ -36,73 +37,14 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	const [scoreVisible, setScoreVisibility] = useState(false);
 	const [reset, setReset] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true)
-	const { gameState, updateGameState, playerState, updatePlayerState } = useContext(PongContext)!; // FIXME: probably also move
-
 	const keyMap = inputHandler();
+
+	const wsClient = useWSClient(); // FIXME: Move to somewhere else
+	const state = useGameState( wsClient, keyMap, setGameOver);
+
 	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const ballRef = useRef<Mesh>(null);
-	const wsClient = useWSClient(); // FIXME: Move to somewhere else
-
-	// Just for testing, need to be moved somewhere else (matchmaking ?)
-	useEffect(() => {
-		updateGameState({ ...gameState, gameId: "1", wsclient: wsClient });
-	}, [wsClient]);
-
-	// FIXME: move function to another component that handles logic
-	// Listening for Pause from Opponent
-	useEffect(() => {
-		const setPause = (msg: string) => {
-			if (msg === "true")
-				updateGameState({ ... gameState, pause: true });
-		};
-
-		gameState.wsclient?.addMessageListener('Pause', gameState.gameId, setPause)
-	
-		return () => {
-			gameState.wsclient?.removeMessageListener('Pause', gameState.gameId);
-		}
-	}, []);
-
-	// Set Pause on Key press and send it to opponent
-	useEffect(() => {
-		if (keyMap['Escape']) {
-			console.log("Pause");
-			updateGameState({ ...gameState, pause: true })
-			gameState.wsclient?.emitMessageToGame("true", 'Pause', gameState.gameId);
-		}
-	}, [keyMap]);
-
-	useEffect(() => {
-		const endGame = (msg: string) => {
-			setGameOver(true);
-		};
-
-		gameState.wsclient?.addMessageListener(`player-disconnected-1}`, gameState.gameId, endGame)
-	
-		return () => {
-			gameState.wsclient?.removeMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId);
-		}
-	}, []);
-
-	const joinGameIfNeeded = async () => {
-		if (gameState.wsclient) {
-			const clients =  await gameState.wsclient.joinGame(gameState.gameId);
-			if (clients === 1) {
-				const newPlayerState = {
-					...playerState,
-					master: true,
-				}
-				updatePlayerState(newPlayerState);
-			}
-		}
-	};
-	
-	// maybe also move to somewhere else
-	useEffect(() => {
-		console.log(gameState, playerState.master);
-		joinGameIfNeeded();
-	}, [gameState.wsclient]);
 
 	const closeModal = () => {
 		setShowModal(false);

@@ -36,8 +36,13 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				
 				socket.emit(`room-joined-${gameId}`, numClients);
 				console.log("Player Joined the Game");
+				if (numClients === 2) {
+					io.to(gameId).emit(`Players-${gameId}`, JSON.stringify(numClients));
+					console.log("Game FULL");
+				}
 				socket.on('disconnect', () => {
 					io.to(gameId).emit(`player-disconnected-${gameId}`, gameId);
+					console.log("Player disconnected");
 				});
 			});
 

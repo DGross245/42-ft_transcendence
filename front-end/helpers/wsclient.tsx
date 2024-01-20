@@ -10,9 +10,8 @@ export type WSClientType = {
 	emitMessageToGame: (msg: string, topic: string, gameId: string) => void;
 	addMessageListener: (topic: string, gameId: string, callback: (msg: string) => void) => void;
 	removeMessageListener: (topic: string, gameId: string) => void;
+	connected(): boolean;
 };
-
-// FIXME: Sockets often not initialized when trying to for example join a room
 
 /* -------------------------------------------------------------------------- */
 /*                                  WSClient                                  */
@@ -30,6 +29,7 @@ class WSClient {
 	private async socketInitializer(): Promise<void> {
 		await fetch('/api/socket');
 		this.socket = io();
+		return ;
 	}
 
 	private async waitForSocket(): Promise<void> {
@@ -62,19 +62,27 @@ class WSClient {
 		});
 	}
 
+	connected() {
+		if (!this.socket)
+			return (false);
+		else
+			return (true);
+	}
+
 	emitMessageToGame(msg: string, topic: string, gameId: string): void {
-		if (!this.socket) console.error("Sockets not defined");
+		if (!this.socket) console.error("Sockets not defined, tried to send topic ", topic);
 		else this.socket!.emit('send-message-to-game', msg, topic, gameId);
 	}
 
 	addMessageListener(topic: string, gameId: string, callback: (msg: string) => void): void {
-		if (!this.socket) console.error("Sockets not defined");
+		if (!this.socket) console.error("Sockets not defined, tried to listen to topic ", topic);
 		else this.socket!.on(`message-${gameId}-${topic}`, callback);
 	}
 
 	removeMessageListener(topic: string, gameId: string): void {
-		if (this.socket)
-			this.socket!.removeListener(`message-${gameId}-${topic}`);
+		if (!this.socket) console.error("Sockets not defined, tried to listen to topic ", topic);
+		else this.socket!.removeListener(`message-${gameId}-${topic}`);
+		console.log("Pass")
 	}
 }
 
@@ -86,7 +94,9 @@ const useWSClient = () => {
 
 	useEffect(() => {
 		if (window !== undefined) {
+			console.log("WAS???");
 			setWsclient(new WSClient());
+			wsclient?.removeMessageListener("test", "test")
 			console.log("created client");
 		}
 	},[]);

@@ -20,7 +20,7 @@ const stringConvert = (y: number ) => {
  * @returns A Three.js mesh representing the paddle.
  */
 export const RightPaddle = forwardRef<Mesh, { position: [number, number, number] }>(({ position }, ref) => {
-	const { gameState, opponentState } = useContext(PongContext)!;
+	const { gameState, opponentState, updateGameState } = useContext(PongContext)!;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const PositionRef = useRef<number>(0);
 
@@ -28,7 +28,6 @@ export const RightPaddle = forwardRef<Mesh, { position: [number, number, number]
 		const setNewCoords = (msg: string) => {
 			const newPosition = JSON.parse(msg);
 			PositionRef.current = newPosition;
-			//console.log(newPosition, 'paddleUpdate', gameState.gameId);
 		};
 
 		gameState.wsclient?.addMessageListener('paddleUpdate', gameState.gameId, setNewCoords);
@@ -69,7 +68,6 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	// Moves the paddle based on pressed key for each frame.
 	useFrame((_, delta) => {
 		if (gameState.pause) {
-			console.log("PAUSE");
 			return ;
 		}
 		if (meshRef && meshRef.current) {

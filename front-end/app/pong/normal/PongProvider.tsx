@@ -31,7 +31,7 @@ const initialOpponentState = {
 const initialGameState = {
 	gameId: '',
 	wsclient: null as WSClientType | null,
-	pause: false,
+	pause: true,
 };
 
 interface PongContextProps {
