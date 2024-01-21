@@ -4,7 +4,7 @@ interface KeyMap {
 	[key: string]: boolean;
 }
 
-// TODO: change inputHandler
+// TODO: change inputHandler to hook
 
 export default function inputHandler () {
 	const keyMap = useRef<KeyMap>({});

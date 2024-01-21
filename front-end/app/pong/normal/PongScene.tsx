@@ -21,6 +21,7 @@ import { useGameState } from './components/GameState';
 // TODO: Matchmaking, should handle the sockets and joining for games, at setting player info
 
 // TODO: maybe move all Game related handler to another component for handling all inportant changes like reset, paus etc.
+// FIXME: Someotimes the guest or not host, counts the score twice
 
 /**
  * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
@@ -40,7 +41,6 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	const keyMap = inputHandler();
 
 	const wsClient = useWSClient(); // FIXME: Move to somewhere else
-	const state = useGameState( wsClient, keyMap, setGameOver);
 
 	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
@@ -53,6 +53,104 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	const openModal = () => {
 		setShowModal(true);
 	}
+
+	const { gameState, updateGameState, playerState, updatePlayerState } = useContext(PongContext);
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	useEffect(() => {
+		const waitForSocket = async () => {
+			if (wsClient) {
+				await wsClient.waitingForSocket();
+				updateGameState({ ...gameState, gameId: "1", wsclient: wsClient });
+			}
+		};
+
+		waitForSocket();
+	}, [wsClient]);
+
+	useEffect(() => {
+		const joinTheGame = async () => {
+			if (gameState.wsclient) {
+				const clients =  await gameState.wsclient.joinGame(gameState.gameId);
+				if (clients === 1) {
+					const newPlayerState = {
+						...playerState,
+						master: true,
+					}
+					updatePlayerState(newPlayerState);
+				}
+			}
+		};
+
+		console.log(gameState, playerState.master);
+		joinTheGame();
+	}, [gameState.wsclient]);
+
+
+	useEffect(() => {
+		if (gameState.wsclient) {
+			const setPause = (msg: string) => {
+				if (msg === "2") {
+					updateGameState({ ...gameState, pause: false });
+				}
+			};
+			gameState.wsclient?.addMessageListener(`Players-${gameState.gameId}`, gameState.gameId, setPause)
+		
+			return () => {
+				gameState.wsclient?.removeMessageListener(`Players-${gameState.gameId}`, gameState.gameId);
+			} 
+		}
+	}, [gameState.wsclient]);
+
+	// useEffect(() => {
+	// 	if (gameState.wsclient) {
+	// 		const setPause = (msg: string) => {
+	// 			if (msg === "true")
+	// 				updateGameState({ ...gameState, pause: true });
+	// 		};
+	// 		gameState.wsclient?.addMessageListener(`Pause-${gameState.gameId}`, gameState.gameId, setPause)
+		
+	// 		return () => {
+	// 			gameState.wsclient?.removeMessageListener(`Pause-${gameState.gameId}`, gameState.gameId);
+	// 		} 
+	// 	}
+	// }, [gameState.wsclient]);
+
+	// useEffect(() => {
+	// 	if (gameState.wsclient) {
+	// 		if (keyMap['Escape']) {
+	// 			console.log("Send Pause to opponent");
+	// 			updateGameState({ ...gameState, pause: true })
+	// 			gameState.wsclient?.emitMessageToGame("true", `Pause-${gameState.gameId}`, gameState.gameId);
+	// 		}
+	// 	}
+	// }, [keyMap, gameState.wsclient]);
+	
+	useEffect(() => {
+		if (gameState.wsclient) {
+			console.log("Adding message listener for disconnecting player");
+			const endGame = (msg: string) => {
+				console.log("PLayer disconnected")
+				setGameOver(true);
+			};
+			
+			gameState.wsclient?.addMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId, endGame)
+			
+			return () => {
+				gameState.wsclient?.removeMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId);
+			}
+		}
+	}, [gameState.wsclient]);
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Handles the reset of the scene when the 'reset' state changes.
 	useEffect(() => {

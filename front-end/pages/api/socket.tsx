@@ -29,20 +29,26 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			// })
 
 			socket.on('join-game', ( gameId: string ) => {
-				socket.join(gameId);
-				
 				const room = io.sockets.adapter.rooms.get(gameId);
 				const numClients = room ? room.size : 0;
-				
-				socket.emit(`room-joined-${gameId}`, numClients);
-				console.log("Player Joined the Game");
-				if (numClients === 2) {
-					io.to(gameId).emit(`Players-${gameId}`, JSON.stringify(numClients));
-					console.log("Game FULL");
+
+				if (numClients < 2) {
+					console.log("JOINING THE GAME AS", numClients + 1);
+					socket.join(gameId);
+					socket.emit(`room-joined-${gameId}`, (numClients + 1));
+					if (numClients === 1) {
+						const string = JSON.stringify(numClients + 1);
+						const topic = `Players-${gameId}`;
+						io.to(gameId).emit(`message-${gameId}-${topic}`, string);
+					}
 				}
+
 				socket.on('disconnect', () => {
-					io.to(gameId).emit(`player-disconnected-${gameId}`, gameId);
-					console.log("Player disconnected");
+					const topic = `player-disconnected-${gameId}`;
+					io.to(gameId).emit(`message-${gameId}-${topic}`, gameId);
+					socket.disconnect();
+					io.to(gameId).disconnectSockets(true);
+					console.log("GAME CLOSED");
 				});
 			});
 

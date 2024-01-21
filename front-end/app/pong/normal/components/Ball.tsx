@@ -50,7 +50,7 @@ export const Ball = forwardRef<Mesh, ballPorps>((props, ref) => {
 	const { playerState, gameState } = useContext(PongContext)!;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
-	const PositionRef = useRef({position: 0, velocity: 0, deltaTime: 0});
+	const PositionRef = useRef({position: {x:0, y:0}, velocity: {x:0, y:0}, deltaTime: 0});
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
 	const halfBall = 2;

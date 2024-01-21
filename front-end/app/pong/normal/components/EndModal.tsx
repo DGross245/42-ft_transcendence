@@ -3,6 +3,8 @@
 import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
+// FIXME: positing of modal with low window size
+
 const EndModal = ({ isOpen, onClose, winner, setReset }) => {
 
 	const getWinnerImage = () => {

@@ -51,7 +51,7 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 				clearInterval(countdownInterval);
 			};
 		}
-	}, [props.scoreVisible]);
+	}, [props.scoreVisible, gameState.pause]);
 
 	return (
 		<mesh visible={!props.scoreVisible} position={ count === 1 ? [-23, 0, 50] : [-35, 0, 50]} rotation={props.rotation}>

@@ -4,13 +4,14 @@ import { PongContext } from "../PongProvider";
 export const useGameState = ( wsClient, keyMap, setGameOver ) => {
 	const { gameState, updateGameState, playerState, updatePlayerState } = useContext(PongContext);
 
-	// Just for testing, need to be moved somewhere else (matchmaking ?)
 	useEffect(() => {
-		updateGameState({ ...gameState, gameId: "1", wsclient: wsClient });
+		if (wsClient) {
+			updateGameState({ ...gameState, gameId: "1", wsclient: wsClient });
+		}
 	}, [wsClient]);
 
 	useEffect(() => {
-		if (gameState.wsclient && gameState.wsclient.connected()) {
+		if (gameState.wsclient) {
 			console.log("Adding message listener for full lobby");
 			const setPause = (msg: string) => {
 				console.log("Check if FULL");
@@ -26,9 +27,7 @@ export const useGameState = ( wsClient, keyMap, setGameOver ) => {
 			} 
 		}
 	}, [gameState.wsclient]);
-	
-	
-	// Set Pause on Key press and send it to opponent
+
 	useEffect(() => {
 		if (keyMap['Escape']) {
 			console.log("Send Pause to opponent");
@@ -38,7 +37,7 @@ export const useGameState = ( wsClient, keyMap, setGameOver ) => {
 	}, [keyMap]);
 	
 	useEffect(() => {
-		if (gameState.wsclient && gameState.wsclient.connected()) {
+		if (gameState.wsclient) {
 			console.log("Adding message listener for disconnecting player");
 			const endGame = (msg: string) => {
 				console.log("PLayer disconnected")
@@ -53,23 +52,22 @@ export const useGameState = ( wsClient, keyMap, setGameOver ) => {
 		}
 	}, [gameState.wsclient]);
 
-	const joinGameIfNeeded = async () => {
-		if (gameState.wsclient) {
-			const clients =  await gameState.wsclient.joinGame(gameState.gameId);
-			if (clients === 1) {
-				const newPlayerState = {
-					...playerState,
-					master: true,
-				}
-				updatePlayerState(newPlayerState);
-			}
-		}
-	};
-		
-	// maybe also move to somewhere else
 	useEffect(() => {
+		const joinTheGame = async () => {
+			if (gameState.wsclient) {
+				const clients =  await gameState.wsclient.joinGame(gameState.gameId);
+				if (clients === 1) {
+					const newPlayerState = {
+						...playerState,
+						master: true,
+					}
+					updatePlayerState(newPlayerState);
+				}
+			}
+		};
+
 		console.log(gameState, playerState.master);
-		joinGameIfNeeded();
+		joinTheGame();
 	}, [gameState.wsclient]);
 
 	return (1);
