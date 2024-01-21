@@ -2,9 +2,9 @@ import { useFrame } from "@react-three/fiber";
 import { MutableRefObject, forwardRef, useContext, useEffect, useRef } from "react";
 import { Mesh } from 'three';
 import { PongContext } from '../PongProvider';
+import useKey from "@/components/inputHandler";
 
 interface Paddle {
-	keyMap: { [key: string]: boolean };
 	position: [number, number, number];
 }
 
@@ -55,16 +55,15 @@ export const RightPaddle = forwardRef<Mesh, { position: [number, number, number]
 /**
  * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
  * @param ref - Forwarded reference for more control in parent component.
- * @param keyMap - An object mapping keyboard keys to their pressed/unpressed state.
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
+export const LeftPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
 	const { playerState, gameState } = useContext(PongContext)!;
 	const paddleSpeed = 300;
 	const borderPositionY = 103;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
-	
+
 	// Moves the paddle based on pressed key for each frame.
 	useFrame((_, delta) => {
 		if (gameState.pause) {
@@ -73,11 +72,6 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 		if (meshRef && meshRef.current) {
 			const stringPos = stringConvert(meshRef.current.position.y);
 			gameState.wsclient?.emitMessageToGame(stringPos, 'paddleUpdate', gameState.gameId);
-			if (keyMap['KeyW']) {
-				meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
-			} else if (keyMap['KeyS']) {
-				meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
-			}
 		}
 	});
 

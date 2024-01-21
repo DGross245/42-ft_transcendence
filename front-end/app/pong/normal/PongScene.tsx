@@ -38,7 +38,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	const [scoreVisible, setScoreVisibility] = useState(false);
 	const [reset, setReset] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true)
-	const keyMap = inputHandler();
+	// const keyMap = inputHandler();
 
 	const wsClient = useWSClient(); // FIXME: Move to somewhere else
 
@@ -203,11 +203,11 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown scoreVisible={scoreVisible} setScoreVisibility={setScoreVisibility} rotation={[0, 0, 0]} />
-				<Camera position={[0, -100, 300]} keyMap={keyMap} />
+				<Camera position={[0, -100, 300]} />
 				<Border position={[0,105,0]} />
 				<Border position={[0,-105,0]} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
-				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap}/>
+				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} />
 				<Ball
 					rightPaddleRef={rightPaddleRef}
 					leftPaddleRef={leftPaddleRef}

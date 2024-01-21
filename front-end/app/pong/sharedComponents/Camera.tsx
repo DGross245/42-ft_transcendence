@@ -4,7 +4,6 @@ import { useRef } from "react";
 
 interface CameraProps {
 	position: [number, number, number],
-	keyMap: { [key: string]: boolean },
 }
 
 /**
@@ -15,24 +14,23 @@ interface CameraProps {
  */
 const Camera : React.FC<CameraProps> = (props) => {
 	const ref = useRef<THREE.PerspectiveCamera>(null);
-	const keyMap = props.keyMap;
 	const [x, y, z] = [...props.position]; // TODO: REMOVE THIS LATER AFTER TESTING
 
 	// Pressing on the Digit1 key, resets the camera back to its original spot.
-	useFrame(() => {
-		if (ref && ref.current) {
-			if (keyMap['Digit1']) {
-				ref.current.position.set(...props.position);
-				ref.current.lookAt(0, 0, 0);
-			}
-			// for testing
-			if (keyMap['Digit2']) {
-				const [x, y, z] = [...props.position];
-				ref.current.position.set(x, y, z + 300);
-				ref.current.lookAt(0, 0, 0);
-			}
-		}
-	});
+	// useFrame(() => {
+	// 	if (ref && ref.current) {
+	// 		if (keyMap['Digit1']) {
+	// 			ref.current.position.set(...props.position);
+	// 			ref.current.lookAt(0, 0, 0);
+	// 		}
+	// 		// for testing
+	// 		if (keyMap['Digit2']) {
+	// 			const [x, y, z] = [...props.position];
+	// 			ref.current.position.set(x, y, z + 300);
+	// 			ref.current.lookAt(0, 0, 0);
+	// 		}
+	// 	}
+	// });
 
 	return (
 		<PerspectiveCamera
