@@ -57,10 +57,7 @@ class WSClient {
 		return ;
 	}
 
-	// TODO: Change back after modal implementation
 	async joinGame(gameId: string): Promise<number> {
-		await this.waitForSocket();
-
 		console.log("Joined")
 		return new Promise((resolve, reject) => {
 			this.socket!.emit('join-game', gameId);

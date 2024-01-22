@@ -38,7 +38,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	const [scoreVisible, setScoreVisibility] = useState(false);
 	const [reset, setReset] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true)
-	// const keyMap = inputHandler();
+	const keyMap = inputHandler();
 
 	const wsClient = useWSClient(); // FIXME: Move to somewhere else
 
@@ -61,6 +61,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	useEffect(() => {
 		const waitForSocket = async () => {
 			if (wsClient) {
@@ -207,7 +208,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 				<Border position={[0,105,0]} />
 				<Border position={[0,-105,0]} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
-				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} />
+				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
 				<Ball
 					rightPaddleRef={rightPaddleRef}
 					leftPaddleRef={leftPaddleRef}
