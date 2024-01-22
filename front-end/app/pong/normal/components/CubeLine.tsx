@@ -1,11 +1,9 @@
-import { BoxGeometry, MeshBasicMaterial } from 'three'
-
 /**
  * Creates a line of Three.js cube components arranged vertically to represent
  * the middle line, splitting the game field in two.
  * @returns A group of cube mehses forming a line.
  */
-const CubeLine = () => {
+export const CubeLine = () => {
 	const cubes = [];
 
 	for (let i = 1; i < 20; i++) {
@@ -25,5 +23,3 @@ const CubeLine = () => {
 		</group>
 	);
 }
-
-export default CubeLine

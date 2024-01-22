@@ -8,7 +8,7 @@ interface Paddle {
 	position: [number, number, number];
 }
 
-// TODO: Fix topic msg for paddles (should specify gameId)
+// TODO: Fix topic msg for paddles (should specify)
 /**
  * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
  * @param ref - Forwarded reference for more control in parent component.

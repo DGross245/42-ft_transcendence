@@ -2,9 +2,9 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Orbitron_Regular from '../../../../public/fonts/Orbitron_Regular.json';
 import { Object3DNode, Vector3, extend } from '@react-three/fiber';
-import { MutableRefObject } from 'react';
+import { MutableRefObject, useContext } from 'react';
 import { Mesh, MeshBasicMaterial } from 'three';
-import { LeftPaddle, RightPaddle } from './Paddle';
+import { PongContext } from '../PongProvider';
 
 extend({ TextGeometry })
 
@@ -37,9 +37,9 @@ declare module "@react-three/fiber" {
  * @returns A JSX fragment containing two mesh elements. Each
  * mesh element represents a player's score.
  */
-const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, leftPaddleRef, rightPaddleRef, scoreVisible }) => {
+export const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, scoreVisible }) => {
 	const font = new FontLoader().parse(Orbitron_Regular);
-
+	const { leftPaddleRef, rightPaddleRef } = useContext(PongContext);
 	// Reposition textGeometry based on score.
 	const Score1 : ScoreType = {
 		0:	{ position: [-70.8, 40, -6] },
@@ -89,5 +89,3 @@ const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, leftPaddleRe
 		</>
 	);
 }
-
-export default Scoreboard
