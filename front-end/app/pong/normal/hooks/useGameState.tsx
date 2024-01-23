@@ -10,6 +10,9 @@ export const useGameState = () => {
 	const [isGameOver, setGameOver] = useState(false);
 	const [resetGame, setReset] = useState(false);
 
+	const [sendRequest, setSendRequest] = useState(false);
+	const [requestRematch, setRequestRematch] = useState(false);
+
 	const closeModal = () => {
 		setShowModal(false);
 	}
@@ -17,6 +20,11 @@ export const useGameState = () => {
 	const openModal = () => {
 		setShowModal(true);
 	}
+
+	useEffect(() => {
+		if (requestRematch && sendRequest)
+			setReset(true);
+	}, [requestRematch, sendRequest]);
 
 	// Handles the reset of the scene when the 'reset' state changes.
 	useEffect(() => {
@@ -47,6 +55,8 @@ export const useGameState = () => {
 	}, [isGameOver]);
 
 	return {
+		sendRequest, setSendRequest,
+		requestRematch, setRequestRematch,
 		p1Score,setP1Score,
 		p2Score, setP2Score,
 		showModal, setShowModal,

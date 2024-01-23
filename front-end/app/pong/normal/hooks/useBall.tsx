@@ -1,9 +1,28 @@
-import { MutableRefObject, useContext, useEffect, useRef } from "react";
+import { Dispatch, MutableRefObject, SetStateAction, useContext, useEffect, useRef } from "react";
 import { Mesh } from 'three'
 import { PongContext } from "../PongProvider";
 import { useFrame } from "@react-three/fiber";
 
-export const useBall = ( props, ref ) => {
+// FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
+// TODO: Refactor code for remote play
+// FIXME: Fix update logic by also taking into account remote communication, implementing client-side prediction, lag compensation and synchronization.
+
+interface BallProps {
+	rightPaddleRef: MutableRefObject<Mesh>,
+	leftPaddleRef: MutableRefObject<Mesh>,
+	p1Score: number,
+	setP1Score: Dispatch<SetStateAction<number>>,
+	p2Score: number,
+	setP2Score: Dispatch<SetStateAction<number>>,
+	setWinner: Dispatch<SetStateAction<string>>,
+	gameOver: boolean,
+	setGameOver: Dispatch<SetStateAction<boolean>>,
+	scoreVisible: boolean,
+	isBallVisible: boolean,
+	setBallVisibility: Dispatch<SetStateAction<boolean>>,
+}
+
+export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 
 	const { playerState, gameState } = useContext(PongContext);
 	const meshRef = ref as MutableRefObject<Mesh | null>;
@@ -166,5 +185,5 @@ export const useBall = ( props, ref ) => {
 		}
 	});
 
-	return ( meshRef )
+	return ( meshRef );
 }

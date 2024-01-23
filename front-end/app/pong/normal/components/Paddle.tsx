@@ -1,6 +1,7 @@
 import { useFrame } from "@react-three/fiber";
 import { MutableRefObject, forwardRef, useContext, useEffect, useRef } from "react";
-import { Mesh, Vector3 } from 'three';
+import { Mesh } from 'three';
+
 import { PongContext } from '../PongProvider';
 
 interface Paddle {
@@ -8,7 +9,6 @@ interface Paddle {
 	position: [number, number, number];
 }
 
-// TODO: Fix topic msg for paddles (should specify)
 /**
  * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
  * @param ref - Forwarded reference for more control in parent component.
@@ -16,7 +16,7 @@ interface Paddle {
  * @returns A Three.js mesh representing the paddle.
  */
 export const RightPaddle = forwardRef<Mesh, { position: [number, number, number] }>(({ position }, ref) => {
-	const { gameState, opponentState, updateGameState } = useContext(PongContext)!;
+	const { gameState, opponentState } = useContext(PongContext)!;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const PositionRef = useRef<number>(0);
 
@@ -26,10 +26,10 @@ export const RightPaddle = forwardRef<Mesh, { position: [number, number, number]
 			PositionRef.current = newPosition;
 		};
 
-		gameState.wsclient?.addMessageListener('paddleUpdate', gameState.gameId, setNewCoords);
+		gameState.wsclient?.addMessageListener(`paddleUpdate-${gameState.gameId}`, gameState.gameId, setNewCoords);
 
 		return () => {
-			gameState.wsclient?.removeMessageListener('paddleUpdate', gameState.gameId);
+			gameState.wsclient?.removeMessageListener(`paddleUpdate-${gameState.gameId}`, gameState.gameId);
 		};
 	}, []);
 
@@ -68,7 +68,7 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 		}
 		if (meshRef && meshRef.current) {
 			const stringPos = JSON.stringify(meshRef.current.position.y);
-			gameState.wsclient?.emitMessageToGame(stringPos, 'paddleUpdate', gameState.gameId);
+			gameState.wsclient?.emitMessageToGame(stringPos, `paddleUpdate-${gameState.gameId}`, gameState.gameId);
 			if (keyMap['KeyW']) {
 				meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
 			} else if (keyMap['KeyS']) {

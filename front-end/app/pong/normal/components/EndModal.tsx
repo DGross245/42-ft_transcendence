@@ -1,21 +1,11 @@
 "use client"
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
 // FIXME: positing of modal with low window size
 
-const EndModal = ({ isOpen, onClose, winner, setReset }) => {
-
-	const getWinnerImage = () => {
-		if (winner == 'P1')
-			return ('/o.png');
-		else if (winner == 'P2')
-			return ('/x.png');
-		else
-			return ('/draw.png');
-	}
-
+const EndModal = ({ isOpen, onClose, winner, setSendRequest, sendRequest, requestRematch}) => {
 	return (
 		<>
 			<Modal
@@ -56,8 +46,8 @@ const EndModal = ({ isOpen, onClose, winner, setReset }) => {
 					<Button color="danger" variant="ghost" onClick={onClose}>
 						Close
 					</Button>
-					<Button color="primary" variant="ghost" onClick={() => setReset(true)}>
-						Play Again
+					<Button color="primary" variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
+						Rematch
 					</Button>
 					<Button color="success" variant="ghost" onClick={onClose}>
 						View

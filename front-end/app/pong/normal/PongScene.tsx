@@ -36,10 +36,10 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	const { rightPaddleRef, leftPaddleRef, ballRef} = useContext(PongContext);
 	const { p1Score, p2Score, setP1Score, setP2Score, isScoreVisible, setScoreVisibility,
 		setWinner, isGameOver, setGameOver, isBallVisible, setBallVisibility, showModal, closeModal,
-		winner, setReset} = useGameState();
+		winner, sendRequest, setRequestRematch, setSendRequest, requestRematch} = useGameState();
 	const keyMap = inputHandler();
 
-	useWebSocket(setGameOver);
+	useWebSocket( isGameOver, sendRequest, setGameOver, setRequestRematch, setSendRequest );
 
 	// Updates window dimensions on window resizing.
 	useEffect(() => {
@@ -89,7 +89,14 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 					scoreVisible={isScoreVisible} 
 				/>
 			</Canvas>
-			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} setReset={setReset} />
+			<EndModal
+				isOpen={showModal}
+				onClose={closeModal}
+				winner={winner}
+				setSendRequest={setSendRequest}
+				sendRequest={sendRequest}
+				requestRematch={requestRematch}
+			/>
 		</div>
 	);
 }
