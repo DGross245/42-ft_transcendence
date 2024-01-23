@@ -29,9 +29,10 @@ const GameCard: React.FC<GameCardProps> = ({title, image, path}) => {
 			<CardBody className="overflow-visible py-2">
 				<Image
 					alt={title}
-					className="object-cover rounded-xl"
+					className="object-cover rounded-xl w-auto h-auto"
 					src={image}
 					width={525}
+					priority
 				/>
 			</CardBody>
 		</Card>

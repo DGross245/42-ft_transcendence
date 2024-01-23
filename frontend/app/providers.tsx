@@ -2,7 +2,6 @@
 
 import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5/react';
 import { ThemeProvider as NextThemesProvider } from "next-themes";
-import { ThemeProviderProps } from "next-themes/dist/types";
 import { NextUIProvider } from "@nextui-org/system";
 import { useRouter } from 'next/navigation';
 import { siteConfig } from "@/config/site";
@@ -13,7 +12,6 @@ import { siteConfig } from "@/config/site";
 
 export interface ProvidersProps {
 	children: React.ReactNode;
-	themeProps?: ThemeProviderProps;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -48,14 +46,12 @@ createWeb3Modal({
 /*                                  Providers                                 */
 /* -------------------------------------------------------------------------- */
 
-export function Providers({ children, themeProps }: ProvidersProps) {
+export function Providers({ children }: ProvidersProps) {
 	const router = useRouter();
 
 	return (
 		<NextUIProvider navigate={router.push} className="h-screen">
-			<NextThemesProvider {...themeProps}>
-				{children}
-			</NextThemesProvider>
+			{children}
 		</NextUIProvider>
 	);
 }

@@ -21,25 +21,27 @@ export const metadata: Metadata = {
 };
 
 /* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+
+interface RootLayoutProps {
+	children: React.ReactNode;
+}
+
+/* -------------------------------------------------------------------------- */
 /*                                    Root                                    */
 /* -------------------------------------------------------------------------- */
 
-// @todo fix "Warning: Extra attributes from the server: class,style"
-
-export default function RootLayout({
-	children,
-}: {
-	children: React.ReactNode;
-}) {
+const RootLayout: React.FC<RootLayoutProps> = ({children}) => {
 	return (
 		<html lang="en">
 			<body
 				className={clsx(
-					"font-sans antialiased",
+					"font-sans antialiased dark text-foreground bg-background",
 					fontSans.className
 				)}
 			>
-				<Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
+				<Providers>
 					<div className="flex flex-col h-full">
 						<Navbar />
 						<main className="flex-grow">
@@ -51,3 +53,5 @@ export default function RootLayout({
 		</html>
 	);
 }
+
+export default RootLayout;
