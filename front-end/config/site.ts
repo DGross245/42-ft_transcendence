@@ -8,14 +8,14 @@ export const siteConfig = {
 			label: "Home",
 			href: "/",
 		},
-    {
-      label: "Pong",
-      href: "/pong",
-    },
-	{
-		label: "Tic-Tac-Toe",
-		href: "/tic-tac-toe",
-	}
+		{
+			label: "Pong",
+			href: "/pong",
+		},
+		{
+			label: "Tic-Tac-Toe",
+			href: "/tic-tac-toe",
+		}
 	],
 	navMenuItems: [
 		{

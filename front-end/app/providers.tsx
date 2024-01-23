@@ -1,26 +1,62 @@
 "use client";
 
-import * as React from "react";
-import { NextUIProvider } from "@nextui-org/system";
-import { useRouter } from 'next/navigation'
+import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5/react';
+
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
-import { Web3ModalProvider } from "./web3Provider";
+import { NextUIProvider } from "@nextui-org/system";
+import { useRouter } from 'next/navigation';
+
+import { siteConfig } from "@/config/site";
+
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
 
 export interface ProvidersProps {
 	children: React.ReactNode;
 	themeProps?: ThemeProviderProps;
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                 Web3Config                                 */
+/* -------------------------------------------------------------------------- */
+const projectId = 'e724641375a102581d38c8ee62fc81dd';
+
+/* -------------------------------- Chain(s) -------------------------------- */
+const goerli = {
+	chainId: 5,
+	name: 'goerli',
+	currency: 'ETH',
+	explorerUrl: 'https://goerli.etherscan.io',
+	rpcUrl: 'https://eth-goerli.g.alchemy.com/v2/demo'
+};
+
+/* ---------------------------------- Modal --------------------------------- */
+createWeb3Modal({
+	ethersConfig: defaultConfig({ 
+		metadata: {
+			name: siteConfig.name,
+			description: siteConfig.description,
+			url: 'https://localhost:3000',
+			icons: ['/favicon.ico']
+		}
+	}),
+	chains: [goerli],
+	projectId
+});
+
+/* -------------------------------------------------------------------------- */
+/*                                  Providers                                 */
+/* -------------------------------------------------------------------------- */
+
 export function Providers({ children, themeProps }: ProvidersProps) {
 	const router = useRouter();
 
 	return (
-		<NextUIProvider navigate={router.push}>
+		<NextUIProvider navigate={router.push} className="h-screen">
 			<NextThemesProvider {...themeProps}>
-				<Web3ModalProvider>
-					{children}
-				</Web3ModalProvider>
+				{children}
 			</NextThemesProvider>
 		</NextUIProvider>
 	);
