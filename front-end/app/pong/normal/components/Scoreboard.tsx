@@ -5,7 +5,7 @@ import { MutableRefObject, useContext } from 'react';
 import { Mesh, MeshBasicMaterial } from 'three';
 
 import Orbitron_Regular from '../../../../public/fonts/Orbitron_Regular.json';
-import { PongContext } from '../PongProvider';
+import { PongContext } from '../../PongProvider';
 
 extend({ TextGeometry })
 

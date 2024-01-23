@@ -3,47 +3,40 @@ import { useEffect, useState } from "react";
 export const useGameState = () => {
 	const [p1Score, setP1Score] = useState(0);
 	const [p2Score, setP2Score] = useState(0);
+	const [p3Score, setP3Score] = useState(0);
+	const [p4Score, setP4Score] = useState(0);
 	const [showModal, setShowModal] = useState(false);
 	const [winner, setWinner] = useState('');
-	const [isScoreVisible, setScoreVisibility] = useState(false);
-	const [isBallVisible, setBallVisibility] = useState(true)
 	const [isGameOver, setGameOver] = useState(false);
-	const [resetGame, setReset] = useState(false);
-
-	const [sendRequest, setSendRequest] = useState(false);
-	const [requestRematch, setRequestRematch] = useState(false);
+	const [isScoreVisible, setScoreVisibility] = useState(false);
+	const [reset, setReset] = useState(false);
+	const [isBallVisible, setBallVisibility] = useState(true);
 
 	const closeModal = () => {
 		setShowModal(false);
-	}
+	};
 
 	const openModal = () => {
 		setShowModal(true);
-	}
-
-	useEffect(() => {
-		if (requestRematch && sendRequest) {
-			setRequestRematch(false);
-			setSendRequest(false);
-			setReset(true);
-		}
-	}, [requestRematch, sendRequest]);
+	};
 
 	// Handles the reset of the scene when the 'reset' state changes.
 	useEffect(() => {
-		if (resetGame) {
+		if (reset) {
 			setBallVisibility(true);
 			setGameOver(false);
 			closeModal();
 			setReset(false);
 			setP1Score(0);
 			setP2Score(0);
+			setP3Score(0);
+			setP4Score(0);
 			setWinner('');
 			setScoreVisibility(false);
 		}
-	}, [resetGame]);
+	}, [reset]);
 
-	// Opens the EndModal after a delay if the game ist over = 'isGameOver' state is true.
+	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
 		if (isGameOver) {
 			const delay = 1000;
@@ -58,16 +51,12 @@ export const useGameState = () => {
 	}, [isGameOver]);
 
 	return {
-		sendRequest, setSendRequest,
-		requestRematch, setRequestRematch,
-		p1Score,setP1Score,
-		p2Score, setP2Score,
-		showModal, setShowModal,
-		winner, setWinner,
+		closeModal, openModal, showModal,
+		p1Score, setP1Score, p2Score, setP2Score,
+		p3Score, setP3Score, p4Score, setP4Score,
+		winner, setWinner, reset, setReset,
 		isScoreVisible, setScoreVisibility,
 		isBallVisible, setBallVisibility,
-		isGameOver, setGameOver,
-		resetGame, setReset,
-		closeModal, openModal
+		isGameOver, setGameOver
 	};
 }

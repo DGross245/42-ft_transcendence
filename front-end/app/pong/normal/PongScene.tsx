@@ -15,7 +15,7 @@ import { CubeLine } from './components/CubeLine';
 import Camera from '../sharedComponents/Camera';
 import Countdown from '../sharedComponents/Countdown';
 import inputHandler from '@/components/inputHandler';
-import { PongContext } from './PongProvider';
+import { PongContext } from '../PongProvider';
 import useWSClient from '@/helpers/wsclient';
 import { useGameState } from './hooks/useGameState';
 import { useWebSocket } from './hooks/useWebSocket';
@@ -33,7 +33,7 @@ import { useWebSocket } from './hooks/useWebSocket';
  */
 export default function PongScene(/* maybe get gameId as param */) { // PlayerState needs to set too
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const { rightPaddleRef, leftPaddleRef, ballRef} = useContext(PongContext);
+	const { rightPaddleRef, leftPaddleRef, ballRef, updateGameState, gameState } = useContext(PongContext);
 	const { p1Score, p2Score, setP1Score, setP2Score, isScoreVisible, setScoreVisibility,
 		setWinner, isGameOver, setGameOver, isBallVisible, setBallVisibility, showModal, closeModal,
 		winner, sendRequest, setRequestRematch, setSendRequest, requestRematch} = useGameState();
@@ -50,12 +50,20 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 			});
 		};
 
+		const handlePause = () => {
+			// updateGameState({ ...gameState, pause: true })
+			// gameState.wsclient?.emitMessageToGame("true", `Pause-${gameState.gameId}`, gameState.gameId);
+		};
+	
+		handlePause();
 		handleResize();
 
 		window.addEventListener('resize', handleResize);
+		window.addEventListener('blur', handlePause);
 
 		return () => {
 			window.removeEventListener('resize', handleResize);
+			window.removeEventListener('blur', handlePause);
 		};
 	}, []);
 

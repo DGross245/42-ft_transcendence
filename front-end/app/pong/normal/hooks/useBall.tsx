@@ -1,6 +1,6 @@
 import { Dispatch, MutableRefObject, SetStateAction, useContext, useEffect, useRef } from "react";
 import { Mesh } from 'three'
-import { PongContext } from "../PongProvider";
+import { PongContext } from "../../PongProvider";
 import { useFrame } from "@react-three/fiber";
 
 // FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
@@ -24,7 +24,7 @@ interface BallProps {
 
 export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 
-	const { playerState, gameState } = useContext(PongContext);
+	const { player1State, gameState } = useContext(PongContext);
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const PositionRef = useRef({position: {x:0, y:0}, velocity: {x:0, y:0}, deltaTime: 0});
@@ -84,7 +84,7 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 	const updateBallPosition = (ball: { x: number; y: number; velocityX: number; velocityY: number; }, deltaTime: number) => {
 		if (gameState.pause)
 			return ;
-		if (playerState.master) {
+		if (player1State.master) {
 			ball.x += ball.velocityX * 100 * deltaTime;
 			ball.y += ball.velocityY * 100 * deltaTime;
 			const msg = { position: { x: ball.x, y: ball.y },

@@ -1,6 +1,6 @@
 "use client"
 
-import { MutableRefObject, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stats } from '@react-three/drei'; 
 import inputHandler from '@/components/inputHandler';
@@ -13,6 +13,8 @@ import Scoreboard from './components/Scoreboard';
 import EndModal from './components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
 import { Mesh } from 'three'
+import { PongContext } from '../PongProvider';
+import { useGameState } from './hooks/useGameState';
 
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
@@ -22,60 +24,14 @@ import { Mesh } from 'three'
 export default function OneForAllScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const keyMap = inputHandler();
-	const [p1Score, setP1Score] = useState(0);
-	const [p2Score, setP2Score] = useState(0);
-	const [p3Score, setP3Score] = useState(0);
-	const [p4Score, setP4Score] = useState(0);
-	const [showModal, setShowModal] = useState(false);
-	const [winner, setWinner] = useState('');
-	const [gameOver, setGameOver] = useState(false);
-	const [scoreVisible, setScoreVisibility] = useState(false);
-	const [reset, setReset] = useState(false);
-	const [isBallVisible, setBallVisibility] = useState(true);
-	
-	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
-	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
-	const topPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
-	const bottomPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
-	const ballRef = useRef<Mesh>(null);
-
-	const closeModal = () => {
-		setShowModal(false);
-	}
-
-	const openModal = () => {
-		setShowModal(true);
-	}
-
-	// Handles the reset of the scene when the 'reset' state changes.
-	useEffect(() => {
-		if (reset) {
-			setBallVisibility(true);
-			setGameOver(false);
-			closeModal();
-			setReset(false);
-			setP1Score(0);
-			setP2Score(0);
-			setP3Score(0);
-			setP4Score(0);
-			setWinner('');
-			setScoreVisibility(false);
-		}
-	}, [reset]);
-
-	// Opens the EndModal after a delay if the 'gameOver' state is true.
-	useEffect(() => {
-		if (gameOver) {
-			const delay = 1000;
-			const modalTimeout = setTimeout(() => {
-				openModal();
-			}, delay);
-
-			return (() => {
-				clearTimeout(modalTimeout)
-			});
-		}
-	}, [gameOver]);
+	const { closeModal, showModal,
+		p1Score, setP1Score, p2Score, setP2Score,
+		p3Score, setP3Score, p4Score, setP4Score,
+		winner, setWinner, setReset,
+		isScoreVisible, setScoreVisibility,
+		isBallVisible, setBallVisibility,
+		isGameOver, setGameOver } = useGameState();
+	const { topPaddleRef,bottomPaddleRef, rightPaddleRef, leftPaddleRef, ballRef} = useContext(PongContext);
 
 	// Updates window dimensions on window resizing.
 	useEffect(() => {
@@ -98,8 +54,8 @@ export default function OneForAllScene() {
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown scoreVisible={scoreVisible} setScoreVisibility={setScoreVisibility} rotation={[Math.PI / 2, 0, 0]} />
-				<Camera position={[0, -350, 100]} keyMap={keyMap} /> 
+				<Countdown scoreVisible={isScoreVisible} setScoreVisibility={setScoreVisibility} rotation={[Math.PI / 2, 0, 0]} />
+				<Camera position={[0, -350, 100]} /> 
 				<Border />
 				<TopPaddle ref={topPaddleRef} position={[0, 151, 0]} keyMap={keyMap} />
 				<BottomPaddle ref={bottomPaddleRef} position={[0, -151, 0]} keyMap={keyMap} />
@@ -115,8 +71,8 @@ export default function OneForAllScene() {
 					p3Score={p3Score} setP3Score={setP3Score}
 					p4Score={p4Score} setP4Score={setP4Score}
 					setWinner={setWinner}
-					gameOver={gameOver} setGameOver={setGameOver}
-					scoreVisible={scoreVisible}
+					gameOver={isGameOver} setGameOver={setGameOver}
+					scoreVisible={isScoreVisible}
 					isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
 					ref={ballRef}
 				/>
@@ -127,7 +83,7 @@ export default function OneForAllScene() {
 					player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score}
 					rightPaddleRef={rightPaddleRef} leftPaddleRef={leftPaddleRef}
 					topPaddleRef={topPaddleRef} bottomPaddleRef={bottomPaddleRef}
-					scoreVisible={scoreVisible} />
+					scoreVisible={isScoreVisible} />
 				<Stats />
 			</Canvas>
 			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} setReset={setReset} />

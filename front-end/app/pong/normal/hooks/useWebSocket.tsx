@@ -1,12 +1,12 @@
 import useWSClient from "@/helpers/wsclient";
 import { Dispatch, SetStateAction, useContext, useEffect } from "react";
-import { PongContext } from "../PongProvider";
+import { PongContext } from "../../PongProvider";
 
 // TODO: Add a paus when document is hidden
 
 export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameOver: Dispatch<SetStateAction<boolean>>, setRequestRematch: Dispatch<SetStateAction<boolean>>, setSendRequest: Dispatch<SetStateAction<boolean>>) => {
 	const wsClient = useWSClient();
-	const { gameState, updateGameState, playerState, updatePlayerState, } = useContext(PongContext);
+	const { gameState, updateGameState, player1State, updatePlayer1State, } = useContext(PongContext);
 
 	useEffect(() => {
 		const waitForSocket = async () => {
@@ -24,8 +24,8 @@ export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameO
 			if (gameState.wsclient) {
 				const clients =  await gameState.wsclient.joinGame(gameState.gameId);
 				if (clients === 1) {
-					const newPlayerState = { ...playerState, master: true }
-					updatePlayerState( newPlayerState );
+					const newPlayerState = { ...player1State, master: true }
+					updatePlayer1State( newPlayerState );
 				}
 			}
 		};
@@ -87,31 +87,20 @@ export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameO
 			gameState.wsclient?.emitMessageToGame("true", `Request-Rematch-${gameState.gameId}`, gameState.gameId);
 	}, [sendRequest]);
 
-	// useEffect(() => {
-	// 	if (gameState.wsclient) {
-	// 		const setPause = (msg: string) => {
-	// 			if (msg === "true")
-	// 				updateGameState({ ...gameState, pause: true });
-	// 			else
-	// 				updateGameState({ ...gameState, pause: true });
-	// 		};
-	// 		gameState.wsclient?.addMessageListener(`Pause-${gameState.gameId}`, gameState.gameId, setPause)
+	useEffect(() => {
+		if (gameState.wsclient) {
+			const setPause = (msg: string) => {
+				if (msg === "true")
+					updateGameState({ ...gameState, pause: true });
+				else
+					updateGameState({ ...gameState, pause: false });
+			};
+			gameState.wsclient?.addMessageListener(`Pause-${gameState.gameId}`, gameState.gameId, setPause)
 	
-	// 		return () => {
-	// 			gameState.wsclient?.removeMessageListener(`Pause-${gameState.gameId}`, gameState.gameId);
-	// 		} 
-	// 	}
-	// }, [gameState.wsclient]);
-
-	// useEffect(() => {
-	// 	if (gameState.wsclient) {
-	// 		if (keyMap['Escape']) {
-	// 			console.log("Send Pause to opponent");
-	// 			if ()
-	// 				updateGameState({ ...gameState, pause: true })
-	// 				gameState.wsclient?.emitMessageToGame("true", `Pause-${gameState.gameId}`, gameState.gameId);
-	// 		}
-	// 	}
-	// }, [keyMap, gameState.wsclient]);
+			return () => {
+				gameState.wsclient?.removeMessageListener(`Pause-${gameState.gameId}`, gameState.gameId);
+			} 
+		}
+	}, [gameState.wsclient]);
 
 }

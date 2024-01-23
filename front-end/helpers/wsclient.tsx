@@ -97,10 +97,8 @@ const useWSClient = () => {
 	const [wsclient, setWsclient] = useState<WSClient | null>(null);
 
 	useEffect(() => {
-		if (window !== undefined) {
+		if (window !== undefined)
 			setWsclient(new WSClient());
-			console.log("LOL")
-		}
 	},[]);
 
 	return wsclient;

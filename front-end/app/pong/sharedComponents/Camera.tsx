@@ -1,6 +1,7 @@
 import { PerspectiveCamera } from "@react-three/drei"
 import { useFrame } from "@react-three/fiber";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
+import * as THREE from 'three'
 
 interface CameraProps {
 	position: [number, number, number],

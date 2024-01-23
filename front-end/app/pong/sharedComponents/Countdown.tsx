@@ -4,7 +4,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Orbitron_Regular from '../../../public/fonts/Orbitron_Regular.json';
 import { extend } from '@react-three/fiber';
 import { useContext, useEffect, useState } from 'react';
-import { PongContext } from '../normal/PongProvider';
+import { PongContext } from '../PongProvider';
 
 extend({ TextGeometry })
 

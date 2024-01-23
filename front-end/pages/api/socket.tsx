@@ -33,7 +33,6 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				const numClients = room ? room.size : 0;
 
 				if (numClients < 2) {
-					console.log("JOINING THE GAME AS", numClients + 1);
 					socket.join(gameId);
 					socket.emit(`room-joined-${gameId}`, (numClients + 1));
 					if (numClients === 1) {
