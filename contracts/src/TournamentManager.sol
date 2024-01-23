@@ -2,8 +2,7 @@
 pragma solidity ^0.8.13;
 
 // @todo add events
-// @todo testing
-// @todo deploy
+// @todo add elo score function for matchmaking
 contract TournamentManager {
 
 	/* -------------------------------------------------------------------------- */
