@@ -1,12 +1,10 @@
 "use client";
 
 import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5/react';
-
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import { NextUIProvider } from "@nextui-org/system";
 import { useRouter } from 'next/navigation';
-
 import { siteConfig } from "@/config/site";
 
 /* -------------------------------------------------------------------------- */

@@ -1,38 +1,16 @@
-export type SiteConfig = typeof siteConfig;
+import favicon from "@/assets/favicon.ico";
+import logo from "@/assets/logo.png";
+
+/* -------------------------------------------------------------------------- */
+/*                                   Config                                   */
+/* -------------------------------------------------------------------------- */
 
 export const siteConfig = {
 	name: "ft_transcendence",
 	description: "",
-	navItems: [
-		{
-			label: "Home",
-			href: "/",
-		},
-		{
-			label: "Pong",
-			href: "/pong",
-		},
-		{
-			label: "Tic-Tac-Toe",
-			href: "/tic-tac-toe",
-		}
-	],
-	navMenuItems: [
-		{
-			label: "Profile",
-			href: "/profile",
-		},
-		{
-			label: "Projects",
-			href: "/projects",
-		},
-		{
-			label: "Settings",
-			href: "/settings",
-		},
-		{
-			label: "Logout",
-			href: "/logout",
-		},
-	]
+	icons: {
+		icon: favicon.src,
+		shortcut: logo.src,
+		apple: logo.src,
+	}
 };

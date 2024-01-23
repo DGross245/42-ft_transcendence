@@ -5,9 +5,6 @@ import { Providers } from "./providers";
 import { Metadata } from "next";
 import clsx from "clsx";
 
-import favicon from "@/assets/favicon.ico";
-import logo from "@/assets/logo.png";
-
 import "@/styles/globals.css";
 
 /* -------------------------------------------------------------------------- */
@@ -20,11 +17,7 @@ export const metadata: Metadata = {
 		template: `%s - ${siteConfig.name}`,
 	},
 	description: siteConfig.description,
-	icons: {
-		icon: favicon.src,
-		shortcut: logo.src,
-		apple: logo.src,
-	},
+	icons: siteConfig.icons
 };
 
 /* -------------------------------------------------------------------------- */
