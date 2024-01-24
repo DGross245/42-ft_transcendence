@@ -54,7 +54,7 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 	}, [props.scoreVisible, gameState.pause]);
 
 	return (
-		<mesh visible={!props.scoreVisible} position={ count === 1 ? [-23, 0, 50] : [-35, 0, 50]} rotation={props.rotation}>
+		<mesh visible={!props.scoreVisible} position={ count === 1 ? [-23, 50, 0] : [-35, 50, 0]} rotation={props.rotation}>
 			<textGeometry args={[String(count), {font, size: 60, height: 6}]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>

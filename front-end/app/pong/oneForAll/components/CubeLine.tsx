@@ -9,11 +9,11 @@ export const CubeLineY = () => {
 	const cubes = [];
   
 	for (let i = 1; i < 20; i++) {
-		const positionY = i * (151 * 2) / 20 - 151;
+		const positionZ = i * (151 * 2) / 20 - 151;
 		const positionX = i * (151 * 2) / 20 - 151;
 
 		const cube = (
-			<mesh key={i} position={[positionX, positionY, -4]}>
+			<mesh key={i} position={[positionX, -4, positionZ]} rotation={[Math.PI / 2, 0, 0]}>
 				<boxGeometry args={[3, 3, 0.5]} />
 				<meshBasicMaterial color={ 0x808080 } />
 			</mesh>
@@ -38,10 +38,10 @@ export const CubeLineX = () => {
 
 	for (let i = 1; i < 20; i++) {
 		const positionX = i * (151 * 2) / 20 - 151;
-		const positionY = -i * (151 * 2) / 20 + 151;
+		const positionZ = -i * (151 * 2) / 20 + 151;
 
 		const cube = (
-			<mesh key={i} position={[positionX, positionY, -4]}>
+			<mesh key={i} position={[positionX, -4, positionZ]} rotation={[Math.PI / 2, 0, 0]}>
 				<boxGeometry args={[3, 3, 0.5]} />
 				<meshBasicMaterial color={ 0x808080 } />
 			</mesh>

@@ -54,11 +54,11 @@ export default function OneForAllScene() {
 	return (
 		<div >
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown scoreVisible={isScoreVisible} setScoreVisibility={setScoreVisibility} rotation={[Math.PI / 2, 0, 0]} />
-				<Camera position={[0, -350, 100]} rotation={[0, 0, Math.PI / 2]} /> 
+				<Countdown scoreVisible={isScoreVisible} setScoreVisibility={setScoreVisibility} rotation={[0, 0, 0]} />
+				<Camera position={[0, 350, 100]} rotation={[0, 0, 0]} /> 
 				<Border />
-				<TopPaddle ref={topPaddleRef} position={[0, 151, 0]} keyMap={keyMap} />
-				<BottomPaddle ref={bottomPaddleRef} position={[0, -151, 0]} keyMap={keyMap} />
+				<TopPaddle ref={topPaddleRef} position={[0, 0, -151]} keyMap={keyMap} />
+				<BottomPaddle ref={bottomPaddleRef} position={[0, 0, 151]} keyMap={keyMap} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} keyMap={keyMap} />
 				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
 				<Ball
@@ -78,7 +78,7 @@ export default function OneForAllScene() {
 				/>
 				<CubeLineY />
 				<CubeLineX />
-				<OrbitControls enablePan={false} enableRotate={true}/>
+				<OrbitControls enablePan={false} enableRotate={true} />
 				<Scoreboard 
 					player1={p1Score} player2={p2Score} player3={p3Score} player4={p4Score}
 					rightPaddleRef={rightPaddleRef} leftPaddleRef={leftPaddleRef}

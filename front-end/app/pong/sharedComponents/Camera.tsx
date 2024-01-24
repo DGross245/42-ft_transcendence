@@ -1,5 +1,5 @@
 import { PerspectiveCamera } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import * as THREE from 'three'
 
@@ -47,7 +47,6 @@ const Camera : React.FC<CameraProps> = (props) => {
 			near={0.1}
 			far={1000}
 			position={[x, y, z + 300]}
-			rotation={props.rotation}
 		/>
 	);
 }

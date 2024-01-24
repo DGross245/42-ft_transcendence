@@ -25,15 +25,15 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
 			if (keyMap['ArrowUp']) {
-				meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
+				meshRef.current.position.z = Math.max(meshRef.current.position.z - paddleSpeed * delta, -borderPositionY + 15);
 			} else if (keyMap['ArrowDown']) {
-				meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
+				meshRef.current.position.z = Math.min(meshRef.current.position.z + paddleSpeed * delta, borderPositionY - 15);
 			}
 		}
 	});
 
 	return (
-		<mesh ref={meshRef} position={position}>
+		<mesh ref={meshRef} position={position} rotation={[0, Math.PI / 2, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0xff0000 } />
 		</mesh>
@@ -55,15 +55,15 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
 			if (keyMap['KeyW']) {
-				meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
+				meshRef.current.position.z = Math.max(meshRef.current.position.z - paddleSpeed * delta, -borderPositionY + 15);
 			} else if (keyMap['KeyS']) {
-				meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
+				meshRef.current.position.z = Math.min(meshRef.current.position.z + paddleSpeed * delta, borderPositionY - 15);
 			}
 		}
 	});
 
 	return (
-		<mesh ref={meshRef} position={position}>
+		<mesh ref={meshRef} position={position} rotation={[0, Math.PI / 2, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0x00ff00 } />
 		</mesh>
@@ -93,7 +93,7 @@ export const TopPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =>
 	});
 
 	return (
-		<mesh ref={meshRef} position={position} rotation={[0, 0, Math.PI / 2]}>
+		<mesh ref={meshRef} position={position} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0x00F5FF11 } />
 		</mesh>
@@ -123,7 +123,7 @@ export const BottomPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref)
 	});
 
 	return (
-		<mesh ref={ref} position={position} rotation={[0, 0, Math.PI / 2]} >
+		<mesh ref={ref} position={position} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ 0x1874CD } />
 		</mesh>
