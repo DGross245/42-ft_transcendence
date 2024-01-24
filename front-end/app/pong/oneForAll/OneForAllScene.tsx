@@ -15,6 +15,7 @@ import Countdown from '../sharedComponents/Countdown';
 import { Mesh } from 'three'
 import { PongContext } from '../PongProvider';
 import { useGameState } from './hooks/useGameState';
+import { useWebSocket } from './hooks/useWebSocket';
 
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
@@ -32,6 +33,8 @@ export default function OneForAllScene() {
 		isBallVisible, setBallVisibility,
 		isGameOver, setGameOver } = useGameState();
 	const { topPaddleRef,bottomPaddleRef, rightPaddleRef, leftPaddleRef, ballRef} = useContext(PongContext);
+
+	useWebSocket();
 
 	// Updates window dimensions on window resizing.
 	useEffect(() => {

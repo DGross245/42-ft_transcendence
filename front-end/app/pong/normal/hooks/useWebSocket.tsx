@@ -6,7 +6,7 @@ import { PongContext } from "../../PongProvider";
 
 export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameOver: Dispatch<SetStateAction<boolean>>, setRequestRematch: Dispatch<SetStateAction<boolean>>, setSendRequest: Dispatch<SetStateAction<boolean>>) => {
 	const wsClient = useWSClient();
-	const { gameState, updateGameState, player1State, updatePlayer1State, } = useContext(PongContext);
+	const { gameState, updateGameState, playerState, updatePlayerState, } = useContext(PongContext);
 
 	useEffect(() => {
 		const waitForSocket = async () => {
@@ -22,10 +22,15 @@ export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameO
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (gameState.wsclient) {
-				const clients =  await gameState.wsclient.joinGame(gameState.gameId);
-				if (clients === 1) {
-					const newPlayerState = { ...player1State, master: true }
-					updatePlayer1State( newPlayerState );
+				const clients =  await gameState.wsclient.joinGame(gameState.gameId, "Pong");
+				if (clients === 0) {
+					updatePlayerState({
+						players: [
+							{ ...playerState.players[0], master: true }, 
+							...playerState.players.slice(1)
+						],
+						client : clients
+					});
 				}
 			}
 		};
@@ -37,8 +42,9 @@ export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameO
 	useEffect(() => {
 		if (gameState.wsclient) {
 			const setPause = (msg: string) => {
-				if (msg === "2")
+				if (msg === "1") {
 					updateGameState({ ...gameState, pause: false });
+				}
 			};
 
 			gameState.wsclient?.addMessageListener(`Players-${gameState.gameId}`, gameState.gameId, setPause)

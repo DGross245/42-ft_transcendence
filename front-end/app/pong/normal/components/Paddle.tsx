@@ -16,7 +16,7 @@ interface Paddle {
  * @returns A Three.js mesh representing the paddle.
  */
 export const RightPaddle = forwardRef<Mesh, { position: [number, number, number] }>(({ position }, ref) => {
-	const { gameState, player2State } = useContext(PongContext)!;
+	const { gameState, playerState } = useContext(PongContext)!;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const PositionRef = useRef<number>(0);
 
@@ -43,7 +43,7 @@ export const RightPaddle = forwardRef<Mesh, { position: [number, number, number]
 	return (
 		<mesh ref={ref} position={position}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={player2State.color} />
+			<meshBasicMaterial color={ playerState.players[1].color } />
 		</mesh>
 	);
 });
@@ -56,7 +56,7 @@ export const RightPaddle = forwardRef<Mesh, { position: [number, number, number]
  * @returns A Three.js mesh representing the paddle.
  */
 export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
-	const { player1State, gameState } = useContext(PongContext)!;
+	const { playerState, gameState } = useContext(PongContext)!;
 	const paddleSpeed = 300;
 	const borderPositionY = 103;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
@@ -80,7 +80,7 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	return (
 		<mesh ref={meshRef} position={position}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ player1State.color } />
+			<meshBasicMaterial color={ playerState.players[1].color } />
 		</mesh>
 	);
 });

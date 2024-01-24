@@ -28,15 +28,23 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			// 	cache.put(walletId, socket);
 			// })
 
-			socket.on('join-game', ( gameId: string ) => {
+			socket.on('join-game', ( gameId: string, gameType: string ) => {
 				const room = io.sockets.adapter.rooms.get(gameId);
 				const numClients = room ? room.size : 0;
+				let maxClients = 2;
 
-				if (numClients < 2) {
+				if (gameType === "OneForAll")
+					maxClients = 4;
+				else if (gameType === "Qubic")
+					maxClients = 3;
+
+				if (numClients < maxClients) {
 					socket.join(gameId);
-					socket.emit(`room-joined-${gameId}`, (numClients + 1));
-					if (numClients === 1) {
-						const string = JSON.stringify(numClients + 1);
+					socket.emit(`room-joined-${gameId}`, (numClients));
+					console.log(numClients);
+					if (numClients === maxClients - 1) {
+						console.log("SEND")
+						const string = JSON.stringify(numClients);
 						const topic = `Players-${gameId}`;
 						io.to(gameId).emit(`message-${gameId}-${topic}`, string);
 					}

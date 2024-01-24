@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
 // FIXME: positing of modal with low window size
+// TODO: ADD if nobody is in the room, then disable button for rematch
+// TODO: Maybe change Rematch button to Accept or Accept Rematch when requestRematch is true
 
 const EndModal = ({ isOpen, onClose, winner, setSendRequest, sendRequest, requestRematch}) => {
 	return (

@@ -24,7 +24,7 @@ interface BallProps {
 
 export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 
-	const { player1State, gameState } = useContext(PongContext);
+	const { playerState, gameState } = useContext(PongContext);
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
 	const PositionRef = useRef({position: {x:0, y:0}, velocity: {x:0, y:0}, deltaTime: 0});
@@ -84,7 +84,7 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 	const updateBallPosition = (ball: { x: number; y: number; velocityX: number; velocityY: number; }, deltaTime: number) => {
 		if (gameState.pause)
 			return ;
-		if (player1State.master) {
+		if (playerState.players[0].master) {
 			ball.x += ball.velocityX * 100 * deltaTime;
 			ball.y += ball.velocityY * 100 * deltaTime;
 			const msg = { position: { x: ball.x, y: ball.y },
