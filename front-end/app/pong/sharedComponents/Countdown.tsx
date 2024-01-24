@@ -14,6 +14,7 @@ interface CountdownProps {
 	rotation: [number, number, number],
 }
 
+// TODO: Find a solution for the position of countdown due to plane difference in Pong and OneForAll
 /**
  * The Countdown component is a timer that counts down from 4 to 0 and displays the count as a 3D text
  * in a React Three Fiber scene.

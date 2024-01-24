@@ -55,7 +55,7 @@ export default function OneForAllScene() {
 		<div >
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown scoreVisible={isScoreVisible} setScoreVisibility={setScoreVisibility} rotation={[0, 0, 0]} />
-				<Camera position={[0, 350, 100]} rotation={[0, 0, 0]} /> 
+				<Camera position={[0, 350, 400]}/> 
 				<Border />
 				<TopPaddle ref={topPaddleRef} position={[0, 0, -151]} keyMap={keyMap} />
 				<BottomPaddle ref={bottomPaddleRef} position={[0, 0, 151]} keyMap={keyMap} />

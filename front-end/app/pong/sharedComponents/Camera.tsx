@@ -5,7 +5,6 @@ import * as THREE from 'three'
 
 interface CameraProps {
 	position: [number, number, number],
-	rotation: [number, number, number],
 }
 
 /**
@@ -34,10 +33,6 @@ const Camera : React.FC<CameraProps> = (props) => {
 	// 	}
 	// });)
 
-	//rotation={[0, 0, 0]} BLUE
-	//rotation={[0, 0, Math.PI / 2]} RED 
-	//rotation={[0, 0, Math.PI]} YELLOW
-	//rotation={[0, 0, Math.PI / -2]} GREEN 
 	return (
 		<PerspectiveCamera
 			makeDefault
@@ -46,7 +41,7 @@ const Camera : React.FC<CameraProps> = (props) => {
 			aspect={window.innerWidth / window.innerHeight}
 			near={0.1}
 			far={1000}
-			position={[x, y, z + 300]}
+			position={[x, y, z]}
 		/>
 	);
 }
