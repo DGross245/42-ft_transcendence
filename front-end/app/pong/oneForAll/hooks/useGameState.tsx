@@ -12,7 +12,7 @@ export const useGameState = () => {
 	const [reset, setReset] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true);
 	const [disconnected, setDisconnected] = useState(false);
-
+	const [camPos, setCamPos] = useState<[number, number, number]>([0, 350, 400]);
 	const closeModal = () => {
 		setShowModal(false);
 	};
@@ -59,6 +59,7 @@ export const useGameState = () => {
 		winner, setWinner, reset, setReset,
 		isScoreVisible, setScoreVisibility,
 		isBallVisible, setBallVisibility,
-		isGameOver, setGameOver
+		isGameOver, setGameOver,
+		camPos, setCamPos
 	};
 }

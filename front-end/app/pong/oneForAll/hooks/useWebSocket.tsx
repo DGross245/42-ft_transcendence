@@ -4,10 +4,27 @@ import { PongContext } from "../../PongProvider";
 import { disconnect } from "process";
 
 export const useWebSocket = (isGameOver: Boolean, setGameOver: Dispatch<SetStateAction<boolean>>,
-	disconnect: Boolean, setDisconnect: Dispatch<SetStateAction<boolean>>) => {
+	disconnect: Boolean, setDisconnect: Dispatch<SetStateAction<boolean>>,
+	setCamPos: Dispatch<SetStateAction<[number, number, number]>>,) => {
 	const wsClient = useWSClient();
 	const { gameState, updateGameState, playerState, updatePlayerState, } = useContext(PongContext);
 	const [isFull, setIsFull] = useState("");
+	var positionInfo: { position: [number, number, number] }[] = Array.from({ length: 4 }, () => ({
+		position: [-1, -1, -1],
+	}));
+
+	positionInfo[0] = {
+		position: [ 0, 350, 400],
+	}
+	positionInfo[1] = {
+		position: [ -400, 350, 0],
+	}
+	positionInfo[2] = {
+		position: [ 0, 350, -400],
+	}
+	positionInfo[3] = {
+		position: [ 400, 350, 0],
+	}
 
 	useEffect(() => {
 		const waitForSocket = async () => {
@@ -54,6 +71,7 @@ export const useWebSocket = (isGameOver: Boolean, setGameOver: Dispatch<SetState
 			};
 	
 			sendPlayerData();
+			setCamPos(positionInfo[playerState.client].position);
 			updateGameState({ ...gameState, pause: false });
 		}
 	}, [playerState.client, isFull]);
