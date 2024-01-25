@@ -31,10 +31,10 @@ export default function OneForAllScene() {
 		winner, setWinner, setReset,
 		isScoreVisible, setScoreVisibility,
 		isBallVisible, setBallVisibility,
-		isGameOver, setGameOver } = useGameState();
-	const { topPaddleRef,bottomPaddleRef, rightPaddleRef, leftPaddleRef, ballRef, playerState} = useContext(PongContext);
+		isGameOver, setGameOver, disconnected, setDisconnected } = useGameState();
+	const { topPaddleRef,bottomPaddleRef, rightPaddleRef, leftPaddleRef, ballRef } = useContext(PongContext);
 
-	useWebSocket();
+	useWebSocket(isGameOver, setGameOver, disconnected, setDisconnected);
 
 	// Updates window dimensions on window resizing.
 	useEffect(() => {
@@ -88,7 +88,13 @@ export default function OneForAllScene() {
 					scoreVisible={isScoreVisible} />
 				<Stats />
 			</Canvas>
-			<EndModal isOpen={showModal} onClose={closeModal} winner={winner} setReset={setReset} />
+			<EndModal
+				isOpen={showModal}
+				onClose={closeModal}
+				winner={winner}
+				setReset={setReset}
+				disconnect={disconnected}
+			/>
 		</div>
 	);
 }

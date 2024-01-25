@@ -29,11 +29,12 @@ interface BallProps {
 };
 
 export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
-	const { playerState} = useContext(PongContext);
+	const { playerState, gameState }= useContext(PongContext);
 	const [color, setColor] = useState( 0xffffff );
 	const [lastPaddleHit, setLastPaddleHit] = useState('');
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 	const ballRef = useRef({ x: 0, z: 0, velocityX: 0, velocityZ: 0, speed: 0.1 });
+	const PositionRef = useRef({position: {x:0, z:0}, velocity: {x:0, z:0}, deltaTime: 0});
 	const halfBall = 2;
 
 	/**
@@ -131,13 +132,40 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 	 * 					  Used to ensure independence from the frame rate.
 	 */
 	const updateBallPosition = (ball: { x: number; z: number; velocityX: number; velocityZ: number; }, deltaTime: number) => {
-		ball.x += ball.velocityX * 100 * deltaTime;
-		ball.z += ball.velocityZ * 100 * deltaTime;
+		if (gameState.pause)
+			return ;
+		if (playerState.players[playerState.client].master) {
+			ball.x += ball.velocityX * 100 * deltaTime;
+			ball.z += ball.velocityZ * 100 * deltaTime;
+			const msg = { 
+				position: { x: ball.x, z: ball.z },
+				velocity: { x: ball.velocityX, z: ball.velocityZ },
+				deltaTime: deltaTime
+			}
+			const stringPos = JSON.stringify(msg);
+			gameState.wsclient?.emitMessageToGame(stringPos, `ballUpdate-${gameState.gameId}`, gameState.gameId);
+		} else {
+			const { position, velocity, deltaTime } = PositionRef.current;
+			ball.x = position.x + velocity.x * deltaTime;
+			ball.z = position.z + velocity.z * deltaTime;
+		}
 		if (meshRef.current) {
 			meshRef.current.position.x = ball.x;
 			meshRef.current.position.z = ball.z;
 		}
 	}
+
+	useEffect(() => {
+		const setNewCoords = (msg: string) => {
+			const newPosition = JSON.parse(msg);
+			PositionRef.current = newPosition;
+		};
+		gameState.wsclient?.addMessageListener(`ballUpdate-${gameState.gameId}`, gameState.gameId, setNewCoords);
+
+		return () => {
+			gameState.wsclient?.removeMessageListener(`ballUpdate-${gameState.gameId}`, gameState.gameId);
+		};
+	}, []);
 
 	const handleBallMovement = (ball: { x: any; z: any; velocityX: any; velocityZ: any; speed: number; }, deltaTime: number) => {
 		const rightPaddlePos = props.rightPaddleRef.current.position;

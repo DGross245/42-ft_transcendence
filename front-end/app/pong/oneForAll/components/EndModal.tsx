@@ -3,7 +3,7 @@
 import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
-const EndModal = ({ isOpen, onClose, winner, setReset }) => {
+const EndModal = ({ isOpen, onClose, winner, setReset, disconnect }) => {
 
 	// TODO: getWinnerImmage need to adjusted/replaced for OneForAll
 	const getWinnerImage = () => {
@@ -46,7 +46,7 @@ const EndModal = ({ isOpen, onClose, winner, setReset }) => {
 						</div>
 					)}
 					<ModalHeader className="flex flex-col gap-1 items-center justify-center">
-						{winner === 'draw' ? 'Draw' : 'Wins' }
+						{disconnect === true ? 'Forfeited' : winner === 'draw' ? 'Draw' : 'Wins' }
 					</ModalHeader>
 					</div>
 					<ModalBody >

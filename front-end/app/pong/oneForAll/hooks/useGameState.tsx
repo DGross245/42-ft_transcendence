@@ -11,6 +11,7 @@ export const useGameState = () => {
 	const [isScoreVisible, setScoreVisibility] = useState(false);
 	const [reset, setReset] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true);
+	const [disconnected, setDisconnected] = useState(false);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -51,6 +52,7 @@ export const useGameState = () => {
 	}, [isGameOver]);
 
 	return {
+		disconnected, setDisconnected,
 		closeModal, openModal, showModal,
 		p1Score, setP1Score, p2Score, setP2Score,
 		p3Score, setP3Score, p4Score, setP4Score,

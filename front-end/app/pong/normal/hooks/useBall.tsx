@@ -87,11 +87,13 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 		if (playerState.players[0].master) {
 			ball.x += ball.velocityX * 100 * deltaTime;
 			ball.y += ball.velocityY * 100 * deltaTime;
-			const msg = { position: { x: ball.x, y: ball.y },
-							  velocity: { x: ball.velocityX, y: ball.velocityY },
-							  deltaTime: deltaTime}
+			const msg = {
+				position: { x: ball.x, y: ball.y },
+				velocity: { x: ball.velocityX, y: ball.velocityY },
+				deltaTime: deltaTime
+			}
 			const stringPos = JSON.stringify(msg);
-			gameState.wsclient?.emitMessageToGame(stringPos, 'ballUpdate', gameState.gameId);
+			gameState.wsclient?.emitMessageToGame(stringPos, `ballUpdate-${gameState.gameId}`, gameState.gameId);
 		} else {
 			const { position, velocity, deltaTime } = PositionRef.current;
 			ball.x = -position.x + -velocity.x * deltaTime;
@@ -109,10 +111,10 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 			const newPosition = JSON.parse(msg);
 			PositionRef.current = newPosition;
 		};
-		gameState.wsclient?.addMessageListener('ballUpdate', gameState.gameId, setNewCoords);
+		gameState.wsclient?.addMessageListener(`ballUpdate-${gameState.gameId}`, gameState.gameId, setNewCoords);
 
 		return () => {
-			gameState.wsclient?.removeMessageListener('ballUpdate', gameState.gameId);
+			gameState.wsclient?.removeMessageListener(`ballUpdate-${gameState.gameId}`, gameState.gameId);
 		};
 	}, []);
 

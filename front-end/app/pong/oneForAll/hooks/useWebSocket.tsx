@@ -1,8 +1,10 @@
 import useWSClient from "@/helpers/wsclient";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, Dispatch, SetStateAction } from "react";
 import { PongContext } from "../../PongProvider";
+import { disconnect } from "process";
 
-export const useWebSocket = () => {
+export const useWebSocket = (isGameOver: Boolean, setGameOver: Dispatch<SetStateAction<boolean>>,
+	disconnect: Boolean, setDisconnect: Dispatch<SetStateAction<boolean>>) => {
 	const wsClient = useWSClient();
 	const { gameState, updateGameState, playerState, updatePlayerState, } = useContext(PongContext);
 	const [isFull, setIsFull] = useState("");
@@ -75,19 +77,16 @@ export const useWebSocket = () => {
 	useEffect(() => {
 		const setPlayer = (msg: string) => {
 			const playerData = JSON.parse(msg);
-			console.log("GOT DATA: ", playerData);
+			let newPlayerData = { ...playerState };
 			const player = playerState.players.find(player => player.number === playerData.number);
 
-			// FIXME: Doesnt update the updatePlayerState correctly (Somehow each old state is deleted)
 			if (!player) {
-				let newPlayerData = JSON.parse(JSON.stringify(playerState));
 				newPlayerData.players[playerData.number] = {
 					name: playerData.name,
 					color: playerData.color,
 					master: playerData.master,
 					number: playerData.number,
 				}
-				console.log(newPlayerData)
 				updatePlayerState( newPlayerData );
 			}
 		};
@@ -99,8 +98,25 @@ export const useWebSocket = () => {
 				gameState.wsclient?.removeMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
-	},[gameState.wsclient]);
+	},[gameState.wsclient, gameState.gameId, playerState, updatePlayerState]);
 
-	// DISCONNECT HANDLER
+	useEffect(() => {
+		if (gameState.wsclient) {
+			const endGame = (msg: string) => {
+				// setRequestRematch(false);
+				// setSendRequest(false);
 
+				if (!disconnect)
+					setDisconnect(true);
+				if (!isGameOver)
+					setGameOver(true);
+			};
+			
+			gameState.wsclient?.addMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId, endGame)
+			
+			return () => {
+				gameState.wsclient?.removeMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId);
+			}
+		}
+	}, [gameState.wsclient]);
 }
