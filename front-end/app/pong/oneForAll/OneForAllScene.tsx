@@ -32,7 +32,7 @@ export default function OneForAllScene() {
 		isScoreVisible, setScoreVisibility,
 		isBallVisible, setBallVisibility,
 		isGameOver, setGameOver } = useGameState();
-	const { topPaddleRef,bottomPaddleRef, rightPaddleRef, leftPaddleRef, ballRef} = useContext(PongContext);
+	const { topPaddleRef,bottomPaddleRef, rightPaddleRef, leftPaddleRef, ballRef, playerState} = useContext(PongContext);
 
 	useWebSocket();
 
@@ -48,7 +48,6 @@ export default function OneForAllScene() {
 		handleResize();
 
 		window.addEventListener('resize', handleResize);
-
 		return () => {
 			window.removeEventListener('resize', handleResize);
 		};

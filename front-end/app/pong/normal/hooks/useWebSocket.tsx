@@ -42,7 +42,7 @@ export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameO
 	useEffect(() => {
 		if (gameState.wsclient) {
 			const setPause = (msg: string) => {
-				if (msg === "1") {
+				if (msg === "FULL") {
 					updateGameState({ ...gameState, pause: false });
 				}
 			};

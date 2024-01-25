@@ -51,9 +51,9 @@ const PongProvider: React.FC<{ children: ReactNode, initialWsClient?: WSClientTy
 			name: "None",
 			color: 0xffffff,
 			master: false,
-			number: 0,
+			number: -1,
 		})),
-		client: 0
+		client: -1
 	});
 
 	const updateGameState : Dispatch<SetStateAction<typeof initialGameState>> = ( newState ) => {

@@ -1,10 +1,13 @@
 import useWSClient from "@/helpers/wsclient";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { PongContext } from "../../PongProvider";
 
 export const useWebSocket = () => {
 	const wsClient = useWSClient();
 	const { gameState, updateGameState, playerState, updatePlayerState, } = useContext(PongContext);
+	//const [clients, setClients] = useState(-1);
+	let clients = -1;
+	const [isFull, setIsFull] = useState("");
 
 	useEffect(() => {
 		const waitForSocket = async () => {
@@ -20,7 +23,7 @@ export const useWebSocket = () => {
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (gameState.wsclient) {
-				const clients = await gameState.wsclient.joinGame(gameState.gameId, "OneForAll");
+				clients = await gameState.wsclient.joinGame(gameState.gameId, "OneForAll");
 
 				const updatedPlayers = [
 					...playerState.players.slice(0, clients),
@@ -39,21 +42,27 @@ export const useWebSocket = () => {
 	}, [gameState.wsclient]);
 
 	useEffect(() => {
-		const sendPlayerData = () => {
-			// //TODO: Need to be replaced late with a real setter
-			const playerData = {
-				name: playerState.players[playerState.client].name,
-				number: playerState.players[playerState.client].number,
-				color: playerState.players[playerState.client].color,
-			}
-			gameState.wsclient?.emitMessageToGame(JSON.stringify(playerData), `PlayerData-${gameState.gameId}`, gameState.gameId);
-		};
+		if (playerState.client !== -1 && isFull === "FULL") {
+			const sendPlayerData = () => {
+				const playerData = {
+					name: playerState.players[playerState.client].name,
+					color: playerState.players[playerState.client].color,
+					master: playerState.players[playerState.client].master,
+					number: playerState.players[playerState.client].number,
+				}
+				console.log("SENDING ", playerData);
+				gameState.wsclient?.emitMessageToGame(JSON.stringify(playerData), `PlayerData-${gameState.gameId}`, gameState.gameId);
+			};
+	
+			sendPlayerData();
+			updateGameState({ ...gameState, pause: false });
+		}
+	}, [playerState.client, isFull]);
 
+	useEffect(() => {
 		const setPause = (msg: string) => {
-			if (msg === "3") {
-				sendPlayerData();
-				updateGameState({ ...gameState, pause: false });
-			}
+			if (msg === "FULL")
+				setIsFull(msg);
 		};
 
 		if (gameState.wsclient) {
@@ -68,16 +77,17 @@ export const useWebSocket = () => {
 	useEffect(() => {
 		const setPlayer = (msg: string) => {
 			const playerData = JSON.parse(msg);
+			console.log("GOT DATA: ", playerData);
 			const player = playerState.players.find(player => player.number === playerData.number);
 
-			console.log(playerState)
+			// FIXME: Doesnt update the updatePlayerState correctly (Somehow each old state is deleted)
 			if (!player) {
-				const newPlayerData = [ ...playerState.players ];
+				const newPlayerData = JSON.parse(JSON.stringify(playerState));
 				newPlayerData[playerData.number] = {
 					name: playerData.name,
-					number: playerData.number,
 					color: playerData.color,
 					master: playerData.master,
+					number: playerData.number,
 				}
 				updatePlayerState({ ...playerState, players: newPlayerData });
 			}
@@ -87,12 +97,11 @@ export const useWebSocket = () => {
 			gameState.wsclient?.addMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId, setPlayer)
 
 			return () => {
-				gameState.wsclient?.removeMessageListener(`Players-${gameState.gameId}`, gameState.gameId);
+				gameState.wsclient?.removeMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
 	},[gameState.wsclient]);
 
 	// DISCONNECT HANDLER
-
 
 }

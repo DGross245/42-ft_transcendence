@@ -44,9 +44,8 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 					console.log(numClients);
 					if (numClients === maxClients - 1) {
 						console.log("SEND")
-						const string = JSON.stringify(numClients);
 						const topic = `Players-${gameId}`;
-						io.to(gameId).emit(`message-${gameId}-${topic}`, string);
+						io.to(gameId).emit(`message-${gameId}-${topic}`, "FULL");
 					}
 				}
 

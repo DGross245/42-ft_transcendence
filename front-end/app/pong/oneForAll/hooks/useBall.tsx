@@ -1,6 +1,7 @@
 import { useFrame } from "@react-three/fiber";
-import { Dispatch, MutableRefObject, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, MutableRefObject, SetStateAction, useContext, useEffect, useRef, useState } from "react";
 import { Mesh, MeshBasicMaterial } from 'three'
+import { PongContext } from "../../PongProvider";
 
 type CollisionInfo = {
 	[key: string]: {score: any, setScore: any, isOwnGoal: boolean};
@@ -28,6 +29,7 @@ interface BallProps {
 };
 
 export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
+	const { playerState} = useContext(PongContext);
 	const [color, setColor] = useState( 0xffffff );
 	const [lastPaddleHit, setLastPaddleHit] = useState('');
 	const meshRef = ref as MutableRefObject<Mesh | null>;
@@ -206,6 +208,7 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 		// Handling scoring when the ball is outside of the play area.
 		else if (( ball.x <= -170 || ball.x >= 170 || ball.z >= 170 || ball.z <= -170) && 
 		props.p1Score !== 7 && props.p2Score !== 7 && props.p3Score !== 7 && props.p4Score !== 7) {
+			console.log(playerState)
 			handleScore(ball);
 			randomBallDir();
 			setColor( 0xffffff );
