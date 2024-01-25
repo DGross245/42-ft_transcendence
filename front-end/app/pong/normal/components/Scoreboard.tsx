@@ -43,25 +43,25 @@ export const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, score
 	const { leftPaddleRef, rightPaddleRef } = useContext(PongContext);
 	// Reposition textGeometry based on score.
 	const Score1 : ScoreType = {
-		0:	{ position: [-70.8, 40, -6] },
-		1:	{ position: [-62.8, 40, -6] },
-		2:	{ position: [  -71, 40, -6] },
-		3:	{ position: [  -71, 40, -6] },
-		4:	{ position: [  -70, 40, -6] },
-		5:	{ position: [  -70, 40, -6] },
-		6:	{ position: [  -70, 40, -6] },
-		7:	{ position: [  -63, 40, -6] },
+		0:	{ position: [-70.8, 6, -40] },
+		1:	{ position: [-62.8, 6, -40] },
+		2:	{ position: [  -71, 6, -40] },
+		3:	{ position: [  -71, 6, -40] },
+		4:	{ position: [  -70, 6, -40] },
+		5:	{ position: [  -70, 6, -40] },
+		6:	{ position: [  -70, 6, -40] },
+		7:	{ position: [  -63, 6, -40] },
 	}
 
 	const Score2 : ScoreType = {
-		0:	{ position: [ 30, 40, -6] },
-		1:	{ position: [ 38, 40, -6] },
-		2:	{ position: [ 30, 40, -6] },
-		3:	{ position: [ 30, 40, -6] },
-		4:	{ position: [ 33, 40, -6] },
-		5:	{ position: [ 33, 40, -6] },
-		6:	{ position: [ 33, 40, -6] },
-		7:	{ position: [ 38, 40, -6] },
+		0:	{ position: [ 30, 6, -40] },
+		1:	{ position: [ 38, 6, -40] },
+		2:	{ position: [ 30, 6, -40] },
+		3:	{ position: [ 30, 6, -40] },
+		4:	{ position: [ 33, 6, -40] },
+		5:	{ position: [ 33, 6, -40] },
+		6:	{ position: [ 33, 6, -40] },
+		7:	{ position: [ 38, 6, -40] },
 	}
 
 	const position1 : Vector3 = Score1[player1]?.position;
@@ -79,11 +79,11 @@ export const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, score
 
 	return (
 		<>
-			<mesh visible={scoreVisible} position={position1} rotation={[0, 0, 0]}>
+			<mesh visible={scoreVisible} position={position1} rotation={[-Math.PI / 2, 0, 0]} >
 				<textGeometry args={[String(player1), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(leftPaddleRef) } />
 			</mesh>
-			<mesh visible={scoreVisible} position={position2}>
+			<mesh visible={scoreVisible} position={position2} rotation={[-Math.PI / 2, 0, 0]}>
 				<textGeometry args={[String(player2), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(rightPaddleRef) } />
 			</mesh>

@@ -70,10 +70,10 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown scoreVisible={isScoreVisible} setScoreVisibility={setScoreVisibility} rotation={[0, 0, 0]} />
-				<Camera position={[0, -100, 600]} />
-				<Border position={[0,105,0]} />
-				<Border position={[0,-105,0]} />
+				<Countdown scoreVisible={isScoreVisible} setScoreVisibility={setScoreVisibility} rotation={[-Math.PI /2, 0, 0]} />
+				<Camera position={[0, 400, 100]} />
+				<Border position={[0, 0, -105]} />
+				<Border position={[0,0,105]} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
 				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
 				<Ball

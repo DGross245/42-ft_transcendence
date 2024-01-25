@@ -36,12 +36,12 @@ export const RightPaddle = forwardRef<Mesh, { position: [number, number, number]
 	// Moves the paddle based on pressed key for each frame.
 	useFrame(() => {
 		if (meshRef && meshRef.current) {
-			meshRef.current.position.y = PositionRef.current;
+			meshRef.current.position.z = PositionRef.current;
 		}
 	});
 
 	return (
-		<mesh ref={ref} position={position}>
+		<mesh ref={ref} position={position} rotation={[Math.PI / 2, 0, 0]} >
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ playerState.players[1].color } />
 		</mesh>
@@ -58,7 +58,7 @@ export const RightPaddle = forwardRef<Mesh, { position: [number, number, number]
 export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
 	const { playerState, gameState } = useContext(PongContext)!;
 	const paddleSpeed = 300;
-	const borderPositionY = 103;
+	const borderPositionZ = 103;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 	
 	// Moves the paddle based on pressed key for each frame.
@@ -67,18 +67,18 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 			return ;
 		}
 		if (meshRef && meshRef.current) {
-			const stringPos = JSON.stringify(meshRef.current.position.y);
+			const stringPos = JSON.stringify(meshRef.current.position.z);
 			gameState.wsclient?.emitMessageToGame(stringPos, `paddleUpdate-${gameState.gameId}`, gameState.gameId);
 			if (keyMap['KeyW']) {
-				meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
+				meshRef.current.position.z = Math.max(meshRef.current.position.z - paddleSpeed * delta, -borderPositionZ + 15);
 			} else if (keyMap['KeyS']) {
-				meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
+				meshRef.current.position.z = Math.min(meshRef.current.position.z + paddleSpeed * delta, borderPositionZ - 15);
 			}
 		}
 	});
 
 	return (
-		<mesh ref={meshRef} position={position}>
+		<mesh ref={meshRef} position={position} rotation={[Math.PI / 2, 0, 0]}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ playerState.players[1].color } />
 		</mesh>

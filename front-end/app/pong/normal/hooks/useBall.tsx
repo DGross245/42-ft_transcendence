@@ -23,33 +23,31 @@ interface BallProps {
 }
 
 export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
-
 	const { playerState, gameState } = useContext(PongContext);
 	const meshRef = ref as MutableRefObject<Mesh | null>;
-	const ballRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0, speed: 0.1 });
-	const PositionRef = useRef({position: {x:0, y:0}, velocity: {x:0, y:0}, deltaTime: 0});
+	const ballRef = useRef({ x: 0, z: 0, velocityX: 0, velocityZ: 0, speed: 0.1 });
+	const PositionRef = useRef({position: {x:0, z:0}, velocity: {x:0, z:0}, deltaTime: 0});
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
 	const halfBall = 2;
 
-	//
 	/**
 	 * Changes the ball's direction after it collided with a paddle.
 	 * @param paddlePos - the position of the paddle.
-	 * 					  Contains 'x' and 'y' properties.
+	 * 					  Contains 'x' and 'z' properties.
 	 * @param direction - The direction (1 or -1) indicating the side of the paddle the ball collided with:
 	 * 					  -  1: Collided with the left paddle.
 	 * 					  - -1: Collided with the right paddle.
 	 */
 	const changeBallDir = (paddlePos: THREE.Vector3, direction: number) => {
 		const ball = ballRef.current;
-		const deltaY = ball.y - paddlePos.y;
-		const normalizedY = deltaY / halfPaddleHeight;
+		const deltaZ = ball.z - paddlePos.z;
+		const normalizedY = deltaZ / halfPaddleHeight;
 
 		if (ball.speed <= 2)
 			ball.speed += 0.2;
 		ball.velocityX = direction * ball.speed;
-		ball.velocityY = normalizedY * ball.speed;
+		ball.velocityZ = normalizedY * ball.speed;
 	}
 
 	/**
@@ -59,7 +57,7 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 	const randomBallDir = () => {
 		let ball = ballRef.current;
 		ball.x = 0;
-		ball.y = 0;
+		ball.z = 0;
 		ball.speed = 1.2;
 
 		const ranges = [
@@ -71,25 +69,25 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 		const angle = (Math.random() * (max - min) + min) * (Math.PI / 180);
 
 		ball.velocityX = ball.speed * Math.sin(angle + (Math.PI / 2));
-		ball.velocityY = ball.speed * Math.cos(angle + (Math.PI / 2));
+		ball.velocityZ = ball.speed * Math.cos(angle + (Math.PI / 2));
 	}
 
 	/**
 	 * Updates the new position of the ball based on its velocity and the time passed since last frame (deltaTime).
 	 * @param ball - The ball object containing position and velocity properties.
-	 * 				 Contains 'x', 'y', 'velocityX', and 'velocityY' fields.
+	 * 				 Contains 'x', 'z', 'velocityX', and 'velocityZ' fields.
 	 * @param deltaTime - The time passed since the last frame, in seconds.
 	 * 					  Used to ensure independence from the frame rate.
 	 */
-	const updateBallPosition = (ball: { x: number; y: number; velocityX: number; velocityY: number; }, deltaTime: number) => {
+	const updateBallPosition = (ball: { x: number; z: number; velocityX: number; velocityZ: number; }, deltaTime: number) => {
 		if (gameState.pause)
 			return ;
 		if (playerState.players[0].master) {
 			ball.x += ball.velocityX * 100 * deltaTime;
-			ball.y += ball.velocityY * 100 * deltaTime;
+			ball.z += ball.velocityZ * 100 * deltaTime;
 			const msg = {
-				position: { x: ball.x, y: ball.y },
-				velocity: { x: ball.velocityX, y: ball.velocityY },
+				position: { x: ball.x, z: ball.z },
+				velocity: { x: ball.velocityX, z: ball.velocityZ },
 				deltaTime: deltaTime
 			}
 			const stringPos = JSON.stringify(msg);
@@ -97,12 +95,12 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 		} else {
 			const { position, velocity, deltaTime } = PositionRef.current;
 			ball.x = -position.x + -velocity.x * deltaTime;
-			ball.y = position.y + velocity.y * deltaTime;
+			ball.z = position.z + velocity.z * deltaTime;
 		}
 
 		if (meshRef.current) {
 			meshRef.current.position.x = ball.x;
-			meshRef.current.position.y = ball.y;
+			meshRef.current.position.z = ball.z;
 		}
 	}
 
@@ -132,9 +130,9 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 			if (playerScore === 7) {
 				let ball = ballRef.current;
 				ball.x = 0;
-				ball.y = 0;
+				ball.z = 0;
 				ball.velocityX = 0;
-				ball.velocityY = 0;
+				ball.velocityZ = 0;
 				ball.speed = 0.1;
 				props.setGameOver(true);
 				props.setWinner(player);
@@ -155,18 +153,18 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 		const rightPaddlePos = props.rightPaddleRef.current.position;
 		const leftPaddlePos = props.leftPaddleRef.current.position;
 
-		const isCollidingWithPaddle = (paddle: { x: number; y: number; }) => {
+		const isCollidingWithPaddle = (paddle: { x: number; z: number; }) => {
 			return (
 				ball.x + halfBall >= paddle.x - halfPaddleWidth &&
 				ball.x - halfBall <= paddle.x + halfPaddleWidth &&
-				ball.y - halfBall <= paddle.y + halfPaddleHeight &&
-				ball.y + halfBall >= paddle.y - halfPaddleHeight
+				ball.z - halfBall <= paddle.z + halfPaddleHeight &&
+				ball.z + halfBall >= paddle.z - halfPaddleHeight
 			);
 		}
 
 		// Handling ball collision with top and bottom boarders.
-		if (ball.y > 100 || ball.y < -100) {
-			ball.velocityY *= -1;
+		if (ball.z > 100 || ball.z < -100) {
+			ball.velocityZ *= -1;
 			updateBallPosition(ball, deltaTime);
 		}
 		// Handling ball collision with paddles.
