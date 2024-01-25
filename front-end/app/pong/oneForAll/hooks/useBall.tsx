@@ -208,7 +208,6 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 		// Handling scoring when the ball is outside of the play area.
 		else if (( ball.x <= -170 || ball.x >= 170 || ball.z >= 170 || ball.z <= -170) && 
 		props.p1Score !== 7 && props.p2Score !== 7 && props.p3Score !== 7 && props.p4Score !== 7) {
-			console.log(playerState)
 			handleScore(ball);
 			randomBallDir();
 			setColor( 0xffffff );

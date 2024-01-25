@@ -5,8 +5,6 @@ import { PongContext } from "../../PongProvider";
 export const useWebSocket = () => {
 	const wsClient = useWSClient();
 	const { gameState, updateGameState, playerState, updatePlayerState, } = useContext(PongContext);
-	//const [clients, setClients] = useState(-1);
-	let clients = -1;
 	const [isFull, setIsFull] = useState("");
 
 	useEffect(() => {
@@ -23,7 +21,7 @@ export const useWebSocket = () => {
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (gameState.wsclient) {
-				clients = await gameState.wsclient.joinGame(gameState.gameId, "OneForAll");
+				const clients = await gameState.wsclient.joinGame(gameState.gameId, "OneForAll");
 
 				const updatedPlayers = [
 					...playerState.players.slice(0, clients),
@@ -82,14 +80,15 @@ export const useWebSocket = () => {
 
 			// FIXME: Doesnt update the updatePlayerState correctly (Somehow each old state is deleted)
 			if (!player) {
-				const newPlayerData = JSON.parse(JSON.stringify(playerState));
-				newPlayerData[playerData.number] = {
+				let newPlayerData = JSON.parse(JSON.stringify(playerState));
+				newPlayerData.players[playerData.number] = {
 					name: playerData.name,
 					color: playerData.color,
 					master: playerData.master,
 					number: playerData.number,
 				}
-				updatePlayerState({ ...playerState, players: newPlayerData });
+				console.log(newPlayerData)
+				updatePlayerState( newPlayerData );
 			}
 		};
 
