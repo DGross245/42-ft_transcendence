@@ -24,17 +24,16 @@ export const useWebSocket = (isGameOver: Boolean, setGameOver: Dispatch<SetState
 		const joinTheGame = async () => {
 			if (gameState.wsclient) {
 				const clients = await gameState.wsclient.joinGame(gameState.gameId, "OneForAll");
+				let newPlayerData = { ...playerState };
 
-				const updatedPlayers = [
-					...playerState.players.slice(0, clients),
-					{ ...playerState.players[clients], master: clients === 0, number: clients },
-					...playerState.players.slice(clients + 1),
-				];
-
-				updatePlayerState({
-					players: updatedPlayers,
-					client: clients,
-				});
+				newPlayerData.players[clients] = {
+						name: "KEK",
+						color: 0x00ff00,
+						master: clients === 0 ? true : false,
+						number: clients,
+				}
+				newPlayerData.client = clients
+				updatePlayerState( newPlayerData );
 			}
 		};
 
@@ -50,7 +49,7 @@ export const useWebSocket = (isGameOver: Boolean, setGameOver: Dispatch<SetState
 					master: playerState.players[playerState.client].master,
 					number: playerState.players[playerState.client].number,
 				}
-				console.log("SENDING ", playerData);
+				console.log("SEND: ", playerData);
 				gameState.wsclient?.emitMessageToGame(JSON.stringify(playerData), `PlayerData-${gameState.gameId}`, gameState.gameId);
 			};
 	
@@ -88,6 +87,7 @@ export const useWebSocket = (isGameOver: Boolean, setGameOver: Dispatch<SetState
 					number: playerData.number,
 				}
 				updatePlayerState( newPlayerData );
+				console.log("NEW :", playerState)
 			}
 		};
 

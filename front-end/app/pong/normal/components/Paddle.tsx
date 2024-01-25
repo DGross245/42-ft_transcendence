@@ -80,7 +80,7 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	return (
 		<mesh ref={meshRef} position={position} rotation={[Math.PI / 2, 0, 0]}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ playerState.players[1].color } />
+			<meshBasicMaterial color={ playerState.players[0].color } />
 		</mesh>
 	);
 });
