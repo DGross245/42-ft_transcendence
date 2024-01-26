@@ -109,10 +109,19 @@ contract TournamentManagerTest is Test {
         assertEq(tournaments.length, 2);
     }
 
-    function testGetTournamenTree() public {
+    function testGetTournamentTree() public {
         testStartTournament();
         uint256 tournament_id = 0;
         TournamentManager.Game[] memory tree = tm.getTournamentTree(tournament_id);
         assertEq(tree.length, 6);
+    }
+
+    function testGetPlayerRankedElo() public {
+        TournamentManager.PlayerScore[] memory scores = new TournamentManager.PlayerScore[](2);
+        scores[0] = TournamentManager.PlayerScore(address(this), 100);
+        scores[1] = TournamentManager.PlayerScore(address(1), 200);
+        tm.submitGameResultRanked(scores);
+        uint256 elo = tm.getPlayerRankedElo(address(this));
+        assertEq(elo, 1000);
     }
 }

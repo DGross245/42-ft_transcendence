@@ -5,7 +5,7 @@ import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers5/re
 import scoresAbi from '../public/tournamentManager_abi.json';
 import erc20Abi from '../public/erc20_abi.json';
 
-const contract_address = '0xBC0657E28Ccac38597f6c417CA2996378935Db28'
+const contract_address = '0x25390Ad585801633B3f39e45D2DdC0de43Bd526b'
 
 function Scores() {
 	const { address, chainId, isConnected } = useWeb3ModalAccount()
@@ -129,6 +129,13 @@ function Scores() {
 		const tmContract = await prepareContract()
 		const rankedGames = await tmContract.getRankedGames()
 		return rankedGames as Game[]
+	}
+
+	// returns number of games played divided by accumulated score across all games
+	async function getPlayerRankedElo() {
+		const tmContract = await prepareContract()
+		const playerElo = await tmContract.getPlayerRankedElo()
+		return playerElo as number
 	}
 
 	// return (
