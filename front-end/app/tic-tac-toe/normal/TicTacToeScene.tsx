@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber"
-import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { OrbitControls } from '@react-three/drei'; 
 import Floor from "../sharedComponents/Floor";
 import { gameValidation }  from "../sharedComponents/GameValidation"
@@ -12,7 +12,6 @@ import Camera from "../sharedComponents/Camera";
 import Countdown from "../sharedComponents/Countdown";
 import inputHandler from "@/components/inputHandler";
 import TurnDisplay from "./components/TurnDisplay";
-import { Mesh } from "three"
 import { useSound } from "@/components/Sound";
 
 
@@ -159,6 +158,22 @@ const TTTScene = () => {
 		}
 	}, [gameOver]);
 
+	useEffect(() => {
+		if (clicked) {
+			soundEngine?.playSound("tictactoe");
+			click(false);
+			const winner = gameValidation(board, sceneCoords, coords, setCoords);
+			if (winner) {
+				setColour(winner === 'X' ? 0xff0000 : 0x1aabff);
+				setShowFinishLine(true);
+				setWinner(winner);
+				setGameOver(true);
+				return;
+			}
+			setTurn(currentTurn === 'X' ? 'O' : 'X');
+		}
+	},[clicked]);
+
 	// Updates window dimensions on window resizing and
 	// changes the turn after a clicked field and checks if a winning condition
 	// is achived.
@@ -170,29 +185,6 @@ const TTTScene = () => {
 			});
 		}
 
-		const checkClick = () => {
-			if (clicked) {
-				soundEngine?.playSound("tictactoe");
-				click(false);
-				const winner = gameValidation(board, sceneCoords, coords, setCoords);
-				if (winner) {
-					if (winner === 'X') {
-						setShowFinishLine(true);
-						setColour(0xff0000);
-					}
-					else if (winner === 'O') {
-						setShowFinishLine(true);
-						setColour(0x1aabff)
-					}
-					setWinner(winner);
-					setGameOver(true);
-					return;
-				}
-				setTurn(currentTurn === 'X' ? 'O' : 'X');
-			}
-		}
-
-		checkClick();
 		handleResize();
 
 		window.addEventListener('resize', handleResize);
