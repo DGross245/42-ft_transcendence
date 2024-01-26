@@ -83,7 +83,7 @@ export const useGameState = () => {
 			setContdownPos(newCountdownPos);
 			setCountdownRot(positionInfo[playerState.client].countdownRotation)
 		}
-	},[playerState.client, positionInfo]);
+	},[playerState.client]);
 
 	// Handles the reset of the scene when the 'reset' state changes.
 	useEffect(() => {
