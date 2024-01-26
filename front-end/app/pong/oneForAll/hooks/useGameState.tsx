@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { PongContext } from "../../PongProvider";
 
 export const useGameState = () => {
 	const [p1Score, setP1Score] = useState(0);
@@ -13,6 +14,57 @@ export const useGameState = () => {
 	const [isBallVisible, setBallVisibility] = useState(true);
 	const [disconnected, setDisconnected] = useState(false);
 	const [camPos, setCamPos] = useState<[number, number, number]>([0, 350, 400]);
+	const [countdownRot, setCountdownRot] = useState<[number, number, number]>([0, 0, 0]);
+	const [countdownPos, setContdownPos] = useState<[number, number, number][]>([ [-23, 50, 0], [-35, 50, 0] ]);
+	const { playerState } = useContext(PongContext);
+
+	var positionInfo: { 
+		camPosition: [number, number, number],
+		countdownRotation:[number, number, number],
+		countdownPosition: [[number, number, number],
+							[number, number, number]]
+	}[] = Array.from({ length: 4 }, () => ({
+		camPosition: [-1, -1, -1],
+		countdownRotation:[-1, -1, -1],
+		countdownPosition: [
+			[-1, -1, -1],
+			[-1, -1, -1],
+		]
+	}));
+
+	positionInfo[0] = {
+		camPosition: [ 0, 350, 400],
+		countdownRotation:[0, 0, 0],
+		countdownPosition: [
+			[-23, 50, 0],
+			[-35, 50, 0]
+		]
+	}
+	positionInfo[1] = {
+		camPosition: [ -400, 350, 0],
+		countdownRotation:[Math.PI / 2, -Math.PI / 2, Math.PI / 2],
+		countdownPosition: [
+			[0, 50, -23],
+			[0, 50, -35]
+		]
+	}
+	positionInfo[2] = {
+		camPosition: [ 0, 350, -400],
+		countdownRotation:[-Math.PI, 0, Math.PI],
+		countdownPosition: [
+			[23, 50, 0],
+			[35, 50, 0]
+		]
+	}
+	positionInfo[3] = {
+		camPosition: [ 400, 350, 0],
+		countdownRotation:[-Math.PI / 2, Math.PI / 2, Math.PI / 2],
+		countdownPosition: [
+			[0, 50, 23],
+			[0, 50, 35]
+		]
+	}
+
 	const closeModal = () => {
 		setShowModal(false);
 	};
@@ -20,6 +72,18 @@ export const useGameState = () => {
 	const openModal = () => {
 		setShowModal(true);
 	};
+
+	useEffect(() => {
+		if (playerState.client !== -1) {
+			setCamPos(positionInfo[playerState.client].camPosition);
+			const newCountdownPos = [
+				positionInfo[playerState.client].countdownPosition[0],
+				positionInfo[playerState.client].countdownPosition[1]
+			]
+			setContdownPos(newCountdownPos);
+			setCountdownRot(positionInfo[playerState.client].countdownRotation)
+		}
+	},[playerState.client, positionInfo]);
 
 	// Handles the reset of the scene when the 'reset' state changes.
 	useEffect(() => {
@@ -60,6 +124,6 @@ export const useGameState = () => {
 		isScoreVisible, setScoreVisibility,
 		isBallVisible, setBallVisibility,
 		isGameOver, setGameOver,
-		camPos, setCamPos
+		camPos,countdownPos,countdownRot
 	};
 }

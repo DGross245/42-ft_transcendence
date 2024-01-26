@@ -32,10 +32,10 @@ export default function OneForAllScene() {
 		isScoreVisible, setScoreVisibility,
 		isBallVisible, setBallVisibility,
 		isGameOver, setGameOver, disconnected, 
-		setDisconnected, camPos, setCamPos } = useGameState();
+		setDisconnected, camPos, countdownPos, countdownRot } = useGameState();
 	const { topPaddleRef,bottomPaddleRef, rightPaddleRef, leftPaddleRef, ballRef } = useContext(PongContext);
 
-	useWebSocket(isGameOver, setGameOver, disconnected, setDisconnected, setCamPos);
+	useWebSocket( isGameOver, setGameOver, disconnected, setDisconnected );
 
 
 	// Updates window dimensions on window resizing.
@@ -58,7 +58,12 @@ export default function OneForAllScene() {
 	return (
 		<div >
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown scoreVisible={isScoreVisible} setScoreVisibility={setScoreVisibility} rotation={[0, 0, 0]} />
+				<Countdown
+					scoreVisible={isScoreVisible} 
+					setScoreVisibility={setScoreVisibility} 
+					rotation={countdownRot}
+					position={countdownPos}
+				/>
 				<Camera position={camPos}/> 
 				<Border />
 				<TopPaddle ref={topPaddleRef} position={[0, 0, -151]} keyMap={keyMap} />

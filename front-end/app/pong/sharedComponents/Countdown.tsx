@@ -12,6 +12,7 @@ interface CountdownProps {
 	setScoreVisibility: React.Dispatch<React.SetStateAction<boolean>>,
 	scoreVisible: boolean,
 	rotation: [number, number, number],
+	position: [number, number, number][],
 }
 
 // TODO: Find a solution for the position of countdown due to plane difference in Pong and OneForAll
@@ -30,7 +31,7 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 	const { gameState } = useContext(PongContext)!;
 
 	useEffect(() => {
-		if (gameState.pause)
+		if (gameState.pause || true)
 			return ;
 		if (!props.scoreVisible) {
 			const countdownInterval = setInterval(() => {
@@ -53,9 +54,9 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 			};
 		}
 	}, [props.scoreVisible, gameState.pause]);
-
+	//[-23, 50, 0] : [-35, 50, 0]
 	return (
-		<mesh visible={!props.scoreVisible} position={ count === 1 ? [-23, 50, 0] : [-35, 50, 0]} rotation={props.rotation}>
+		<mesh visible={!props.scoreVisible} position={ count === 1 ? props.position[0] : props.position[1]} rotation={props.rotation}>
 			<textGeometry args={[String(count), {font, size: 60, height: 6}]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
