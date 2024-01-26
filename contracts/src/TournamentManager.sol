@@ -225,7 +225,7 @@ contract TournamentManager {
 		return ranked_games;
 	}
 
-	function getPlayerRankedScore(address addr)
+	function getPlayerRankedElo(address addr)
 	external view
 	returns (uint256) {
 		require (players[addr].addr != address(0), "Player does not exist");

@@ -131,6 +131,13 @@ function Scores() {
 		return rankedGames as Game[]
 	}
 
+	// returns number of games played divided by accumulated score across all games
+	async function getPlayerRankedElo() {
+		const tmContract = await prepareContract()
+		const playerElo = await tmContract.getPlayerRankedElo()
+		return playerElo as number
+	}
+
 	// return (
 	// 	<section>
 	// 		<button onClick={startTournament}>Start Tournament</button>
