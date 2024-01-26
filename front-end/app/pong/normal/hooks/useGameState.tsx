@@ -12,6 +12,7 @@ export const useGameState = () => {
 
 	const [sendRequest, setSendRequest] = useState(false);
 	const [requestRematch, setRequestRematch] = useState(false);
+	const [disable, setDisable] = useState(false);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -68,6 +69,7 @@ export const useGameState = () => {
 		isBallVisible, setBallVisibility,
 		isGameOver, setGameOver,
 		resetGame, setReset,
-		closeModal, openModal
+		closeModal, openModal,
+		disable, setDisable
 	};
 }

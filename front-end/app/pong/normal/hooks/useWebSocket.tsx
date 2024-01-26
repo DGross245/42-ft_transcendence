@@ -4,7 +4,9 @@ import { PongContext } from "../../PongProvider";
 
 // TODO: Add a paus when document is hidden
 
-export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameOver: Dispatch<SetStateAction<boolean>>, setRequestRematch: Dispatch<SetStateAction<boolean>>, setSendRequest: Dispatch<SetStateAction<boolean>>) => {
+export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameOver: Dispatch<SetStateAction<boolean>>,
+	setRequestRematch: Dispatch<SetStateAction<boolean>>, setSendRequest: Dispatch<SetStateAction<boolean>>,
+	setDisable: Dispatch<SetStateAction<boolean>>) => {
 	const wsClient = useWSClient();
 	const { gameState, updateGameState, playerState, updatePlayerState, } = useContext(PongContext);
 	const [isFull, setIsFull] = useState("");
@@ -49,7 +51,6 @@ export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameO
 					master: playerState.players[0].master,
 					number: playerState.players[0].number,
 				}
-				console.log("SEND: ", playerData);
 				gameState.wsclient?.emitMessageToGame(JSON.stringify(playerData), `PlayerData-${gameState.gameId}`, gameState.gameId);
 			};
 	
@@ -70,7 +71,6 @@ export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameO
 					number: playerData.number,
 			}
 			updatePlayerState( newPlayerData );
-			console.log("NEW :", playerState)
 		};
 
 		if (gameState.wsclient) {
@@ -101,6 +101,7 @@ export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameO
 	useEffect(() => {
 		if (gameState.wsclient) {
 			const endGame = (msg: string) => {
+				setDisable(true);
 				setRequestRematch(false);
 				setSendRequest(false);
 				if (!isGameOver)

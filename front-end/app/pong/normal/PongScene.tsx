@@ -20,10 +20,7 @@ import useWSClient from '@/helpers/wsclient';
 import { useGameState } from './hooks/useGameState';
 import { useWebSocket } from './hooks/useWebSocket';
 
-// TODO: ADD Paus screen for handling disconnections/pausing etc..
 // TODO: Matchmaking, should handle the sockets and joining for games, at setting player info
-
-// TODO: maybe move all Game related handler to another component for handling all inportant changes like reset, paus etc.
 // FIXME: Someotimes the guest or not host, counts the score twice
 
 /**
@@ -36,10 +33,11 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	const { rightPaddleRef, leftPaddleRef, ballRef, updateGameState, gameState } = useContext(PongContext);
 	const { p1Score, p2Score, setP1Score, setP2Score, isScoreVisible, setScoreVisibility,
 		setWinner, isGameOver, setGameOver, isBallVisible, setBallVisibility, showModal, closeModal,
-		winner, sendRequest, setRequestRematch, setSendRequest, requestRematch} = useGameState();
+		winner, sendRequest, setRequestRematch, setSendRequest, requestRematch,
+		disable, setDisable} = useGameState();
 	const keyMap = inputHandler();
 
-	useWebSocket( isGameOver, sendRequest, setGameOver, setRequestRematch, setSendRequest );
+	useWebSocket( isGameOver, sendRequest, setGameOver, setRequestRematch, setSendRequest, setDisable );
 
 	// Updates window dimensions on window resizing.
 	useEffect(() => {
@@ -70,7 +68,12 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown scoreVisible={isScoreVisible} setScoreVisibility={setScoreVisibility} rotation={[-Math.PI /2, 0, 0]} />
+				<Countdown
+					scoreVisible={isScoreVisible} 
+					setScoreVisibility={setScoreVisibility} 
+					rotation={[-Math.PI /2, 0, 0]}
+					position={[ [-23, 50, 0],[-35, 50, 0] ]}
+				/>
 				<Camera position={[0, 400, 100]} />
 				<Border position={[0, 0, -105]} />
 				<Border position={[0,0,105]} />
@@ -104,6 +107,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 				setSendRequest={setSendRequest}
 				sendRequest={sendRequest}
 				requestRematch={requestRematch}
+				disable={disable}
 			/>
 		</div>
 	);

@@ -50,6 +50,15 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 		ball.velocityZ = normalizedY * ball.speed;
 	}
 
+	useEffect(() => {
+		if (props.gameOver && meshRef && meshRef.current) {
+			ballRef.current.velocityX = 0
+			ballRef.current.velocityZ = 0
+			meshRef.current.position.x = 0;
+			meshRef.current.position.z = 0;
+		}
+	},[props.gameOver]);
+
 	/**
 	 * Sets the ball back to the middle and generates a random direction for the ball.
 	 * It randomly takes one specified range and calculates with it a angle to determin the ball's direction.

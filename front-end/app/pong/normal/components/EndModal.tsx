@@ -7,7 +7,7 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from
 // TODO: ADD if nobody is in the room, then disable button for rematch
 // TODO: Maybe change Rematch button to Accept or Accept Rematch when requestRematch is true
 
-const EndModal = ({ isOpen, onClose, winner, setSendRequest, sendRequest, requestRematch}) => {
+const EndModal = ({ isOpen, onClose, winner, setSendRequest, sendRequest, requestRematch, disable}) => {
 	return (
 		<>
 			<Modal
@@ -48,7 +48,7 @@ const EndModal = ({ isOpen, onClose, winner, setSendRequest, sendRequest, reques
 					<Button color="danger" variant="ghost" onClick={onClose}>
 						Close
 					</Button>
-					<Button color="primary" variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
+					<Button color="primary" isDisabled={disable} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
 						Rematch
 					</Button>
 					<Button color="success" variant="ghost" onClick={onClose}>

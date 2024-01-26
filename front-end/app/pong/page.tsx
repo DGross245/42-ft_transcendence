@@ -8,7 +8,7 @@ export default function PongPage() {
 		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
 			<div>
 				<PongProvider>
-					<OneForAllScene />
+					<PongScene />
 				</PongProvider>
 			</div>
 		 </div>
