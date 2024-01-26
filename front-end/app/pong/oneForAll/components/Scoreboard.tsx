@@ -2,7 +2,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Orbitron_Regular from '../../../../public/fonts/Orbitron_Regular.json';
 import { Vector3, extend } from '@react-three/fiber';
-import { MutableRefObject, useContext, useEffect } from 'react';
+import { MutableRefObject, useContext, useEffect, useState } from 'react';
 import { Mesh, MeshBasicMaterial } from 'three';
 import { PongContext } from '../../PongProvider';
 
@@ -20,7 +20,7 @@ interface ScoreboardProps {
 	scoreVisible: boolean,
 }
 
-interface PosInfo {
+interface PosAndRotInfo {
 	position: [number, number, number],
 	rotation: [number, number, number],
 }
@@ -40,14 +40,13 @@ const Scoreboard : React.FC<ScoreboardProps> = ({
 	scoreVisible }) => {
 	const { playerState } = useContext(PongContext);
 	const font = new FontLoader().parse(Orbitron_Regular);
-
-	var InitialPos: PosInfo[] = [
+	const [posAndRot, setPosAndRot] = useState<PosAndRotInfo[]>([
 		{
-			position: player1 === 1 || player1 === 7 ? [ -13, -5, 210] : [ -21, -5, 210],
-			rotation:[-Math.PI / 2, 0, 0]
+			position: player1 === 1 || player1 === 7 ? [ 13, 50, 170] : [ 21, 50, 170],
+			rotation:[0, -Math.PI, 0]
 		},
 		{
-			position: player2 === 1 || player2 === 7 ? [-170, 50,  13] : [-170, 50,  21],
+			position: player2 === 1 || player2 === 7 ? [-170, 50, 13] : [-170, 50,  21],
 			rotation: [0, Math.PI / 2, 0]
 		},
 		{
@@ -58,10 +57,9 @@ const Scoreboard : React.FC<ScoreboardProps> = ({
 			position: player4 === 1 || player4 === 7 ? [ 170, 50, -13] : [ 170, 50, -21],
 			rotation: [0, -Math.PI / 2, 0]
 		},
+	])
 
-	]
-
-	const replacePosAndRot = (player : number): PosInfo => {
+	const replacePosAndRot = (player : number): PosAndRotInfo => {
 		switch (player) {
 			case 1:
 				return {
@@ -93,10 +91,12 @@ const Scoreboard : React.FC<ScoreboardProps> = ({
 
 	useEffect(() => {
 		if (playerState.client !== -1) {
-			console.log("KEK")
-			const { position, rotation } = replacePosAndRot(playerState.client);
-			InitialPos[playerState.client].position = position
-			InitialPos[playerState.client].rotation = rotation
+			const { position, rotation } = replacePosAndRot(playerState.client + 1);
+			let newPosAndRot = [...posAndRot];
+
+			newPosAndRot[playerState.client].position = position
+			newPosAndRot[playerState.client].rotation = rotation
+			setPosAndRot(newPosAndRot);
 		}
 	}, [playerState.client]);
 
@@ -112,20 +112,20 @@ const Scoreboard : React.FC<ScoreboardProps> = ({
 
 	return (
 		<>
-			<mesh visible={scoreVisible} position={InitialPos[0].position} rotation={InitialPos[0].rotation} >
-				<textGeometry args={[String(1), {font, size: 35, height: 3}]} />
+			<mesh visible={scoreVisible} position={posAndRot[0].position} rotation={posAndRot[0].rotation} >
+				<textGeometry args={[String(player1), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(bottomPaddleRef) } />
 			</mesh>
-			<mesh visible={scoreVisible} position={InitialPos[1].position} rotation={InitialPos[1].rotation} >
-				<textGeometry args={[String(2), {font, size: 35, height: 3}]} />
+			<mesh visible={scoreVisible} position={posAndRot[1].position} rotation={posAndRot[1].rotation} >
+				<textGeometry args={[String(player2), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(leftPaddleRef) } />
 			</mesh>
-			<mesh visible={scoreVisible} position={InitialPos[2].position} rotation={InitialPos[2].rotation} >
-				<textGeometry args={[String(3), {font, size: 35, height: 3}]} />
+			<mesh visible={scoreVisible} position={posAndRot[2].position} rotation={posAndRot[2].rotation} >
+				<textGeometry args={[String(player3), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(topPaddleRef) } />
 			</mesh>
-			<mesh visible={scoreVisible} position={InitialPos[3].position} rotation={InitialPos[3].rotation}>
-				<textGeometry args={[String(4), {font, size: 35, height: 3}]} />
+			<mesh visible={scoreVisible} position={posAndRot[3].position} rotation={posAndRot[3].rotation}>
+				<textGeometry args={[String(player4), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(rightPaddleRef) } />
 			</mesh>
 		</>
