@@ -31,7 +31,7 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 	const { gameState } = useContext(PongContext)!;
 
 	useEffect(() => {
-		if (gameState.pause || true)
+		if (gameState.pause)
 			return ;
 		if (!props.scoreVisible) {
 			const countdownInterval = setInterval(() => {
@@ -54,7 +54,7 @@ const Countdown : React.FC<CountdownProps>= (props) => {
 			};
 		}
 	}, [props.scoreVisible, gameState.pause]);
-	//[-23, 50, 0] : [-35, 50, 0]
+
 	return (
 		<mesh visible={!props.scoreVisible} position={ count === 1 ? props.position[0] : props.position[1]} rotation={props.rotation}>
 			<textGeometry args={[String(count), {font, size: 60, height: 6}]} />

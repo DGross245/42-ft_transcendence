@@ -5,16 +5,6 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from
 
 const EndModal = ({ isOpen, onClose, winner, setReset, disconnect }) => {
 
-	// TODO: getWinnerImmage need to adjusted/replaced for OneForAll
-	const getWinnerImage = () => {
-		if (winner == 'P1')
-			return ('/o.png');
-		else if (winner == 'P2')
-			return ('/x.png');
-		else
-			return ('/draw.png');
-	}
-
 	return (
 		<>
 			<Modal
@@ -33,18 +23,6 @@ const EndModal = ({ isOpen, onClose, winner, setReset, disconnect }) => {
 			>
 				<ModalContent style={{ position: 'relative', overflow: 'visible' }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-					{isOpen && (
-						<div style={{ marginTop: '20px' }}>
-							<img
-								src={getWinnerImage()}
-								style={{
-									width: winner === 'draw' ? '160px' : '80px',
-									height: '80px',
-								}}
-								alt="Image"
-							/>
-						</div>
-					)}
 					<ModalHeader className="flex flex-col gap-1 items-center justify-center">
 						{disconnect === true ? 'Forfeited' : winner === 'draw' ? 'Draw' : 'Wins' }
 					</ModalHeader>

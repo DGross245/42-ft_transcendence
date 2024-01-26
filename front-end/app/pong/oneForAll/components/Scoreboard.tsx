@@ -35,10 +35,30 @@ const Scoreboard : React.FC<ScoreboardProps> = ({
 	scoreVisible }) => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 
+	//// Player 1
 	const position1 : Vector3 = player1 === 1 || player1 === 7 ? [ -13, -5, 210] : [-21, -5, 210];
 	const position2 : Vector3 = player2 === 1 || player2 === 7 ? [-170, 50, 13] : [-170, 50, 21];
 	const position3 : Vector3 = player3 === 1 || player3 === 7 ? [-13, 50, -170] : [-21, 50, -170];
 	const position4 : Vector3 = player4 === 1 || player4 === 7 ? [170, 50, -13] : [170, 50, -21];
+	////rotation={[ -Math.PI / 2, 0, 0]}
+	////rotation={[0, Math.PI / 2, 0]}
+	////rotation={[0, 0, 0]}
+	////rotation={[0, -Math.PI / 2, 0]}
+
+	//// Player 2
+	//const position1 : Vector3 = player1 === 1 || player1 === 7 ? [ 13, 50, 170] : [21, 50, 170];
+	//const position2 : Vector3 = player2 === 1 || player2 === 7 ? [-170, -5, -13] : [-210, -5, -21];
+	//const position3 : Vector3 = player3 === 1 || player3 === 7 ? [-13, 50, -170] : [-21, 50, -170];
+	//const position4 : Vector3 = player4 === 1 || player4 === 7 ? [170, 50, -13] : [170, 50, -21];
+	////rotation={[ 0, -Math.PI, 0]}
+	////rotation={[ Math.PI / 2, -Math.PI, Math.PI / 2]}
+	////rotation={[0, 0, 0]}
+	////rotation={[0, -Math.PI / 2, 0]}
+
+	//const position1 : Vector3 = player1 === 1 || player1 === 7 ? [ 13, 50, 170] : [21, 50, 170];
+	//const position2 : Vector3 = player2 === 1 || player2 === 7 ? [-170, 50, -13] : [-210, -5, -21];
+	//const position3 : Vector3 = player3 === 1 || player3 === 7 ? [-13, -5, -170] : [-21, 50, -170];
+	//const position4 : Vector3 = player4 === 1 || player4 === 7 ? [170, 50, -13] : [170, 50, -21];
 
 	const getColor = ( ref:  MutableRefObject<Mesh>) => {
 		if (ref && ref.current) {
@@ -56,7 +76,7 @@ const Scoreboard : React.FC<ScoreboardProps> = ({
 				<textGeometry args={[String(player1), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(bottomPaddleRef) } />
 			</mesh>
-			<mesh visible={scoreVisible} position={position2} rotation={[0, Math.PI / 2, 0]}>
+			<mesh visible={scoreVisible} position={position2} rotation={[0, Math.PI / 2, 0]} >
 				<textGeometry args={[String(player2), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(leftPaddleRef) } />
 			</mesh>
