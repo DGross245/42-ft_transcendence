@@ -212,14 +212,34 @@ contract TournamentManager {
 	}
 
 	function getPlayer(address addr)
-	external view returns (Player memory) {
+	external view
+	returns (Player memory) {
 		require (players[addr].addr != address(0), "Player does not exist");
 
 		return players[addr];
 	}
 
 	function getRankedGames()
-	external view returns (Game[] memory) {
+	external view
+	returns (Game[] memory) {
 		return ranked_games;
+	}
+
+	function getPlayerRankedScore(address addr)
+	external view
+	returns (uint256) {
+		require (players[addr].addr != address(0), "Player does not exist");
+
+		uint256 total_score = 0;
+		uint256 played_games = 0;
+		for (uint256 i = 0; i < ranked_games.length; i++) {
+			for (uint256 j = 0; j < ranked_games[i].player_scores.length; j++) {
+				if (ranked_games[i].player_scores[j].addr == addr) {
+					total_score += ranked_games[i].player_scores[j].score;
+					played_games++;
+				}
+			}
+		}
+		return total_score / played_games;
 	}
 }
