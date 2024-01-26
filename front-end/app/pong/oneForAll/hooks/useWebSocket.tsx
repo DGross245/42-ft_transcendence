@@ -1,7 +1,6 @@
 import useWSClient from "@/helpers/wsclient";
 import { useContext, useEffect, useState, Dispatch, SetStateAction } from "react";
 import { PongContext } from "../../PongProvider";
-import { disconnect } from "process";
 
 export const useWebSocket = (isGameOver: Boolean, setGameOver: Dispatch<SetStateAction<boolean>>,
 	disconnect: Boolean, setDisconnect: Dispatch<SetStateAction<boolean>>) => {
