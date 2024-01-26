@@ -37,7 +37,6 @@ export default function OneForAllScene() {
 
 	useWebSocket( isGameOver, setGameOver, disconnected, setDisconnected );
 
-
 	// Updates window dimensions on window resizing.
 	useEffect(() => {
 		const handleResize = () => {
