@@ -1,8 +1,10 @@
 import { useCursor } from '@react-three/drei';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import Torus from '../../sharedComponents/Torus';
 import X from '../../sharedComponents/X';
+import { TTTContext } from '../../TTTProvider';
+import { useFrame } from '@react-three/fiber';
 
 interface FieldProps {
 	key: string,
@@ -31,11 +33,18 @@ interface FieldProps {
 const Field : React.FC<FieldProps> = (props) => {
 	const [hovered, hover] = useState(false);
 	const [symbol, setSymbol] = useState<string>();
+	const { gameState, playerState } = useContext(TTTContext);
+
 	useCursor(hovered);
 	useCursor(props.clicked);
 
+	const handleHover = ( state: boolean) => {
+		if (playerState.players[playerState.client].symbol == props.turn)
+			hover(state);
+	};
+
 	const handleClick = () => {
-		if (!props.clicked && !symbol) {
+		if (!props.clicked && !symbol && playerState.players[playerState.client].symbol === props.turn) {
 			props.click(true);
 			setSymbol(props.turn);
 
@@ -51,13 +60,24 @@ const Field : React.FC<FieldProps> = (props) => {
 		}
 	}
 
+	useEffect(() => {
+		if (props.board[props.i][props.j][props.k] !== '' && !symbol) {
+			setSymbol(props.board[props.i][props.j][props.k]);
+
+			const updateSceneCoords = [...props.sceneCoords];
+			updateSceneCoords[props.i][props.j][props.k] = props.position;
+			props.setSceneCoords(updateSceneCoords);
+			props.click(true);
+		}
+	}, [props.board]);
+
 	return (
 		<>
 			<mesh
 				{...props}
 				rotation={[0, 0, Math.PI / 2]}
-				onPointerOver={(e) => { e.stopPropagation(), hover(true) }}
-				onPointerOut={() => hover(false)}
+				onPointerOver={(e) => { e.stopPropagation(), handleHover(true) }}
+				onPointerOut={() => handleHover(false)}
 				onClick={(e) => {e.stopPropagation(), handleClick()}}
 			>
 				<boxGeometry args={[0.5, 5.5, 5.5]} />

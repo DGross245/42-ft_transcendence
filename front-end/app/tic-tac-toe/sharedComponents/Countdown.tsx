@@ -2,8 +2,9 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Silkscreen_Regular from '../../../public/fonts/Silkscreen_Regular.json';
 import { extend, useThree } from '@react-three/fiber';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useSound } from '@/components/Sound';
+import { TTTContext } from '../TTTProvider';
 
 extend({ TextGeometry })
 
@@ -29,6 +30,7 @@ const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVi
 	const soundEngine = useSound();
 	const { camera } = useThree();
 	const ref = useRef<THREE.Mesh | null>(null);
+	const { gameState } = useContext(TTTContext);
 
 	useEffect(() => {
 		const meshRef = ref.current;
@@ -36,6 +38,8 @@ const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVi
 			camera.add(meshRef);
 		setCount(3);
 	
+		if (gameState.pause)
+			return ;
 		if (countdownVisible) {
 			soundEngine?.playSound("countSound");
 			const countdownInterval = setInterval(() => {
@@ -59,7 +63,7 @@ const Countdown : React.FC<CountdownProps> = ({ countdownVisible, setCountdownVi
 				clearInterval(countdownInterval);
 			};
 		}
-	}, [countdownVisible, soundEngine]);
+	}, [countdownVisible, soundEngine, gameState.pause]);
 	
 	return (
 		<mesh ref={ref} visible={countdownVisible} position={[-5, -4, -30]}>

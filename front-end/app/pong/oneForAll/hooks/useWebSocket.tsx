@@ -86,7 +86,6 @@ export const useWebSocket = (isGameOver: Boolean, setGameOver: Dispatch<SetState
 					number: playerData.number,
 				}
 				updatePlayerState( newPlayerData );
-				console.log("NEW :", playerState)
 			}
 		};
 

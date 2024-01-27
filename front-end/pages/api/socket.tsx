@@ -41,9 +41,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				if (numClients < maxClients) {
 					socket.join(gameId);
 					socket.emit(`room-joined-${gameId}`, (numClients));
-					console.log(numClients);
 					if (numClients === maxClients - 1) {
-						console.log("SEND")
 						const topic = `Players-${gameId}`;
 						io.to(gameId).emit(`message-${gameId}-${topic}`, "FULL");
 					}
@@ -54,7 +52,6 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 					io.to(gameId).emit(`message-${gameId}-${topic}`, gameId);
 					socket.disconnect();
 					io.to(gameId).disconnectSockets(true);
-					console.log("GAME CLOSED");
 				});
 			});
 

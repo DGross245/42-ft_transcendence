@@ -70,6 +70,6 @@ export const useGameState = () => {
 		isGameOver, setGameOver,
 		resetGame, setReset,
 		closeModal, openModal,
-		disable, setDisable
+		disable, setDisable,
 	};
 }

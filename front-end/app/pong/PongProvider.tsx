@@ -1,8 +1,15 @@
 "use client"
 
 import { WSClientType } from '@/helpers/wsclient';
-import { MutableRefObject, ReactNode, createContext, useRef, useState } from 'react';
-import { Dispatch, SetStateAction } from 'react';
+import {
+	MutableRefObject,
+	ReactNode,
+	createContext,
+	useRef,
+	useState,
+	Dispatch,
+	SetStateAction
+} from 'react';
 import { Mesh } from 'three'
 
 const initialGameState = {
@@ -33,7 +40,7 @@ interface PongContextProps {
 	topPaddleRef: MutableRefObject<Mesh>,
 	bottomPaddleRef: MutableRefObject<Mesh>,
 	ballRef: MutableRefObject<Mesh>,
-	updatePlayerState :  Dispatch<SetStateAction<{ players: Player[], client: number }>>,
+	updatePlayerState : Dispatch<SetStateAction<{ players: Player[], client: number }>>,
 	updateGameState :  Dispatch<SetStateAction<typeof initialGameState>>
 }
 
@@ -57,13 +64,13 @@ const PongProvider: React.FC<{ children: ReactNode, initialWsClient?: WSClientTy
 	});
 
 	const updateGameState : Dispatch<SetStateAction<typeof initialGameState>> = ( newState ) => {
-		setGameState(prevState => ({
+		setGameState((prevState) => ({
 			...prevState,
 			...newState,
 		}));
-	}
+	};
 
-	const updatePlayerState :  Dispatch<SetStateAction<{ players: Player[], client: number }>>  = ( newState ) => {
+	const updatePlayerState : Dispatch<SetStateAction<{ players: Player[], client: number }>>  = ( newState ) => {
 		setPlayerState((prevState) => ({
 			...prevState,
 			...newState,
