@@ -33,7 +33,7 @@ interface FieldProps {
 const Field : React.FC<FieldProps> = (props) => {
 	const [hovered, hover] = useState(false);
 	const [symbol, setSymbol] = useState<string>();
-	const { gameState, playerState } = useContext(TTTContext);
+	const { playerState } = useContext(TTTContext);
 
 	useCursor(hovered);
 	useCursor(props.clicked);

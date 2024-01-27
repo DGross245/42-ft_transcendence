@@ -3,14 +3,13 @@
 import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
-const EndModal = ({ setReset, isOpen, onClose, winner }) => {
-
+const EndModal = ({ isOpen, onClose, winner, setSendRequest, sendRequest, requestRematch, disable }) => {
 	const getWinnerImage = () => {
 		if (winner == 'O')
 			return ('/images/o.png');
 		else if (winner == 'X')
 			return ('/images/x.png');
-		else if (winner == '⬜️')
+		else if (winner == '🔳')
 			return ('/images/block.png')
 		else
 			return ('/images/draw.png');
@@ -56,8 +55,8 @@ const EndModal = ({ setReset, isOpen, onClose, winner }) => {
 					<Button color="danger" variant="ghost" onClick={onClose}>
 						Close
 					</Button>
-					<Button color="primary" variant="ghost" onClick={() => setReset(true)}>
-						Play Again
+					<Button color="primary" isDisabled={disable} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
+						Rematch
 					</Button>
 					<Button color="success" variant="ghost" onClick={onClose}>
 						View

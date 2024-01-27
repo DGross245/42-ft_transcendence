@@ -1,6 +1,6 @@
 import useWSClient from "@/helpers/wsclient";
 import { useContext, useEffect, useState } from "react";
-import { TTTContext } from "../TTTProvider";
+import { TTTContext } from "../../TTTProvider";
 
 export const useWebSocket = ( isGameOver, setGameOver, setWinner, setDisable, setRequestRematch, setSendRequest, sendRequest ) => {
 	const wsClient = useWSClient();
@@ -21,14 +21,14 @@ export const useWebSocket = ( isGameOver, setGameOver, setWinner, setDisable, se
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (gameState.wsclient) {
-				const clients = await gameState.wsclient.joinGame(gameState.gameId, "TicTacToe");
+				const clients = await gameState.wsclient.joinGame(gameState.gameId, "Qubic");
 				let newPlayerData = { ...playerState };
 
 				newPlayerData.players[clients] = {
 						name: "KEK",
 						color: 0x00ff00,
 						number: clients,
-						symbol: clients === 0 ? 'X' : 'O',
+						symbol: clients === 0 ? 'X' : clients === 1 ? 'O' : '🔳',
 				}
 				newPlayerData.client = clients
 				updatePlayerState( newPlayerData );

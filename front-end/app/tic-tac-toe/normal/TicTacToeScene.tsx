@@ -13,9 +13,9 @@ import Countdown from "../sharedComponents/Countdown";
 import inputHandler from "@/components/inputHandler";
 import TurnDisplay from "./components/TurnDisplay";
 import { useSound } from "@/components/Sound";
-import { useGameState } from "../hook/useGameState";
-import { useClick } from "../hook/useClick";
-import { useWebSocket } from "../hook/useWebSocket";
+import { useGameState } from "./hook/useGameState";
+import { useClick } from "./hook/useClick";
+import { useWebSocket } from "./hook/useWebSocket";
 import { TTTContext } from "../TTTProvider";
 
 

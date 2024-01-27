@@ -6,7 +6,7 @@ import GridLine from "../../sharedComponents/GridLine";
  * Generates an array of Field components for the game board.
  * @param clicked - Indicates if the field was clicked (boolean).
  * @param click - Setter function for the clicked state.
- * @param currentTurn - Represents the current player's turn (X or O or ⬜️).
+ * @param currentTurn - Represents the current player's turn (X or O or 🔳).
  * @param board - Three-dimensional array of strings representing the game board.
  * @param setCurrentBoardState - Setter for the board state.
  * @param sceneCoords - Stores 3D coordinates for each field on the board.

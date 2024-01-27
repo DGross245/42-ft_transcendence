@@ -1,7 +1,7 @@
 import { useSound } from "@/components/Sound";
 import { useContext, useEffect, useState } from "react";
-import { gameValidation } from "../sharedComponents/GameValidation";
-import { TTTContext } from "../TTTProvider";
+import { gameValidation } from "../../sharedComponents/GameValidation";
+import { TTTContext } from "../../TTTProvider";
 
 export const useClick = (
 	setColour, setShowFinishLine, setWinner, setGameOver, board,
@@ -9,7 +9,7 @@ export const useClick = (
 	const soundEngine = useSound();
 	const [clicked, click] = useState(false);
 
-	const { playerState, gameState} = useContext(TTTContext)
+	const { gameState } = useContext(TTTContext)
 
 	useEffect(() => {
 		if (clicked) {
@@ -29,9 +29,6 @@ export const useClick = (
 		}
 	},[clicked]);
 
-	useEffect(() => {
-		console.log("Updated");
-	},[board])
 	useEffect(() => {
 		const setNewBoard = (msg: string) => {
 			let newBoard = JSON.parse(msg);

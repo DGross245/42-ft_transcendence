@@ -6,7 +6,7 @@ import { useThree } from "@react-three/fiber";
 /**
  * The TurnDisplay component renders a 3D display of the current turn in a game, with different shapes
  * and colors representing different players.
- * @param turn - `turn`: The current turn in the game, represented as a string ('X', 'O', or '⬜️'). This
+ * @param turn - `turn`: The current turn in the game, represented as a string ('X', 'O', or '🔳'). This
  * determines the appearance of the turn display.
  * @returns The `TurnDisplay` component is returning a group of mesh objects representing the current
  * turn in a game. The returned JSX structure includes multiple mesh objects, each representing a
@@ -120,14 +120,14 @@ const TurnDisplay = ({ turn } : { turn: string }) => {
 
 			<mesh
 				position={[4.5, 13.5, -30]}
-				scale={turn === '⬜️' ? [0.6, 0.6, 0.6] : [0.5, 0.5, 0.5]}
+				scale={turn === '🔳' ? [0.6, 0.6, 0.6] : [0.5, 0.5, 0.5]}
 			>
 				<Extrude args={[boxShape, extrudeSettings]}>
 					<meshBasicMaterial
 						color={0x008800}
 						transparent={true}
 						side={DoubleSide}
-						opacity={turn === '⬜️' ? 1 : 0.4}
+						opacity={turn === '🔳' ? 1 : 0.4}
 					/>
 				</Extrude>
 			</mesh>

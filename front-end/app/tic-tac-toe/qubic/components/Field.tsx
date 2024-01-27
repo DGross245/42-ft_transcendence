@@ -1,9 +1,10 @@
 import { useCursor } from '@react-three/drei';
-import {useState } from 'react';
+import {useContext, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import Block from './Block';
 import X from '../../sharedComponents/X';
 import Torus from '../../sharedComponents/Torus';
+import { TTTContext } from '../../TTTProvider';
 
 interface FieldProps {
 	key: string,
@@ -23,18 +24,25 @@ interface FieldProps {
 
 /**
  * The `Field` component represents a individual fields in a three-dimensional tic-tac-toe board.
- * It manages the rendering of the field and the placement of symbols (X or O or ⬜️).
+ * It manages the rendering of the field and the placement of symbols (X or O or 🔳).
  * @param props
  * @returns - A Three.js mesh representing the field with/without a symbol.
  */
 const Field : React.FC<FieldProps> = (props, key) => {
 	const [hovered, hover] = useState(false);
 	const [symbol, setSymbol] = useState<string>();
+	const { playerState } = useContext(TTTContext);
+
 	useCursor(hovered);
 	useCursor(props.clicked);
 
+	const handleHover = ( state: boolean) => {
+		if (playerState.players[playerState.client].symbol == props.turn)
+			hover(state);
+	};
+
 	const handleClick = () => {
-		if (!props.clicked && !symbol) {
+		if (!props.clicked && !symbol && playerState.players[playerState.client].symbol === props.turn) {
 			props.click(true);
 			setSymbol(props.turn);
 
@@ -50,13 +58,24 @@ const Field : React.FC<FieldProps> = (props, key) => {
 		}
 	}
 
+	useEffect(() => {
+		if (props.board[props.i][props.j][props.k] !== '' && !symbol) {
+			setSymbol(props.board[props.i][props.j][props.k]);
+
+			const updateSceneCoords = [...props.sceneCoords];
+			updateSceneCoords[props.i][props.j][props.k] = props.position;
+			props.setSceneCoords(updateSceneCoords);
+			props.click(true);
+		}
+	}, [props.board]);
+
 	return (
 		<>
 			<mesh
 				{...props}
 				rotation={[0, 0, Math.PI / 2]}
-				onPointerOver={(e) => { e.stopPropagation(), hover(true) }}
-				onPointerOut={() => hover(false)}
+				onPointerOver={(e) => { e.stopPropagation(), handleHover(true) }}
+				onPointerOut={() => handleHover(false)}
 				onClick={(e) => {e.stopPropagation(), handleClick()}}
 			>
 				<boxGeometry args={[0.5, 5.5, 5.5]} />
@@ -72,7 +91,7 @@ const Field : React.FC<FieldProps> = (props, key) => {
 				<X {...props} color={0xff0000} transparent={true} />
 			)}
 
-			{hovered && !props.clicked && !symbol && props.turn == '⬜️' && !props.gameOver && (
+			{hovered && !props.clicked && !symbol && props.turn == '🔳' && !props.gameOver && (
 				<Block {...props} color={0x008000} transparent={true} />
 			)}
 
@@ -85,7 +104,7 @@ const Field : React.FC<FieldProps> = (props, key) => {
 				<X {...props} color={0xff0000} transparent={false}/>
 			)}
 
-			{symbol && symbol == '⬜️' && (
+			{symbol && symbol == '🔳' && (
 				<Block {...props} color={0x008800} transparent={false} />
 			)}
 		</>
