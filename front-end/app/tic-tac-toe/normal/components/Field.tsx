@@ -86,20 +86,20 @@ const Field : React.FC<FieldProps> = (props) => {
 
 			{/* Projects a transparent verison of the symbol on the field the user hovers over based on the current turn */}
 			{hovered && !props.clicked && !symbol && props.turn == 'O' && !props.gameOver && (
-				<Torus {...props} color={0x1fcdff} transparent={true} blending={THREE.AdditiveBlending}/>
+				<Torus {...props} color={playerState.players[1].color} transparent={true} blending={THREE.AdditiveBlending}/>
 			)}
 
 			{hovered && !props.clicked && !symbol && props.turn == 'X' && !props.gameOver && (
-				<X {...props} color={0xff0000} transparent={true} />
+				<X {...props} color={playerState.players[0].color} transparent={true} />
 			)}
 
 			{/* Projects the symbol on the field the user click on based on the turn the player clicked (symbol) */}
 			{symbol && symbol == 'O' && (
-				<Torus {...props} color={0x1fcdff} transparent={false} />
+				<Torus {...props} color={playerState.players[1].color} transparent={false} />
 			)}
 
 			{symbol && symbol == 'X' && (
-				<X {...props} color={0xff0000} transparent={false}/>
+				<X {...props} color={playerState.players[0].color} transparent={false}/>
 			)}
 		</>
 	);

@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { DoubleSide, Shape } from 'three';
 import { Extrude } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
+import { TTTContext } from "../../TTTProvider";
 
 // TODO: Change scaling of symbols
 
@@ -15,7 +16,7 @@ import { useThree } from "@react-three/fiber";
 const TurnDisplay = ({ turn } : { turn: string }) => {
 	const ref = useRef<THREE.Group | null>(null);
 	const { camera } = useThree();
-	
+	const { playerState } = useContext(TTTContext);
 	const extrudeSettings = {
 		steps: 2,
 		depth: 0.75,
@@ -62,7 +63,7 @@ const TurnDisplay = ({ turn } : { turn: string }) => {
 			>
 				<Extrude args={[xShape, extrudeSettings]}>
 					<meshBasicMaterial 
-						color={0xff0000}
+						color={playerState.players[0].color}
 						side={DoubleSide}
 						opacity={turn === 'X' ? 0.8 : 0.4}
 						transparent={true}
@@ -79,10 +80,11 @@ const TurnDisplay = ({ turn } : { turn: string }) => {
 			</mesh>
 			<mesh
 				position={turn === 'O' ? [2.2, 13.6, -30] : [2.2, 13.6, -30]}
-				scale={turn === 'O' ? [0.8, 0.8, 0.8] : [0.6, 0.6, 0.6]}>
+				scale={turn === 'O' ? [0.8, 0.8, 0.8] : [0.6, 0.6, 0.6]}
+			>
 				<torusGeometry args={[2, 0.4, 8, 24]} />
 				<meshBasicMaterial
-					color={0x1aabff}
+					color={playerState.players[1].color}
 					transparent={true}
 					opacity={turn === 'O' ? 1 : 0.4}
 				/>
