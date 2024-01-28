@@ -15,7 +15,6 @@ interface SocketApiResponse extends NextApiResponse {
 	};
 }
 
-// TODO: Add rematch request system for 4 and 3 players
 // TODO: Maybe replacing the Rematch button with a continue button in tournaments / div modal
 // TODO: Refactor code 
 // TODO: Implement and test pause in games when tab is not in focus (or ESC)
@@ -26,7 +25,6 @@ interface SocketApiResponse extends NextApiResponse {
 // FIXME: Ball collision problem
 // TODO: Add music
 // TODO: ((Add more cam position on key press))
-// TODO: Change 🔳 winning picture/image 
 // FIXME: (Fix scene positioning)
 // FIXME: (Fix documentation)
 // FIXME: Try to find the next.js error that is causing ⚠ when compiling r3f code

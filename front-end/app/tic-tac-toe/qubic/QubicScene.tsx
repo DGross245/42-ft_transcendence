@@ -38,11 +38,11 @@ const QubicScene = () => {
 		closeModal, setSendRequest,
 		setDisable, setRequestRematch,
 		sendRequest, requestRematch,
-		disable
-	} = useGameState();
+		disable, rematchIndex, setRematchIndex
+	} = useGameState(3);
 	const { click, clicked } = useClick(setColour, setShowFinishLine, setWinner, setGameOver, board, sceneCoords, coords, setCoords, setTurn, currentTurn, setCurrentBoardState);
 
-	useWebSocket( isGameOver, setGameOver, setWinner, setDisable, setRequestRematch, setSendRequest, sendRequest );
+	useWebSocket( isGameOver, setGameOver, setWinner, setDisable, setRequestRematch, setSendRequest, sendRequest, rematchIndex, setRematchIndex );
 
 	// Updates window dimensions on window resizing and
 	// changes the turn after a clicked field and checks if a winning condition

@@ -2,7 +2,7 @@ import useWSClient from "@/helpers/wsclient";
 import { useContext, useEffect, useState } from "react";
 import { TTTContext } from "../../TTTProvider";
 
-export const useWebSocket = ( isGameOver, setGameOver, setWinner, setDisable, setRequestRematch, setSendRequest, sendRequest ) => {
+export const useWebSocket = ( isGameOver, setGameOver, setWinner, setDisable, setRequestRematch, setSendRequest, sendRequest, rematchIndex, setRematchIndex ) => {
 	const wsClient = useWSClient();
 	const { gameState, updateGameState, playerState, updatePlayerState, } = useContext(TTTContext);
 	const [isFull, setIsFull] = useState("");
@@ -118,8 +118,10 @@ export const useWebSocket = ( isGameOver, setGameOver, setWinner, setDisable, se
 	useEffect(() => {
 		if (gameState.wsclient) {
 			const rematch = (msg: string) => {
-				if (msg === "true")
+				if (msg === "true") {
+					setRematchIndex(rematchIndex + 1);
 					setRequestRematch(true);
+				}
 			};
 			
 			gameState.wsclient?.addMessageListener(`Request-Rematch-${gameState.gameId}`, gameState.gameId, rematch)
@@ -128,11 +130,13 @@ export const useWebSocket = ( isGameOver, setGameOver, setWinner, setDisable, se
 				gameState.wsclient?.removeMessageListener(`Request-Rematch-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [gameState.wsclient]);
+	}, [gameState.wsclient, rematchIndex]);
 
 	useEffect(() => {
-		if (sendRequest)
+		if (sendRequest) {
+			setRematchIndex(rematchIndex + 1);
 			gameState.wsclient?.emitMessageToGame("true", `Request-Rematch-${gameState.gameId}`, gameState.gameId);
+		}
 	}, [sendRequest]);
 
 	useEffect(() => {

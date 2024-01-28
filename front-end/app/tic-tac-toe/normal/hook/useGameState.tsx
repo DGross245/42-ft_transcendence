@@ -72,7 +72,7 @@ const winningCoords : [number, number, number][] = [
 	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
 ];
 
-export const useGameState = () => {
+export const useGameState = ( maxClients: number ) => {
 	const [currentTurn, setTurn] = useState('');
 	const [board, setCurrentBoardState] = useState(initialBoard());
 	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
@@ -90,6 +90,7 @@ export const useGameState = () => {
 	const [sendRequest, setSendRequest] = useState(false);
 	const [requestRematch, setRequestRematch] = useState(false);
 	const [disable, setDisable] = useState(false);
+	const [rematchIndex, setRematchIndex] = useState(0);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -119,12 +120,12 @@ export const useGameState = () => {
 	}, [reset]);
 
 	useEffect(() => {
-		if (requestRematch && sendRequest) {
+		if (rematchIndex === maxClients) {
 			setRequestRematch(false);
 			setSendRequest(false);
 			setReset(true);
 		}
-	}, [requestRematch, sendRequest]);
+	}, [rematchIndex]);
 
 	useEffect(() => {
 		if (!countdownVisible)
@@ -161,6 +162,7 @@ export const useGameState = () => {
 		keyMap, closeModal, openModal,
 		sendRequest, setSendRequest,
 		requestRematch, setRequestRematch,
-		disable, setDisable
+		disable, setDisable,
+		rematchIndex, setRematchIndex
 	};
 };
