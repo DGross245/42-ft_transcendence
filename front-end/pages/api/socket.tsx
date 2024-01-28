@@ -15,19 +15,20 @@ interface SocketApiResponse extends NextApiResponse {
 	};
 }
 
-// TODO: Maybe replacing the Rematch button with a continue button in tournaments / div modal
 // TODO: Refactor code 
+// TODO: Add useKey hook (or fix it, so that its useable)
+// TODO: Limit cam movment in Pong
 // TODO: Implement and test pause in games when tab is not in focus (or ESC)
 // FIXME: Paddle movement based on player number (need to be inverted or adjusted to player rotation)
 // TODO: Add paddle socket data transfer in OneForAll
-// TODO: Add useKey hook (or fix it, so that its useable)
-// TODO: Limit cam movment in Pong
+// TODO: Maybe replacing the Rematch button with a continue button in tournaments / div modal
 // FIXME: Ball collision problem
 // TODO: Add music
+// FIXME: Try to find the next.js error that is causing ⚠ when compiling r3f code
+
 // TODO: ((Add more cam position on key press))
 // FIXME: (Fix scene positioning)
 // FIXME: (Fix documentation)
-// FIXME: Try to find the next.js error that is causing ⚠ when compiling r3f code
 
 /* -------------------------------------------------------------------------- */
 /*                                   Handler                                  */

@@ -73,19 +73,22 @@ const winningCoords : [number, number, number][] = [
 ];
 
 export const useGameState = ( maxClients: number ) => {
+	const [showFinishLine, setShowFinishLine] = useState(false);
+	const [colour, setColour] = useState(0xffffff);
+
 	const [currentTurn, setTurn] = useState('');
 	const [board, setCurrentBoardState] = useState(initialBoard());
 	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
-	const [showFinishLine, setShowFinishLine] = useState(false);
 	const [coords, setCoords] = useState([...winningCoords]);
-	const [colour, setColour] = useState(0xffffff);
-	const [showModal, setShowModal] = useState(false);
 	const [isGameOver, setGameOver] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [countdownVisible, setCountdownVisible] = useState(true);
 	const [reset, setReset] = useState(false);
+
 	const soundEngine = useSound();
 	const keyMap = inputHandler();
+	
+	const [showModal, setShowModal] = useState(false);
 
 	const [sendRequest, setSendRequest] = useState(false);
 	const [requestRematch, setRequestRematch] = useState(false);
