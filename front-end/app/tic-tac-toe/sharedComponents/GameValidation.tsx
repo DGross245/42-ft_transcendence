@@ -37,7 +37,7 @@ export const gameValidation = (
 			[[ 1,-1,-1], [ 2,-2,-2],[ 1,-1,-1]],
 			[[-1,-1,-1], [-2,-2,-2],[-1,-1,-1]],
 			[[-1, 1,-1], [-2, 2,-2],[-1, 1,-1]],
-		];
+		]; // @note vectors representing possible winning lines
 
 		let isDraw = true;
 

@@ -94,9 +94,9 @@ const winningCoords : [number, number, number][] = [
  */
 const TTTScene = () => {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const [clicked, click] = useState(false);
-	const [currentTurn, setTurn] = useState('X');
-	const [board, setCurrentBoardState] = useState(initialBoard());
+	const [clicked, click] = useState(false); // @note triggers validation
+	const [currentTurn, setTurn] = useState('X'); // @note sets turn
+	const [board, setCurrentBoardState] = useState(initialBoard()); // @note board setter and getter
 	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
 	const [showFinishLine, setShowFinishLine] = useState(false);
 	const [coords, setCoords] = useState([...winningCoords]);
@@ -162,6 +162,7 @@ const TTTScene = () => {
 
 		const checkClick = () => {
 			if (clicked) {
+				console.log(board);
 				tictactoe();
 				setTurn(currentTurn === 'X' ? 'O' : 'X');
 				click(false);
