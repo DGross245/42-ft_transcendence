@@ -6,7 +6,7 @@ import { PongContext } from "../../PongProvider";
 
 export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameOver: Dispatch<SetStateAction<boolean>>,
 	setRequestRematch: Dispatch<SetStateAction<boolean>>, setSendRequest: Dispatch<SetStateAction<boolean>>,
-	setDisable: Dispatch<SetStateAction<boolean>>) => {
+	setDisable: Dispatch<SetStateAction<boolean>>, rematchIndex: number, setRematchIndex: Dispatch<SetStateAction<number>>) => {
 	const wsClient = useWSClient();
 	const { gameState, updateGameState, playerState, updatePlayerState, } = useContext(PongContext);
 	const [isFull, setIsFull] = useState("");
@@ -114,13 +114,15 @@ export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameO
 				gameState.wsclient?.removeMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [gameState.wsclient]);
+	}, [gameState.wsclient, isGameOver]);
 
 	useEffect(() => {
 		if (gameState.wsclient) {
 			const rematch = (msg: string) => {
-				if (msg === "true")
+				if (msg === "true") {
+					setRematchIndex(rematchIndex + 1);
 					setRequestRematch(true);
+				}
 			};
 			
 			gameState.wsclient?.addMessageListener(`Request-Rematch-${gameState.gameId}`, gameState.gameId, rematch)
@@ -129,11 +131,13 @@ export const useWebSocket = (isGameOver: Boolean, sendRequest: Boolean, setGameO
 				gameState.wsclient?.removeMessageListener(`Request-Rematch-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [gameState.wsclient]);
+	}, [gameState.wsclient, rematchIndex]);
 
 	useEffect(() => {
-		if (sendRequest)
+		if (sendRequest) {
+			setRematchIndex(rematchIndex + 1);
 			gameState.wsclient?.emitMessageToGame("true", `Request-Rematch-${gameState.gameId}`, gameState.gameId);
+		}
 	}, [sendRequest]);
 
 	useEffect(() => {

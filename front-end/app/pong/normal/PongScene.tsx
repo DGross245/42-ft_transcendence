@@ -30,14 +30,14 @@ import { useWebSocket } from './hooks/useWebSocket';
  */
 export default function PongScene(/* maybe get gameId as param */) { // PlayerState needs to set too
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const { rightPaddleRef, leftPaddleRef, ballRef, updateGameState, gameState } = useContext(PongContext);
+	const { rightPaddleRef, leftPaddleRef, ballRef } = useContext(PongContext);
 	const { p1Score, p2Score, setP1Score, setP2Score, isScoreVisible, setScoreVisibility,
 		setWinner, isGameOver, setGameOver, isBallVisible, setBallVisibility, showModal, closeModal,
 		winner, sendRequest, setRequestRematch, setSendRequest, requestRematch,
-		disable, setDisable} = useGameState();
+		disable, setDisable, rematchIndex, setRematchIndex} = useGameState(2);
 	const keyMap = inputHandler();
 
-	useWebSocket( isGameOver, sendRequest, setGameOver, setRequestRematch, setSendRequest, setDisable );
+	useWebSocket( isGameOver, sendRequest, setGameOver, setRequestRematch, setSendRequest, setDisable, rematchIndex, setRematchIndex );
 
 	// Updates window dimensions on window resizing.
 	useEffect(() => {

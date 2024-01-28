@@ -251,7 +251,7 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
-			if (playerScore === 7) {
+			if (playerScore === 1) {
 				props.setGameOver(true);
 				props.setWinner(player);
 				let ball = ballRef.current;

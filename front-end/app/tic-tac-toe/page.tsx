@@ -10,7 +10,7 @@ export default function TicTacToePage() {
 		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80svh' }}>
 			<div>
 				<TTTProvider>
-					<QubicScene />
+					<TTTScene />
 				</TTTProvider>
 			</div>
 		</div>

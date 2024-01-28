@@ -3,8 +3,7 @@
 import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
-const EndModal = ({ isOpen, onClose, winner, setReset, disconnect }) => {
-
+const EndModal = ({ isOpen, onClose, winner, setSendRequest, sendRequest, requestRematch, disconnect}) => {
 	return (
 		<>
 			<Modal
@@ -33,8 +32,8 @@ const EndModal = ({ isOpen, onClose, winner, setReset, disconnect }) => {
 					<Button color="danger" variant="ghost" onClick={onClose}>
 						Close
 					</Button>
-					<Button color="primary" variant="ghost" onClick={() => setReset(true)}>
-						Play Again
+					<Button color="primary" isDisabled={disconnect} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
+						Rematch
 					</Button>
 					<Button color="success" variant="ghost" onClick={onClose}>
 						View

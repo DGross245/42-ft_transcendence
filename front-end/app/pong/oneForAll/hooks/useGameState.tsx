@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { PongContext } from "../../PongProvider";
 
-export const useGameState = () => {
+export const useGameState = (maxClients: number) => {
 	const [p1Score, setP1Score] = useState(0);
 	const [p2Score, setP2Score] = useState(0);
 	const [p3Score, setP3Score] = useState(0);
@@ -17,6 +17,10 @@ export const useGameState = () => {
 	const [countdownRot, setCountdownRot] = useState<[number, number, number]>([0, 0, 0]);
 	const [countdownPos, setContdownPos] = useState<[number, number, number][]>([ [-23, 50, 0], [-35, 50, 0] ]);
 	const { playerState } = useContext(PongContext);
+
+	const [sendRequest, setSendRequest] = useState(false);
+	const [requestRematch, setRequestRematch] = useState(false);
+	const [rematchIndex, setRematchIndex] = useState(0);
 
 	var positionInfo: { 
 		camPosition: [number, number, number],
@@ -101,6 +105,14 @@ export const useGameState = () => {
 		}
 	}, [reset]);
 
+	useEffect(() => {
+		if (rematchIndex === maxClients) {
+			setRequestRematch(false);
+			setSendRequest(false);
+			setReset(true);
+		}
+	}, [rematchIndex]);
+
 	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
 		if (isGameOver) {
@@ -124,6 +136,9 @@ export const useGameState = () => {
 		isScoreVisible, setScoreVisibility,
 		isBallVisible, setBallVisibility,
 		isGameOver, setGameOver,
-		camPos,countdownPos,countdownRot
+		camPos,countdownPos,countdownRot,
+		sendRequest, setSendRequest,
+		requestRematch, setRequestRematch,
+		rematchIndex, setRematchIndex
 	};
 }

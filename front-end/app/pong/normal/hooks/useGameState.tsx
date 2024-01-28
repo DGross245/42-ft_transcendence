@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export const useGameState = () => {
+export const useGameState = (maxClients: number) => {
 	const [p1Score, setP1Score] = useState(0);
 	const [p2Score, setP2Score] = useState(0);
 	const [showModal, setShowModal] = useState(false);
@@ -13,6 +13,7 @@ export const useGameState = () => {
 	const [sendRequest, setSendRequest] = useState(false);
 	const [requestRematch, setRequestRematch] = useState(false);
 	const [disable, setDisable] = useState(false);
+	const [rematchIndex, setRematchIndex] = useState(0);
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -23,12 +24,12 @@ export const useGameState = () => {
 	}
 
 	useEffect(() => {
-		if (requestRematch && sendRequest) {
+		if (rematchIndex === maxClients) {
 			setRequestRematch(false);
 			setSendRequest(false);
 			setReset(true);
 		}
-	}, [requestRematch, sendRequest]);
+	}, [rematchIndex]);
 
 	// Handles the reset of the scene when the 'reset' state changes.
 	useEffect(() => {
@@ -71,5 +72,6 @@ export const useGameState = () => {
 		resetGame, setReset,
 		closeModal, openModal,
 		disable, setDisable,
+		rematchIndex, setRematchIndex
 	};
 }

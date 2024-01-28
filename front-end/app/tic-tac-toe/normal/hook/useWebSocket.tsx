@@ -113,7 +113,7 @@ export const useWebSocket = ( isGameOver, setGameOver, setWinner, setDisable, se
 				gameState.wsclient?.removeMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [gameState.wsclient, playerState]);
+	}, [gameState.wsclient, playerState, isGameOver]);
 
 	useEffect(() => {
 		if (gameState.wsclient) {

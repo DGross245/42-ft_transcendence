@@ -28,14 +28,16 @@ export default function OneForAllScene() {
 	const { closeModal, showModal,
 		p1Score, setP1Score, p2Score, setP2Score,
 		p3Score, setP3Score, p4Score, setP4Score,
-		winner, setWinner, setReset,
+		winner, setWinner,
 		isScoreVisible, setScoreVisibility,
 		isBallVisible, setBallVisibility,
 		isGameOver, setGameOver, disconnected, 
-		setDisconnected, camPos, countdownPos, countdownRot } = useGameState();
+		setDisconnected, camPos, countdownPos, countdownRot, sendRequest, setSendRequest,
+		requestRematch, setRequestRematch,
+		rematchIndex, setRematchIndex } = useGameState(4);
 	const { topPaddleRef,bottomPaddleRef, rightPaddleRef, leftPaddleRef, ballRef } = useContext(PongContext);
 
-	useWebSocket( isGameOver, setGameOver, disconnected, setDisconnected );
+	useWebSocket( isGameOver, setGameOver, disconnected, setDisconnected, setRequestRematch, setSendRequest, sendRequest, rematchIndex, setRematchIndex);
 
 	// Updates window dimensions on window resizing.
 	useEffect(() => {
@@ -98,7 +100,9 @@ export default function OneForAllScene() {
 				isOpen={showModal}
 				onClose={closeModal}
 				winner={winner}
-				setReset={setReset}
+				setSendRequest={setSendRequest}
+				sendRequest={sendRequest}
+				requestRematch={requestRematch}
 				disconnect={disconnected}
 			/>
 		</div>
