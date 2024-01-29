@@ -2,8 +2,9 @@ import { useContext, useEffect, useState } from "react";
 import { SocketContext } from "../context/Sockets";
 import { useGameState } from "./useGameState";
 import useWSClient from "@/helpers/wsclient";
+import { useSocket } from "./useSocket";
 
-export const useSockets = (gameMode = false) => {
+export const useSocketEvent = () => {
 	const newClient = useWSClient();
 	const {
 		wsclient,
@@ -16,9 +17,8 @@ export const useSockets = (gameMode = false) => {
 		setSendRequest,
 		rematchIndex,
 		sendRequest,
-		requestRematch
-	} = useContext(SocketContext);
-	const { gameState, updateGameState, setWinner } = useGameState();
+	} = useSocket();
+	const { gameState, updateGameState, setWinner, isGameMode } = useGameState();
 	const [isFull, setIsFull] = useState("");
 
 	useEffect(() => {
@@ -36,7 +36,7 @@ export const useSockets = (gameMode = false) => {
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (wsclient) {
-				const clients = await wsclient.joinGame(gameState.gameId, gameMode ? "Qubic" : "TicTacToe");
+				const clients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe");
 				let newPlayerData = { ...playerState };
 
 				newPlayerData.players[clients] = {
@@ -170,9 +170,4 @@ export const useSockets = (gameMode = false) => {
 			} 
 		}
 	}, [wsclient]);
-
-	return {
-		sendRequest, setSendRequest,
-		requestRematch, setRequestRematch
-	}
 };

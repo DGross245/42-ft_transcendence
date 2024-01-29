@@ -87,7 +87,7 @@ interface GameStateContextValue {
 	currentTurn: string,
 	setTurn: Dispatch<SetStateAction<string>>,
 	board: string[][][],
-	setBoard: Dispatch<SetStateAction<string[][][]>>,
+	updateBoard: Dispatch<SetStateAction<string[][][]>>,
 	sceneCoords: number[][][][],
 	setSceneCoords: Dispatch<SetStateAction<number[][][][]>>,
 	winner: string,
@@ -97,11 +97,14 @@ interface GameStateContextValue {
 	setLineCoords: Dispatch<SetStateAction<[number, number, number][]>>,
 	countdownVisible: boolean,
 	setCountdownVisible: Dispatch<SetStateAction<boolean>>,
+	isGameMode: boolean,
+	setGameMode: Dispatch<SetStateAction<boolean>>,
 }
 
 export const GameStateContext = createContext<GameStateContextValue>({} as GameStateContextValue);
 
-export const GameState: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const GameState: React.FC<{ gameMode: boolean, children: ReactNode }> = ({ gameMode = false, children }) => {
+	const [isGameMode, setGameMode] = useState(gameMode);
 	const [countdownVisible, setCountdownVisible] = useState(true);
 	const [currentTurn, setTurn] = useState('');
 	const [board, setBoard] = useState(initialBoard());
@@ -109,8 +112,16 @@ export const GameState: React.FC<{ children: ReactNode }> = ({ children }) => {
 	const [winner, setWinner] = useState('');
 	const [gameState, setGameState] = useState({ gameId: "1", pause: false, reset: false, gameOver: false });
 	const [lineCoords, setLineCoords] = useState([...winningCoords]);
+
 	const updateGameState : Dispatch<SetStateAction<GameStateContextValue['gameState']>> = ( newState ) => {
 		setGameState(prevState => ({
+			...prevState,
+			...newState,
+		}));
+	};
+
+	const updateBoard : Dispatch<SetStateAction<string [][][]>> = ( newState ) => {
+		setBoard(prevState => ({
 			...prevState,
 			...newState,
 		}));
@@ -120,7 +131,7 @@ export const GameState: React.FC<{ children: ReactNode }> = ({ children }) => {
 		currentTurn,
 		setTurn,
 		board,
-		setBoard,
+		updateBoard,
 		sceneCoords,
 		setSceneCoords,
 		winner,
@@ -130,7 +141,8 @@ export const GameState: React.FC<{ children: ReactNode }> = ({ children }) => {
 		lineCoords,
 		setLineCoords,
 		countdownVisible,
-		setCountdownVisible
+		setCountdownVisible,
+		isGameMode, setGameMode
 	};
 
 	return (

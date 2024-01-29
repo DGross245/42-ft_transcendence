@@ -74,7 +74,7 @@ const TTTScene = () => {
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown countdownVisible={countdownVisible} setCountdownVisible={setCountdownVisible} />
-				<Camera keyMap={keyMap} target={[4, 10, 2]} reset={reset} />
+				<Camera keyMap={keyMap} target={[3, 11.8, 3]} reset={reset} />
 				{gridLineGenrator()}
 				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, isGameOver)}
 				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
@@ -82,7 +82,7 @@ const TTTScene = () => {
 				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<TurnDisplay turn={currentTurn} />
 				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
-				<OrbitControls enableZoom={false} target={[4, 10, 2]} enableRotate={true} enablePan={false} />
+				<OrbitControls enableZoom={false} target={[3, 11.8, 3]} enableRotate={true} enablePan={false} />
 			</Canvas>
 			<EndModal
 				isOpen={showModal}

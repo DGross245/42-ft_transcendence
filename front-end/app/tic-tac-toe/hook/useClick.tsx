@@ -2,25 +2,25 @@ import { useEffect, useState } from "react";
 
 import { useSound } from "@/components/Sound";
 import { useGameState } from "./useGameState";
-import { useSockets } from "./useSockets";
 import { gameValidation } from "../sharedComponents/GameValidation";
-import { WSClientType } from "@/helpers/wsclient";
+import { useSocket } from "./useSocket";
 
-export const useClick = (gameMode = false, wsclient: WSClientType | null) => {
+export const useClick = () => {
 	const soundEngine = useSound();
 	const [clicked, click] = useState(false);
-
+	const { wsclient } = useSocket();
 	const {
 		gameState,
 		board,
 		sceneCoords,
 		setTurn,
 		updateGameState,
-		setBoard,
+		updateBoard,
 		setWinner,
 		lineCoords,
 		setLineCoords,
-		currentTurn
+		currentTurn,
+		isGameMode
 	} = useGameState();
  
 	useEffect(() => {
@@ -35,17 +35,18 @@ export const useClick = (gameMode = false, wsclient: WSClientType | null) => {
 				updateGameState({ ...gameState, gameOver: true })
 				return;
 			}
-			if (gameMode)
+			if (isGameMode)
 				setTurn(currentTurn === 'X' ? 'O' : currentTurn === 'O' ? '🔳' : 'X');
 			else
 				setTurn(currentTurn === 'X' ? 'O' : 'X');
 		}
 	},[clicked]);
 
+	// Thinking about sending only changed array instead of all of it
 	useEffect(() => {
 		const setNewBoard = (msg: string) => {
 			let newBoard = JSON.parse(msg);
-			setBoard(newBoard);
+			updateBoard(newBoard);
 		};
 
 		if (wsclient) {
