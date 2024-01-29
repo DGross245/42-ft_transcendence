@@ -1,7 +1,7 @@
 import { useCursor } from '@react-three/drei';
 import {useContext, useEffect, useState } from 'react';
 import * as THREE from 'three';
-import Block from './Block';
+import Block from './Square';
 import X from '../../sharedComponents/X';
 import Torus from '../../sharedComponents/Torus';
 import { TTTContext } from '../../TTTProvider';

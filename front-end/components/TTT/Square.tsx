@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { DoubleSide} from 'three';
 import * as THREE from 'three'
 
-interface BlockProps {
+interface SquareProps {
 	position: [number, number, number],
 	transparent: boolean;
 	color: number,
@@ -15,7 +15,7 @@ interface BlockProps {
  * 				  `position`, `transparent` and `color`.
  * @returns A mesh with this new block component.
  */
-const Block : React.FC<BlockProps> = (props) => {
+const Square : React.FC<SquareProps> = (props) => {
 	const [x, y, z] = props.position;
 
 	const extrudeSettings = {
@@ -56,4 +56,4 @@ const Block : React.FC<BlockProps> = (props) => {
 	);
 }
 
-export default Block;
+export default Square;

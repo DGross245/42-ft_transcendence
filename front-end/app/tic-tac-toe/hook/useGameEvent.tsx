@@ -8,7 +8,7 @@ export const useGameEvent = (
 ) => {
 	const {
 		gameState,
-		updateBoard,
+		setBoard,
 		setTurn,
 		setLineCoords,
 		updateGameState,
@@ -23,7 +23,7 @@ export const useGameEvent = (
 	useEffect(() => {
 		if (gameState.reset) {
 			// closeModal();
-			updateBoard(initialBoard());
+			setBoard(initialBoard());
 			setTurn('');
 			setLineCoords([...winningCoords]);
 			updateGameState({ ...gameState, reset: false, gameOver: false })

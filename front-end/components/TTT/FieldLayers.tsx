@@ -1,9 +1,7 @@
-import { useGameState } from "../hook/useGameState";
+import { useGameState } from "../../app/tic-tac-toe/hook/useGameState";
+import Field from "./Field";
 
-export const Grid = (
-	clicked: boolean,
-	click: React.Dispatch<React.SetStateAction<boolean>>
-) => {
+export const FieldLayers = ({ clicked, click } : { clicked: boolean; click: React.Dispatch<React.SetStateAction<boolean>> }) => {
 	const { gameState } = useGameState();
 	const fields = [];
 	let l = 0;

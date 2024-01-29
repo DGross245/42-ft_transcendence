@@ -23,7 +23,6 @@ class WSClient {
 	private socketInitialized: Promise<void>;
 
 	constructor() {
-		console.log('WSClient constructor');
 		this.socketInitialized = this.socketInitializer();
 	}
 
@@ -53,12 +52,10 @@ class WSClient {
 
 	async waitingForSocket(): Promise<void> {
 		await this.waitForSocket();
-		console.log("Should be set now !!!")
 		return ;
 	}
 
 	async joinGame(gameId: string, gameType: string): Promise<number> {
-		console.log("Joined")
 		return new Promise((resolve, reject) => {
 			this.socket!.emit('join-game', gameId, gameType);
 			this.socket!.on(`room-joined-${gameId}`, (numClients: number) => {

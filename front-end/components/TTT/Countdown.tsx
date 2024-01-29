@@ -4,8 +4,8 @@ import { extend, useThree } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
 
 import { useSound } from '@/components/Sound';
-import { useGameState } from '../hook/useGameState';
-import Silkscreen_Regular from '../../../public/fonts/Silkscreen_Regular.json';
+import { useGameState } from '../../app/tic-tac-toe/hook/useGameState';
+import Silkscreen_Regular from '../../public/fonts/Silkscreen_Regular.json';
 
 extend({ TextGeometry })
 

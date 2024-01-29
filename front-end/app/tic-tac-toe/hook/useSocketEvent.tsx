@@ -43,7 +43,7 @@ export const useSocketEvent = () => {
 						name: "KEK",
 						color: 0x00ff00,
 						number: clients,
-						symbol: clients === 0 ? 'X' : 'O',
+						symbol: clients === 0 ? 'X' : clients === 1 ? 'O' : '🔳',
 				}
 				newPlayerData.client = clients
 				updatePlayerState( newPlayerData );

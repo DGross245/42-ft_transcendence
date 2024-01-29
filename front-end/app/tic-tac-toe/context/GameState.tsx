@@ -87,7 +87,7 @@ interface GameStateContextValue {
 	currentTurn: string,
 	setTurn: Dispatch<SetStateAction<string>>,
 	board: string[][][],
-	updateBoard: Dispatch<SetStateAction<string[][][]>>,
+	setBoard: Dispatch<SetStateAction<string[][][]>>,
 	sceneCoords: number[][][][],
 	setSceneCoords: Dispatch<SetStateAction<number[][][][]>>,
 	winner: string,
@@ -110,7 +110,7 @@ export const GameState: React.FC<{ gameMode: boolean, children: ReactNode }> = (
 	const [board, setBoard] = useState(initialBoard());
 	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
 	const [winner, setWinner] = useState('');
-	const [gameState, setGameState] = useState({ gameId: "1", pause: false, reset: false, gameOver: false });
+	const [gameState, setGameState] = useState({ gameId: "1", pause: true, reset: false, gameOver: false });
 	const [lineCoords, setLineCoords] = useState([...winningCoords]);
 
 	const updateGameState : Dispatch<SetStateAction<GameStateContextValue['gameState']>> = ( newState ) => {
@@ -120,18 +120,18 @@ export const GameState: React.FC<{ gameMode: boolean, children: ReactNode }> = (
 		}));
 	};
 
-	const updateBoard : Dispatch<SetStateAction<string [][][]>> = ( newState ) => {
-		setBoard(prevState => ({
-			...prevState,
-			...newState,
-		}));
-	};
+	//const updateBoard : Dispatch<SetStateAction<string[][][]>> = ( newState ) => {
+	//	setBoard(prevState => ({
+	//		...prevState,
+	//		...newState,
+	//	}));
+	//};
 
 	const value: GameStateContextValue = {
 		currentTurn,
 		setTurn,
 		board,
-		updateBoard,
+		setBoard,
 		sceneCoords,
 		setSceneCoords,
 		winner,

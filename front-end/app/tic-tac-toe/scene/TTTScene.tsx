@@ -5,11 +5,14 @@ import { useGameEvent } from "../hook/useGameEvent";
 import { useSocketEvent } from "../hook/useSocketEvent";
 import { useWindow } from "../hook/useWindow";
 import { OrbitControls } from "@react-three/drei";
-import Countdown from "../TTT/Countdown";
-import Camera from "../TTT/Camera";
-
-// TODO: Add a lose function, that displays losing modal + plays random lose sound
-// TODO: Add maybe a minimap where you can see the board better
+import Countdown from "../../../components/TTT/Countdown";
+import Camera from "../../../components/TTT/Camera";
+import { Grid } from "../../../components/TTT/Grid";
+import Floor from "../../../components/TTT/Floor";
+import { FieldLayers } from "../../../components/TTT/FieldLayers";
+import { useClick } from "../hook/useClick";
+import TurnDisplay from "../../../components/TTT/TurnDisplay";
+import FinishLine from "../../../components/TTT/FinishLine";
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
@@ -21,7 +24,8 @@ import Camera from "../TTT/Camera";
 const TTTSceneTEST = () => {
 	const { dimensions } = useWindow();
 	const maxClients = 2;
-	
+	const { click, clicked } = useClick();
+
 	// Event hooks
 	useSocketEvent();
 	useGameEvent(maxClients);
@@ -31,31 +35,22 @@ const TTTSceneTEST = () => {
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown />
 				<Camera />
-				
-				{gridLineGenrator()}
-				{!countdownVisible && fieldGenerator(clicked, click, currentTurn, board, setCurrentBoardState, sceneCoords, setSceneCoords, isGameOver)}
+				<Grid />
+				<FieldLayers clicked={clicked} click={click} />
 				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
 				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<Floor position={[ 3, 23.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<TurnDisplay />
-				<FinishLine coords={coords} visible={showFinishLine} colour={colour} />
+				<FinishLine />
 				<OrbitControls
 					enableZoom={false}
-					target={[4, 10, 2]}
+					target={[3, 11.8, 3]}
 					enableRotate={true}
 					enablePan={false}
 				/>
 			</Canvas>
-			<EndModal
-				isOpen={showModal}
-				onClose={closeModal}
-				winner={winner}
-				setSendRequest={setSendRequest}
-				sendRequest={sendRequest}
-				requestRematch={requestRematch}
-				disable={disable}
-			/>
+
 		</div> 
 	);
 }
