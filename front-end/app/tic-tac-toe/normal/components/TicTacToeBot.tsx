@@ -130,15 +130,6 @@ export const TicTacToeBot = ( board: string[][][], symbol: string ) => {
 		else {
 			placeSymbol(symbol, longest_opponent.coords, longest_opponent.vector);
 		}
-		// get longest line of own symbol that is not blocked
-		// longest line constitutes: amount of symbols in a possible line without the occurrence of opponents symbols
-		// get longest line of opponent symbol that is not blocked
-		// if opponent line length <= self line length
-			// continue self line
-		// else
-			// block opponent line
-		// if no lines
-			// place in random spot
 	}
 
 	makeMove();
