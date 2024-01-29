@@ -13,6 +13,7 @@ import { FieldLayers } from "../../../components/TTT/FieldLayers";
 import { useClick } from "../hook/useClick";
 import TurnDisplay from "../../../components/TTT/TurnDisplay";
 import FinishLine from "../../../components/TTT/FinishLine";
+import { useGameState } from "../hook/useGameState";
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
@@ -21,9 +22,10 @@ import FinishLine from "../../../components/TTT/FinishLine";
  * resizing, modal display, and game completion.
  * @returns The entire Three.js scene, including the modal.
  */
-const TTTSceneTEST = () => {
+const TTTScene = () => {
+	const { isGameMode } = useGameState();
 	const { dimensions } = useWindow();
-	const maxClients = 2;
+	const maxClients = isGameMode ? 4 : 2;
 	const { click, clicked } = useClick();
 
 	// Event hooks
@@ -55,4 +57,4 @@ const TTTSceneTEST = () => {
 	);
 }
 
-export default TTTSceneTEST;
+export default TTTScene;

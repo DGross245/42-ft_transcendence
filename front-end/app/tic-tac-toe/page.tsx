@@ -1,21 +1,16 @@
 "use client"
 
-import React, { useState, useEffect } from 'react';
-import TTTScene from "./normal/TicTacToeScene";
-import QubicScene from './qubic/QubicScene';
-import { TTTProvider } from './TTTProvider';
-import TTTSceneTEST from './scene/TTTScene';
 import { GameState } from './context/GameState';
 import { Socket } from './context/Sockets';
-import QubicSceneTEST from './scene/QubicScene';
+import TTTScene from './scene/TTTScene';
 
 export default function TicTacToePage() {
 	return (
 		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80svh' }}>
 			<div>
-				<GameState gameMode={true} >
+				<GameState gameMode={false} >
 					<Socket>
-						<QubicSceneTEST />
+						<TTTScene />
 					</Socket>
 				</GameState>
 			</div>

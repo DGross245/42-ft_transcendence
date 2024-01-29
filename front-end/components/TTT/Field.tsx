@@ -4,9 +4,9 @@ import * as THREE from 'three';
 import { useGameState } from '../../app/tic-tac-toe/hook/useGameState';
 import { useSocket } from '../../app/tic-tac-toe/hook/useSocket';
 import { useField } from '../../app/tic-tac-toe/hook/useField';
-import Square from '../../app/tic-tac-toe/qubic/components/Square';
 import X from './X';
 import Torus from './Torus';
+import Square from './Square';
 
 export interface FieldProps {
 	key: string,
