@@ -12,7 +12,7 @@ import Camera from "../sharedComponents/Camera";
 import Countdown from "../sharedComponents/Countdown";
 import inputHandler from "@/components/inputHandler";
 import { losing1, losing2, tictactoe, win } from "@/components/Sound";
-import { TicTacToeBot } from "@/components/TicTacToeBot";
+import { TicTacToeBot } from "./components/TicTacToeBot";
 
 // TODO: Add a lose function, that displays losing modal + plays random lose sound
 
@@ -167,8 +167,8 @@ const TTTScene = () => {
 			if (clicked) {
 				tictactoe();
 				if (botActive)
-					TicTacToeBot(botActive, botSymbol);
-				else
+					TicTacToeBot(board, botSymbol);
+				// else
 					setTurn(currentTurn === 'X' ? 'O' : 'X');
 				click(false);
 				const winner = gameValidation(board, sceneCoords, coords, setCoords);
