@@ -22,7 +22,7 @@ export const useClick = () => {
 		currentTurn,
 		isGameMode
 	} = useGameState();
- 
+
 	useEffect(() => {
 		if (clicked) {
 			soundEngine?.playSound("tictactoe");

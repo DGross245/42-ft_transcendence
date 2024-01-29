@@ -41,7 +41,7 @@ export const useField = (props: FieldProps) => {
 			setSceneCoords(updateSceneCoords);
 			click(true);
 		}
-	}, [board]);
+	}, [board[i][j][k]]);
 
 	return {
 		hovered, hover, handleClick, handleHover, symbol

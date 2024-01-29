@@ -1,3 +1,4 @@
+import { useKey } from "@/components/useKey";
 import { useFrame } from "@react-three/fiber";
 import { MutableRefObject, forwardRef } from "react";
 import * as THREE from 'three'
@@ -22,11 +23,14 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
 	const borderPositionY = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
+	const up = useKey('ArrowUp');
+	const down = useKey('ArrowDown')
+
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
-			if (keyMap['ArrowUp']) {
+			if (up.isKeyDown) {
 				meshRef.current.position.z = Math.max(meshRef.current.position.z - paddleSpeed * delta, -borderPositionY + 15);
-			} else if (keyMap['ArrowDown']) {
+			} else if (down.isKeyDown) {
 				meshRef.current.position.z = Math.min(meshRef.current.position.z + paddleSpeed * delta, borderPositionY - 15);
 			}
 		}
@@ -52,11 +56,14 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	const borderPositionY = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
+	const up = useKey('KeyW');
+	const down = useKey('KeyS')
+
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
-			if (keyMap['KeyW']) {
+			if (up.isKeyDown) {
 				meshRef.current.position.z = Math.max(meshRef.current.position.z - paddleSpeed * delta, -borderPositionY + 15);
-			} else if (keyMap['KeyS']) {
+			} else if (down.isKeyDown) {
 				meshRef.current.position.z = Math.min(meshRef.current.position.z + paddleSpeed * delta, borderPositionY - 15);
 			}
 		}
@@ -82,11 +89,14 @@ export const TopPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =>
 	const borderPositionX = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
+	const right = useKey('KeyD');
+	const left = useKey('KeyA');
+
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
-			if (keyMap['KeyD']) {
+			if (right.isKeyDown) {
 				meshRef.current.position.x = Math.min(meshRef.current.position.x + paddleSpeed * delta, borderPositionX - 15);
-			} else if (keyMap['KeyA']) {
+			} else if (left.isKeyDown) {
 				meshRef.current.position.x = Math.max(meshRef.current.position.x - paddleSpeed * delta, -borderPositionX + 15);
 			}
 		}
@@ -112,11 +122,14 @@ export const BottomPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref)
 	const borderPositionX = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
+	const right = useKey('ArrowRight');
+	const left = useKey('ArrowLeft');
+
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
-			if (keyMap['ArrowRight']) {
+			if (right.isKeyDown) {
 				meshRef.current.position.x = Math.min(meshRef.current.position.x + paddleSpeed * delta, borderPositionX - 15);
-			} else if (keyMap['ArrowLeft']) {
+			} else if (left.isKeyDown) {
 				meshRef.current.position.x = Math.max(meshRef.current.position.x - paddleSpeed * delta, -borderPositionX + 15);
 			}
 		}

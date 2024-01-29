@@ -24,7 +24,6 @@ import { useWebSocket } from './hooks/useWebSocket';
  */
 export default function OneForAllScene() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const keyMap = inputHandler();
 	const { closeModal, showModal,
 		p1Score, setP1Score, p2Score, setP2Score,
 		p3Score, setP3Score, p4Score, setP4Score,
@@ -67,10 +66,10 @@ export default function OneForAllScene() {
 				/>
 				<Camera position={camPos}/> 
 				<Border />
-				<TopPaddle ref={topPaddleRef} position={[0, 0, -151]} keyMap={keyMap} />
-				<BottomPaddle ref={bottomPaddleRef} position={[0, 0, 151]} keyMap={keyMap} />
-				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} keyMap={keyMap} />
-				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
+				<TopPaddle ref={topPaddleRef} position={[0, 0, -151]} />
+				<BottomPaddle ref={bottomPaddleRef} position={[0, 0, 151]} />
+				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
+				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} />
 				<Ball
 					rightPaddleRef={rightPaddleRef}
 					leftPaddleRef={leftPaddleRef}

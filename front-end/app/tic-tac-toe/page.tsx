@@ -17,14 +17,3 @@ export default function TicTacToePage() {
 		</div>
 	);
 }
-//export default function TicTacToePage() {
-//	return (
-//		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80svh' }}>
-//			<div>
-//				<TTTProvider>
-//					<TTTScene />
-//				</TTTProvider>
-//			</div>
-//		</div>
-//	);
-//}
