@@ -168,7 +168,7 @@ const TTTScene = () => {
 				tictactoe();
 				if (botActive)
 					TicTacToeBot(board, botSymbol);
-				// else
+				else
 					setTurn(currentTurn === 'X' ? 'O' : 'X');
 				click(false);
 				const winner = gameValidation(board, sceneCoords, coords, setCoords);

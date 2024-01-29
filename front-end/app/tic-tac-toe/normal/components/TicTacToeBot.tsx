@@ -33,6 +33,7 @@ const win_vectors = [
 ];
 
 // coordinate data structure
+// @todo create vector struct or delete this
 interface Coordinate {
 	x: number;
 	y: number;
@@ -67,7 +68,7 @@ export const TicTacToeBot = ( board: string[][][], symbol: string ) => {
 	// 	[ 1, 1,-1 ],
 	// ]; // @note this can't work because there are multiple possible origin coords for most of these vectors
 
-	const getLongestLine = (board: string[][][], symbol: string) => {
+	const getLongestLine = (symbol: string) => {
 		let longest_count: number = 0;
 		let longest_coords: Coordinate = { x: 0, y: 0, z: 0 };
 		let longest_vector: number[] = [];
@@ -96,7 +97,7 @@ export const TicTacToeBot = ( board: string[][][], symbol: string ) => {
 							y += vector[1];
 							z += vector[2];
 						}
-						if (total == 4 && temp > longest_count) {
+						if (total == board.length && temp > longest_count) {
 							longest_count = temp;
 							longest_coords = { x: i, y: j, z: k };
 							longest_vector = vector;
@@ -108,7 +109,27 @@ export const TicTacToeBot = ( board: string[][][], symbol: string ) => {
 		return { count: longest_count, coords: longest_coords, vector: longest_vector };
 	}
 
+	const placeSymbol = (symbol: string, coords: Coordinate, vector: number[]) => {
+		let x = coords.x;
+		let y = coords.y;
+		let z = coords.z;
+		while (board[x][y][z] != '') {
+			x += vector[0];
+			y += vector[1];
+			z += vector[2];
+		}
+		board[x][y][z] = symbol;
+	}
+
 	const makeMove = () => {
+		const longest_self = getLongestLine(symbol);
+		const longest_opponent = getLongestLine(symbol === 'X' ? 'O' : 'X');
+		if (longest_opponent.count <= longest_self.count) {
+			placeSymbol(symbol, longest_self.coords, longest_self.vector);
+		}
+		else {
+			placeSymbol(symbol, longest_opponent.coords, longest_opponent.vector);
+		}
 		// get longest line of own symbol that is not blocked
 		// longest line constitutes: amount of symbols in a possible line without the occurrence of opponents symbols
 		// get longest line of opponent symbol that is not blocked
@@ -118,7 +139,6 @@ export const TicTacToeBot = ( board: string[][][], symbol: string ) => {
 			// block opponent line
 		// if no lines
 			// place in random spot
-		console.log(getLongestLine(board, symbol));
 	}
 
 	makeMove();
