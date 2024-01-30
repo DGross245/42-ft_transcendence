@@ -16,7 +16,9 @@ export const gameValidation = (
 	board: string[][][],
 	SceneCoords: number [][][][],
 	coords: [number, number, number][],
-	setCoords: Dispatch<SetStateAction<[number, number, number][]>>) => {
+	setCoords: Dispatch<SetStateAction<[number, number, number][]>>,
+	setLineVisibility: Dispatch<SetStateAction<boolean>>) => {
+
 		// Represents possible symbol positions to form a winning line from a given location.
 		// Left column: second possible symbol locations. Right column: third possible symbol locations.
 		const directions = [
@@ -37,7 +39,7 @@ export const gameValidation = (
 			[[ 1,-1,-1], [ 2,-2,-2],[ 1,-1,-1]],
 			[[-1,-1,-1], [-2,-2,-2],[-1,-1,-1]],
 			[[-1, 1,-1], [-2, 2,-2],[-1, 1,-1]],
-		]; // @note vectors representing possible winning lines
+		];
 
 		let isDraw = true;
 
@@ -60,6 +62,7 @@ export const gameValidation = (
 									coords[p++] = [...SceneCoords[x][y][z]] as [number, number, number];
 									if (count === 4) {
 										setCoords(coords);
+										setLineVisibility(true);
 										return (symbol);
 									}
 								} else {

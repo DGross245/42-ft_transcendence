@@ -8,8 +8,8 @@ import { useSocket } from "@/app/tic-tac-toe/hook/useSocket";
 
 const EndModal = () => {
 	const { winner } = useGameState();
-	const { showModal, closeModal } = useUI();
 	const { disconnected, requestRematch, setSendRequest, sendRequest } = useSocket();
+	const { showModal, closeModal } = useUI();
 
 	const getWinnerImage = () => {
 		if (winner == 'O')

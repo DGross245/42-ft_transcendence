@@ -1,3 +1,4 @@
+import { useSound } from "@/components/Sound";
 import {
 	ReactNode,
 	createContext,
@@ -100,6 +101,8 @@ interface GameStateContextValue {
 	setCountdownVisible: Dispatch<SetStateAction<boolean>>,
 	isGameMode: boolean,
 	setGameMode: Dispatch<SetStateAction<boolean>>,
+	isLineVisible: boolean,
+	setLineVisible: Dispatch<SetStateAction<boolean>>,
 }
 
 export const GameStateContext = createContext<GameStateContextValue>({} as GameStateContextValue);
@@ -113,6 +116,7 @@ export const GameState: React.FC<{ gameMode: boolean, children: ReactNode }> = (
 	const [winner, setWinner] = useState('');
 	const [gameState, setGameState] = useState({ gameId: "1", pause: true, reset: false, gameOver: false, bot: false });
 	const [lineCoords, setLineCoords] = useState([...winningCoords]);
+	const [isLineVisible, setLineVisible] = useState(false);
 
 	const updateGameState : Dispatch<SetStateAction<GameStateContextValue['gameState']>> = ( newState ) => {
 		setGameState(prevState => ({
@@ -143,7 +147,10 @@ export const GameState: React.FC<{ gameMode: boolean, children: ReactNode }> = (
 		setLineCoords,
 		countdownVisible,
 		setCountdownVisible,
-		isGameMode, setGameMode
+		isGameMode,
+		setGameMode,
+		isLineVisible,
+		setLineVisible,
 	};
 
 	return (

@@ -22,18 +22,17 @@ export const useClick = () => {
 		lineCoords,
 		setLineCoords,
 		currentTurn,
-		isGameMode
+		isGameMode,
+		setLineVisible
 	} = useGameState();
 
 	useEffect(() => {
 		if (clicked) {
-			console.log(board);
-			console.log(gameState.bot);
 			soundEngine?.playSound("tictactoe");
 			click(false);
 			const newBoard = JSON.stringify(board);
 			wsclient?.emitMessageToGame(newBoard,`Board-${gameState.gameId}`, gameState.gameId);
-			const winner = gameValidation(board, sceneCoords, lineCoords, setLineCoords);
+			const winner = gameValidation(board, sceneCoords, lineCoords, setLineCoords, setLineVisible);
 			if (winner) {
 				setWinner(winner);
 				updateGameState({ ...gameState, gameOver: true })
@@ -43,7 +42,6 @@ export const useClick = () => {
 				setTurn(currentTurn === 'X' ? 'O' : currentTurn === 'O' ? '🔳' : 'X');
 			else
 				setTurn(currentTurn === 'X' ? 'O' : 'X');
-			console.log(currentTurn)
 		}
 	},[clicked, board, currentTurn]);
 

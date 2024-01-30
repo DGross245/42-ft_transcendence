@@ -45,14 +45,14 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			socket.on('join-game', ( gameId: string, gameType: string ) => {
 				const room = io.sockets.adapter.rooms.get(gameId);
 				const numClients = room ? room.size : 0;
-				let maxClients = 1; // FIXME: CHANGE LATER BACK TO 2
+				let maxClients = 2;
 
 				if (gameType === "OneForAll")
 					maxClients = 4;
 				else if (gameType === "Qubic")
-					maxClients = 2;
+					maxClients = 3;
 
-				if (numClients < maxClients) { // FIXME: maxClients - 1
+				if (numClients < maxClients) {
 					socket.join(gameId);
 					socket.emit(`room-joined-${gameId}`, (numClients));
 					if (numClients === maxClients - 1) {

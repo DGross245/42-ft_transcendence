@@ -16,6 +16,7 @@ export const useGameEvent = (
 		setWinner,
 		setCountdownVisible,
 		countdownVisible,
+		setLineVisible
 	} = useGameState();
 	const { rematchIndex, setRequestRematch, setSendRequest } = useSocket();
 	const { setShowModal, openModal } = useUI();
@@ -30,6 +31,7 @@ export const useGameEvent = (
 			updateGameState({ ...gameState, reset: false, gameOver: false })
 			setWinner('');
 			setCountdownVisible(true);
+			setLineVisible(false)
 		}
 	}, [gameState.reset]);
 
@@ -45,18 +47,4 @@ export const useGameEvent = (
 		if (!countdownVisible)
 			setTurn('X');
 	}, [countdownVisible]);
-
-	// Opens the EndModal after a delay if the 'gameOver' state is true.
-	useEffect(() => {
-		if (gameState.gameOver) {
-			const delay = 2000;
-			const modalTimeout = setTimeout(() => {
-				openModal();
-			}, delay);
-
-			return (() => {
-				clearTimeout(modalTimeout)
-			});
-		}
-	}, [gameState.gameOver]);
 }

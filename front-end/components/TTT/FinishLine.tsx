@@ -3,6 +3,7 @@ import { Line } from "@react-three/drei";
 import { useEffect, useState } from "react";
 
 import { useGameState } from "../../app/tic-tac-toe/hook/useGameState";
+import { winningCoords } from "@/app/tic-tac-toe/context/GameState";
 
 /**
  * The `FinishLine` component renders a line with specified coordinates and color, and plays a sound
@@ -16,30 +17,22 @@ import { useGameState } from "../../app/tic-tac-toe/hook/useGameState";
  */
 const FinishLine = () => {
 	const soundEngine = useSound();
-	const [isVisible, setVisibility] = useState(false);
 	const [color, setColor] = useState(0x00ffff);
 	const { winner, lineCoords, isGameMode } = useGameState();
-
+	const { isLineVisible } = useGameState();
 	useEffect(() => {
 		if (winner) {
 			if (isGameMode)
 				setColor(winner === 'X' ? 0xff0000 : winner === 'O' ? 0x1aabff : 0x008000 );
 			else
 				setColor(winner === 'X' ? 0xff0000 : 0x1aabff);
-			setVisibility(true);
+			soundEngine?.playSound("finish");
 		} 
-		else if (isVisible) {
-			setVisibility(false);	
-		}
 	}, [winner])
 
-	useEffect(() => {
-		if (isVisible)
-			soundEngine?.playSound("finish");
-	}, [isVisible]);
 
 	return (
-		<mesh visible={isVisible}>
+		<mesh visible={isLineVisible}>
 			<Line
 				points={[lineCoords[0], lineCoords[1], lineCoords[2], lineCoords[3]]}
 				color={color}
