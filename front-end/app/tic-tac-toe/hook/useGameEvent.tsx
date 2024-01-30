@@ -18,7 +18,7 @@ export const useGameEvent = (
 		countdownVisible,
 	} = useGameState();
 	const { rematchIndex, setRequestRematch, setSendRequest } = useSocket();
-	const { showModal, setShowModal } = useUI();
+	const { setShowModal, openModal } = useUI();
 
 	// Handling the reset of the scene, resetting important states.
 	useEffect(() => {
@@ -51,7 +51,7 @@ export const useGameEvent = (
 		if (gameState.gameOver) {
 			const delay = 2000;
 			const modalTimeout = setTimeout(() => {
-				setShowModal(true);
+				openModal();
 			}, delay);
 
 			return (() => {
