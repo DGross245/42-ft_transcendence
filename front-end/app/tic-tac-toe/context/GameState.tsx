@@ -83,6 +83,7 @@ interface GameStateContextValue {
 		pause: boolean,
 		reset: boolean,
 		gameOver: boolean,
+		bot: boolean,
 	},
 	currentTurn: string,
 	setTurn: Dispatch<SetStateAction<string>>,
@@ -110,7 +111,7 @@ export const GameState: React.FC<{ gameMode: boolean, children: ReactNode }> = (
 	const [board, setBoard] = useState(initialBoard());
 	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
 	const [winner, setWinner] = useState('');
-	const [gameState, setGameState] = useState({ gameId: "1", pause: true, reset: false, gameOver: false });
+	const [gameState, setGameState] = useState({ gameId: "1", pause: true, reset: false, gameOver: false, bot: false });
 	const [lineCoords, setLineCoords] = useState([...winningCoords]);
 
 	const updateGameState : Dispatch<SetStateAction<GameStateContextValue['gameState']>> = ( newState ) => {

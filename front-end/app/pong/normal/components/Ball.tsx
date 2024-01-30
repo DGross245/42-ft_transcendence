@@ -5,7 +5,7 @@ import { Mesh } from 'three';
 
 import { useBall } from "../hooks/useBall";
 
-interface BallProps {
+export interface BallProps {
 	rightPaddleRef: MutableRefObject<Mesh>,
 	leftPaddleRef: MutableRefObject<Mesh>,
 	p1Score: number,

@@ -1,5 +1,8 @@
 "use client"
 
+import { useGameState } from "@/app/tic-tac-toe/hook/useGameState";
+import { useEffect } from "react";
+
 interface TicTacToeBot {
 	board: string[][][];
 	symbol: string;
@@ -40,8 +43,7 @@ interface Coordinate {
 	z: number;
 }
 
-export const TicTacToeBot = ( board: string[][][], symbol: string ) => {
-
+export const TicTacToeBot = ( board: string[][][], symbol: string, setBoard ) => { 
 	// origin coordinates for each vector
 	// const vector_origins = [
 	// 	// one dimensionals
@@ -110,16 +112,24 @@ export const TicTacToeBot = ( board: string[][][], symbol: string ) => {
 	}
 
 	const placeSymbol = (symbol: string, coords: Coordinate, vector: number[]) => {
-		let x = coords.x;
-		let y = coords.y;
-		let z = coords.z;
-		while (board[x][y][z] != '') {
-			x += vector[0];
-			y += vector[1];
-			z += vector[2];
-		}
-		board[x][y][z] = symbol;
-	}
+		console.log("placeSymbol called.")
+			let x = coords.x;
+			let y = coords.y;
+			let z = coords.z;
+			while (board[x][y][z] !== '') {
+				console.log("coords in loop:", x, y, z);
+				x += vector[0];
+				y += vector[1];
+				z += vector[2];
+			}
+			console.log(board);
+			const newBoard = [...board];
+			newBoard[x][y][z] = symbol; 
+			setBoard(newBoard);
+
+			console.log("symbol placed!");
+			console.log("coords:", x, y, z);;
+	}	
 
 	const makeMove = () => {
 		const longest_self = getLongestLine(symbol);

@@ -4,8 +4,10 @@ import { useSound } from "@/components/Sound";
 import { useGameState } from "./useGameState";
 import { useSocket } from "./useSocket";
 import { gameValidation } from "../../../components/TTT/GameValidation";
+import { TicTacToeBot } from "@/components/TTT/TicTacToeBot";
 
-export const useClick = () => {
+
+export const useClick = (botSymbol) => {
 	const soundEngine = useSound();
 	const [clicked, click] = useState(false);
 	const { wsclient } = useSocket();
@@ -25,6 +27,8 @@ export const useClick = () => {
 
 	useEffect(() => {
 		if (clicked) {
+			console.log(board);
+			console.log(gameState.bot);
 			soundEngine?.playSound("tictactoe");
 			click(false);
 			const newBoard = JSON.stringify(board);
@@ -35,6 +39,8 @@ export const useClick = () => {
 				updateGameState({ ...gameState, gameOver: true })
 				return;
 			}
+			if (currentTurn !== 'O' && gameState.bot)
+				TicTacToeBot(board, botSymbol, setBoard);
 			if (isGameMode)
 				setTurn(currentTurn === 'X' ? 'O' : currentTurn === 'O' ? '🔳' : 'X');
 			else

@@ -45,8 +45,15 @@ export const useSocketEvent = () => {
 						number: clients,
 						symbol: clients === 0 ? 'X' : clients === 1 ? 'O' : '🔳',
 				}
+				newPlayerData.players[1] = {
+					name: "KEK",
+					color: 0xff0000,
+					number: 1,
+					symbol: 'O'
+				}
 				newPlayerData.client = clients
 				updatePlayerState( newPlayerData );
+				updateGameState({...gameState, bot: clients === 0 ? true : false});
 			}
 		};
 

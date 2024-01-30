@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { FieldProps } from "../../../components/TTT/Field";
 import { useSocket } from "./useSocket";
 import { useGameState } from "./useGameState";
+import { GameState } from "../context/GameState";
 
 export const useField = (props: FieldProps) => {
 	const [hovered, hover] = useState(false);
 	const [symbol, setSymbol] = useState<string>();
 	const { position, clicked, click, i, j, k } = props;
 	const { playerState } = useSocket();
-	const { board, setSceneCoords, sceneCoords, setBoard, currentTurn } = useGameState();
+	const { gameState, board, setSceneCoords, sceneCoords, setBoard, currentTurn } = useGameState();
 
 	const handleHover = ( state: boolean) => {
 		if (playerState.players[playerState.client].symbol == currentTurn)
