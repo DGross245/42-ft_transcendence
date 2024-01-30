@@ -48,7 +48,6 @@ export const useWebSocket = (isGameOver: Boolean, setGameOver: Dispatch<SetState
 					master: playerState.players[playerState.client].master,
 					number: playerState.players[playerState.client].number,
 				}
-				console.log("SEND: ", playerData);
 				gameState.wsclient?.emitMessageToGame(JSON.stringify(playerData), `PlayerData-${gameState.gameId}`, gameState.gameId);
 			};
 	

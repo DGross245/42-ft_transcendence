@@ -14,6 +14,7 @@ import { useClick } from "../hook/useClick";
 import TurnDisplay from "../../../components/TTT/TurnDisplay";
 import FinishLine from "../../../components/TTT/FinishLine";
 import { useGameState } from "../hook/useGameState";
+import EndModal from "@/components/TTT/EndModal";
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
@@ -52,7 +53,7 @@ const TTTScene = () => {
 					enablePan={false}
 				/>
 			</Canvas>
-
+			<EndModal />
 		</div> 
 	);
 }

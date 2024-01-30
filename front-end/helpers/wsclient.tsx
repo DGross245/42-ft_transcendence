@@ -29,7 +29,6 @@ class WSClient {
 	private async socketInitializer(): Promise<void> {
 		await fetch('/api/socket');
 		this.socket = io();
-		console.log("Socket now init");
 		return ;
 	}
 

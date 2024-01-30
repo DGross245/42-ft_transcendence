@@ -1,21 +1,15 @@
 "use client"
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
+import { useGameState } from "@/app/tic-tac-toe/hook/useGameState";
+import { useUI } from "@/app/tic-tac-toe/hook/useUI";
+import { useSocket } from "@/app/tic-tac-toe/hook/useSocket";
 
 const EndModal = () => {
-	const [showModal, setShowModal] = useState(false);
-
-	const closeModal = () => {
-		setShowModal(false);
-	}
-
-	const openModal = () => {
-		soundEngine?.playSound("win");
-		//losing1();
-		//losing2();
-		setShowModal(true);
-	}
+	const { winner } = useGameState();
+	const { showModal, closeModal } = useUI();
+	const { disconnected, requestRematch, setSendRequest, sendRequest } = useSocket();
 
 	const getWinnerImage = () => {
 		if (winner == 'O')
@@ -30,8 +24,8 @@ const EndModal = () => {
 		<>
 			<Modal
 				backdrop="opaque"
-				isOpen={isOpen}
-				onClose={onClose}
+				isOpen={showModal}
+				onClose={closeModal}
 				classNames={{
 					backdrop: 'bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20'
 				}}
@@ -44,7 +38,7 @@ const EndModal = () => {
 			>
 				<ModalContent style={{ position: 'relative', overflow: 'visible' }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-					{isOpen && (
+					{showModal && (
 						<div style={{ marginTop: '20px' }}>
 							<img
 								src={getWinnerImage()}
@@ -63,13 +57,13 @@ const EndModal = () => {
 					<ModalBody >
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
-					<Button color="danger" variant="ghost" onClick={onClose}>
+					<Button color="danger" variant="ghost" onClick={closeModal}>
 						Close
 					</Button>
-					<Button color="primary" isDisabled={disable} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
+					<Button color="primary" isDisabled={disconnected} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
 						Rematch
 					</Button>
-					<Button color="success" variant="ghost" onClick={onClose}>
+					<Button color="success" variant="ghost" onClick={closeModal}>
 						View
 					</Button>
 					</ModalFooter>

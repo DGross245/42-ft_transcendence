@@ -2,6 +2,7 @@ import { useEffect, Dispatch, SetStateAction } from "react";
 import { useGameState } from "./useGameState";
 import { initialBoard, winningCoords } from "../context/GameState";
 import { useSocket } from "./useSocket";
+import { useUI } from "./useUI";
 
 export const useGameEvent = (
 	maxClients: number,
@@ -16,13 +17,13 @@ export const useGameEvent = (
 		setCountdownVisible,
 		countdownVisible,
 	} = useGameState();
-
 	const { rematchIndex, setRequestRematch, setSendRequest } = useSocket();
+	const { showModal, setShowModal } = useUI();
 
 	// Handling the reset of the scene, resetting important states.
 	useEffect(() => {
 		if (gameState.reset) {
-			// closeModal();
+			setShowModal(false);
 			setBoard(initialBoard());
 			setTurn('');
 			setLineCoords([...winningCoords]);
@@ -50,7 +51,7 @@ export const useGameEvent = (
 		if (gameState.gameOver) {
 			const delay = 2000;
 			const modalTimeout = setTimeout(() => {
-				// openModal();
+				setShowModal(true);
 			}, delay);
 
 			return (() => {
