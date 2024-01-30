@@ -43,34 +43,31 @@ interface Coordinate {
 	z: number;
 }
 
-export const TicTacToeBot = ( board: string[][][], symbol: string, setBoard ) => { 
-	// origin coordinates for each vector
-	// const vector_origins = [
-	// 	// one dimensionals
-	// 	[ 0, 0, 0 ],
-	// 	[ 0, 0, 0 ],
-	// 	[ 0, 0, 0 ],
+// strength: number between 0 and 1, indicating how well the bot plays
+export const TicTacToeBot = ( board: string[][][], symbol: string, strength: number, setBoard ) => { 
 
-	// 	// two dimensional diagonals
-	// 	[ 0, 0, 0 ],
-	// 	[board.length, 0, 0 ],
+	function placeAtCoordinate(coords: Coordinate) {
+		const newBoard = [...board];
+		newBoard[coords.x][coords.y][coords.z] = symbol; 
+		setBoard(newBoard);
+	}
 
-	// 	// x-z diagonals
-	// 	[ 0, 0, 0 ],
-	// 	[ board.length, 0, 0 ],
+	function placeAtRandom() {
+		const coords: Coordinate = {
+			x: 0,
+			y: 0,
+			z: 0,
+		}
 
-	// 	// y-z diagonals
-	// 	[ 0, 0, 0 ],
-	// 	[ 0, board[0].length,-1 ],
+		while (board[coords.x][coords.y][coords.z] !== '') {
+			coords.x = Math.floor(Math.random() * board.length);
+			coords.y = Math.floor(Math.random() * board.length);
+			coords.z = Math.floor(Math.random() * board.length);
+		}
+		placeAtCoordinate(coords);
+	}
 
-	// 	// three dimensional diagonals
-	// 	[ 1, 1, 1 ],
-	// 	[-1, 1, 1 ],
-	// 	[ 1,-1, 1 ],
-	// 	[ 1, 1,-1 ],
-	// ]; // @note this can't work because there are multiple possible origin coords for most of these vectors
-
-	const getLongestLine = (symbol: string) => {
+	function getLongestLine(symbol_to_check: string) {
 		let longest_count: number = 0;
 		let longest_coords: Coordinate = { x: 0, y: 0, z: 0 };
 		let longest_vector: number[] = [];
@@ -88,7 +85,7 @@ export const TicTacToeBot = ( board: string[][][], symbol: string, setBoard ) =>
 						while (x >= 0 && x < board.length
 							&& y >= 0 && y < board[x].length
 							&& z >= 0 && z < board[x][y].length) {
-							if (board[x][y][z] === symbol)
+							if (board[x][y][z] === symbol_to_check)
 								temp++;
 							else if (board[x][y][z] !== '') {
 								temp = 0;
@@ -111,34 +108,34 @@ export const TicTacToeBot = ( board: string[][][], symbol: string, setBoard ) =>
 		return { count: longest_count, coords: longest_coords, vector: longest_vector };
 	}
 
-	const placeSymbol = (symbol: string, coords: Coordinate, vector: number[]) => {
+	function placeAtLine(coords: Coordinate, vector: number[]) {
 		console.log("placeSymbol called.")
-			let x = coords.x;
-			let y = coords.y;
-			let z = coords.z;
-			while (board[x][y][z] !== '') {
-				console.log("coords in loop:", x, y, z);
-				x += vector[0];
-				y += vector[1];
-				z += vector[2];
-			}
-			console.log(board);
-			const newBoard = [...board];
-			newBoard[x][y][z] = symbol; 
-			setBoard(newBoard);
+		console.log("coords:", coords);
+		console.log(board);
+		while (board[coords.x][coords.y][coords.z] !== '') {
+			coords.x += vector[0];
+			coords.y += vector[1];
+			coords.z += vector[2];
+			console.log("coords in loop:", coords.x, coords.y, coords.z);
+		}
+		console.log(board);
+		placeAtCoordinate(coords);
 
-			console.log("symbol placed!");
-			console.log("coords:", x, y, z);;
+		console.log("symbol placed!");
 	}	
 
-	const makeMove = () => {
+	function makeMove() {
 		const longest_self = getLongestLine(symbol);
 		const longest_opponent = getLongestLine(symbol === 'X' ? 'O' : 'X');
-		if (longest_opponent.count <= longest_self.count) {
-			placeSymbol(symbol, longest_self.coords, longest_self.vector);
+		if (Math.random() >= strength) {
+			console.log("random");
+			placeAtRandom();
+		}
+		else if (longest_opponent.count <= longest_self.count) {
+			placeAtLine(longest_self.coords, longest_self.vector);
 		}
 		else {
-			placeSymbol(symbol, longest_opponent.coords, longest_opponent.vector);
+			placeAtLine(longest_opponent.coords, longest_opponent.vector);
 		}
 	}
 

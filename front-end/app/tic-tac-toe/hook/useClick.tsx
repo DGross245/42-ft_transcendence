@@ -40,7 +40,7 @@ export const useClick = (botSymbol) => {
 				return;
 			}
 			if (currentTurn !== 'O' && gameState.bot)
-				TicTacToeBot(board, botSymbol, setBoard);
+				TicTacToeBot(board, botSymbol, 0.6, setBoard);
 			if (isGameMode)
 				setTurn(currentTurn === 'X' ? 'O' : currentTurn === 'O' ? '🔳' : 'X');
 			else
