@@ -15,6 +15,7 @@ import { CubeLine } from './components/CubeLine';
 import Camera from '../sharedComponents/Camera';
 import Countdown from '../sharedComponents/Countdown';
 import { PongContext } from '../PongProvider';
+import { usePongBot } from '../hooks/PongBot';
 import { useGameState } from './hooks/useGameState';
 import { useWebSocket } from './hooks/useWebSocket';
 
@@ -33,6 +34,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 		setWinner, isGameOver, setGameOver, isBallVisible, setBallVisibility, showModal, closeModal,
 		winner, sendRequest, setRequestRematch, setSendRequest, requestRematch,
 		disable, setDisable, rematchIndex, setRematchIndex} = useGameState(2);
+	const { active, direction, ballAidsHook } = usePongBot(true, 100, rightPaddleRef.current?.position);
 
 	useWebSocket( isGameOver, sendRequest, setGameOver, setRequestRematch, setSendRequest, setDisable, rematchIndex, setRematchIndex );
 
@@ -62,6 +64,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 		};
 	}, []);
 
+
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
@@ -74,7 +77,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 				<Camera position={[0, 400, 100]} />
 				<Border position={[0, 0, -105]} />
 				<Border position={[0,0,105]} />
-				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
+				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} botActive={active} botDirection={direction}/>
 				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} />
 				<Ball
 					rightPaddleRef={rightPaddleRef}
@@ -86,6 +89,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 					scoreVisible={isScoreVisible}
 					isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
 					ref={ballRef}
+					onPositionChange={ballAidsHook}
 				/>
 				<CubeLine />
 				<OrbitControls enablePan={false} />

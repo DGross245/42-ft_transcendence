@@ -17,7 +17,8 @@ interface BallProps {
 	setGameOver: Dispatch<SetStateAction<boolean>>,
 	scoreVisible: boolean,
 	isBallVisible: boolean,
-	setBallVisibility: Dispatch<SetStateAction<boolean>>,
+	setBallVisibility: React.Dispatch<React.SetStateAction<boolean>>,
+	onPositionChange?: (position: THREE.Vector3) => void
 }
 
 /**
