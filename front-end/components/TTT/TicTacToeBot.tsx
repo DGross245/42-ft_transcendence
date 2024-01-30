@@ -1,7 +1,6 @@
 "use client"
 
-import { useGameState } from "@/app/tic-tac-toe/hook/useGameState";
-import { useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
 
 interface TicTacToeBot {
 	board: string[][][];
@@ -44,12 +43,13 @@ interface Coordinate {
 }
 
 // strength: number between 0 and 1, indicating how well the bot plays
-export const TicTacToeBot = ( board: string[][][], symbol: string, strength: number, setBoard ) => { 
+export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol: string, strength: number, setBoard: Dispatch<SetStateAction<string[][][]>>) => {
 
 	function placeAtCoordinate(coords: Coordinate) {
 		const newBoard = [...board];
 		newBoard[coords.x][coords.y][coords.z] = symbol; 
 		setBoard(newBoard);
+		console.log("placed at coordinate: ", coords);
 	}
 
 	function placeAtRandom() {
@@ -71,7 +71,7 @@ export const TicTacToeBot = ( board: string[][][], symbol: string, strength: num
 		let longest_count: number = 0;
 		let longest_coords: Coordinate = { x: 0, y: 0, z: 0 };
 		let longest_vector: number[] = [];
-		for (const vector of win_vectors) {
+		for (let vector of win_vectors) {
 			for (let i = 0; i < board.length; i++) {
 				for (let j = 0; j < board[i].length; j++) {
 					for (let k = 0; k < board[i][j].length; k++) {
@@ -109,34 +109,36 @@ export const TicTacToeBot = ( board: string[][][], symbol: string, strength: num
 	}
 
 	function placeAtLine(coords: Coordinate, vector: number[]) {
-		console.log("placeSymbol called.")
-		console.log("coords:", coords);
-		console.log(board);
 		while (board[coords.x][coords.y][coords.z] !== '') {
 			coords.x += vector[0];
 			coords.y += vector[1];
 			coords.z += vector[2];
-			console.log("coords in loop:", coords.x, coords.y, coords.z);
 		}
-		console.log(board);
 		placeAtCoordinate(coords);
-
-		console.log("symbol placed!");
 	}	
 
 	function makeMove() {
-		const longest_self = getLongestLine(symbol);
-		const longest_opponent = getLongestLine(symbol === 'X' ? 'O' : 'X');
+		let longest_lines: { count: number; coords: Coordinate; vector: number[]; }[] = [];
+		let self_index = 0;
+		SymbolArray.forEach((val, index) => {
+			longest_lines.push(getLongestLine(val));
+			if (val === symbol)
+				self_index = index;
+		});
+		console.log(longest_lines)
 		if (Math.random() >= strength) {
-			console.log("random");
 			placeAtRandom();
+			return ;
 		}
-		else if (longest_opponent.count <= longest_self.count) {
-			placeAtLine(longest_self.coords, longest_self.vector);
-		}
-		else {
-			placeAtLine(longest_opponent.coords, longest_opponent.vector);
-		}
+		let longest_total = longest_lines[0];
+		longest_lines.forEach((val) => {
+			if (val.count > longest_total.count) {
+				longest_total = val;
+			}
+		});
+		if (longest_lines[self_index].count == longest_total.count)
+			longest_total = longest_lines[self_index];	
+		placeAtLine(longest_total.coords, longest_total.vector);
 	}
 
 	makeMove();

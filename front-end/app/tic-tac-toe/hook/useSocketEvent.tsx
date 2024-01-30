@@ -45,11 +45,11 @@ export const useSocketEvent = () => {
 						number: clients,
 						symbol: clients === 0 ? 'X' : clients === 1 ? 'O' : '🔳',
 				}
-				newPlayerData.players[1] = {
+				newPlayerData.players[2] = {
 					name: "KEK",
 					color: 0xff0000,
 					number: 1,
-					symbol: 'O'
+					symbol: '🔳'
 				}
 				newPlayerData.client = clients
 				updatePlayerState( newPlayerData );

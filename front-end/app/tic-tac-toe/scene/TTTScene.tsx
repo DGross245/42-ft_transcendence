@@ -16,6 +16,7 @@ import FinishLine from "../../../components/TTT/FinishLine";
 import { useGameState } from "../hook/useGameState";
 import EndModal from "@/components/TTT/EndModal";
 import { useState } from "react";
+import { useBot } from "../hook/useBot";
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
@@ -27,12 +28,13 @@ import { useState } from "react";
 const TTTScene = () => {
 	const { isGameMode } = useGameState();
 	const { dimensions } = useWindow();
-	const maxClients = isGameMode ? 4 : 1;
+	const maxClients = isGameMode ? 2 : 1;
 	//const botActive = useState(true);
-	const botSymbol = 'O';
+	const botSymbol = '🔳';
 
-	const { click, clicked } = useClick(botSymbol);
+	const { click, clicked } = useClick();
 
+	useBot(botSymbol, 1);
 	// Event hooks
 	useSocketEvent();
 	useGameEvent(maxClients);

@@ -50,7 +50,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				if (gameType === "OneForAll")
 					maxClients = 4;
 				else if (gameType === "Qubic")
-					maxClients = 3;
+					maxClients = 2;
 
 				if (numClients < maxClients) { // FIXME: maxClients - 1
 					socket.join(gameId);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useSound } from "@/components/Sound";
 import { useGameState } from "./useGameState";
@@ -7,7 +7,7 @@ import { gameValidation } from "../../../components/TTT/GameValidation";
 import { TicTacToeBot } from "@/components/TTT/TicTacToeBot";
 
 
-export const useClick = (botSymbol) => {
+export const useClick = () => {
 	const soundEngine = useSound();
 	const [clicked, click] = useState(false);
 	const { wsclient } = useSocket();
@@ -39,14 +39,13 @@ export const useClick = (botSymbol) => {
 				updateGameState({ ...gameState, gameOver: true })
 				return;
 			}
-			if (currentTurn !== 'O' && gameState.bot)
-				TicTacToeBot(board, botSymbol, 0.6, setBoard);
 			if (isGameMode)
 				setTurn(currentTurn === 'X' ? 'O' : currentTurn === 'O' ? '🔳' : 'X');
 			else
 				setTurn(currentTurn === 'X' ? 'O' : 'X');
+			console.log(currentTurn)
 		}
-	},[clicked, board]);
+	},[clicked, board, currentTurn]);
 
 	// Thinking about sending only changed array instead of all of it
 	useEffect(() => {
