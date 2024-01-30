@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Server } from "Socket.IO";
+import { Server } from "socket.io";
 import cache from "memory-cache";
 import crypto from 'crypto';
 
@@ -15,7 +15,7 @@ interface SocketApiResponse extends NextApiResponse {
 	};
 }
 
-// TODO: Refactor code 
+// TODO: Refactor code
 // TODO: Add useKey hook (or fix it, so that its useable)
 // TODO: Limit cam movment in Pong
 // TODO: Implement and test pause in games when tab is not in focus (or ESC)
@@ -37,7 +37,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 	if (!res.socket.server?.io) {
 		const io = new Server(res.socket.server as any);
 		res.socket.server!.io = io;
-  
+
 		io.on('connection', (socket) => {
 			// socket.on('init', (walletId: string) => {
 			// 	cache.put(walletId, socket);
