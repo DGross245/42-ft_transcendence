@@ -14,9 +14,7 @@ import { CubeLine } from './components/CubeLine';
 
 import Camera from '../sharedComponents/Camera';
 import Countdown from '../sharedComponents/Countdown';
-import inputHandler from '@/components/inputHandler';
 import { PongContext } from '../PongProvider';
-import useWSClient from '@/helpers/wsclient';
 import { useGameState } from './hooks/useGameState';
 import { useWebSocket } from './hooks/useWebSocket';
 
@@ -35,7 +33,6 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 		setWinner, isGameOver, setGameOver, isBallVisible, setBallVisibility, showModal, closeModal,
 		winner, sendRequest, setRequestRematch, setSendRequest, requestRematch,
 		disable, setDisable, rematchIndex, setRematchIndex} = useGameState(2);
-	const keyMap = inputHandler();
 
 	useWebSocket( isGameOver, sendRequest, setGameOver, setRequestRematch, setSendRequest, setDisable, rematchIndex, setRematchIndex );
 
@@ -78,7 +75,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 				<Border position={[0, 0, -105]} />
 				<Border position={[0,0,105]} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
-				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
+				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} />
 				<Ball
 					rightPaddleRef={rightPaddleRef}
 					leftPaddleRef={leftPaddleRef}

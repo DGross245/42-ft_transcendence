@@ -3,9 +3,9 @@ import { MutableRefObject, forwardRef, useContext, useEffect, useRef } from "rea
 import { Mesh } from 'three';
 
 import { PongContext } from '../../PongProvider';
+import { useKey } from "@/components/useKey";
 
 interface Paddle {
-	keyMap: { [key: string]: boolean };
 	position: [number, number, number];
 }
 
@@ -55,12 +55,15 @@ export const RightPaddle = forwardRef<Mesh, { position: [number, number, number]
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
+export const LeftPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
 	const { playerState, gameState } = useContext(PongContext)!;
 	const paddleSpeed = 300;
 	const borderPositionZ = 103;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 	
+	const up = useKey('W');
+	const down = useKey('S');
+
 	// Moves the paddle based on pressed key for each frame.
 	useFrame((_, delta) => {
 		if (gameState.pause) {
@@ -69,9 +72,9 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 		if (meshRef && meshRef.current) {
 			const stringPos = JSON.stringify(meshRef.current.position.z);
 			gameState.wsclient?.emitMessageToGame(stringPos, `paddleUpdate-${gameState.gameId}`, gameState.gameId);
-			if (keyMap['KeyW']) {
+			if (up.isKeyDown) {
 				meshRef.current.position.z = Math.max(meshRef.current.position.z - paddleSpeed * delta, -borderPositionZ + 15);
-			} else if (keyMap['KeyS']) {
+			} else if (down.isKeyDown) {
 				meshRef.current.position.z = Math.min(meshRef.current.position.z + paddleSpeed * delta, borderPositionZ - 15);
 			}
 		}
