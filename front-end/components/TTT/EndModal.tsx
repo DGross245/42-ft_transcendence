@@ -5,11 +5,12 @@ import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from
 import { useGameState } from "@/app/tic-tac-toe/hook/useGameState";
 import { useUI } from "@/app/tic-tac-toe/hook/useUI";
 import { useSocket } from "@/app/tic-tac-toe/hook/useSocket";
+import { useKey } from "../useKey";
 
 const EndModal = () => {
-	const { winner } = useGameState();
+	const { winner, gameState } = useGameState();
 	const { disconnected, requestRematch, setSendRequest, sendRequest } = useSocket();
-	const { showModal, closeModal } = useUI();
+	const { showModal, closeModal, openModal } = useUI();
 
 	const getWinnerImage = () => {
 		if (winner == 'O')
@@ -19,6 +20,13 @@ const EndModal = () => {
 		else
 			return ('/images/draw.png');
 	}
+
+	const escape = useKey(['Escape'])
+
+	useEffect(() => {
+		if (escape.isKeyDown && gameState.gameOver)
+			openModal();
+	},[escape]);
 
 	return (
 		<>

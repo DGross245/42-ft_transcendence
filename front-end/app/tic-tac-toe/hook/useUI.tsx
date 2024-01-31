@@ -12,12 +12,10 @@ export const useUI = () => {
 	}
 
 	const openModal = () => {
-		soundEngine?.playSound("win");
 		//losing1();
 		//losing2();
 		setShowModal(true);
 	}
-
 
 	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
@@ -25,6 +23,7 @@ export const useUI = () => {
 			const delay = 2000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
+				soundEngine?.playSound("win");
 			}, delay);
 
 			return (() => {

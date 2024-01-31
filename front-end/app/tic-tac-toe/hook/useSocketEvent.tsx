@@ -18,7 +18,7 @@ export const useSocketEvent = () => {
 		rematchIndex,
 		sendRequest,
 	} = useSocket();
-	const { gameState, updateGameState, setWinner, isGameMode, botState } = useGameState();
+	const { gameState, updateGameState, setWinner, isGameMode, botState, setBot } = useGameState();
 	const [isFull, setIsFull] = useState("");
 
 	useEffect(() => {
@@ -47,6 +47,8 @@ export const useSocketEvent = () => {
 				}
 				newPlayerData.client = numClients
 				updatePlayerState( newPlayerData );
+				if (numClients !== 0)
+					setBot({ ...botState, isActive: false })
 			}
 		};
 
