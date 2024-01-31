@@ -8,7 +8,7 @@ export default function TicTacToePage() {
 	return (
 		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80svh' }}>
 			<div>
-				<GameState gameMode={false} isBotActive={true}>
+				<GameState gameMode={true} isBotActive={true}>
 					<Socket>
 						<TTTScene />
 					</Socket>

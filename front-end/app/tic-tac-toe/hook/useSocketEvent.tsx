@@ -18,7 +18,7 @@ export const useSocketEvent = () => {
 		rematchIndex,
 		sendRequest,
 	} = useSocket();
-	const { gameState, updateGameState, setWinner, isGameMode } = useGameState();
+	const { gameState, updateGameState, setWinner, isGameMode, botState } = useGameState();
 	const [isFull, setIsFull] = useState("");
 
 	useEffect(() => {
@@ -36,20 +36,17 @@ export const useSocketEvent = () => {
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (wsclient) {
-				const { numClients, isBot } = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", false);
-				console.log("PLAYER IS CLIENT", numClients, isBot)
+				const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
 				let newPlayerData = { ...playerState };
 
-				if (!isBot) {
-					newPlayerData.players[numClients] = {
-							name: "KEK",
-							color: 0x00ff00,
-							number: numClients,
-							symbol: numClients === 0 ? 'X' : numClients === 1 ? 'O' : '🔳',
-					}
-					newPlayerData.client = numClients
-					updatePlayerState( newPlayerData );
+				newPlayerData.players[numClients] = {
+						name: "KEK",
+						color: 0x00ff00,
+						number: numClients,
+						symbol: numClients === 0 ? 'X' : numClients === 1 ? 'O' : '🔳',
 				}
+				newPlayerData.client = numClients
+				updatePlayerState( newPlayerData );
 			}
 		};
 
@@ -57,16 +54,17 @@ export const useSocketEvent = () => {
 	}, [wsclient]);
 
 	useEffect(() => {
+		const sendPlayerData = () => {
+			const playerData = {
+				name: playerState.players[playerState.client].name,
+				color: playerState.players[playerState.client].color,
+				number: playerState.players[playerState.client].number,
+				symbol: playerState.players[playerState.client].symbol,
+			}
+			wsclient?.emitMessageToGame(JSON.stringify(playerData), `PlayerData-${gameState.gameId}`, gameState.gameId);
+		};
+
 		if (playerState.client !== -1 && isFull === "FULL") {
-			const sendPlayerData = () => {
-				const playerData = {
-					name: playerState.players[playerState.client].name,
-					color: playerState.players[playerState.client].color,
-					number: playerState.players[playerState.client].number,
-					symbol: playerState.players[playerState.client].symbol,
-				}
-				wsclient?.emitMessageToGame(JSON.stringify(playerData), `PlayerData-${gameState.gameId}`, gameState.gameId);
-			};
 			sendPlayerData();
 			updateGameState({ ...gameState, pause: false });
 		}

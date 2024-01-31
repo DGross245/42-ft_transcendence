@@ -16,32 +16,32 @@ export const useBot = () => {
 	],[playerState.players[0].symbol,playerState.players[1].symbol,playerState.players[2].symbol]);
 
 	useEffect(( ) => {
-		if (currentTurn === botState.symbol)
+		if (currentTurn === botState.symbol) {
+			console.log("KEK");
 			TicTacToeBot(board, SymbolArray, botState.symbol, botState.strength, setBoard );
+		}
 	},[currentTurn, botState])
 
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (wsclient && botState.symbol === 'NOT DEFINED') {
-				const { numClients, isBot } = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", BOT_ACTIVE);
+				console.log("K")
 				let newPlayerData = { ...playerState };
-
-				if (isBot) {
-					newPlayerData.players[numClients] = {
-						name: "BOT",
-						color: 0xff0000,
-						number: numClients,
-						symbol: numClients === 0 ? 'X' : numClients === 1 ? 'O' : '🔳',
-					}
-					newPlayerData.client = numClients
-					console.log("BOT IS CLIENT", numClients)
-					updatePlayerState( newPlayerData );
-					setBot({ ...botState, symbol: newPlayerData.players[numClients].symbol})
+				const client = isGameMode ? 2 : 1;
+			
+				newPlayerData.players[client] = {
+					name: "BOT",
+					color: 0xff0000,
+					number: client,
+					symbol: isGameMode ? '🔳' : 'O'
 				}
+				updatePlayerState( newPlayerData );
+				setBot({ ...botState, symbol: newPlayerData.players[client].symbol, client: client })
 			}
 		}
 
 		if (botState.isActive && wsclient)
 			joinTheGame();
-	},[botState.isActive, wsclient])
+	},[botState.isActive, wsclient, playerState])
+
 }

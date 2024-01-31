@@ -45,21 +45,18 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			socket.on('join-game', ( gameId: string, gameType: string, isBot: boolean ) => {
 				const room = io.sockets.adapter.rooms.get(gameId);
 				const numClients = room ? room.size : 0;
-				let maxClients = 2;
+				let maxClients = isBot ? 1 : 2;
 
 				if (gameType === "OneForAll")
-					maxClients = 4;
+					maxClients = isBot ? 3: 4;
 				else if (gameType === "Qubic")
-					maxClients = 3;
+					maxClients = isBot ? 2: 3;
+
 
 				if (numClients < maxClients) {
 						socket.join(gameId);
-						if (isBot)
-							socket.emit(`room-joined-${gameId}-BOT`, numClients, isBot);
-						else
-							socket.emit(`room-joined-${gameId}`, numClients, isBot);
+						socket.emit(`room-joined-${gameId}`, numClients);
 					if (numClients === maxClients - 1) {
-						console.log("FULL")
 						const topic = `Players-${gameId}`;
 						io.to(gameId).emit(`message-${gameId}-${topic}`, "FULL");
 					}

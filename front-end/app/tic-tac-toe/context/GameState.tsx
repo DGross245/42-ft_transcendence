@@ -89,8 +89,9 @@ interface GameStateContextValue {
 		isActive: boolean,
 		symbol: string,
 		strength: number,
+		client: number
 	},
-	setBot: Dispatch<SetStateAction<GameStateContextValue['BotState']>>,
+	setBot: Dispatch<SetStateAction<GameStateContextValue['botState']>>,
 	currentTurn: string,
 	setTurn: Dispatch<SetStateAction<string>>,
 	board: string[][][],
@@ -119,10 +120,10 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 	const [board, setBoard] = useState(initialBoard());
 	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
 	const [winner, setWinner] = useState('');
-	const [gameState, setGameState] = useState({ gameId: "1", pause: true, reset: false, gameOver: false, bot: isBotActive });
+	const [gameState, setGameState] = useState({ gameId: "1", pause: true, reset: false, gameOver: false });
 	const [lineCoords, setLineCoords] = useState([...winningCoords]);
 	const [isLineVisible, setLineVisible] = useState(false);
-	const [botState, setBot] = useState({ isActive: isBotActive, symbol: 'NOT DEFINED', strength: 0.9});
+	const [botState, setBot] = useState({ isActive: isBotActive, symbol: 'NOT DEFINED', strength: 0.9, client: -1});
 
 	const updateGameState : Dispatch<SetStateAction<GameStateContextValue['gameState']>> = ( newState ) => {
 		setGameState(prevState => ({
