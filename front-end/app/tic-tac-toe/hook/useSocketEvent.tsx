@@ -36,24 +36,20 @@ export const useSocketEvent = () => {
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (wsclient) {
-				const clients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe");
+				const { numClients, isBot } = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", false);
+				console.log("PLAYER IS CLIENT", numClients, isBot)
 				let newPlayerData = { ...playerState };
 
-				newPlayerData.players[clients] = {
-						name: "KEK",
-						color: 0x00ff00,
-						number: clients,
-						symbol: clients === 0 ? 'X' : clients === 1 ? 'O' : '🔳',
+				if (!isBot) {
+					newPlayerData.players[numClients] = {
+							name: "KEK",
+							color: 0x00ff00,
+							number: numClients,
+							symbol: numClients === 0 ? 'X' : numClients === 1 ? 'O' : '🔳',
+					}
+					newPlayerData.client = numClients
+					updatePlayerState( newPlayerData );
 				}
-				// newPlayerData.players[2] = {
-				// 	name: "KEK",
-				// 	color: 0xff0000,
-				// 	number: 1,
-				// 	symbol: '🔳'
-				// }
-				newPlayerData.client = clients
-				updatePlayerState( newPlayerData );
-				updateGameState({...gameState, bot: false});
 			}
 		};
 
@@ -71,7 +67,6 @@ export const useSocketEvent = () => {
 				}
 				wsclient?.emitMessageToGame(JSON.stringify(playerData), `PlayerData-${gameState.gameId}`, gameState.gameId);
 			};
-	
 			sendPlayerData();
 			updateGameState({ ...gameState, pause: false });
 		}

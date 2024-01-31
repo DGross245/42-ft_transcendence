@@ -42,7 +42,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			// 	cache.put(walletId, socket);
 			// })
 
-			socket.on('join-game', ( gameId: string, gameType: string ) => {
+			socket.on('join-game', ( gameId: string, gameType: string, isBot: boolean ) => {
 				const room = io.sockets.adapter.rooms.get(gameId);
 				const numClients = room ? room.size : 0;
 				let maxClients = 2;
@@ -53,8 +53,11 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 					maxClients = 3;
 
 				if (numClients < maxClients) {
-					socket.join(gameId);
-					socket.emit(`room-joined-${gameId}`, (numClients));
+						socket.join(gameId);
+						if (isBot)
+							socket.emit(`room-joined-${gameId}-BOT`, numClients, isBot);
+						else
+							socket.emit(`room-joined-${gameId}`, numClients, isBot);
 					if (numClients === maxClients - 1) {
 						console.log("FULL")
 						const topic = `Players-${gameId}`;

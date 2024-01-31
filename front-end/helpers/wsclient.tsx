@@ -6,7 +6,7 @@ import crypto from 'crypto';
 
 export type WSClientType = {
 	createGame: () => Promise<string>;
-	joinGame: (gameId: string, gameType: string) => Promise<number>;
+	joinGame: (gameId: string, gameType: string, isBot: boolean) => Promise<{ numClients: number, isBot: boolean }>;
 	waitingForSocket: () => Promise<void>;
 	emitMessageToGame: (msg: string, topic: string, gameId: string) => void;
 	addMessageListener: (topic: string, gameId: string, callback: (msg: string) => void) => void;
@@ -54,12 +54,16 @@ class WSClient {
 		return ;
 	}
 
-	async joinGame(gameId: string, gameType: string): Promise<number> {
+	async joinGame(gameId: string, gameType: string, isBot: boolean): Promise<{ numClients: number, isBot: boolean }> {
 		return new Promise((resolve, reject) => {
-			this.socket!.emit('join-game', gameId, gameType);
-			this.socket!.on(`room-joined-${gameId}`, (numClients: number) => {
+			this.socket!.emit('join-game', gameId, gameType, isBot);
+			this.socket!.on(`room-joined-${gameId}-BOT`, (numClients: number,  isBot: boolean) => {
+				this.socket!.removeListener(`room-joined-${gameId}-BOT`);
+				resolve({numClients, isBot});
+			});
+				this.socket!.on(`room-joined-${gameId}`, (numClients: number,  isBot: boolean) => {
 				this.socket!.removeListener(`room-joined-${gameId}`);
-				resolve(numClients);
+				resolve({numClients, isBot});
 			});
 		});
 	}

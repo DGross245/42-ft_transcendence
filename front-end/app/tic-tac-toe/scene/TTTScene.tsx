@@ -27,14 +27,13 @@ import { useUI } from "../hook/useUI";
  * @returns The entire Three.js scene, including the modal.
  */
 const TTTScene = () => {
-	const { isGameMode } = useGameState();
+	const { isGameMode, botState } = useGameState();
 	const { dimensions } = useWindow();
 	const maxClients = isGameMode ? 3 : 2;
-	const botSymbol = '🔳';
 
 	const { click, clicked } = useClick();
 
-	useBot(botSymbol, 1);
+	useBot();
 	// Event hooks
 	useSocketEvent();
 	useGameEvent(maxClients);
