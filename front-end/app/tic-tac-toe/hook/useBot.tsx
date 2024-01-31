@@ -3,10 +3,8 @@ import { useGameState } from "./useGameState"
 import { TicTacToeBot } from "@/components/TTT/TicTacToeBot";
 import { useSocket } from "./useSocket";
 
-const BOT_ACTIVE = true;
-
 export const useBot = () => {
-	const { gameState, currentTurn, board, setBoard ,isGameMode, botState, setBot } = useGameState();
+	const { currentTurn, board, setBoard ,isGameMode, botState, setBot } = useGameState();
 	const { playerState, wsclient, updatePlayerState } = useSocket();
 
 	const SymbolArray = useMemo(() => [
@@ -23,9 +21,8 @@ export const useBot = () => {
 	},[currentTurn, botState])
 
 	useEffect(() => {
-		const joinTheGame = async () => {
+		const joinTheGame = () => {
 			if (wsclient && botState.symbol === 'NOT DEFINED') {
-				console.log("K")
 				let newPlayerData = { ...playerState };
 				const client = isGameMode ? 2 : 1;
 			

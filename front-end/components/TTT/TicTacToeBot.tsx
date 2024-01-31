@@ -49,7 +49,6 @@ export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol
 		const newBoard = [...board];
 		newBoard[coords.x][coords.y][coords.z] = symbol; 
 		setBoard(newBoard);
-		console.log("placed at coordinate: ", coords);
 	}
 
 	function placeAtRandom() {

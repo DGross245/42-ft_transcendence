@@ -1,4 +1,3 @@
-import { useSound } from "@/components/Sound";
 import {
 	ReactNode,
 	createContext,
@@ -109,6 +108,8 @@ interface GameStateContextValue {
 	setGameMode: Dispatch<SetStateAction<boolean>>,
 	isLineVisible: boolean,
 	setLineVisible: Dispatch<SetStateAction<boolean>>,
+	symbolArray: string[],
+	setSymbolArray: Dispatch<SetStateAction<string[]>>,
 }
 
 export const GameStateContext = createContext<GameStateContextValue>({} as GameStateContextValue);
@@ -124,6 +125,7 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 	const [lineCoords, setLineCoords] = useState([...winningCoords]);
 	const [isLineVisible, setLineVisible] = useState(false);
 	const [botState, setBot] = useState({ isActive: isBotActive, symbol: 'NOT DEFINED', strength: 0.9, client: -1});
+	const [symbolArray, setSymbolArray] = useState(['', '', '']);
 
 	const updateGameState : Dispatch<SetStateAction<GameStateContextValue['gameState']>> = ( newState ) => {
 		setGameState(prevState => ({
@@ -131,13 +133,6 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 			...newState,
 		}));
 	};
-
-	//const updateBoard : Dispatch<SetStateAction<string[][][]>> = ( newState ) => {
-	//	setBoard(prevState => ({
-	//		...prevState,
-	//		...newState,
-	//	}));
-	//};
 
 	const value: GameStateContextValue = {
 		currentTurn,
@@ -159,7 +154,9 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 		isLineVisible,
 		setLineVisible,
 		botState,
-		setBot
+		setBot,
+		symbolArray,
+		setSymbolArray
 	};
 
 	return (

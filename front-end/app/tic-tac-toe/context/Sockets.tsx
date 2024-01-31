@@ -8,7 +8,7 @@ import {
 
 import { WSClientType } from "@/helpers/wsclient";
 
-interface Player {
+export interface Player {
 	name: string;
 	color: number;
 	number: number;

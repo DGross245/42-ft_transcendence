@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { SocketContext } from "../context/Sockets";
+import { Player, SocketContext } from "../context/Sockets";
 import { useGameState } from "./useGameState";
 import useWSClient from "@/helpers/wsclient";
 import { useSocket } from "./useSocket";
@@ -20,6 +20,7 @@ export const useSocketEvent = () => {
 	} = useSocket();
 	const { gameState, updateGameState, setWinner, isGameMode, botState, setBot } = useGameState();
 	const [isFull, setIsFull] = useState("");
+	const [playerSet, setPlayerSet] = useState(false);
 
 	useEffect(() => {
 		const waitForSocket = async () => {
@@ -84,6 +85,7 @@ export const useSocketEvent = () => {
 					symbol: playerData.symbol,
 			}
 			updatePlayerState( newPlayerData );
+			setPlayerSet(true);
 		};
 
 		if (wsclient) {
@@ -172,4 +174,71 @@ export const useSocketEvent = () => {
 			} 
 		}
 	}, [wsclient]);
+
+	useEffect(() => {
+		const shuffleArray = (array: string[]) => {
+			for (let i = array.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				let temp = array[i];
+				array[i] = array[j];
+				array[j] = temp
+			}
+			return array;
+		};
+	
+		const sendRandomSymbol = () => {
+			const symbols = shuffleArray(isGameMode ? ['X', 'O', '🔳'] : ['X', 'O']);
+			const numbers: number[] = [];
+			const newPlayerArray: Player[] = [];
+			const newPlayerState = { ...playerState };
+
+			console.log(symbols, numbers)
+			symbols.forEach((symbol, index) => {
+				numbers.push(symbol === 'X' ? 0 : symbol === 'O' ? 1 : 2);
+			});
+			
+			newPlayerState.players.forEach((player, index) => {
+				player.symbol = symbols[index];
+			});
+			
+			const botSymbol = newPlayerState.players[isGameMode ? 2 : 1].symbol;
+			
+			numbers.forEach((index) => {
+				console.log(newPlayerState.players[index])
+				newPlayerArray.push(newPlayerState.players[index]);
+			});
+			
+			console.log("KOL", playerState.players)
+			if (isGameMode)
+				wsclient?.emitMessageToGame(JSON.stringify(symbols), `Symbols-${gameState.gameId}`, gameState.gameId);
+
+			if (botState.isActive)
+				setBot({ ...botState, symbol: botSymbol})
+			updatePlayerState({ ...newPlayerState, players: newPlayerArray});
+		};
+	
+		if (playerSet && wsclient && playerState.client === 0) {
+			sendRandomSymbol();
+		}
+	}, [playerSet]);
+
+	useEffect(() => {
+		const setSymbols = (msg: string) => {
+			const symbols = JSON.parse(msg);
+			const newPlayerState = {...playerState};
+
+			newPlayerState.players.forEach((player, index) => {
+				player.symbol = symbols[index];
+			});
+			updatePlayerState(newPlayerState);
+		};
+
+		if (wsclient) {
+			wsclient?.addMessageListener(`Symbols-${gameState.gameId}`, gameState.gameId, setSymbols)
+			
+			return () => {
+				wsclient?.removeMessageListener(`Symbols-${gameState.gameId}`, gameState.gameId);
+			}
+		}
+	}, [wsclient, playerState]);
 };
