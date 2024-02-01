@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { Player, SocketContext } from "../context/Sockets";
+import { useEffect, useState } from "react";
 import { useGameState } from "./useGameState";
 import useWSClient from "@/helpers/wsclient";
 import { useSocket } from "./useSocket";
@@ -44,7 +43,7 @@ export const useSocketEvent = () => {
 						name: "KEK",
 						color: 0x00ff00,
 						number: numClients,
-						symbol: numClients === 0 ? 'X' : numClients === 1 ? 'O' : '🔳',
+						symbol: '',
 				}
 				newPlayerData.client = numClients
 				updatePlayerState( newPlayerData );
@@ -69,6 +68,8 @@ export const useSocketEvent = () => {
 
 		if (playerState.client !== -1 && isFull === "FULL") {
 			sendPlayerData();
+			if (!isGameMode && botState.isActive)
+				setPlayerSet(true);
 			updateGameState({ ...gameState, pause: false });
 		}
 	}, [playerState.client, isFull]);
@@ -188,33 +189,18 @@ export const useSocketEvent = () => {
 	
 		const sendRandomSymbol = () => {
 			const symbols = shuffleArray(isGameMode ? ['X', 'O', '🔳'] : ['X', 'O']);
-			const numbers: number[] = [];
-			const newPlayerArray: Player[] = [];
 			const newPlayerState = { ...playerState };
+			const botClientNumber = isGameMode ? 2 : 1;
 
-			console.log(symbols, numbers)
-			symbols.forEach((symbol, index) => {
-				numbers.push(symbol === 'X' ? 0 : symbol === 'O' ? 1 : 2);
-			});
-			
 			newPlayerState.players.forEach((player, index) => {
 				player.symbol = symbols[index];
 			});
-			
-			const botSymbol = newPlayerState.players[isGameMode ? 2 : 1].symbol;
-			
-			numbers.forEach((index) => {
-				console.log(newPlayerState.players[index])
-				newPlayerArray.push(newPlayerState.players[index]);
-			});
-			
-			console.log("KOL", playerState.players)
-			if (isGameMode)
-				wsclient?.emitMessageToGame(JSON.stringify(symbols), `Symbols-${gameState.gameId}`, gameState.gameId);
 
-			if (botState.isActive)
-				setBot({ ...botState, symbol: botSymbol})
-			updatePlayerState({ ...newPlayerState, players: newPlayerArray});
+			if (isGameMode)
+				wsclient?.emitMessageToGame(JSON.stringify(symbols), `ShuffeledPlayer-${gameState.gameId}`, gameState.gameId);
+
+			updatePlayerState({ ...newPlayerState });
+			setBot({ ...botState, symbol: playerState.players[botClientNumber].symbol })
 		};
 	
 		if (playerSet && wsclient && playerState.client === 0) {
@@ -224,20 +210,20 @@ export const useSocketEvent = () => {
 
 	useEffect(() => {
 		const setSymbols = (msg: string) => {
-			const symbols = JSON.parse(msg);
-			const newPlayerState = {...playerState};
+			const newSymbols = JSON.parse(msg);
+			const newPlayerState = { ... playerState };
 
 			newPlayerState.players.forEach((player, index) => {
-				player.symbol = symbols[index];
+				player.symbol = newSymbols[index];
 			});
 			updatePlayerState(newPlayerState);
 		};
 
 		if (wsclient) {
-			wsclient?.addMessageListener(`Symbols-${gameState.gameId}`, gameState.gameId, setSymbols)
+			wsclient?.addMessageListener(`ShuffeledPlayer-${gameState.gameId}`, gameState.gameId, setSymbols)
 			
 			return () => {
-				wsclient?.removeMessageListener(`Symbols-${gameState.gameId}`, gameState.gameId);
+				wsclient?.removeMessageListener(`ShuffeledPlayer-${gameState.gameId}`, gameState.gameId);
 			}
 		}
 	}, [wsclient, playerState]);

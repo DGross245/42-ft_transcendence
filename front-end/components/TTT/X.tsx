@@ -5,7 +5,7 @@ import * as THREE from 'three'
 
 interface XProps {
 	position: [number, number, number],
-	color: number,
+	color: number | undefined,
 	transparent: boolean,
 }
 

@@ -46,9 +46,11 @@ interface Coordinate {
 export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol: string, strength: number, setBoard: Dispatch<SetStateAction<string[][][]>>) => {
 
 	function placeAtCoordinate(coords: Coordinate) {
-		const newBoard = [...board];
-		newBoard[coords.x][coords.y][coords.z] = symbol; 
-		setBoard(newBoard);
+		setTimeout(() => {
+			const newBoard = [...board];
+			newBoard[coords.x][coords.y][coords.z] = symbol;
+			setBoard(newBoard)
+		}, 1000);
 	}
 
 	function placeAtRandom() {
@@ -124,7 +126,6 @@ export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol
 			if (val === symbol)
 				self_index = index;
 		});
-		console.log(longest_lines)
 		if (Math.random() >= strength) {
 			placeAtRandom();
 			return ;

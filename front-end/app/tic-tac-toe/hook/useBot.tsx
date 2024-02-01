@@ -11,11 +11,10 @@ export const useBot = () => {
 		playerState.players[0].symbol,
 		playerState.players[1].symbol,
 		...(playerState.players[2].symbol !== '' ? [playerState.players[2].symbol] : [])
-	],[playerState.players[0].symbol,playerState.players[1].symbol,playerState.players[2].symbol]);
-
+	],[playerState.players[0].symbol, playerState.players[1].symbol, playerState.players[2].symbol]);
+	
 	useEffect(( ) => {
 		if (currentTurn === botState.symbol) {
-			console.log("KEK");
 			TicTacToeBot(board, SymbolArray, botState.symbol, botState.strength, setBoard );
 		}
 	},[currentTurn, botState])
@@ -30,7 +29,7 @@ export const useBot = () => {
 					name: "BOT",
 					color: 0xff0000,
 					number: client,
-					symbol: isGameMode ? '🔳' : 'O'
+					symbol: ''
 				}
 				updatePlayerState( newPlayerData );
 				setBot({ ...botState, symbol: newPlayerData.players[client].symbol, client: client })

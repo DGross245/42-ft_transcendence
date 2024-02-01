@@ -7,6 +7,7 @@ import { useField } from '../../app/tic-tac-toe/hook/useField';
 import X from './X';
 import Torus from './Torus';
 import Square from './Square';
+import { useMemo } from 'react';
 
 export interface FieldProps {
 	key: string,
@@ -32,6 +33,17 @@ const Field : React.FC<FieldProps> = (props) => {
 	const { currentTurn, gameState } = useGameState();
 	const { hovered, handleClick, handleHover, symbol } = useField(props);
 	
+	const getColorBySymbol = (symbol: string) => {
+		const player = playerState.players.find(player => player.symbol === symbol);
+		return player?.color;
+	};
+
+	const colors = useMemo (() => [
+		getColorBySymbol('X'),
+		getColorBySymbol('O'),
+		getColorBySymbol('🔳'),
+	],[playerState]);
+
 	useCursor(hovered);
 	useCursor(clicked);
 
@@ -51,26 +63,26 @@ const Field : React.FC<FieldProps> = (props) => {
 			{/* Projects a transparent verison of the symbol on the field the user hovers over based on the current turn */}
 
 			{hovered && !clicked && !symbol && currentTurn == 'X' && !gameState.gameOver && (
-				<X {...props} color={playerState.players[0].color} transparent={true} />
+				<X {...props} color={colors[0]} transparent={true} />
 			)}
 
 			{hovered && !clicked && !symbol && currentTurn == 'O' && !gameState.gameOver && (
-				<Torus {...props} color={playerState.players[1].color} transparent={true} blending={THREE.AdditiveBlending}/>
+				<Torus {...props} color={colors[1]} transparent={true} blending={THREE.AdditiveBlending}/>
 			)}
 
 			{hovered && !clicked && !symbol && currentTurn == '🔳' && !gameState.gameOver && (
-				<Square {...props} color={playerState.players[2].color} transparent={true} />
+				<Square {...props} color={colors[2]} transparent={true} />
 			)}
 
 			{/* Projects the symbol on the field the user click on based on the turn the player clicked (symbol) */}
 			{symbol && (
 				<>
 					{symbol === 'X' ? (
-						<X {...props} color={playerState.players[0].color} transparent={false}/>
+						<X {...props} color={colors[0]} transparent={false}/>
 					) : symbol === 'O' ? (
-						<Torus {...props} color={playerState.players[1].color} transparent={false} />
+						<Torus {...props} color={colors[1]} transparent={false} />
 					) : (
-						<Square {...props} color={playerState.players[2].color} transparent={false} />
+						<Square {...props} color={colors[2]} transparent={false} />
 					)}
 				</>
 			)}

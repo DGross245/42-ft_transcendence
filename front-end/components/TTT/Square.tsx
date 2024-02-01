@@ -6,7 +6,7 @@ import * as THREE from 'three'
 interface SquareProps {
 	position: [number, number, number],
 	transparent: boolean;
-	color: number,
+	color: number | undefined,
 }
 
 /**

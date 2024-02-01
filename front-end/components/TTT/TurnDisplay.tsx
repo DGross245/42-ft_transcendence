@@ -24,6 +24,17 @@ const TurnDisplay = () => {
 	const { playerState } = useSocket();
 	const { isGameMode, currentTurn } = useGameState();
 
+	const getColorBySymbol = (symbol: string) => {
+		const player = playerState.players.find(player => player.symbol === symbol);
+		return player?.color;
+	};
+
+	const colors = useMemo (() => [
+		getColorBySymbol('X'),
+		getColorBySymbol('O'),
+		getColorBySymbol('🔳'),
+	],[playerState]);
+
 	const extrudeSettings = {
 		steps: 2,
 		depth: 0.75,
@@ -90,7 +101,7 @@ const TurnDisplay = () => {
 					>
 						<Extrude args={[xShape, extrudeSettings]}>
 							<meshBasicMaterial 
-								color={playerState.players[0].color}
+								color={colors[0]}
 								side={DoubleSide}
 								opacity={currentTurn === 'X' ? 0.8 : 0.4}
 								transparent={true}
@@ -112,7 +123,7 @@ const TurnDisplay = () => {
 						scale={currentTurn === 'O' ? [0.65, 0.65, 0.65] : [0.6, 0.6, 0.6]}>
 						<torusGeometry args={[2, 0.4, 8, 24]} />
 						<meshBasicMaterial
-							color={playerState.players[1].color}
+							color={colors[1]}
 							transparent={true}
 							opacity={currentTurn === 'O' ? 1 : 0.4}
 						/>
@@ -133,7 +144,7 @@ const TurnDisplay = () => {
 					>
 						<Extrude args={[boxShape, extrudeSettings]}>
 							<meshBasicMaterial
-								color={playerState.players[2].color}
+								color={colors[2]}
 								transparent={true}
 								side={DoubleSide}
 								opacity={currentTurn === '🔳' ? 1 : 0.4}
@@ -149,7 +160,7 @@ const TurnDisplay = () => {
 					>
 						<Extrude args={[xShape, extrudeSettings]}>
 							<meshBasicMaterial 
-								color={playerState.players[0].color}
+								color={colors[0]}
 								side={DoubleSide}
 								opacity={currentTurn === 'X' ? 0.8 : 0.4}
 								transparent={true}
@@ -170,7 +181,7 @@ const TurnDisplay = () => {
 					>
 						<torusGeometry args={[2, 0.4, 8, 24]} />
 						<meshBasicMaterial
-							color={playerState.players[1].color}
+							color={colors[1]}
 							transparent={true}
 							opacity={currentTurn === 'O' ? 1 : 0.4}
 						/>

@@ -3,7 +3,7 @@ interface TorusProps {
 	position: [number, number, number],
 	transparent: boolean;
 	blending?: THREE.Blending,
-	color: number,
+	color: number | undefined,
 }
 
 /**
