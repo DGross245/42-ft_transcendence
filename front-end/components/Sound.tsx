@@ -19,7 +19,7 @@ class SoundEngine {
 	constructor() {
 		this.soundElement = new Audio();
 		document.body.appendChild(this.soundElement);
-		this.soundElement.volume = 0.5;
+		this.soundElement.volume = 0.1;
 	}
 
 	playSound(sound: string) {

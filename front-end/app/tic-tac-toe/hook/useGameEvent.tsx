@@ -1,8 +1,7 @@
-import { useEffect, Dispatch, SetStateAction } from "react";
+import { useEffect } from "react";
 import { useGameState } from "./useGameState";
 import { initialBoard, winningCoords } from "../context/GameState";
 import { useSocket } from "./useSocket";
-import { useUI } from "./useUI";
 
 export const useGameEvent = (
 	maxClients: number,
@@ -18,28 +17,27 @@ export const useGameEvent = (
 		countdownVisible,
 		setLineVisible
 	} = useGameState();
-	const { rematchIndex, setRequestRematch, setSendRequest } = useSocket();
-	const { setShowModal, openModal } = useUI();
+	const { rematchIndex, setRematchIndex, setRequestRematch, setSendRequest } = useSocket();
 
 	// Handling the reset of the scene, resetting important states.
 	useEffect(() => {
 		if (gameState.reset) {
-			setShowModal(false);
 			setBoard(initialBoard());
 			setTurn('');
 			setLineCoords([...winningCoords]);
-			updateGameState({ ...gameState, reset: false, gameOver: false })
 			setWinner('');
 			setCountdownVisible(true);
 			setLineVisible(false)
+			updateGameState({ ...gameState, reset: false, gameOver: false })
 		}
-	}, [gameState.reset]);
+	}, [gameState]);
 
 	useEffect(() => {
 		if (rematchIndex === maxClients) {
+			updateGameState({ ...gameState, reset: true});
 			setRequestRematch(false);
 			setSendRequest(false);
-			updateGameState({ ...gameState, reset: true});
+			setRematchIndex(0);
 		}
 	}, [rematchIndex]);
 

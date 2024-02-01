@@ -9,7 +9,7 @@ export const useField = (props: FieldProps) => {
 	const [symbol, setSymbol] = useState<string>();
 	const { position, clicked, click, i, j, k } = props;
 	const { playerState } = useSocket();
-	const { board, setSceneCoords, sceneCoords, setBoard, currentTurn } = useGameState();
+	const { board, setSceneCoords, sceneCoords, setBoard, currentTurn, gameState } = useGameState();
 
 	const handleHover = ( state: boolean) => {
 		if (playerState.players[playerState.client].symbol == currentTurn)
@@ -20,7 +20,8 @@ export const useField = (props: FieldProps) => {
 		if (!clicked && !symbol && playerState.players[playerState.client].symbol === currentTurn) {
 			click(true);
 			setSymbol(currentTurn);
-
+			hover(false);
+	
 			// Updates the board state by assigning the symbol to the corresponding position.
 			const updatedBoard = [...board];
 			updatedBoard[i][j][k] = currentTurn;
@@ -41,6 +42,12 @@ export const useField = (props: FieldProps) => {
 			updateSceneCoords[i][j][k] = position;
 			setSceneCoords(updateSceneCoords);
 			click(true);
+		}
+	}, [board[i][j][k]]);
+
+	useEffect(() => {
+		if (board[i][j][k] === '' && symbol) {
+			setSymbol(undefined);
 		}
 	}, [board[i][j][k]]);
 

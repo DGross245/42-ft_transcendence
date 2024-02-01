@@ -17,6 +17,8 @@ const EndModal = () => {
 			return ('/images/o.png');
 		else if (winner == 'X')
 			return ('/images/x.png');
+		else if (winner === '🔳')
+			return ('/images/square.png')
 		else
 			return ('/images/draw.png');
 	}
@@ -28,6 +30,10 @@ const EndModal = () => {
 			openModal();
 	},[escape]);
 
+	useEffect(() => {
+		if (gameState.reset)
+			closeModal();
+	},[gameState.reset])
 	return (
 		<>
 			<Modal

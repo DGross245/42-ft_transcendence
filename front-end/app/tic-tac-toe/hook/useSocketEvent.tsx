@@ -47,8 +47,6 @@ export const useSocketEvent = () => {
 				}
 				newPlayerData.client = numClients
 				updatePlayerState( newPlayerData );
-				if (numClients !== 0)
-					setBot({ ...botState, isActive: false })
 			}
 		};
 
@@ -68,7 +66,7 @@ export const useSocketEvent = () => {
 
 		if (playerState.client !== -1 && isFull === "FULL") {
 			sendPlayerData();
-			if (!isGameMode && botState.isActive)
+			if (botState.isActive && !isGameMode)
 				setPlayerSet(true);
 			updateGameState({ ...gameState, pause: false });
 		}
@@ -86,6 +84,10 @@ export const useSocketEvent = () => {
 					symbol: playerData.symbol,
 			}
 			updatePlayerState( newPlayerData );
+
+			const player = playerState.players.find(player => player.name === "None");
+			if (player && isGameMode) return ;
+
 			setPlayerSet(true);
 		};
 
@@ -154,7 +156,8 @@ export const useSocketEvent = () => {
 
 	useEffect(() => {
 		if (sendRequest) {
-			setRematchIndex(rematchIndex + 1);
+			const bot = botState.isActive ? 1 : 0;
+			setRematchIndex(rematchIndex + 1 + bot);
 			wsclient?.emitMessageToGame("true", `Request-Rematch-${gameState.gameId}`, gameState.gameId);
 		}
 	}, [sendRequest]);
@@ -169,7 +172,7 @@ export const useSocketEvent = () => {
 			};
 
 			wsclient?.addMessageListener(`Pause-${gameState.gameId}`, gameState.gameId, setPause)
-	
+
 			return () => {
 				wsclient?.removeMessageListener(`Pause-${gameState.gameId}`, gameState.gameId);
 			} 
@@ -200,14 +203,15 @@ export const useSocketEvent = () => {
 				wsclient?.emitMessageToGame(JSON.stringify(symbols), `ShuffeledPlayer-${gameState.gameId}`, gameState.gameId);
 
 			updatePlayerState({ ...newPlayerState });
+
 			if (botState.isActive)
 				setBot({ ...botState, symbol: playerState.players[botClientNumber].symbol })
 		};
 	
-		if (playerSet && wsclient && playerState.client === 0) {
+		if (playerSet && playerState.client === 0) {
 			sendRandomSymbol();
 		}
-	}, [playerSet]);
+	}, [playerSet, playerState.client]);
 
 	useEffect(() => {
 		const setSymbols = (msg: string) => {
