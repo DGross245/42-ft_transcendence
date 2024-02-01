@@ -14,7 +14,7 @@ export const useBot = () => {
 	],[playerState.players[0].symbol, playerState.players[1].symbol, playerState.players[2].symbol]);
 	
 	useEffect(( ) => {
-		if (currentTurn === botState.symbol) {
+		if (currentTurn === botState.symbol && botState.isActive) {
 			TicTacToeBot(board, SymbolArray, botState.symbol, botState.strength, setBoard );
 		}
 	},[currentTurn, botState])
@@ -36,8 +36,10 @@ export const useBot = () => {
 			}
 		}
 
-		if (botState.isActive && wsclient)
+		if (botState.isActive && wsclient) {
+			console.log(botState.isActive, "kek")
 			joinTheGame();
+		}
 	},[botState.isActive, wsclient, playerState])
 
 }

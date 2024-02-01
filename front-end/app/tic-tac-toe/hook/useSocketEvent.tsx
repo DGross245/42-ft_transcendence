@@ -196,11 +196,12 @@ export const useSocketEvent = () => {
 				player.symbol = symbols[index];
 			});
 
-			if (isGameMode)
+			if (!botState.isActive || isGameMode)
 				wsclient?.emitMessageToGame(JSON.stringify(symbols), `ShuffeledPlayer-${gameState.gameId}`, gameState.gameId);
 
 			updatePlayerState({ ...newPlayerState });
-			setBot({ ...botState, symbol: playerState.players[botClientNumber].symbol })
+			if (botState.isActive)
+				setBot({ ...botState, symbol: playerState.players[botClientNumber].symbol })
 		};
 	
 		if (playerSet && wsclient && playerState.client === 0) {
