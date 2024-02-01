@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useSound } from "@/components/Sound";
 import { useGameState } from "./useGameState";
 import { useSocket } from "./useSocket";
-import { gameValidation } from "../../../components/TTT/GameValidation";
-import { TicTacToeBot } from "@/components/TTT/TicTacToeBot";
-
+import { gameValidation } from "@/components/TTT/GameValidation";
 
 export const useClick = () => {
 	const soundEngine = useSound();

@@ -32,6 +32,7 @@ interface SocketContextValue {
 	rematchIndex: number,
 	setRematchIndex: Dispatch<SetStateAction<number>>,
 }
+
 export const SocketContext = createContext<SocketContextValue>({} as SocketContextValue);
 
 export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children: ReactNode }> = ({ initialWsClient, children }) => {

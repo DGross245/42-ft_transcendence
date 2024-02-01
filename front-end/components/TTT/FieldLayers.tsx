@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+
 import { useGameState } from "../../app/tic-tac-toe/hook/useGameState";
 import Field from "./Field";
 
@@ -30,7 +31,7 @@ export const FieldLayers = ({ clicked, click } : { clicked: boolean; click: Reac
 
 		const fieldArray= [];
 		let l = 0;
-		
+
 		for (let level = 0; level < 4; level++) {
 			for (let i = -1; i < 3; i++) {
 				for (let j = -1; j < 3; j++) {

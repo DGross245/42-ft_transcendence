@@ -2,6 +2,7 @@
 
 import React, { useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
+
 import { useGameState } from "@/app/tic-tac-toe/hook/useGameState";
 import { useUI } from "@/app/tic-tac-toe/hook/useUI";
 import { useSocket } from "@/app/tic-tac-toe/hook/useSocket";

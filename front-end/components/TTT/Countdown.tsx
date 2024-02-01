@@ -9,11 +9,6 @@ import Silkscreen_Regular from '../../public/fonts/Silkscreen_Regular.json';
 
 extend({ TextGeometry })
 
-interface CountdownProps {
-	setCountdownVisible: React.Dispatch<React.SetStateAction<boolean>>,
-	countdownVisible: boolean,
-}
-
 /**
  * The Countdown component is a timer that counts down from 3 to 1 and displays the count as a 3D text
  * in a React Three Fiber scene.
@@ -37,7 +32,7 @@ const Countdown = () => {
 		const meshRef = ref.current;
 		if (meshRef) camera.add(meshRef);
 		setCount(3);
-	
+
 		if (gameState.pause) return ;
 		if (countdownVisible) {
 			soundEngine?.playSound("countSound");
@@ -55,14 +50,14 @@ const Countdown = () => {
 					}
 				});
 			}, 1000);
-	
+
 			return () => {
 				if (meshRef) camera.remove(meshRef);
 				clearInterval(countdownInterval);
 			};
 		}
 	}, [countdownVisible, soundEngine, gameState.pause]);
-	
+
 	return (
 		<mesh ref={ref} visible={countdownVisible} position={[-5, -4, -30]}>
 			<textGeometry args={[String(count), {font, size: 10, height: 2}]} />

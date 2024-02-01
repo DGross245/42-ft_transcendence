@@ -1,4 +1,3 @@
-
 interface TorusProps {
 	position: [number, number, number],
 	transparent: boolean;
@@ -16,7 +15,7 @@ interface TorusProps {
  */
 const Torus : React.FC<TorusProps> = (props) => {
 	const [x, y, z] = props.position;
-	
+
 	return (
 		<mesh {...props} position={[x, y - 0.05, z]} rotation={[Math.PI / 2, 0, 0]}>
 			<torusGeometry args={[2, 0.4, 8, 24]} />

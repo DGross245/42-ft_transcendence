@@ -1,4 +1,5 @@
 import { useCursor } from '@react-three/drei';
+import { useMemo } from 'react';
 import * as THREE from 'three';
 
 import { useGameState } from '../../app/tic-tac-toe/hook/useGameState';
@@ -7,7 +8,6 @@ import { useField } from '../../app/tic-tac-toe/hook/useField';
 import X from './X';
 import Torus from './Torus';
 import Square from './Square';
-import { useMemo } from 'react';
 
 export interface FieldProps {
 	key: string,

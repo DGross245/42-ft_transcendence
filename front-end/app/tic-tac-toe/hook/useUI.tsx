@@ -1,5 +1,6 @@
-import { useSound } from "@/components/Sound";
 import { useEffect, useState } from "react";
+
+import { useSound } from "@/components/Sound";
 import { useGameState } from "./useGameState";
 
 export const useUI = () => {
@@ -12,8 +13,6 @@ export const useUI = () => {
 	}
 
 	const openModal = () => {
-		//losing1();
-		//losing2();
 		setShowModal(true);
 	}
 

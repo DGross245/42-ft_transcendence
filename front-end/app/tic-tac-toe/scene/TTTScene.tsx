@@ -1,23 +1,22 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+
 import { useGameEvent } from "../hook/useGameEvent";
 import { useSocketEvent } from "../hook/useSocketEvent";
 import { useWindow } from "../hook/useWindow";
-import { OrbitControls } from "@react-three/drei";
-import Countdown from "../../../components/TTT/Countdown";
-import Camera from "../../../components/TTT/Camera";
-import { Grid } from "../../../components/TTT/Grid";
-import Floor from "../../../components/TTT/Floor";
-import { FieldLayers } from "../../../components/TTT/FieldLayers";
+import { Grid } from "@/components/TTT/Grid";
+import { FieldLayers } from "@/components/TTT/FieldLayers";
 import { useClick } from "../hook/useClick";
-import TurnDisplay from "../../../components/TTT/TurnDisplay";
-import FinishLine from "../../../components/TTT/FinishLine";
 import { useGameState } from "../hook/useGameState";
-import EndModal from "@/components/TTT/EndModal";
-import { useState } from "react";
 import { useBot } from "../hook/useBot";
-import { useUI } from "../hook/useUI";
+import Countdown from "@/components/TTT/Countdown";
+import Camera from "@/components/TTT/Camera";
+import Floor from "@/components/TTT/Floor";
+import TurnDisplay from "@/components/TTT/TurnDisplay";
+import FinishLine from "@/components/TTT/FinishLine";
+import EndModal from "@/components/TTT/EndModal";
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
@@ -27,14 +26,13 @@ import { useUI } from "../hook/useUI";
  * @returns The entire Three.js scene, including the modal.
  */
 const TTTScene = () => {
-	const { isGameMode, botState } = useGameState();
+	const { isGameMode } = useGameState();
 	const { dimensions } = useWindow();
 	const maxClients = isGameMode ? 3 : 2;
 
 	const { click, clicked } = useClick();
 
 	useBot();
-	// Event hooks
 	useSocketEvent();
 	useGameEvent(maxClients);
 

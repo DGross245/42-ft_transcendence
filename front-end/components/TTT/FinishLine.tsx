@@ -1,9 +1,8 @@
-import { useSound } from "@/components/Sound";
 import { Line } from "@react-three/drei";
 import { useEffect, useState } from "react";
 
+import { useSound } from "@/components/Sound";
 import { useGameState } from "../../app/tic-tac-toe/hook/useGameState";
-import { winningCoords } from "@/app/tic-tac-toe/context/GameState";
 
 /**
  * The `FinishLine` component renders a line with specified coordinates and color, and plays a sound

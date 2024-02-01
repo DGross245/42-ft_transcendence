@@ -40,7 +40,7 @@ const TurnDisplay = () => {
 		depth: 0.75,
 		bevelEnabled: false,
 	};
-	
+
 	const boxShape = useMemo(() => {
 		const boxShape = new Shape();
 
@@ -78,7 +78,7 @@ const TurnDisplay = () => {
 		
 		return shape;
 	}, []);
-	
+
 	// binding display to the camera.
 	useEffect(() => {
 		const meshRef = ref.current;
@@ -90,7 +90,7 @@ const TurnDisplay = () => {
 				camera.remove(meshRef);
 		};
 	}, [camera, ref.current]);
-	
+
 	return (
 		<group ref={ref} scale={[0.4, 0.4, 0.4]}>
 			{ isGameMode ? (

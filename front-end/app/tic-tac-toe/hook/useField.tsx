@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
-import { FieldProps } from "../../../components/TTT/Field";
+import { useEffect, useState } from "react";
+
+import { FieldProps } from "@/components/TTT/Field";
 import { useSocket } from "./useSocket";
 import { useGameState } from "./useGameState";
-import { GameState } from "../context/GameState";
 
 export const useField = (props: FieldProps) => {
 	const [hovered, hover] = useState(false);

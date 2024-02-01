@@ -1,6 +1,6 @@
 import { PerspectiveCamera } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
+
 import { useGameState } from "../../app/tic-tac-toe/hook/useGameState";
 import { useKey } from "@/components/useKey";
 
