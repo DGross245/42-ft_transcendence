@@ -1,8 +1,9 @@
 version: '3.8'
 
 services:
-  my-app:
-    build: .
+  ft_transcendence:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    command: npm run dev

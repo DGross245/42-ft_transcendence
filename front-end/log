@@ -1,0 +1,4 @@
+31. Jan
+----------
+- Docker, docker-compose und makefile laufen fürs erste mit der aktuellen Version
+- noch einen User erstellen im docker und über den laufen lassen
