@@ -34,8 +34,6 @@ const win_vectors = [
 	[ 1, 1,-1 ],
 ];
 
-// coordinate data structure
-// @todo create vector struct or delete this
 interface Coordinate {
 	x: number;
 	y: number;
@@ -126,16 +124,16 @@ export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol
 			if (val === symbol)
 				self_index = index;
 		});
-		if (Math.random() >= strength) {
-			placeAtRandom();
-			return ;
-		}
 		let longest_total = longest_lines[0];
 		longest_lines.forEach((val) => {
 			if (val.count > longest_total.count) {
 				longest_total = val;
 			}
 		});
+		if (Math.random() >= strength || longest_total.count === 0) {
+			placeAtRandom();
+			return ;
+		}
 		if (longest_lines[self_index].count == longest_total.count)
 			longest_total = longest_lines[self_index];	
 		placeAtLine(longest_total.coords, longest_total.vector);
