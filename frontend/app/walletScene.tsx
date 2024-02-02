@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { useWindow } from "./tic-tac-toe/hook/useWindow";
+// import { useWindow } from "./tic-tac-toe/hook/useWindow";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { useEffect, useRef, useState } from "react";
 import { Html } from '@react-three/drei';
