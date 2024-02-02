@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 
 import pongGameImage from "@/assets/pongGame.png";
 import tttGameImage from "@/assets/tttGame.png";
+import { WalletScene } from "./walletScene";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -45,10 +46,11 @@ export default function Home() {
 	if (!isConnected) {
 		return (
 			<section className="flex flex-col items-center justify-center h-full">
-				<div className="flex flex-col text-center">
+				{/* <div className="flex flex-col text-center">
 					<p style={{fontSize: '120px', verticalAlign: 'middle'}}>🪪</p>
 					<p className="font-bold text-xl">🕹️ Please connect your Wallet to play 🕹️</p>
-				</div>
+				</div> */}
+				<WalletScene />
 			</section>
 		);
 	}
