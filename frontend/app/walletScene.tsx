@@ -25,7 +25,7 @@ const Wallet = () => {
 		</group>
 	)
 }
- 
+
 const Text = () => {
 	return (
 		<>
