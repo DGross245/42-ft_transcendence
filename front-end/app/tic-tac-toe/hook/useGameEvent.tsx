@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 import { useGameState } from "./useGameState";
-import { initialBoard, winningCoords } from "../context/GameState";
+import { initialBoard, winningCoords } from "../context/TTTGameState";
 import { useSocket } from "./useSocket";
 
 export const useGameEvent = (

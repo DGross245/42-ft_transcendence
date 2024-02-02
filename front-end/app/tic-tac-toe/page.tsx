@@ -1,7 +1,7 @@
 "use client"
 
-import { GameState } from './context/GameState';
-import { Socket } from './context/Sockets';
+import { GameState } from './context/TTTGameState';
+import { Socket } from './context/TTTSockets';
 import TTTScene from './scene/TTTScene';
 
 export default function TicTacToePage() {

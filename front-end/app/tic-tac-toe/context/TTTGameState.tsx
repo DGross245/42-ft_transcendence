@@ -76,7 +76,6 @@ export const winningCoords : [number, number, number][] = [
 	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
 ];
 
-
 interface GameStateContextValue {
 	gameState: {
 		gameId: string,

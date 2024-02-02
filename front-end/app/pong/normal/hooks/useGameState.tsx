@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 export const useGameState = (maxClients: number) => {
 	const [p1Score, setP1Score] = useState(0);
 	const [p2Score, setP2Score] = useState(0);
+
 	const [showModal, setShowModal] = useState(false);
 	const [winner, setWinner] = useState('');
 	const [isScoreVisible, setScoreVisibility] = useState(false);

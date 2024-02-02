@@ -5,17 +5,17 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stats } from '@react-three/drei'; 
 import inputHandler from '@/components/inputHandler';
 import Camera from '../sharedComponents/Camera';
-import Border from './components/Border';
-import { RightPaddle, LeftPaddle, TopPaddle, BottomPaddle } from './components/Paddle';
-import { Ball } from './components/Ball';
-import { CubeLineY, CubeLineX }from './components/CubeLine';
-import Scoreboard from './components/Scoreboard';
-import EndModal from './components/EndModal';
+import Border from '../oneForAll/components/Border';
+import { RightPaddle, LeftPaddle, TopPaddle, BottomPaddle } from '../oneForAll/components/Paddle';
+import { Ball } from '../oneForAll/components/Ball';
+import { CubeLineY, CubeLineX }from '../oneForAll/components/CubeLine';
+import Scoreboard from '../oneForAll/components/Scoreboard';
+import EndModal from '../oneForAll/components/EndModal';
 import Countdown from '../sharedComponents/Countdown';
 import { Mesh } from 'three'
 import { PongContext } from '../PongProvider';
-import { useGameState } from './hooks/useGameState';
-import { useWebSocket } from './hooks/useWebSocket';
+import { useGameState } from '../oneForAll/hooks/useGameState';
+import { useWebSocket } from '../oneForAll/hooks/useWebSocket';
 
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,

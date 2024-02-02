@@ -5,19 +5,19 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei'; 
 import { Mesh } from 'three'
 
-import { Border } from './components/Border';
-import { RightPaddle, LeftPaddle } from './components/Paddle';
-import { Ball } from './components/Ball';
-import { Scoreboard } from './components/Scoreboard';
-import EndModal from './components/EndModal';
-import { CubeLine } from './components/CubeLine';
+import { Border } from '../normal/components/Border';
+import { RightPaddle, LeftPaddle } from '../normal/components/Paddle';
+import { Ball } from '../normal/components/Ball';
+import { Scoreboard } from '../normal/components/Scoreboard';
+import EndModal from '../normal/components/EndModal';
+import { CubeLine } from '../normal/components/CubeLine';
 
 import Camera from '../sharedComponents/Camera';
 import Countdown from '../sharedComponents/Countdown';
 import { PongContext } from '../PongProvider';
 import { usePongBot } from '../hooks/PongBot';
-import { useGameState } from './hooks/useGameState';
-import { useWebSocket } from './hooks/useWebSocket';
+import { useGameState } from '../normal/hooks/useGameState';
+import { useWebSocket } from '../normal/hooks/useWebSocket';
 
 // TODO: Matchmaking, should handle the sockets and joining for games, at setting player info
 // FIXME: Someotimes the guest or not host, counts the score twice
