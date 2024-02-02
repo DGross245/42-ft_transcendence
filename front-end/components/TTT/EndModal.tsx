@@ -9,7 +9,7 @@ import { useSocket } from "@/app/tic-tac-toe/hook/useSocket";
 import { useKey } from "../useKey";
 
 const EndModal = () => {
-	const { winner, gameState } = useGameState();
+	const { winner, gameState, isGameMode } = useGameState();
 	const { disconnected, requestRematch, setSendRequest, sendRequest } = useSocket();
 	const { showModal, closeModal, openModal } = useUI();
 
@@ -20,6 +20,8 @@ const EndModal = () => {
 			return ('/images/x.png');
 		else if (winner === '🔳')
 			return ('/images/square.png')
+		else if (isGameMode)
+			return ('/images/Qubic_draw.png');
 		else
 			return ('/images/draw.png');
 	}
