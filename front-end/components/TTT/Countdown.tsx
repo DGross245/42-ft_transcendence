@@ -3,7 +3,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { extend, useThree } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
 
-import { useSound } from '@/components/Sound';
+import { useSound } from '@/components/hooks/Sound';
 import { useGameState } from '../../app/tic-tac-toe/hooks/useGameState';
 import Silkscreen_Regular from '../../public/fonts/Silkscreen_Regular.json';
 

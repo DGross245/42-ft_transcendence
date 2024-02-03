@@ -2,7 +2,7 @@ import { PerspectiveCamera } from "@react-three/drei"
 import { useEffect, useRef } from "react";
 
 import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
-import { useKey } from "@/components/useKey";
+import { useKey } from "@/components/hooks/useKey";
 
 /**
  * Ceates a perspective camera for a 3D scene and updates its position and orientation based on a key map.

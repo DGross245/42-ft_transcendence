@@ -1,13 +1,11 @@
-import { useKey } from "@/components/useKey";
+import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
+import { useKey } from "@/components/hooks/useKey";
 import { useFrame } from "@react-three/fiber";
 import { MutableRefObject, forwardRef } from "react";
 import * as THREE from 'three'
 import { Mesh } from 'three';
 
-// TODO: add later a getter/setter that sets the color for the player
-
 interface Paddle {
-	keyMap: { [key: string]: boolean };
 	position: [number, number, number];
 }
 
@@ -18,7 +16,8 @@ interface Paddle {
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
+export const RightPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
+	const { playerState } = usePongSocket();
 	const paddleSpeed = 300;
 	const borderPositionY = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
@@ -39,7 +38,7 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
 	return (
 		<mesh ref={meshRef} position={position} rotation={[0, Math.PI / 2, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ 0xff0000 } />
+			<meshBasicMaterial color={ playerState.players[3].color } />
 		</mesh>
 	);
 });
@@ -47,17 +46,17 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) 
 /**
  * Creates a Three.js mesh representing the left paddle for the game scene and manages its movement.
  * @param ref - Forwarded reference for more control in parent component.
- * @param keyMap - An object mapping keyboard keys to their pressed/unpressed state.
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
+export const LeftPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
+	const { playerState } = usePongSocket();
 	const paddleSpeed = 300;
 	const borderPositionY = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
 
-	const up = useKey('KeyW');
-	const down = useKey('KeyS')
+	const up = useKey(['W', 'w']);
+	const down = useKey(['S', 's'])
 
 	useFrame((_, delta) => {
 		if (meshRef && meshRef.current) {
@@ -72,7 +71,7 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 	return (
 		<mesh ref={meshRef} position={position} rotation={[0, Math.PI / 2, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ 0x00ff00 } />
+			<meshBasicMaterial color={ playerState.players[1].color } />
 		</mesh>
 	);
 });
@@ -80,11 +79,11 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =
 /**
  * Creates a Three.js mesh representing the top paddle for the game scene and manages its movement.
  * @param ref - Forwarded reference for more control in parent component.
- * @param keyMap - An object mapping keyboard keys to their pressed/unpressed state.
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const TopPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
+export const TopPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
+	const { playerState } = usePongSocket();
 	const paddleSpeed = 300;
 	const borderPositionX = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
@@ -105,7 +104,7 @@ export const TopPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =>
 	return (
 		<mesh ref={meshRef} position={position} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ 0x00F5FF11 } />
+			<meshBasicMaterial color={ playerState.players[2].color } />
 		</mesh>
 	);
 });
@@ -117,7 +116,8 @@ export const TopPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) =>
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const BottomPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
+export const BottomPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
+	const { playerState } = usePongSocket();
 	const paddleSpeed = 300;
 	const borderPositionX = 111;
 	const meshRef = ref as MutableRefObject<Mesh | null>;
@@ -138,7 +138,7 @@ export const BottomPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref)
 	return (
 		<mesh ref={ref} position={position} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ 0x1874CD } />
+			<meshBasicMaterial color={ playerState.players[0].color } />
 		</mesh>
 	);
 });

@@ -4,9 +4,7 @@ import { useGameState } from "./useGameState";
 import { initialBoard, winningCoords } from "../context/TTTGameState";
 import { useSocket } from "./useSocket";
 
-export const useGameEvent = (
-	maxClients: number,
-) => {
+export const useGameEvent = ( maxClients: number ) => {
 	const {
 		gameState,
 		setBoard,

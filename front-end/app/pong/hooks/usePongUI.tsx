@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
-
 import { useSound } from "@/components/hooks/Sound";
-import { useGameState } from "./useGameState";
+import { useEffect, useState } from "react";
+import { usePongGameState } from "./usePongGameState";
 
-export const useUI = () => {
+export const usePongUI = () => {
 	const [showModal, setShowModal] = useState(false);
+	const { pongGameState } = usePongGameState();
 	const soundEngine = useSound();
-	const { gameState } = useGameState();
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -18,18 +17,17 @@ export const useUI = () => {
 
 	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
-		if (gameState.gameOver) {
-			const delay = 2000;
+		if (pongGameState.gameOver) {
+			const delay = 1000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
-				soundEngine?.playSound("win");
 			}, delay);
 
 			return (() => {
 				clearTimeout(modalTimeout)
 			});
 		}
-	}, [gameState.gameOver]);
+	}, [pongGameState.gameOver]);
 
 	return {
 		closeModal,

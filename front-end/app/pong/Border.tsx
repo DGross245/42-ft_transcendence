@@ -1,17 +1,16 @@
-import * as THREE from "three"
 
 /**
  * Creates multiple Three.js meshes representing 3D borders that cover the corners of the playing area within a 3D space.
  * @returns An array of Three.js border meshes.
  */
-const Border = () => {
+export const Border = () => {
 
 	// All positions and rotations for each border
 	const info = [
-		{ position: {x: 131, y:  0, z: -151}, rotation: {x: 0, y: 0, z: 0} },
-		{ position: {x: 151, y:  0, z: -131}, rotation: {x: 0, y: Math.PI / 2, z: 0} },
-		{ position: {x:-131, y:  0, z: -151}, rotation: {x: 0, y: 0, z: 0} },
-		{ position: {x:-151, y:  0, z: -131}, rotation: {x: 0, y: Math.PI / 2, z: 0} },
+		{ position: {x: 131, y: 0, z:-151}, rotation: {x: 0, y: 0, z: 0} },
+		{ position: {x: 151, y: 0, z:-131}, rotation: {x: 0, y: Math.PI / 2, z: 0} },
+		{ position: {x:-131, y: 0, z:-151}, rotation: {x: 0, y: 0, z: 0} },
+		{ position: {x:-151, y: 0, z:-131}, rotation: {x: 0, y: Math.PI / 2, z: 0} },
 		{ position: {x:-131, y: 0, z: 151}, rotation: {x: 0, y: 0, z: 0} },
 		{ position: {x:-151, y: 0, z: 131}, rotation: {x: 0, y: Math.PI / 2, z: 0} },
 		{ position: {x: 131, y: 0, z: 151}, rotation: {x: 0, y: 0, z: 0} },
@@ -30,5 +29,3 @@ const Border = () => {
 
 	return (borders);
 }
-
-export default Border;

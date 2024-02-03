@@ -1,7 +1,7 @@
 import { Line } from "@react-three/drei";
 import { useEffect, useState } from "react";
 
-import { useSound } from "@/components/Sound";
+import { useSound } from "@/components/hooks/Sound";
 import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
 
 /**

@@ -5,7 +5,7 @@ import { OrbitControls } from "@react-three/drei";
 
 import { useGameEvent } from "../hooks/useGameEvent";
 import { useSocketEvent } from "../hooks/useSocketEvent";
-import { useWindow } from "../hooks/useWindow";
+import { useWindow } from "../../../components/hooks/useWindow";
 import { Grid } from "@/components/TTT/Grid";
 import { FieldLayers } from "@/components/TTT/FieldLayers";
 import { useClick } from "../hooks/useClick";

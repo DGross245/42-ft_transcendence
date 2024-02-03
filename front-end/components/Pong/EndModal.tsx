@@ -2,41 +2,27 @@
 
 import React, { useEffect } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
-
-import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
-import { useUI } from "@/app/tic-tac-toe/hooks/useUI";
-import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
+import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
+import { usePongUI } from "@/app/pong/hooks/usePongUI";
+import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 
 const EndModal = () => {
-	const { winner, gameState, isGameMode } = useGameState();
-	const { disconnected, requestRematch, setSendRequest, sendRequest } = useSocket();
-	const { showModal, closeModal, openModal } = useUI();
-
-	const getWinnerImage = () => {
-		if (winner == 'O')
-			return ('/images/o.png');
-		else if (winner == 'X')
-			return ('/images/x.png');
-		else if (winner === '🔳')
-			return ('/images/square.png')
-		else if (isGameMode)
-			return ('/images/Qubic_draw.png');
-		else
-			return ('/images/draw.png');
-	}
-
 	const escape = useKey(['Escape'])
+	const { pongGameState, winner  } = usePongGameState();
+	const { disconnected, requestRematch, setSendRequest, sendRequest } = usePongSocket();
+	const { openModal, closeModal, showModal} = usePongUI();
 
 	useEffect(() => {
-		if (escape.isKeyDown && gameState.gameOver)
+		if (escape.isKeyDown && pongGameState.gameOver)
 			openModal();
 	},[escape]);
 
 	useEffect(() => {
-		if (gameState.reset)
+		if (pongGameState.reset)
 			closeModal();
-	},[gameState.reset])
+	},[pongGameState.reset])
+
 	return (
 		<>
 			<Modal
@@ -55,20 +41,8 @@ const EndModal = () => {
 			>
 				<ModalContent style={{ position: 'relative', overflow: 'visible' }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-					{showModal && (
-						<div style={{ marginTop: '20px' }}>
-							<img
-								src={getWinnerImage()}
-								style={{
-									width: winner === 'draw' ? '160px' : '80px',
-									height: '80px',
-								}}
-								alt="Image"
-							/>
-						</div>
-					)}
 					<ModalHeader className="flex flex-col gap-1 items-center justify-center">
-						{winner === 'draw' ? 'Draw' : 'Wins' }
+						{disconnected === true ? 'Forfeited' : winner === 'draw' ? 'Draw' : 'Wins' }
 					</ModalHeader>
 					</div>
 					<ModalBody >

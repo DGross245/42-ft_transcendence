@@ -2,6 +2,7 @@ import { PerspectiveCamera } from "@react-three/drei"
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import * as THREE from 'three'
+import { useKey } from "../hooks/useKey";
 
 interface CameraProps {
 	position: [number, number, number],
@@ -13,25 +14,28 @@ interface CameraProps {
  * 				  `keyMap` and `position`. 
  * @returns The PerspectiveCamera component from the Three.js library.
  */
-const Camera : React.FC<CameraProps> = (props) => {
+const Camera: React.FC<{ position: [number, number, number] }> = ({ position }) => {
 	const ref = useRef<THREE.PerspectiveCamera>(null);
-	const [x, y, z] = [...props.position]; // TODO: REMOVE THIS LATER AFTER TESTING
+	const [x, y, z] = [...position];
+
+	const digit1 = useKey(['1']);
+	const digit2 = useKey(['2']);
 
 	// Pressing on the Digit1 key, resets the camera back to its original spot.
-	// useFrame(() => {
-	// 	if (ref && ref.current) {
-	// 		if (keyMap['Digit1']) {
-	// 			ref.current.position.set(...props.position);
-	// 			ref.current.lookAt(0, 0, 0);
-	// 		}
-	// 		// for testing
-	// 		if (keyMap['Digit2']) {
-	// 			const [x, y, z] = [...props.position];
-	// 			ref.current.position.set(x, y, z + 300);
-	// 			ref.current.lookAt(0, 0, 0);
-	// 		}
-	// 	}
-	// });)
+	useEffect(() => {
+		if (ref && ref.current) {
+			if (digit1.isKeyDown) {
+				ref.current.position.set(...position);
+				ref.current.lookAt(0, 0, 0);
+			}
+			// for testing
+			if (digit2.isKeyDown) {
+				const [x, y, z] = [...position];
+				ref.current.position.set(x, y, z + 300);
+				ref.current.lookAt(0, 0, 0);
+			}
+		}
+	},[digit1])
 
 	return (
 		<PerspectiveCamera

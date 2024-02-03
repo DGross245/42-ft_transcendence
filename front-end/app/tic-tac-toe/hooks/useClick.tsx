@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { useSound } from "@/components/Sound";
+import { useSound } from "@/components/hooks/Sound";
 import { useGameState } from "./useGameState";
 import { useSocket } from "./useSocket";
 import { gameValidation } from "@/components/TTT/GameValidation";

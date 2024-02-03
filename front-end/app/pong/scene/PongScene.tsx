@@ -1,23 +1,19 @@
 "use client"
 
-import React, { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei'; 
-import { Mesh } from 'three'
-
-import { Border } from '../normal/components/Border';
-import { RightPaddle, LeftPaddle } from '../normal/components/Paddle';
-import { Ball } from '../normal/components/Ball';
-import { Scoreboard } from '../normal/components/Scoreboard';
-import EndModal from '../normal/components/EndModal';
-import { CubeLine } from '../normal/components/CubeLine';
-
-import Camera from '../sharedComponents/Camera';
-import Countdown from '../sharedComponents/Countdown';
-import { PongContext } from '../PongProvider';
-import { usePongBot } from '../hooks/PongBot';
-import { useGameState } from '../normal/hooks/useGameState';
-import { useWebSocket } from '../normal/hooks/useWebSocket';
+import Countdown from "@/components/Pong/Countdown";
+import { useWindow } from "@/components/hooks/useWindow";
+import { Canvas } from "@react-three/fiber";
+import { usePongGameState } from "../hooks/usePongGameState";
+import Camera from "@/components/Pong/Camera";
+import { Border } from "../NormalBorder";
+import EndModal from "@/components/Pong/EndModal";
+import { OrbitControls } from "@react-three/drei";
+import { CubeLine } from "@/components/Pong/CubeLine";
+import { usePongGameEvent } from "../hooks/usePongGameEvent";
+import { Ball } from "@/components/Pong/Ball";
+import { usePongSocketEvents } from "../hooks/usePongSocketEvent";
+import { Scoreboard } from "../NormalScoreboard";
+import { LeftPaddle, RightPaddle } from "../NormalPaddle";
 
 // TODO: Matchmaking, should handle the sockets and joining for games, at setting player info
 // FIXME: Someotimes the guest or not host, counts the score twice
@@ -28,88 +24,29 @@ import { useWebSocket } from '../normal/hooks/useWebSocket';
  * @returns The entire Three.js scene, including the modal.
  */
 export default function PongScene(/* maybe get gameId as param */) { // PlayerState needs to set too
-	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const { rightPaddleRef, leftPaddleRef, ballRef } = useContext(PongContext);
-	const { p1Score, p2Score, setP1Score, setP2Score, isScoreVisible, setScoreVisibility,
-		setWinner, isGameOver, setGameOver, isBallVisible, setBallVisibility, showModal, closeModal,
-		winner, sendRequest, setRequestRematch, setSendRequest, requestRematch,
-		disable, setDisable, rematchIndex, setRematchIndex} = useGameState(2);
-	const { active, direction, ballAidsHook } = usePongBot(true, 100, rightPaddleRef.current?.position);
-
-	useWebSocket( isGameOver, sendRequest, setGameOver, setRequestRematch, setSendRequest, setDisable, rematchIndex, setRematchIndex );
-
-	// Updates window dimensions on window resizing.
-	useEffect(() => {
-		const handleResize = () => {
-			setDimensions({
-				width: window.innerWidth,
-				height: window.innerHeight,
-			});
-		};
-
-		const handlePause = () => {
-			// updateGameState({ ...gameState, pause: true })
-			// gameState.wsclient?.emitMessageToGame("true", `Pause-${gameState.gameId}`, gameState.gameId);
-		};
-	
-		handlePause();
-		handleResize();
-
-		window.addEventListener('resize', handleResize);
-		window.addEventListener('blur', handlePause);
-
-		return () => {
-			window.removeEventListener('resize', handleResize);
-			window.removeEventListener('blur', handlePause);
-		};
-	}, []);
-
-
+	// const { active, direction, ballAidsHook } = usePongBot(true, 100, rightPaddleRef.current?.position);
+	const {dimensions} = useWindow();
+	const maxClients = 2;
+	const { leftPaddleRef, rightPaddleRef } = usePongGameState();
+	usePongGameEvent( maxClients );
+	usePongSocketEvents();
+	// botActive={active} botDirection={direction}
+	// onPositionChange={ballAidsHook}
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown
-					scoreVisible={isScoreVisible} 
-					setScoreVisibility={setScoreVisibility} 
-					rotation={[-Math.PI /2, 0, 0]}
-					position={[ [-23, 50, 0],[-35, 50, 0] ]}
-				/>
+				<Countdown rotation={[-Math.PI /2, 0, 0]} position={[ [-23, 50, 0],[-35, 50, 0] ]} />
 				<Camera position={[0, 400, 100]} />
 				<Border position={[0, 0, -105]} />
 				<Border position={[0,0,105]} />
-				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} botActive={active} botDirection={direction}/>
+				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
 				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} />
-				<Ball
-					rightPaddleRef={rightPaddleRef}
-					leftPaddleRef={leftPaddleRef}
-					p1Score={p1Score} setP1Score={setP1Score}
-					p2Score={p2Score} setP2Score={setP2Score}
-					setWinner={setWinner}
-					gameOver={isGameOver} setGameOver={setGameOver}
-					scoreVisible={isScoreVisible}
-					isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
-					ref={ballRef}
-					onPositionChange={ballAidsHook}
-				/>
+				<Ball />
 				<CubeLine />
 				<OrbitControls enablePan={false} />
-				<Scoreboard
-					player1={p1Score}
-					player2={p2Score}
-					rightPaddleRef={rightPaddleRef}
-					leftPaddleRef={leftPaddleRef}
-					scoreVisible={isScoreVisible} 
-				/>
+				<Scoreboard />
 			</Canvas>
-			<EndModal
-				isOpen={showModal}
-				onClose={closeModal}
-				winner={winner}
-				setSendRequest={setSendRequest}
-				sendRequest={sendRequest}
-				requestRematch={requestRematch}
-				disable={disable}
-			/>
+			<EndModal />
 		</div>
 	);
 }

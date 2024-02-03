@@ -1,24 +1,16 @@
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { Object3DNode, Vector3, extend } from '@react-three/fiber';
-import { MutableRefObject, useContext } from 'react';
+import { MutableRefObject } from 'react';
 import { Mesh, MeshBasicMaterial } from 'three';
 
-import Orbitron_Regular from '../../../../public/fonts/Orbitron_Regular.json';
-import { PongContext } from '../../PongProvider';
+import Orbitron_Regular from '../../public/fonts/Orbitron_Regular.json';
+import { usePongGameState } from './hooks/usePongGameState';
 
 extend({ TextGeometry })
 
 type ScoreType = {
 	[key: number]: { position: Vector3 };
-}
-
-interface ScoreboardProps {
-	player1: number,
-	player2: number,
-	rightPaddleRef: MutableRefObject<Mesh>,
-	leftPaddleRef: MutableRefObject<Mesh>,
-	scoreVisible: boolean,
 }
 
 /* The `declare module` statement is used to extend the existing module declaration in TypeScript.
@@ -38,9 +30,10 @@ declare module "@react-three/fiber" {
  * @returns A JSX fragment containing two mesh elements. Each
  * mesh element represents a player's score.
  */
-export const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, scoreVisible }) => {
+export const Scoreboard = () => {
 	const font = new FontLoader().parse(Orbitron_Regular);
-	const { leftPaddleRef, rightPaddleRef } = useContext(PongContext);
+	const { scores, isScoreVisible, rightPaddleRef, leftPaddleRef } = usePongGameState();
+
 	// Reposition textGeometry based on score.
 	const Score1 : ScoreType = {
 		0:	{ position: [-70.8, 6, -40] },
@@ -64,8 +57,8 @@ export const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, score
 		7:	{ position: [ 38, 6, -40] },
 	}
 
-	const position1 : Vector3 = Score1[player1]?.position;
-	const position2 : Vector3 = Score2[player2]?.position;
+	const position1 : Vector3 = Score1[scores.p1Score]?.position;
+	const position2 : Vector3 = Score2[scores.p2Score]?.position;
 
 	const getColor = ( ref:  MutableRefObject<Mesh>) => {
 		if (ref && ref.current) {
@@ -79,12 +72,12 @@ export const Scoreboard : React.FC<ScoreboardProps> = ({ player1, player2, score
 
 	return (
 		<>
-			<mesh visible={scoreVisible} position={position1} rotation={[-Math.PI / 2, 0, 0]} >
-				<textGeometry args={[String(player1), {font, size: 35, height: 3}]} />
+			<mesh visible={isScoreVisible} position={position1} rotation={[-Math.PI / 2, 0, 0]} >
+				<textGeometry args={[String(scores.p1Score), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(leftPaddleRef) } />
 			</mesh>
-			<mesh visible={scoreVisible} position={position2} rotation={[-Math.PI / 2, 0, 0]}>
-				<textGeometry args={[String(player2), {font, size: 35, height: 3}]} />
+			<mesh visible={isScoreVisible} position={position2} rotation={[-Math.PI / 2, 0, 0]}>
+				<textGeometry args={[String(scores.p2Score), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(rightPaddleRef) } />
 			</mesh>
 		</>
