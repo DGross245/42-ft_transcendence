@@ -8,14 +8,14 @@ const Border = () => {
 
 	// All positions and rotations for each border
 	const info = [
-		{ position: {x: 131, y:  151, z: 0}, rotation: {x: 0, y: 0, z: 0} },
-		{ position: {x: 151, y:  131, z: 0}, rotation: {x: 0, y: 0, z: Math.PI / 2} },
-		{ position: {x:-131, y:  151, z: 0}, rotation: {x: 0, y: 0, z: 0} },
-		{ position: {x:-151, y:  131, z: 0}, rotation: {x: 0, y: 0, z: Math.PI / 2} },
-		{ position: {x:-131, y: -151, z: 0}, rotation: {x: 0, y: 0, z: 0} },
-		{ position: {x:-151, y: -131, z: 0}, rotation: {x: 0, y: 0, z: Math.PI / 2} },
-		{ position: {x: 131, y: -151, z: 0}, rotation: {x: 0, y: 0, z: 0} },
-		{ position: {x: 151, y: -131, z: 0}, rotation: {x: 0, y: 0, z: Math.PI / 2} },
+		{ position: {x: 131, y:  0, z: -151}, rotation: {x: 0, y: 0, z: 0} },
+		{ position: {x: 151, y:  0, z: -131}, rotation: {x: 0, y: Math.PI / 2, z: 0} },
+		{ position: {x:-131, y:  0, z: -151}, rotation: {x: 0, y: 0, z: 0} },
+		{ position: {x:-151, y:  0, z: -131}, rotation: {x: 0, y: Math.PI / 2, z: 0} },
+		{ position: {x:-131, y: 0, z: 151}, rotation: {x: 0, y: 0, z: 0} },
+		{ position: {x:-151, y: 0, z: 131}, rotation: {x: 0, y: Math.PI / 2, z: 0} },
+		{ position: {x: 131, y: 0, z: 151}, rotation: {x: 0, y: 0, z: 0} },
+		{ position: {x: 151, y: 0, z: 131}, rotation: {x: 0, y: Math.PI / 2, z: 0} },
 	];
 
 	const borders = info.map((border, index) => (
@@ -24,13 +24,7 @@ const Border = () => {
 			position={[border.position.x, border.position.y, border.position.z]}
 			rotation={[border.rotation.x, border.rotation.y, border.rotation.z]} >
 			<boxGeometry args={[40, 4, 4]} />
-			<meshBasicMaterial
-				color={ 0xffffff }
-				toneMapped={false}
-				transparent={false}
-				blending={THREE.AdditiveBlending}
-				side={THREE.BackSide}
-			/>
+			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
 	));
 

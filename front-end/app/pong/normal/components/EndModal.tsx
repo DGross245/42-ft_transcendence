@@ -1,19 +1,13 @@
 "use client"
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
-const EndModal = ({ isOpen, onClose, winner, setReset }) => {
+// FIXME: positing of modal with low window size
+// TODO: ADD if nobody is in the room, then disable button for rematch
+// TODO: Maybe change Rematch button to Accept or Accept Rematch when requestRematch is true
 
-	const getWinnerImage = () => {
-		if (winner == 'P1')
-			return ('/o.png');
-		else if (winner == 'P2')
-			return ('/x.png');
-		else
-			return ('/draw.png');
-	}
-
+const EndModal = ({ isOpen, onClose, winner, setSendRequest, sendRequest, requestRematch, disable}) => {
 	return (
 		<>
 			<Modal
@@ -32,7 +26,7 @@ const EndModal = ({ isOpen, onClose, winner, setReset }) => {
 			>
 				<ModalContent style={{ position: 'relative', overflow: 'visible' }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-					{isOpen && (
+					{/* {isOpen && (
 						<div style={{ marginTop: '20px' }}>
 							<img
 								src={getWinnerImage()}
@@ -43,7 +37,7 @@ const EndModal = ({ isOpen, onClose, winner, setReset }) => {
 								alt="Image"
 							/>
 						</div>
-					)}
+					)} */}
 					<ModalHeader className="flex flex-col gap-1 items-center justify-center">
 						{winner === 'draw' ? 'Draw' : 'Wins' }
 					</ModalHeader>
@@ -54,8 +48,8 @@ const EndModal = ({ isOpen, onClose, winner, setReset }) => {
 					<Button color="danger" variant="ghost" onClick={onClose}>
 						Close
 					</Button>
-					<Button color="primary" variant="ghost" onClick={() => setReset(true)}>
-						Play Again
+					<Button color="primary" isDisabled={disable} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
+						Rematch
 					</Button>
 					<Button color="success" variant="ghost" onClick={onClose}>
 						View
