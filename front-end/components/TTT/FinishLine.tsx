@@ -2,7 +2,7 @@ import { Line } from "@react-three/drei";
 import { useEffect, useState } from "react";
 
 import { useSound } from "@/components/Sound";
-import { useGameState } from "../../app/tic-tac-toe/hook/useGameState";
+import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
 
 /**
  * The `FinishLine` component renders a line with specified coordinates and color, and plays a sound

@@ -1,10 +1,13 @@
 import {
 	Dispatch,
+	MutableRefObject,
 	ReactNode,
 	SetStateAction,
 	createContext,
+	useRef,
 	useState
 } from "react";
+import { Mesh } from 'three'
 
 interface PongGameStateContextValue {
 	scores: {
@@ -33,6 +36,11 @@ interface PongGameStateContextValue {
 	isBallVisible: boolean,
 	setBallVisibility: Dispatch<SetStateAction<boolean>>,
 	setBot: Dispatch<SetStateAction<PongGameStateContextValue['botState']>>,
+	rightPaddleRef: MutableRefObject<Mesh>,
+	leftPaddleRef: MutableRefObject<Mesh>,
+	topPaddleRef: MutableRefObject<Mesh>,
+	bottomPaddleRef: MutableRefObject<Mesh>,
+	ballRef: MutableRefObject<Mesh>
 }
 
 export const PongGameStateContext = createContext<PongGameStateContextValue>({} as PongGameStateContextValue);
@@ -44,6 +52,12 @@ export const PongGameState: React.FC<{ isBotActive: boolean, children: ReactNode
 	const [botState, setBot] = useState({ isActive: isBotActive, strength: 0.9, client: -1 });
 	const [isScoreVisible, setScoreVisibility] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true);
+
+	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+	const topPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+	const bottomPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+	const ballRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 
 	const value: PongGameStateContextValue = {
 		scores,
@@ -57,12 +71,17 @@ export const PongGameState: React.FC<{ isBotActive: boolean, children: ReactNode
 		isScoreVisible,
 		setScoreVisibility,
 		isBallVisible,
-		setBallVisibility
+		setBallVisibility,
+		rightPaddleRef,
+		leftPaddleRef,
+		topPaddleRef,
+		bottomPaddleRef,
+		ballRef,
 	};
 
 	return (
 		<PongGameStateContext.Provider value={ value } >
 			{children}
 		</PongGameStateContext.Provider>
-	)
+	);
 }

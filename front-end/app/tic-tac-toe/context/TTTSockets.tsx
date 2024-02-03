@@ -74,7 +74,7 @@ export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children:
 	}
 
 	return (
-		<SocketContext.Provider value={ value }>
+		<SocketContext.Provider value={ value } >
 			{children}
 		</SocketContext.Provider>
 	);

@@ -3,14 +3,14 @@
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 
-import { useGameEvent } from "../hook/useGameEvent";
-import { useSocketEvent } from "../hook/useSocketEvent";
-import { useWindow } from "../hook/useWindow";
+import { useGameEvent } from "../hooks/useGameEvent";
+import { useSocketEvent } from "../hooks/useSocketEvent";
+import { useWindow } from "../hooks/useWindow";
 import { Grid } from "@/components/TTT/Grid";
 import { FieldLayers } from "@/components/TTT/FieldLayers";
-import { useClick } from "../hook/useClick";
-import { useGameState } from "../hook/useGameState";
-import { useBot } from "../hook/useBot";
+import { useClick } from "../hooks/useClick";
+import { useGameState } from "../hooks/useGameState";
+import { useBot } from "../hooks/useBot";
 import Countdown from "@/components/TTT/Countdown";
 import Camera from "@/components/TTT/Camera";
 import Floor from "@/components/TTT/Floor";

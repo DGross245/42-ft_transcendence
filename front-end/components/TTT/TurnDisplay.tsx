@@ -3,8 +3,8 @@ import { DoubleSide, Shape } from 'three';
 import { Extrude } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 
-import { useSocket } from "../../app/tic-tac-toe/hook/useSocket";
-import { useGameState } from "../../app/tic-tac-toe/hook/useGameState";
+import { useSocket } from "../../app/tic-tac-toe/hooks/useSocket";
+import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
 
 // FIXME: FIX THIS MESS LATER
 

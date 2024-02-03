@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { useGameState } from "../../app/tic-tac-toe/hook/useGameState";
+import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
 import Field from "./Field";
 
 export const FieldLayers = ({ clicked, click } : { clicked: boolean; click: React.Dispatch<React.SetStateAction<boolean>> }) => {

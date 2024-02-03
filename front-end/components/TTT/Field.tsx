@@ -2,9 +2,9 @@ import { useCursor } from '@react-three/drei';
 import { useMemo } from 'react';
 import * as THREE from 'three';
 
-import { useGameState } from '../../app/tic-tac-toe/hook/useGameState';
-import { useSocket } from '../../app/tic-tac-toe/hook/useSocket';
-import { useField } from '../../app/tic-tac-toe/hook/useField';
+import { useGameState } from '../../app/tic-tac-toe/hooks/useGameState';
+import { useSocket } from '../../app/tic-tac-toe/hooks/useSocket';
+import { useField } from '../../app/tic-tac-toe/hooks/useField';
 import X from './X';
 import Torus from './Torus';
 import Square from './Square';

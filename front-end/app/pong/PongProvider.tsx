@@ -23,7 +23,7 @@ interface Player {
 	color: number;
 	master: boolean;
 	number: number;
-}
+};
 
 interface PongContextProps {
 	playerState: {
