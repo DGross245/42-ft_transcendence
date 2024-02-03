@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { Html } from '@react-three/drei';
 import { Button } from "@nextui-org/button";
 import { Tooltip } from "@nextui-org/react";
+import CustomW3Button from "@/components/CustomW3Button";
 
 const Wallet = () => {
 	const walletGLTF = useLoader(GLTFLoader, '/wallet/scene.gltf');
@@ -36,11 +37,12 @@ const Text = () => {
 				Connect your Wallet!
 			</Html>
 			<Html position={[-0.65, -1.8, 0]}>
-				<Tooltip showArrow color={"primary"} content={"Click on the top right Button"} className="capitalize">
+					<CustomW3Button />
+				{/* <Tooltip showArrow color={"primary"} content={"Click on the top right Button"} className="capitalize">
 					<Button size="lg" variant="ghost" className="ghost-button gradient">
 						How to connect?
 					</Button>
-				</Tooltip>
+				</Tooltip> */}
 			</Html>
 		</>
 	)
