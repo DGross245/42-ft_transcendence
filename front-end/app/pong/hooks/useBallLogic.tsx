@@ -100,7 +100,7 @@ export const useBallLogic = () => {
 
 		if (lastPaddleHit !== '') {
 			const { player, score, isOwnGoal } = paddleCollision[lastPaddleHit];
-
+			console.log(player, score, isOwnGoal)
 			if (isOwnGoal && score !== 0)
 				setScores({ ...scores, [player]: score - 1})
 			else if (!isOwnGoal)

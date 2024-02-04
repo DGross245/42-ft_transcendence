@@ -14,6 +14,7 @@ import Scoreboard from "@/components/Pong/Scoreboard";
 import EndModal from "@/components/Pong/EndModal";
 import { usePongSocketEvents } from "../hooks/usePongSocketEvent";
 import { CornerBorder } from "@/components/Pong/Border";
+import { useEffect } from "react";
 
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,

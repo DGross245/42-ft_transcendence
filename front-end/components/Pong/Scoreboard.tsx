@@ -2,7 +2,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import Orbitron_Regular from '../../public/fonts/Orbitron_Regular.json';
 import { extend } from '@react-three/fiber';
-import { MutableRefObject, useContext, useEffect, useState } from 'react';
+import { MutableRefObject, useEffect, useMemo, useState } from 'react';
 import { Mesh, MeshBasicMaterial } from 'three';
 import { usePongSocket } from '@/app/pong/hooks/usePongSocket';
 import { usePongGameState } from '@/app/pong/hooks/usePongGameState';
@@ -10,7 +10,7 @@ import { usePongGameState } from '@/app/pong/hooks/usePongGameState';
 extend({ TextGeometry })
 
 interface PosAndRotInfo {
-	position: [number, number, number],
+	position: [number, number, number][],
 	rotation: [number, number, number],
 }
 
@@ -38,58 +38,58 @@ const Scoreboard = () => {
 
 	const [posAndRot, setPosAndRot] = useState<PosAndRotInfo[]>([
 		{
-			position: scores.p1Score === 1 || scores.p1Score === 7 ? [ 13, 50, 170] : [ 21, 50, 170],
+			position: [[ 13, 50, 170], [ 21, 50, 170]],
 			rotation:[0, -Math.PI, 0]
 		},
 		{
-			position: scores.p2Score === 1 || scores.p2Score === 7 ? [-170, 50, 13] : [-170, 50,  21],
+			position: [[-170, 50, 13],[-170, 50,  21]],
 			rotation: [0, Math.PI / 2, 0]
 		},
 		{
-			position: scores.p3Score === 1 || scores.p3Score === 7 ? [ -13, 50,-170] : [ -21, 50,-170],
+			position: [[ -13, 50,-170],[ -21, 50,-170]],
 			rotation: [0, 0, 0]
 		},
 		{
-			position: scores.p4Score === 1 || scores.p4Score === 7 ? [ 170, 50, -13] : [ 170, 50, -21],
+			position: [[ 170, 50, -13],[ 170, 50, -21]],
 			rotation: [0, -Math.PI / 2, 0]
 		},
 	])
 
-	const replacePosAndRot = (player : number): PosAndRotInfo => {
+	const replacePosAndRot = useMemo(() => (player : number): PosAndRotInfo => {
 		switch (player) {
 			case 1:
 				return {
-					position: scores.p1Score === 1 || scores.p1Score === 7 ? [ -13, -5, 210] : [ -21, -5, 210],
-					rotation:[-Math.PI / 2, 0, 0]
+					position: [[ -13, -5, 210],[ -21, -5, 210]],
+					rotation: [-Math.PI / 2, 0, 0]
 				};
 			case 2:
 				return {
-					position: scores.p2Score === 1 || scores.p2Score === 7 ? [-210, -5, -13] : [-210, -5, -21],
+					position: [[-210, -5, -13],[-210, -5, -21]],
 					rotation: [Math.PI / 2, -Math.PI, Math.PI / 2]
 				};
 			case 3:
 				return {
-					position: scores.p3Score === 1 || scores.p3Score === 7 ? [  13, -5,-210] : [  21, -5,-210],
-					rotation:[-Math.PI / 2, 0, -Math.PI]
+					position: [[ 13, -5,-210],[ 21, -5,-210]],
+					rotation: [-Math.PI / 2, 0, -Math.PI]
 				};
 			case 4:
 				return {
-					position: scores.p4Score === 1 || scores.p4Score === 7 ? [ 210, -5, 13] : [ 210, -5, 21],
-					rotation:[-Math.PI / 2, 0, Math.PI / 2]
+					position: [[ 210, -5, 13],[ 210, -5, 21]],
+					rotation: [-Math.PI / 2, 0, Math.PI / 2]
 				};
 			default:
 				return {
-					position: [0, 0, 0],
+					position: [[0, 0, 0], [0,0,0]],
 					rotation: [0, 0, 0]
 				};
 		}
-	};
+	},[playerState.client]);
 
 	useEffect(() => {
 		if (playerState.client !== -1) {
+
 			const { position, rotation } = replacePosAndRot(playerState.client + 1);
 			let newPosAndRot = [...posAndRot];
-
 			newPosAndRot[playerState.client].position = position
 			newPosAndRot[playerState.client].rotation = rotation
 			setPosAndRot(newPosAndRot);
@@ -106,26 +106,31 @@ const Scoreboard = () => {
 			return ( 0xffffff );
 	}
 
+	const getPosition = (position: [number, number, number][], score: number) => {
+		const pos = score === 1 || score === 7 ? position[0] : position[1];
+		return (pos);
+	};
+
 	return (
 		<>
-			<mesh visible={isScoreVisible} position={posAndRot[0].position} rotation={posAndRot[0].rotation} >
+			<mesh visible={isScoreVisible} position={ getPosition(posAndRot[0].position, scores.p1Score) } rotation={posAndRot[0].rotation} >
 				<textGeometry args={[String(scores.p1Score), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(bottomPaddleRef) } />
 			</mesh>
-			<mesh visible={isScoreVisible} position={posAndRot[1].position} rotation={posAndRot[1].rotation} >
+			<mesh visible={isScoreVisible} position={ getPosition(posAndRot[1].position, scores.p2Score) } rotation={posAndRot[1].rotation} >
 				<textGeometry args={[String(scores.p2Score), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(leftPaddleRef) } />
 			</mesh>
-			<mesh visible={isScoreVisible} position={posAndRot[2].position} rotation={posAndRot[2].rotation} >
+			<mesh visible={isScoreVisible} position={ getPosition(posAndRot[2].position, scores.p3Score) } rotation={posAndRot[2].rotation} >
 				<textGeometry args={[String(scores.p3Score), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(topPaddleRef) } />
 			</mesh>
-			<mesh visible={isScoreVisible} position={posAndRot[3].position} rotation={posAndRot[3].rotation}>
+			<mesh visible={isScoreVisible} position={ getPosition(posAndRot[3].position, scores.p4Score) } rotation={posAndRot[3].rotation}>
 				<textGeometry args={[String(scores.p4Score), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(rightPaddleRef) } />
 			</mesh>
 		</>
-	)
+	);
 }
 
 export default Scoreboard;

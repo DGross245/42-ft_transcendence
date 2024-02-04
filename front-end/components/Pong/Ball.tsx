@@ -3,7 +3,6 @@
 import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
 import { useBallLogic } from "@/app/pong/hooks/useBallLogic";
 import { useBall } from "@/app/pong/hooks/useNormalBall";
-import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 
 /**
  * Creates a ball Three.js mesh and handles its movement and collision behavior.

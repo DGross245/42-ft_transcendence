@@ -82,6 +82,7 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
  * @returns A Three.js mesh representing the paddle.
  */
 export const TopPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
+	console.log("re-rendert paddle")
 	const { playerState } = usePongSocket();
 	const paddleSpeed = 300;
 	const borderPositionX = 111;
