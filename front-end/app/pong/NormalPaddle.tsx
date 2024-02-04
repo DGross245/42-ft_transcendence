@@ -3,7 +3,6 @@ import { MutableRefObject, forwardRef, useContext, useEffect, useRef } from "rea
 import { Mesh } from 'three';
 import { Direction } from "./hooks/PongBot";
 
-import { PongContext } from './PongProvider';
 import { useKey } from "@/components/hooks/useKey";
 import { usePongGameState } from "./hooks/usePongGameState";
 import { usePongSocket } from "./hooks/usePongSocket";
@@ -37,7 +36,7 @@ export const RightPaddle = forwardRef<Mesh, { position: [number, number, number]
 		return () => {
 			wsclient?.removeMessageListener(`paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 		};
-	}, []);
+	}, [wsclient]);
 
 	// if (botActive) {
 	// 	useFrame((_, delta) => {

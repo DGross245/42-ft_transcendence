@@ -2,7 +2,6 @@ import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 import { useKey } from "@/components/hooks/useKey";
 import { useFrame } from "@react-three/fiber";
 import { MutableRefObject, forwardRef } from "react";
-import * as THREE from 'three'
 import { Mesh } from 'three';
 
 interface Paddle {

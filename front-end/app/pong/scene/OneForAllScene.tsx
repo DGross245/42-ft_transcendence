@@ -5,7 +5,6 @@ import { Canvas } from "@react-three/fiber";
 import { usePongGameEvent } from "../hooks/usePongGameEvent";
 import Countdown from "@/components/Pong/Countdown";
 import Camera from "@/components/Pong/Camera";
-import { Border } from "../Border";
 import { BottomPaddle, LeftPaddle, RightPaddle, TopPaddle } from "@/components/Pong/Paddle";
 import { usePongGameState } from "../hooks/usePongGameState";
 import { Ball } from "@/components/Pong/Ball";
@@ -14,6 +13,7 @@ import { OrbitControls } from "@react-three/drei";
 import Scoreboard from "@/components/Pong/Scoreboard";
 import EndModal from "@/components/Pong/EndModal";
 import { usePongSocketEvents } from "../hooks/usePongSocketEvent";
+import { CornerBorder } from "@/components/Pong/Border";
 
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
@@ -33,7 +33,7 @@ export default function OneForAllScene() {
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown position={countdownPos} rotation={countdownRot} />
 				<Camera position={camPos}/> 
-				<Border />
+				<CornerBorder />
 				<TopPaddle ref={topPaddleRef} position={[0, 0, -151]} />
 				<BottomPaddle ref={bottomPaddleRef} position={[0, 0, 151]} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />

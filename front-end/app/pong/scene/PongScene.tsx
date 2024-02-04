@@ -5,7 +5,6 @@ import { useWindow } from "@/components/hooks/useWindow";
 import { Canvas } from "@react-three/fiber";
 import { usePongGameState } from "../hooks/usePongGameState";
 import Camera from "@/components/Pong/Camera";
-import { Border } from "../NormalBorder";
 import EndModal from "@/components/Pong/EndModal";
 import { OrbitControls } from "@react-three/drei";
 import { CubeLine } from "@/components/Pong/CubeLine";
@@ -14,6 +13,7 @@ import { Ball } from "@/components/Pong/Ball";
 import { usePongSocketEvents } from "../hooks/usePongSocketEvent";
 import { Scoreboard } from "../NormalScoreboard";
 import { LeftPaddle, RightPaddle } from "../NormalPaddle";
+import { LongBorder } from "@/components/Pong/Border";
 
 // TODO: Matchmaking, should handle the sockets and joining for games, at setting player info
 // FIXME: Someotimes the guest or not host, counts the score twice
@@ -37,8 +37,8 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<Countdown rotation={[-Math.PI /2, 0, 0]} position={[ [-23, 50, 0],[-35, 50, 0] ]} />
 				<Camera position={[0, 400, 100]} />
-				<Border position={[0, 0, -105]} />
-				<Border position={[0,0,105]} />
+				<LongBorder position={[0, 0, -105]} />
+				<LongBorder position={[0,0,105]} />
 				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
 				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} />
 				<Ball />
