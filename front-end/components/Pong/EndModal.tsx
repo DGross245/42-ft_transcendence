@@ -42,7 +42,7 @@ const EndModal = () => {
 				<ModalContent style={{ position: 'relative', overflow: 'visible' }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 					<ModalHeader className="flex flex-col gap-1 items-center justify-center">
-						{disconnected === true ? 'Forfeited' : winner === 'draw' ? 'Draw' : 'Wins' }
+						{ winner === 'draw' ? 'Draw' : 'Wins' }
 					</ModalHeader>
 					</div>
 					<ModalBody >
