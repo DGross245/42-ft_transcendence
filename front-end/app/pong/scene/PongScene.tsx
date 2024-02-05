@@ -6,7 +6,7 @@ import { Canvas } from "@react-three/fiber";
 import { usePongGameState } from "../hooks/usePongGameState";
 import Camera from "@/components/Pong/Camera";
 import EndModal from "@/components/Pong/EndModal";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, Stats } from "@react-three/drei";
 import { CubeLine } from "@/components/Pong/CubeLine";
 import { usePongGameEvent } from "../hooks/usePongGameEvent";
 import { Ball } from "@/components/Pong/Ball";
@@ -46,6 +46,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 				<CubeLine />
 				<OrbitControls enablePan={false} />
 				<Scoreboard />
+				<Stats />
 			</Canvas>
 			<EndModal />
 		</div>

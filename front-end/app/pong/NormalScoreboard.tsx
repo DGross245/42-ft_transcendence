@@ -36,25 +36,24 @@ export const Scoreboard = () => {
 
 	// Reposition textGeometry based on score.
 	const Score1 : ScoreType = {
-		0:	{ position: [-70.8, 6, -40] },
-		1:	{ position: [-62.8, 6, -40] },
-		2:	{ position: [  -71, 6, -40] },
-		3:	{ position: [  -71, 6, -40] },
-		4:	{ position: [  -70, 6, -40] },
-		5:	{ position: [  -70, 6, -40] },
-		6:	{ position: [  -70, 6, -40] },
-		7:	{ position: [  -63, 6, -40] },
+		0:	{ position: [-70.8, -7, -40] },
+		1:	{ position: [-62.8, -7, -40] },
+		2:	{ position: [  -71, -7, -40] },
+		3:	{ position: [  -71, -7, -40] },
+		4:	{ position: [  -70, -7, -40] },
+		5:	{ position: [  -70, -7, -40] },
+		6:	{ position: [  -70, -7, -40] },
+		7:	{ position: [  -63, -7, -40] },
 	}
-
 	const Score2 : ScoreType = {
-		0:	{ position: [ 30, 6, -40] },
-		1:	{ position: [ 38, 6, -40] },
-		2:	{ position: [ 30, 6, -40] },
-		3:	{ position: [ 30, 6, -40] },
-		4:	{ position: [ 33, 6, -40] },
-		5:	{ position: [ 33, 6, -40] },
-		6:	{ position: [ 33, 6, -40] },
-		7:	{ position: [ 38, 6, -40] },
+		0:	{ position: [ 30, -7, -40] },
+		1:	{ position: [ 38, -7, -40] },
+		2:	{ position: [ 30, -7, -40] },
+		3:	{ position: [ 30, -7, -40] },
+		4:	{ position: [ 33, -7, -40] },
+		5:	{ position: [ 33, -7, -40] },
+		6:	{ position: [ 33, -7, -40] },
+		7:	{ position: [ 38, -7, -40] },
 	}
 
 	const position1 : Vector3 = Score1[scores.p1Score]?.position;

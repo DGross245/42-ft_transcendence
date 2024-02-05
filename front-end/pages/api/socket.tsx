@@ -14,7 +14,6 @@ interface SocketApiResponse extends NextApiResponse {
 	};
 }
 
-// TODO: Refactor code 
 // TODO: Limit cam movment in Pong
 // TODO: Implement and test pause in games when tab is not in focus (or ESC)
 // FIXME: Paddle movement based on player number (need to be inverted or adjusted to player rotation)
