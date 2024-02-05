@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
@@ -8,17 +8,21 @@ import { useUI } from "@/app/tic-tac-toe/hooks/useUI";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
 
+// maybe change the View to something like go into queue 
+
 const EndModal = () => {
 	const { winner, gameState, isGameMode } = useGameState();
-	const { disconnected, requestRematch, setSendRequest, sendRequest } = useSocket();
+	const { disconnected, requestRematch, setSendRequest, sendRequest, playerState } = useSocket();
 	const { showModal, closeModal, openModal } = useUI();
+	const [showResult, setShowResult] = useState("");
+	const escape = useKey(['Escape']);
 
-	const getWinnerImage = () => {
-		if (winner == 'O')
+	const getOwnImage = () => {
+		if (playerState.players[playerState.client].symbol === 'O')
 			return ('/images/o.png');
-		else if (winner == 'X')
+		else if (playerState.players[playerState.client].symbol === 'X')
 			return ('/images/x.png');
-		else if (winner === '🔳')
+		else if (playerState.players[playerState.client].symbol === '🔳')
 			return ('/images/square.png')
 		else if (isGameMode)
 			return ('/images/Qubic_draw.png');
@@ -26,7 +30,19 @@ const EndModal = () => {
 			return ('/images/draw.png');
 	}
 
-	const escape = useKey(['Escape'])
+	const getResult = () => {
+		if (winner === playerState.players[playerState.client].symbol)
+			return ('Wins');
+		if (winner === "draw")
+			return ('Draw');
+		else
+			return ('Loses');
+	};
+
+	useEffect (() => {
+		if (showModal)
+			setShowResult(getResult());
+	}, [showModal])
 
 	useEffect(() => {
 		if (escape.isKeyDown && gameState.gameOver)
@@ -37,6 +53,7 @@ const EndModal = () => {
 		if (gameState.reset)
 			closeModal();
 	},[gameState.reset])
+
 	return (
 		<>
 			<Modal
@@ -58,7 +75,7 @@ const EndModal = () => {
 					{showModal && (
 						<div style={{ marginTop: '20px' }}>
 							<img
-								src={getWinnerImage()}
+								src={getOwnImage()}
 								style={{
 									width: winner === 'draw' ? '160px' : '80px',
 									height: '80px',
@@ -68,14 +85,14 @@ const EndModal = () => {
 						</div>
 					)}
 					<ModalHeader className="flex flex-col gap-1 items-center justify-center">
-						{winner === 'draw' ? 'Draw' : 'Wins' }
+						{ showResult }
 					</ModalHeader>
 					</div>
 					<ModalBody >
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
 					<Button color="danger" variant="ghost" onClick={closeModal}>
-						Close
+						Leave
 					</Button>
 					<Button color="primary" isDisabled={disconnected} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
 						Rematch

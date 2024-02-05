@@ -1,10 +1,12 @@
 import { useSound } from "@/components/hooks/Sound";
 import { useEffect, useState } from "react";
 import { usePongGameState } from "./usePongGameState";
+import { usePongSocket } from "./usePongSocket";
 
 export const usePongUI = () => {
 	const [showModal, setShowModal] = useState(false);
-	const { pongGameState } = usePongGameState();
+	const { pongGameState, winner } = usePongGameState();
+	const { playerState } = usePongSocket();
 	const soundEngine = useSound();
 
 	const closeModal = () => {
@@ -21,6 +23,12 @@ export const usePongUI = () => {
 			const delay = 1000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
+				if (winner) // fix later need to use real winner
+					soundEngine?.playSound("win");
+				else if (winner === "draw")
+					soundEngine?.playSound("door");
+				else
+					soundEngine?.playSound("losing");
 			}, delay);
 
 			return (() => {

@@ -14,7 +14,7 @@ const EndModal = () => {
 	const { openModal, closeModal, showModal} = usePongUI();
 
 	useEffect(() => {
-		if (escape.isKeyDown && pongGameState.gameOver)
+		if (escape.isKeyDown && pongGameState.gameOver) {}
 			openModal();
 	},[escape]);
 

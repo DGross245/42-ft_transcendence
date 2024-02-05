@@ -23,6 +23,10 @@ class SoundEngine {
 	}
 
 	playSound(sound: string) {
+		if (sound === 'losing') {
+			const randomNum = Math.floor(Math.random() * 2);
+			sound = randomNum === 0 ? "losing1" : "losing2";
+		}
 		if (!this.soundElement || !(sound in sounds)) {
 			return;
 		}
