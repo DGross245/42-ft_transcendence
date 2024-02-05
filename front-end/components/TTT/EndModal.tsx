@@ -88,7 +88,8 @@ const EndModal = () => {
 						{ showResult }
 					</ModalHeader>
 					</div>
-					<ModalBody >
+					<ModalBody style={{ textAlign: 'center' }} >
+						{ disconnected && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
 					<Button color="danger" variant="ghost" onClick={closeModal}>

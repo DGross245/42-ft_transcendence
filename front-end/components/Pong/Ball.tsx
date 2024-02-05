@@ -24,6 +24,7 @@ export const Ball = () => {
 		useBall();
 		color = 0xffffff;
 	}
+
 	return (
 		<mesh ref={ballRef} visible={isBallVisible}>
 			<boxGeometry args={[4, 4, 4]} />

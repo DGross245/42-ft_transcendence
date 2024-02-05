@@ -6,8 +6,6 @@ import { useThree } from "@react-three/fiber";
 import { useSocket } from "../../app/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
 
-// FIXME: FIX THIS MESS LATER
-
 /**
  * The TurnDisplay component renders a 3D display of the current currentTurn in a game, with different shapes
  * and colors representing different players.

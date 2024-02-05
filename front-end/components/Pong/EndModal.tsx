@@ -26,7 +26,7 @@ const EndModal = () => {
 	},[pongGameState.reset])
 
 	const getResult = () => {
-		if (winner === String(playerState.players[0].number + 1))
+		if (winner === String(playerState.players[0].number + 1) || (winner === '' && disconnected))
 			return ('Wins');
 		else
 			return ('Loses');
@@ -59,11 +59,12 @@ const EndModal = () => {
 						{ showResult }
 					</ModalHeader>
 					</div>
-					<ModalBody >
+					<ModalBody style={{ textAlign: 'center' }} >
+						{ disconnected && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
 					<Button color="danger" variant="ghost" onClick={closeModal}>
-						Close
+						Leave
 					</Button>
 					<Button color="primary" isDisabled={disconnected} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
 						Rematch
