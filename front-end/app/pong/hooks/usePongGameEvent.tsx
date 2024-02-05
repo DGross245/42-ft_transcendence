@@ -4,7 +4,7 @@ import { usePongSocket } from "./usePongSocket";
 
 export const usePongGameEvent = ( maxClients: number ) => {
 	const { setScores, pongGameState, setPongGameState, setWinner, setBallVisibility, setScoreVisibility } = usePongGameState();
-	const { playerState, rematchIndex, setRequestRematch, setSendRequest } = usePongSocket();
+	const { playerState, rematchIndex, setRequestRematch, setSendRequest, setRematchIndex } = usePongSocket();
 
 	const [camPos, setCamPos] = useState<[number, number, number]>([0, 350, 400]);
 	const [countdownRot, setCountdownRot] = useState<[number, number, number]>([0, 0, 0]);
@@ -82,9 +82,10 @@ export const usePongGameEvent = ( maxClients: number ) => {
 
 	useEffect(() => {
 		if (rematchIndex === maxClients) {
+			setPongGameState({ ...pongGameState, reset: true })
 			setRequestRematch(false);
 			setSendRequest(false);
-			setPongGameState({ ...pongGameState, reset: true })
+			setRematchIndex(0);
 		}
 	}, [rematchIndex]);
 

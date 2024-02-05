@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
+import { useSound } from "@/components/hooks/Sound";
 
 export const useBall = () => {
 	const {
@@ -145,8 +146,8 @@ export const useBall = () => {
 			}
 		}
 
-		checkWinner('P1', scores.p1Score);
-		checkWinner('P2', scores.p2Score);
+		checkWinner('1', scores.p1Score);
+		checkWinner('2', scores.p2Score);
 	}, [scores.p1Score, scores.p2Score]);
 
 	// Game/render loop for the ball.

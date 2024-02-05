@@ -2,6 +2,7 @@ import useWSClient from "@/helpers/wsclient";
 import { useEffect, useState } from "react";
 import { usePongSocket } from "./usePongSocket";
 import { usePongGameState } from "./usePongGameState";
+import { useSound } from "@/components/hooks/Sound";
 
 export const usePongSocketEvents = () => {
 	const newClient = useWSClient();
@@ -20,6 +21,7 @@ export const usePongSocketEvents = () => {
 	} = usePongSocket();
 	const { pongGameState, setPongGameState, isGameMode } = usePongGameState();
 	const [isFull, setIsFull] = useState("");
+	const soundEngine = useSound();
 
 	useEffect(() => {
 		const waitForSocket = async () => {
@@ -114,6 +116,7 @@ export const usePongSocketEvents = () => {
 			const endGame = (msg: string) => {
 				setRequestRematch(false);
 				setSendRequest(false);
+				soundEngine?.playSound("door");
 
 				if (!disconnected)
 					setDisconnected(true);

@@ -30,6 +30,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 	const { leftPaddleRef, rightPaddleRef } = usePongGameState();
 	usePongGameEvent( maxClients );
 	usePongSocketEvents();
+
 	// botActive={active} botDirection={direction}
 	// onPositionChange={ballAidsHook}
 	return (

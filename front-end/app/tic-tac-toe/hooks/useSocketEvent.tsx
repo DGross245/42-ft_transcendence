@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useGameState } from "./useGameState";
 import useWSClient from "@/helpers/wsclient";
 import { useSocket } from "./useSocket";
+import { useSound } from "@/components/hooks/Sound";
 
 export const useSocketEvent = () => {
 	const newClient = useWSClient();
@@ -21,6 +22,7 @@ export const useSocketEvent = () => {
 	const { gameState, updateGameState, setWinner, isGameMode, botState, setBot } = useGameState();
 	const [isFull, setIsFull] = useState("");
 	const [playerSet, setPlayerSet] = useState(false);
+	const soundEngine = useSound();
 
 	useEffect(() => {
 		const waitForSocket = async () => {
@@ -124,6 +126,7 @@ export const useSocketEvent = () => {
 				setDisconnected(true);
 				setRequestRematch(false);
 				setSendRequest(false);
+				soundEngine?.playSound("door");
 				if (!gameState.gameOver) {
 					setWinner(playerState.players[playerState.client].symbol);
 					updateGameState({ ...gameState, gameOver: true});

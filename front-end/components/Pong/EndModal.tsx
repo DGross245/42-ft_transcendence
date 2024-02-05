@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 import { useKey } from "../hooks/useKey";
 import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
@@ -8,13 +8,15 @@ import { usePongUI } from "@/app/pong/hooks/usePongUI";
 import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 
 const EndModal = () => {
-	const escape = useKey(['Escape'])
 	const { pongGameState, winner  } = usePongGameState();
-	const { disconnected, requestRematch, setSendRequest, sendRequest } = usePongSocket();
+	const { disconnected, requestRematch, setSendRequest, sendRequest, playerState } = usePongSocket();
 	const { openModal, closeModal, showModal} = usePongUI();
+	const [showResult, setShowResult] = useState("");
+
+	const escape = useKey(['Escape'])
 
 	useEffect(() => {
-		if (escape.isKeyDown && pongGameState.gameOver) {}
+		if (escape.isKeyDown && pongGameState.gameOver)
 			openModal();
 	},[escape]);
 
@@ -22,6 +24,18 @@ const EndModal = () => {
 		if (pongGameState.reset)
 			closeModal();
 	},[pongGameState.reset])
+
+	const getResult = () => {
+		if (winner === String(playerState.players[0].number + 1))
+			return ('Wins');
+		else
+			return ('Loses');
+	};
+
+	useEffect (() => {
+		if (showModal)
+			setShowResult(getResult());
+	}, [showModal])
 
 	return (
 		<>
@@ -42,7 +56,7 @@ const EndModal = () => {
 				<ModalContent style={{ position: 'relative', overflow: 'visible' }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 					<ModalHeader className="flex flex-col gap-1 items-center justify-center">
-						{ winner === 'draw' ? 'Draw' : 'Wins' }
+						{ showResult }
 					</ModalHeader>
 					</div>
 					<ModalBody >

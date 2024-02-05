@@ -23,10 +23,8 @@ export const usePongUI = () => {
 			const delay = 1000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
-				if (winner) // fix later need to use real winner
+				if (winner === String(playerState.players[0].number + 1))
 					soundEngine?.playSound("win");
-				else if (winner === "draw")
-					soundEngine?.playSound("door");
 				else
 					soundEngine?.playSound("losing");
 			}, delay);
