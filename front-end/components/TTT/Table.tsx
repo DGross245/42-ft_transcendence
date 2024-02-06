@@ -1,11 +1,12 @@
 import { useGLTF } from "@react-three/drei";
+import { memo } from "react";
 import { Mesh } from "three";
 
-export function Table({ position } : {position: [number, number, number]}) {
-	const { nodes, materials } = useGLTF("/Models/Table.gltf");
+export const Table = memo(() => {
+	const { nodes, materials } = useGLTF("./Models/Table.gltf");
 
 	return (
-		<group position={position} dispose={null} scale={[15,15,15]}>
+		<group position={[3, -3.6, 3]} dispose={null} scale={[15,15,15]}>
 			<mesh
 				geometry={(nodes.Plate as Mesh).geometry}
 				material={materials.Plate}
@@ -26,6 +27,4 @@ export function Table({ position } : {position: [number, number, number]}) {
 			/>
 		</group>
 	);
-}
-
-useGLTF.preload("/Modles/Table.gltf");
+});

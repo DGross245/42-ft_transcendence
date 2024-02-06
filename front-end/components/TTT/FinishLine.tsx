@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 import { useSound } from "@/components/hooks/Sound";
 import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
+import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 
 /**
  * The `FinishLine` component renders a line with specified coordinates and color, and plays a sound
@@ -19,13 +20,16 @@ const FinishLine = () => {
 	const [color, setColor] = useState(0x00ffff);
 	const { winner, lineCoords, isGameMode } = useGameState();
 	const { isLineVisible } = useGameState();
+	const { disconnected } = useSocket();
+
 	useEffect(() => {
 		if (winner) {
 			if (isGameMode)
 				setColor(winner === 'X' ? 0xff0000 : winner === 'O' ? 0x1aabff : 0x008000 );
 			else
 				setColor(winner === 'X' ? 0xff0000 : 0x1aabff);
-			soundEngine?.playSound("finish");
+			if (!disconnected)
+				soundEngine?.playSound("finish");
 		} 
 	}, [winner])
 

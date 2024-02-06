@@ -39,7 +39,7 @@ const TTTScene = () => {
 
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
-			<Canvas shadows  style={{ width: dimensions.width, height: dimensions.height }}>
+			<Canvas  style={{ width: dimensions.width, height: dimensions.height }}>
 				<Camera />
 				<Countdown />
 				<Grid />
@@ -50,7 +50,7 @@ const TTTScene = () => {
 				<Floor position={[ 3, 23.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<TurnDisplay />
 				<FinishLine />
-				<Table position={[3, -3.6, 3]}/>
+				<Table />
 				<OrbitControls
 					makeDefault
 					enableZoom={false}

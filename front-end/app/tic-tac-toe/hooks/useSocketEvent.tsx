@@ -46,7 +46,7 @@ export const useSocketEvent = () => {
 						name: "KEK",
 						color: 0x00ff00,
 						number: numClients,
-						symbol: '',
+						symbol: 'Undefined',
 				}
 				newPlayerData.client = numClients
 				updatePlayerState( newPlayerData );
