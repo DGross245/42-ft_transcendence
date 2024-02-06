@@ -3,14 +3,9 @@
 import { Canvas } from "@react-three/fiber";
 import { Environment, OrbitControls } from "@react-three/drei";
 
-import { useGameEvent } from "../hooks/useGameEvent";
-import { useSocketEvent } from "../hooks/useSocketEvent";
 import { useWindow } from "../../../components/hooks/useWindow";
 import { Grid } from "@/components/TTT/Grid";
 import { FieldLayers } from "@/components/TTT/FieldLayers";
-import { useClick } from "../hooks/useClick";
-import { useGameState } from "../hooks/useGameState";
-import { useBot } from "../hooks/useBot";
 import Countdown from "@/components/TTT/Countdown";
 import Camera from "@/components/TTT/Camera";
 import Floor from "@/components/TTT/Floor";
@@ -18,6 +13,9 @@ import TurnDisplay from "@/components/TTT/TurnDisplay";
 import FinishLine from "@/components/TTT/FinishLine";
 import EndModal from "@/components/TTT/EndModal";
 import { Table } from "@/components/TTT/Table";
+import { TTTGameEvents } from "@/components/TTT/TTTGameEvents";
+import { TTTSocketEvents } from "@/components/TTT/TTTSocketEvents";
+import { TTTBot } from "@/components/TTT/TTTBot";
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
@@ -27,15 +25,7 @@ import { Table } from "@/components/TTT/Table";
  * @returns The entire Three.js scene, including the modal.
  */
 const TTTScene = () => {
-	const { isGameMode } = useGameState();
 	const { dimensions } = useWindow();
-	const maxClients = isGameMode ? 3 : 2;
-
-	const { click, clicked } = useClick();
-
-	useBot();
-	useSocketEvent();
-	useGameEvent(maxClients);
 
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
@@ -43,7 +33,10 @@ const TTTScene = () => {
 				<Camera />
 				<Countdown />
 				<Grid />
-				<FieldLayers clicked={clicked} click={click} />
+				<TTTBot />
+				<TTTGameEvents />
+				<TTTSocketEvents />
+				<FieldLayers />
 				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
 				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />

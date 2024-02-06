@@ -2,9 +2,12 @@ import { useMemo } from "react";
 
 import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
 import Field from "./Field";
+import { useClick } from "@/app/tic-tac-toe/hooks/useClick";
 
-export const FieldLayers = ({ clicked, click } : { clicked: boolean; click: React.Dispatch<React.SetStateAction<boolean>> }) => {
+export const FieldLayers = () => {
 	const { gameState } = useGameState();
+	const { click, clicked } = useClick();
+
 	const arrayPosition = [
 		{ i: 0, j: 0, k: 0 }, { i: 0, j: 1, k: 0 }, { i: 0, j: 2, k: 0 }, { i: 0, j: 3, k: 0 },
 		{ i: 0, j: 0, k: 1 }, { i: 0, j: 1, k: 1 }, { i: 0, j: 2, k: 1 }, { i: 0, j: 3, k: 1 },
