@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
-import { useSound } from "@/components/hooks/Sound";
 
 export const useBall = () => {
 	const {
@@ -120,7 +119,7 @@ export const useBall = () => {
 		return () => {
 			wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 		};
-	}, []);
+	}, [wsclient]);
 
 	/**
 	 * Initiates the game by providing a random direction to the ball after the countdown 

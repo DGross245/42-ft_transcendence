@@ -14,7 +14,6 @@ import Scoreboard from "@/components/Pong/Scoreboard";
 import EndModal from "@/components/Pong/EndModal";
 import { usePongSocketEvents } from "../hooks/usePongSocketEvent";
 import { CornerBorder } from "@/components/Pong/Border";
-import { useEffect } from "react";
 
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
@@ -25,7 +24,6 @@ export default function OneForAllScene() {
 	const {dimensions} = useWindow();
 	const maxClients = 4
 	const { camPos, countdownPos, countdownRot } = usePongGameEvent( maxClients );
-	const { leftPaddleRef, rightPaddleRef, topPaddleRef, bottomPaddleRef } = usePongGameState();
 
 	usePongSocketEvents();
 
@@ -35,10 +33,10 @@ export default function OneForAllScene() {
 				<Countdown position={countdownPos} rotation={countdownRot} />
 				<Camera position={camPos}/> 
 				<CornerBorder />
-				<TopPaddle ref={topPaddleRef} position={[0, 0, -151]} />
-				<BottomPaddle ref={bottomPaddleRef} position={[0, 0, 151]} />
-				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
-				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} />
+				<TopPaddle />
+				<BottomPaddle />
+				<RightPaddle />
+				<LeftPaddle />
 				<Ball />
 				<CubeLineY />
 				<CubeLineX />

@@ -1,3 +1,4 @@
+import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
 import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 import { useKey } from "@/components/hooks/useKey";
 import { useFrame } from "@react-three/fiber";
@@ -15,32 +16,33 @@ interface Paddle {
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const RightPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
+export const RightPaddle = () => {
 	const { playerState } = usePongSocket();
 	const paddleSpeed = 300;
 	const borderPositionY = 111;
-	const meshRef = ref as MutableRefObject<Mesh | null>;
+	// const meshRef = ref as MutableRefObject<Mesh | null>;
+	const { rightPaddleRef } = usePongGameState();
 
 	const up = useKey('ArrowUp');
 	const down = useKey('ArrowDown')
 
 	useFrame((_, delta) => {
-		if (meshRef && meshRef.current) {
+		if (rightPaddleRef && rightPaddleRef.current) {
 			if (up.isKeyDown) {
-				meshRef.current.position.z = Math.max(meshRef.current.position.z - paddleSpeed * delta, -borderPositionY + 15);
+				rightPaddleRef.current.position.z = Math.max(rightPaddleRef.current.position.z - paddleSpeed * delta, -borderPositionY + 15);
 			} else if (down.isKeyDown) {
-				meshRef.current.position.z = Math.min(meshRef.current.position.z + paddleSpeed * delta, borderPositionY - 15);
+				rightPaddleRef.current.position.z = Math.min(rightPaddleRef.current.position.z + paddleSpeed * delta, borderPositionY - 15);
 			}
 		}
 	});
 
 	return (
-		<mesh ref={meshRef} position={position} rotation={[0, Math.PI / 2, Math.PI / 2]}>
+		<mesh ref={rightPaddleRef} position={[151, 0, 0]} rotation={[0, Math.PI / 2, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ playerState.players[3].color } />
 		</mesh>
 	);
-});
+};
 
 /**
  * Creates a Three.js mesh representing the left paddle for the game scene and manages its movement.
@@ -48,32 +50,32 @@ export const RightPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const LeftPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
+export const LeftPaddle = () => {
 	const { playerState } = usePongSocket();
 	const paddleSpeed = 300;
 	const borderPositionY = 111;
-	const meshRef = ref as MutableRefObject<Mesh | null>;
+	const { leftPaddleRef } = usePongGameState();
 
 	const up = useKey(['W', 'w']);
 	const down = useKey(['S', 's'])
 
 	useFrame((_, delta) => {
-		if (meshRef && meshRef.current) {
+		if (leftPaddleRef && leftPaddleRef.current) {
 			if (up.isKeyDown) {
-				meshRef.current.position.z = Math.max(meshRef.current.position.z - paddleSpeed * delta, -borderPositionY + 15);
+				leftPaddleRef.current.position.z = Math.max(leftPaddleRef.current.position.z - paddleSpeed * delta, -borderPositionY + 15);
 			} else if (down.isKeyDown) {
-				meshRef.current.position.z = Math.min(meshRef.current.position.z + paddleSpeed * delta, borderPositionY - 15);
+				leftPaddleRef.current.position.z = Math.min(leftPaddleRef.current.position.z + paddleSpeed * delta, borderPositionY - 15);
 			}
 		}
 	});
 
 	return (
-		<mesh ref={meshRef} position={position} rotation={[0, Math.PI / 2, Math.PI / 2]}>
+		<mesh ref={leftPaddleRef} position={[-151, 0, 0]} rotation={[0, Math.PI / 2, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ playerState.players[1].color } />
 		</mesh>
 	);
-});
+};
 
 /**
  * Creates a Three.js mesh representing the top paddle for the game scene and manages its movement.
@@ -81,33 +83,33 @@ export const LeftPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const TopPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
+export const TopPaddle = () => {
 	console.log("re-rendert paddle")
 	const { playerState } = usePongSocket();
 	const paddleSpeed = 300;
 	const borderPositionX = 111;
-	const meshRef = ref as MutableRefObject<Mesh | null>;
+	const { topPaddleRef } = usePongGameState();
 
 	const right = useKey('KeyD');
 	const left = useKey('KeyA');
 
 	useFrame((_, delta) => {
-		if (meshRef && meshRef.current) {
+		if (topPaddleRef && topPaddleRef.current) {
 			if (right.isKeyDown) {
-				meshRef.current.position.x = Math.min(meshRef.current.position.x + paddleSpeed * delta, borderPositionX - 15);
+				topPaddleRef.current.position.x = Math.min(topPaddleRef.current.position.x + paddleSpeed * delta, borderPositionX - 15);
 			} else if (left.isKeyDown) {
-				meshRef.current.position.x = Math.max(meshRef.current.position.x - paddleSpeed * delta, -borderPositionX + 15);
+				topPaddleRef.current.position.x = Math.max(topPaddleRef.current.position.x - paddleSpeed * delta, -borderPositionX + 15);
 			}
 		}
 	});
 
 	return (
-		<mesh ref={meshRef} position={position} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
+		<mesh ref={topPaddleRef} position={[0, 0, -151]} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ playerState.players[2].color } />
 		</mesh>
 	);
-});
+};
 
 /**
  * Creates a Three.js mesh representing the bottom paddle for the game scene and manages its movement.
@@ -116,29 +118,29 @@ export const TopPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const BottomPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
+export const BottomPaddle = () => {
 	const { playerState } = usePongSocket();
 	const paddleSpeed = 300;
 	const borderPositionX = 111;
-	const meshRef = ref as MutableRefObject<Mesh | null>;
+	const { bottomPaddleRef } = usePongGameState();
 
 	const right = useKey('ArrowRight');
 	const left = useKey('ArrowLeft');
 
 	useFrame((_, delta) => {
-		if (meshRef && meshRef.current) {
+		if (bottomPaddleRef && bottomPaddleRef.current) {
 			if (right.isKeyDown) {
-				meshRef.current.position.x = Math.min(meshRef.current.position.x + paddleSpeed * delta, borderPositionX - 15);
+				bottomPaddleRef.current.position.x = Math.min(bottomPaddleRef.current.position.x + paddleSpeed * delta, borderPositionX - 15);
 			} else if (left.isKeyDown) {
-				meshRef.current.position.x = Math.max(meshRef.current.position.x - paddleSpeed * delta, -borderPositionX + 15);
+				bottomPaddleRef.current.position.x = Math.max(bottomPaddleRef.current.position.x - paddleSpeed * delta, -borderPositionX + 15);
 			}
 		}
 	});
 
 	return (
-		<mesh ref={ref} position={position} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
+		<mesh ref={bottomPaddleRef} position={[0, 0, 151]} rotation={[Math.PI / 2, 0, Math.PI / 2]}>
 			<boxGeometry args={[4, 30, 4]} />
 			<meshBasicMaterial color={ playerState.players[0].color } />
 		</mesh>
 	);
-});
+};

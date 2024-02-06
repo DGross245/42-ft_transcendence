@@ -44,6 +44,13 @@ interface PongGameStateContextValue {
 	bottomPaddleRef: MutableRefObject<Mesh>,
 	ballRef: MutableRefObject<Mesh>,
 	isGameMode: boolean,
+
+	camPos: [number, number, number],
+	setCamPos: Dispatch<SetStateAction<[number, number, number]>>,
+	countdownRot: [number, number, number],
+	setCountdownRot: Dispatch<SetStateAction<[number, number, number]>>,
+	countdownPos: [number, number, number][],
+	setContdownPos: Dispatch<SetStateAction<[number, number, number][]>>,
 }
 
 export const PongGameStateContext = createContext<PongGameStateContextValue>({} as PongGameStateContextValue);
@@ -56,6 +63,10 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 	const [isScoreVisible, setScoreVisibility] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true);
 	const [isGameMode] = useState(gameMode);
+	const [camPos, setCamPos] = useState<[number, number, number]>([0, 350, 400]);
+	const [countdownRot, setCountdownRot] = useState<[number, number, number]>([0, 0, 0]);
+	const [countdownPos, setContdownPos] = useState<[number, number, number][]>([ [-23, 50, 0], [-35, 50, 0] ]);
+
 	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const topPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
@@ -80,7 +91,13 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 		topPaddleRef,
 		bottomPaddleRef,
 		ballRef,
-		isGameMode
+		isGameMode,
+		camPos,
+		setCamPos,
+		countdownRot,
+		setCountdownRot,
+		countdownPos,
+		setContdownPos,
 	};
 
 	return (
