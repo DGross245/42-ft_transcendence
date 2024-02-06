@@ -5,20 +5,16 @@ import { OrbitControls, Stats } from "@react-three/drei";
 
 import Countdown from "@/components/Pong/Countdown";
 import { useWindow } from "@/components/hooks/useWindow";
-import { usePongGameState } from "../hooks/usePongGameState";
 import Camera from "@/components/Pong/Camera";
 import EndModal from "@/components/Pong/EndModal";
 import { CubeLine } from "@/components/Pong/CubeLine";
-import { usePongGameEvent } from "../hooks/usePongGameEvent";
 import { Ball } from "@/components/Pong/Ball";
-import { usePongSocketEvents } from "../hooks/usePongSocketEvent";
 import { Scoreboard } from "../NormalScoreboard";
 import { LeftPaddle, RightPaddle } from "../NormalPaddle";
 import { LongBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
 
-// TODO: Matchmaking, should handle the sockets and joining for games, at setting player info
 // FIXME: Someotimes the guest or not host, counts the score twice
 
 /**
@@ -37,8 +33,8 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<PongSocketEvents />
 				<PongGameEvents maxClients={2}/>
-				<Countdown rotation={[-Math.PI /2, 0, 0]} position={[ [-23, 50, 0],[-35, 50, 0] ]} />
-				<Camera position={[0, 400, 100]} />
+				<Countdown />
+				<Camera />
 				<LongBorder position={[0, 0, -105]} />
 				<LongBorder position={[0,0,105]} />
 				<RightPaddle />

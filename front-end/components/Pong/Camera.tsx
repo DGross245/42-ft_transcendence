@@ -1,12 +1,9 @@
 import { PerspectiveCamera } from "@react-three/drei"
-import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
 import * as THREE from 'three'
-import { useKey } from "../hooks/useKey";
 
-interface CameraProps {
-	position: [number, number, number],
-}
+import { useKey } from "../hooks/useKey";
+import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
 
 /**
  * Ceates a perspective camera for a 3D scene and updates its position and orientation based on a key map.
@@ -14,9 +11,10 @@ interface CameraProps {
  * 				  `keyMap` and `position`. 
  * @returns The PerspectiveCamera component from the Three.js library.
  */
-const Camera: React.FC<{ position: [number, number, number] }> = ({ position }) => {
+const Camera = () => {
 	const ref = useRef<THREE.PerspectiveCamera>(null);
-	const [x, y, z] = [...position];
+	const { camPos } = usePongGameState();
+	const [x, y, z] = [...camPos];
 
 	const digit1 = useKey(['1']);
 	const digit2 = useKey(['2']);
@@ -25,12 +23,12 @@ const Camera: React.FC<{ position: [number, number, number] }> = ({ position }) 
 	useEffect(() => {
 		if (ref && ref.current) {
 			if (digit1.isKeyDown) {
-				ref.current.position.set(...position);
+				ref.current.position.set(...camPos);
 				ref.current.lookAt(0, 0, 0);
 			}
 			// for testing
 			if (digit2.isKeyDown) {
-				const [x, y, z] = [...position];
+				const [x, y, z] = [...camPos];
 				ref.current.position.set(x, y, z + 300);
 				ref.current.lookAt(0, 0, 0);
 			}

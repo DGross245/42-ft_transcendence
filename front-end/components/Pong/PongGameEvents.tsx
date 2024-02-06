@@ -3,7 +3,7 @@ import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 import { useEffect } from "react";
 
 export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
-	const { setScores, pongGameState, setPongGameState, setWinner, setBallVisibility, setScoreVisibility, setCamPos, setCountdownRot, setContdownPos } = usePongGameState();
+	const { setScores, pongGameState, setPongGameState, setWinner, setBallVisibility, setScoreVisibility, setCamPos, setCountdownRot, setContdownPos, isGameMode } = usePongGameState();
 	const { playerState, rematchIndex, setRequestRematch, setSendRequest, setRematchIndex } = usePongSocket();
 
 	var positionInfo: { 
@@ -55,6 +55,16 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 
 	useEffect(() => {
 		if (playerState.client !== -1) {
+			if (!isGameMode) {
+				setCamPos([0, 400, 100]);
+				const newCountdownPos = [
+					[-23, 50, 0] as [number, number, number],
+					[-35, 50, 0] as [number, number, number]
+				]
+				setContdownPos(newCountdownPos);
+				setCountdownRot([-Math.PI /2, 0, 0]);
+				return ;
+			}
 			setCamPos(positionInfo[playerState.client].camPosition);
 			const newCountdownPos = [
 				positionInfo[playerState.client].countdownPosition[0],

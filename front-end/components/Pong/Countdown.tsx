@@ -8,11 +8,6 @@ import { useSound } from '../hooks/Sound';
 
 extend({ TextGeometry })
 
-interface CountdownProps {
-	position: [number, number, number][];
-	rotation: [number, number, number];
-}
-  
 /**
  * The Countdown component is a timer that counts down from 4 to 0 and displays the count as a 3D text
  * in a React Three Fiber scene.
@@ -22,10 +17,10 @@ interface CountdownProps {
  * The visibility of the mesh is determined by the props.scoreVisible value. If props.scoreVisible is
  * false, the mesh will be visible, otherwise it will be hidden.
  */
-const Countdown: React.FC<CountdownProps> = ({ position, rotation }) => {
+const Countdown = () => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 	const [count, setCount] = useState(4);
-	const { pongGameState, isScoreVisible, setScoreVisibility} = usePongGameState();
+	const { pongGameState, isScoreVisible, setScoreVisibility, countdownPos, countdownRot} = usePongGameState();
 	const soundEngine = useSound();
 
 	useEffect(() => {
@@ -53,7 +48,7 @@ const Countdown: React.FC<CountdownProps> = ({ position, rotation }) => {
 	}, [isScoreVisible, pongGameState.pause]);
 
 	return (
-		<mesh visible={!isScoreVisible} position={ count === 1 ? position[0] : position[1]} rotation={rotation}>
+		<mesh visible={!isScoreVisible} position={ count === 1 ? countdownPos[0] : countdownPos[1]} rotation={countdownRot}>
 			<textGeometry args={[String(count), {font, size: 60, height: 6}]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>

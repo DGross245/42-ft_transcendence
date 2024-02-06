@@ -2,19 +2,19 @@
 
 import { useWindow } from "@/components/hooks/useWindow";
 import { Canvas } from "@react-three/fiber";
-import { usePongGameEvent } from "../hooks/usePongGameEvent";
 import Countdown from "@/components/Pong/Countdown";
 import Camera from "@/components/Pong/Camera";
 import { BottomPaddle, LeftPaddle, RightPaddle, TopPaddle } from "@/components/Pong/Paddle";
-import { usePongGameState } from "../hooks/usePongGameState";
 import { Ball } from "@/components/Pong/Ball";
 import { CubeLineX, CubeLineY } from "@/components/Pong/CubeLine";
 import { OrbitControls } from "@react-three/drei";
 import Scoreboard from "@/components/Pong/Scoreboard";
 import EndModal from "@/components/Pong/EndModal";
-import { usePongSocketEvents } from "../hooks/usePongSocketEvent";
 import { CornerBorder } from "@/components/Pong/Border";
+import { PongGameEvents } from "@/components/Pong/PongGameEvents";
+import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
 
+// FIXME: Scoring doesnt work anymore
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
  * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.
@@ -22,16 +22,14 @@ import { CornerBorder } from "@/components/Pong/Border";
  */
 export default function OneForAllScene() {
 	const {dimensions} = useWindow();
-	const maxClients = 4
-	const { camPos, countdownPos, countdownRot } = usePongGameEvent( maxClients );
-
-	usePongSocketEvents();
 
 	return (
 		<div >
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown position={countdownPos} rotation={countdownRot} />
-				<Camera position={camPos}/> 
+				<PongGameEvents maxClients={4} />
+				<PongSocketEvents />
+				<Countdown />
+				<Camera/> 
 				<CornerBorder />
 				<TopPaddle />
 				<BottomPaddle />
@@ -40,7 +38,12 @@ export default function OneForAllScene() {
 				<Ball />
 				<CubeLineY />
 				<CubeLineX />
-				<OrbitControls enablePan={false} enableRotate={true} />
+				<OrbitControls
+					enablePan={false}
+					enableRotate={true}
+					minPolarAngle={0}
+					maxPolarAngle={Math.PI / 2}
+				/>
 				<Scoreboard />
 			</Canvas>
 			<EndModal />
