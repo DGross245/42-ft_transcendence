@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { Environment, OrbitControls } from "@react-three/drei";
 
 import { useGameEvent } from "../hooks/useGameEvent";
 import { useSocketEvent } from "../hooks/useSocketEvent";
@@ -17,6 +17,7 @@ import Floor from "@/components/TTT/Floor";
 import TurnDisplay from "@/components/TTT/TurnDisplay";
 import FinishLine from "@/components/TTT/FinishLine";
 import EndModal from "@/components/TTT/EndModal";
+import { Table } from "@/components/TTT/Table";
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
@@ -38,9 +39,9 @@ const TTTScene = () => {
 
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
-			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown />
+			<Canvas shadows  style={{ width: dimensions.width, height: dimensions.height }}>
 				<Camera />
+				<Countdown />
 				<Grid />
 				<FieldLayers clicked={clicked} click={click} />
 				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
@@ -49,12 +50,17 @@ const TTTScene = () => {
 				<Floor position={[ 3, 23.8, 3]} args={[0.25, 23.2, 23.2]} />
 				<TurnDisplay />
 				<FinishLine />
+				<Table position={[3, -3.6, 3]}/>
 				<OrbitControls
+					makeDefault
 					enableZoom={false}
 					target={[3, 11.8, 3]}
 					enableRotate={true}
 					enablePan={false}
+					minPolarAngle={0}
+					maxPolarAngle={Math.PI / 2}
 				/>
+				<Environment preset="city" />
 			</Canvas>
 			<EndModal />
 		</div> 
