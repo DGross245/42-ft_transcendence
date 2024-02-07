@@ -1,4 +1,3 @@
-import { useCursor } from '@react-three/drei';
 import { useMemo } from 'react';
 import * as THREE from 'three';
 
@@ -12,8 +11,6 @@ import Square from './Square';
 export interface FieldProps {
 	key: string,
 	position: [number, number, number],
-	clicked: boolean,
-	click: React.Dispatch<React.SetStateAction<boolean>>,
 	i: number,
 	j: number,
 	k: number,
@@ -28,11 +25,10 @@ export interface FieldProps {
  * @returns - A Three.js mesh representing the field with/without a symbol.
  */
 const Field : React.FC<FieldProps> = (props) => {
-	const { clicked } = props;
 	const { playerState} = useSocket();
 	const { currentTurn, gameState } = useGameState();
 	const { hovered, handleClick, handleHover, symbol } = useField(props);
-	
+
 	const getColorBySymbol = (symbol: string) => {
 		const player = playerState.players.find(player => player.symbol === symbol);
 		return player?.color;
@@ -43,9 +39,6 @@ const Field : React.FC<FieldProps> = (props) => {
 		getColorBySymbol('O'),
 		getColorBySymbol('🔳'),
 	],[playerState]);
-
-	useCursor(hovered);
-	useCursor(clicked);
 
 	return (
 		<>
@@ -62,15 +55,15 @@ const Field : React.FC<FieldProps> = (props) => {
 
 			{/* Projects a transparent verison of the symbol on the field the user hovers over based on the current turn */}
 
-			{hovered && !clicked && !symbol && currentTurn == 'X' && !gameState.gameOver && (
+			{hovered && !symbol && currentTurn == 'X' && !gameState.gameOver && (
 				<X {...props} color={colors[0]} transparent={true} />
 			)}
 
-			{hovered && !clicked && !symbol && currentTurn == 'O' && !gameState.gameOver && (
-				<Torus {...props} color={colors[1]} transparent={true} blending={THREE.AdditiveBlending}/>
+			{hovered && !symbol && currentTurn == 'O' && !gameState.gameOver && (
+				<Torus {...props} color={colors[1]} transparent={true} />
 			)}
 
-			{hovered && !clicked && !symbol && currentTurn == '🔳' && !gameState.gameOver && (
+			{hovered && !symbol && currentTurn == '🔳' && !gameState.gameOver && (
 				<Square {...props} color={colors[2]} transparent={true} />
 			)}
 

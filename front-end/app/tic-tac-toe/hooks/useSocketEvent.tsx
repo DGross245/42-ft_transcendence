@@ -94,14 +94,14 @@ export const useSocketEvent = () => {
 			setPlayerSet(true);
 		};
 
-		if (wsclient) {
+		if (wsclient && playerState.client > -1) {
 			wsclient?.addMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId, setPlayer)
 
 			return () => {
 				wsclient?.removeMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
-	},[wsclient, gameState.gameId, playerState, updatePlayerState]);
+	},[wsclient, gameState.gameId, playerState]);
 
 	useEffect(() => {
 		if (wsclient) {

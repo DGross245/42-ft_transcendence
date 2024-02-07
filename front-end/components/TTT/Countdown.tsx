@@ -37,7 +37,6 @@ const Countdown = () => {
 		if (countdownVisible) {
 			soundEngine?.playSound("countSound");
 			const countdownInterval = setInterval(() => {
-	
 				setCount((prevCount) => {
 					if (prevCount > 1) {
 						soundEngine?.playSound("countSound");

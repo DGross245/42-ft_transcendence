@@ -79,7 +79,6 @@ export const TTTSocketEvents = () => {
 		const setPlayer = (msg: string) => {
 			const playerData = JSON.parse(msg);
 			let newPlayerData = { ...playerState };
-
 			newPlayerData.players[playerData.number] = {
 					name: playerData.name,
 					color: playerData.color,

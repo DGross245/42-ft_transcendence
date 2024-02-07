@@ -1,3 +1,5 @@
+import { DoubleSide} from 'three';
+
 interface TorusProps {
 	position: [number, number, number],
 	transparent: boolean;
@@ -19,7 +21,7 @@ const Torus : React.FC<TorusProps> = (props) => {
 	return (
 		<mesh {...props} position={[x, y - 0.05, z]} rotation={[Math.PI / 2, 0, 0]}>
 			<torusGeometry args={[2, 0.4, 8, 24]} />
-			<meshBasicMaterial color={props.color} transparent={props.transparent} blending={props.blending}/>
+			<meshBasicMaterial color={props.color} transparent={props.transparent} side={DoubleSide} opacity={0.8}/>
 		</mesh>
 	);
 }

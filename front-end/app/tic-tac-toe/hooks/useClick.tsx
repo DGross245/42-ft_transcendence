@@ -41,7 +41,7 @@ export const useClick = () => {
 			else
 				setTurn(currentTurn === 'X' ? 'O' : 'X');
 		}
-	},[clicked, board, currentTurn]);
+	},[clicked]);
 
 	// Thinking about sending only changed array instead of all of it
 	useEffect(() => {

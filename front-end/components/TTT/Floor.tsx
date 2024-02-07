@@ -23,7 +23,7 @@ const Floor : React.FC<FloorProps> = (props) => {
 				transparent={true}
 				metalness={0.8}
 				side={THREE.BackSide}
-				opacity={0.5}
+				opacity={0.8}
 				roughness={0.9}
 			/>
 		</mesh>
