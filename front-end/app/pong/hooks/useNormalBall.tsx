@@ -70,8 +70,10 @@ export const useBall = () => {
 		const { min, max } = ranges[Math.floor(Math.random() * ranges.length)];
 		const angle = (Math.random() * (max - min) + min) * (Math.PI / 180);
 
-		ball.velocityX = ball.speed * Math.sin(angle + (Math.PI / 2));
-		ball.velocityZ = ball.speed * Math.cos(angle + (Math.PI / 2));
+		// ball.velocityX = ball.speed * Math.sin(angle + (Math.PI / 2));
+		// ball.velocityZ = ball.speed * Math.cos(angle + (Math.PI / 2));
+		ball.velocityX = 1;
+		ball.velocityZ = 1.22;
 	}
 
 	/**
@@ -158,12 +160,30 @@ export const useBall = () => {
 		const rightPaddlePos = rightPaddleRef.current.position;
 		const leftPaddlePos = leftPaddleRef.current.position;
 
-		const isCollidingWithPaddle = (paddle: { x: number; z: number; }) => {
+		// const isCollidingWithPaddle = (paddle: { x: number; z: number; }) => {
+		// 	return (
+		// 		ball.x + halfBall >= paddle.x - halfPaddleWidth &&
+		// 		ball.x - halfBall <= paddle.x + halfPaddleWidth &&
+		// 		ball.z - halfBall <= paddle.z + halfPaddleHeight &&
+		// 		ball.z + halfBall >= paddle.z - halfPaddleHeight
+		// 	);
+		// }
+
+		const isCollidingWithPaddleX = (paddle: { x: number; z: number; }) => {
 			return (
-				ball.x + halfBall >= paddle.x - halfPaddleWidth &&
-				ball.x - halfBall <= paddle.x + halfPaddleWidth &&
-				ball.z - halfBall <= paddle.z + halfPaddleHeight &&
-				ball.z + halfBall >= paddle.z - halfPaddleHeight
+				ball.x + halfBall + ball.velocityX > paddle.x - halfPaddleWidth &&
+				ball.x - halfBall + ball.velocityX < paddle.x + halfPaddleWidth &&
+				ball.z + halfBall > paddle.z - halfPaddleHeight &&
+				ball.z + halfBall < paddle.z + halfPaddleHeight
+			);
+		}
+
+		const isCollidingWithPaddleY = (paddle: { x: number; z: number; }) => {
+			return (
+				ball.x + halfBall > paddle.x - halfPaddleWidth &&
+				ball.x - halfBall < paddle.x + halfPaddleWidth &&
+				ball.z + halfBall + ball.velocityZ > paddle.z - halfPaddleHeight &&
+				ball.z + halfBall + ball.velocityZ < paddle.z + halfPaddleHeight
 			);
 		}
 
@@ -173,10 +193,16 @@ export const useBall = () => {
 			updateBallPosition(ball, deltaTime);
 		}
 		// Handling ball collision with paddles.
-		else if (isCollidingWithPaddle(leftPaddlePos)) {
+		else if (isCollidingWithPaddleX(leftPaddlePos)) {
 			changeBallDir(leftPaddlePos, 1);
 		}
-		else if (isCollidingWithPaddle(rightPaddlePos)) {
+		else if (isCollidingWithPaddleX(rightPaddlePos)) {
+			changeBallDir(rightPaddlePos, -1);
+		}
+		if (isCollidingWithPaddleY(leftPaddlePos)) {
+			changeBallDir(leftPaddlePos, 1);
+		}
+		else if (isCollidingWithPaddleY(rightPaddlePos)) {
 			changeBallDir(rightPaddlePos, -1);
 		}
 		// Handling scoring when the ball is outside of the play area.

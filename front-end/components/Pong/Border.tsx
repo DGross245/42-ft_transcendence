@@ -4,7 +4,6 @@
  * @returns An array of Three.js border meshes.
  */
 export const CornerBorder = () => {
-
 	// All positions and rotations for each border
 	const info = [
 		{ position: {x: 131, y: 0, z:-151}, rotation: {x: 0, y: 0, z: 0} },
