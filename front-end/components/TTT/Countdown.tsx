@@ -60,7 +60,7 @@ const Countdown = () => {
 	return (
 		<mesh ref={ref} visible={countdownVisible} position={[-5, -4, -30]}>
 			<textGeometry args={[String(count), {font, size: 10, height: 2}]} />
-			<meshBasicMaterial color={ 0xffffff } />
+			<meshStandardMaterial color={ 0xffffff } />
 		</mesh>
 	)
 }

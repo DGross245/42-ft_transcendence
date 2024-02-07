@@ -25,7 +25,7 @@ const GridLine : React.FC<GridLineProps> = (props, key) => {
 			onClick={(e) => {e.stopPropagation()}}
 		>
 			<boxGeometry args={props.args} />
-			<meshBasicMaterial color={0x333333} />
+			<meshStandardMaterial color={0x333333} />
 		</mesh>
 	);
 }

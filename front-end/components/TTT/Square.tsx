@@ -45,7 +45,7 @@ const Square : React.FC<SquareProps> = (props) => {
 	return (
 		<mesh {...props} position={[x, y + 0.3, z]} rotation={[Math.PI / 2, 0, 0]}>
 			<Extrude args={[shape, extrudeSettings]}>
-				<meshBasicMaterial
+				<meshStandardMaterial
 					color={props.color}
 					transparent={props.transparent}
 					side={DoubleSide}
