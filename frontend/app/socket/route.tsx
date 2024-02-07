@@ -11,7 +11,7 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponse): Promise
 	  console.log('Socket is initializing');
 	  const io = new Server((res.socket as any).server);
 	  (res.socket as any).server.io = io;
-  
+
 	  io.on('connection', (socket) => {
 		socket.on('input-change', (msg: any) => {
 		  socket.broadcast.emit('update-input', msg);
