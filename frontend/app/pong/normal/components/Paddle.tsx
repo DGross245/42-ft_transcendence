@@ -1,127 +1,91 @@
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
-import { MutableRefObject, forwardRef, useContext, useEffect, useRef } from "react";
-import { Mesh } from 'three';
+import * as THREE from "three";
 
-import { PongContext } from '../PongProvider';
-
-interface Paddle {
-	keyMap: { [key: string]: boolean };
-	position: [number, number, number];
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+interface PaddleProps {
+	movementSpeed?: number;
+	color?: THREE.Color;
+	x: number;
+	y: number;
+	rotated?: boolean;
 }
 
-/**
- * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
- * @param ref - Forwarded reference for more control in parent component.
- * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
- * @returns A Three.js mesh representing the paddle.
- */
-export const RightPaddle = forwardRef<Mesh, { position: [number, number, number] }>(({ position }, ref) => {
-	const { gameState, opponentState } = useContext(PongContext)!;
-	const meshRef = ref as MutableRefObject<Mesh | null>;
-	const PositionRef = useRef<number>(0);
+export interface PaddleRef {
+	setX: (update: ((prevX: number) => number)) => void;
+  	setY: (update: ((prevY: number) => number)) => void;
+}
 
-	useEffect(() => {
-		const setNewCoords = (msg: string) => {
-			const newPosition = JSON.parse(msg);
-			PositionRef.current = newPosition;
-		};
+/* -------------------------------------------------------------------------- */
+/*                                    Body                                    */
+/* -------------------------------------------------------------------------- */
+const Paddle = forwardRef<PaddleRef, PaddleProps>(({ movementSpeed = 10, color, x, y, rotated = false }, ref) => {
+	const [position, setPosition] = useState({ x, y });
+	const meshRef = useRef<THREE.Mesh | null>(null);
 
-		gameState.wsclient?.addMessageListener(`paddleUpdate-${gameState.gameId}`, gameState.gameId, setNewCoords);
+	/* ------------------------ expose updates to parent ------------------------ */
+	useImperativeHandle(ref, () => ({
+		setX: (update) => setPosition(prev => ({ ...prev, x: update(prev.x) })),
+		setY: (update) => setPosition(prev => ({ ...prev, y: update(prev.y) }))
+	}));
 
-		return () => {
-			gameState.wsclient?.removeMessageListener(`paddleUpdate-${gameState.gameId}`, gameState.gameId);
-		};
-	}, []);
-
-	// Moves the paddle based on pressed key for each frame.
-	useFrame(() => {
-		if (meshRef && meshRef.current) {
-			meshRef.current.position.y = PositionRef.current;
-		}
-	});
-
-	return (
-		<mesh ref={ref} position={position}>
-			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={opponentState.color} />
-		</mesh>
-	);
-});
-
-/**
- * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
- * @param ref - Forwarded reference for more control in parent component.
- * @param keyMap - An object mapping keyboard keys to their pressed/unpressed state.
- * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
- * @returns A Three.js mesh representing the paddle.
- */
-export const LeftPaddle = forwardRef<Mesh, Paddle>(({ keyMap, position }, ref) => {
-	const { playerState, gameState } = useContext(PongContext)!;
-	const paddleSpeed = 300;
-	const borderPositionY = 103;
-	const meshRef = ref as MutableRefObject<Mesh | null>;
-	
-	// Moves the paddle based on pressed key for each frame.
-	useFrame((_, delta) => {
-		if (gameState.pause) {
-			return ;
-		}
-		if (meshRef && meshRef.current) {
-			const stringPos = JSON.stringify(meshRef.current.position.y);
-			gameState.wsclient?.emitMessageToGame(stringPos, `paddleUpdate-${gameState.gameId}`, gameState.gameId);
-			if (keyMap['KeyW']) {
-				meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
-			} else if (keyMap['KeyS']) {
-				meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
+	/* ------------------------- animate position change ------------------------ */
+	useFrame((state, delta) => {
+		if (meshRef && meshRef.current && (meshRef.current.position.x != position.x || meshRef.current.position.y != position.y)) {
+			const newMesh = meshRef.current.clone();
+			newMesh.position.copy(
+				meshRef.current.position.clone().lerp(new THREE.Vector3(position.x, position.y, 0), movementSpeed * delta)
+			);
+			if (newMesh.position.distanceTo(new THREE.Vector3(position.x, position.y, 0)) < 0.1) {
+				meshRef.current.position.copy(new THREE.Vector3(position.x, position.y, 0));
+			} else if (meshRef.current.position.distanceTo(newMesh.position) > 0.1) {
+				meshRef.current.position.copy(newMesh.position);
 			}
+
+			const paddleBox = new THREE.Box3().setFromObject(meshRef.current);
+			const paddleCenter = new THREE.Vector3();
+			paddleBox.getCenter(paddleCenter); // Get center of the paddleBox
+			state.scene.children.forEach((child) => {
+				if (child.type === 'Mesh' && child !== meshRef.current) {
+					const box = new THREE.Box3().setFromObject(child);
+					const childCenter = new THREE.Vector3();
+					box.getCenter(childCenter); // Get center of the child box
+			
+					if (paddleBox.intersectsBox(box)) {
+						const overlapX = Math.min(paddleBox.max.x - box.min.x, box.max.x - paddleBox.min.x);
+						const overlapY = Math.min(paddleBox.max.y - box.min.y, box.max.y - paddleBox.min.y);
+			
+						// Determine which side is overlapping
+						const isLeft = paddleCenter.x > childCenter.x;
+						const isAbove = paddleCenter.y < childCenter.y;
+			
+						let newPosition = new THREE.Vector3();
+			
+						if (rotated) {
+							newPosition.x = isLeft ? overlapX : -overlapX;
+							newPosition.y = isAbove ? -overlapY : overlapY;
+						} else {
+							// If not rotated, we might only care about Y axis for example
+							newPosition.x = 0; // Keep X position unchanged
+							newPosition.y = isAbove ? -overlapY : overlapY;
+						}
+			
+						setPosition(prev => ({ x: prev.x + newPosition.x, y: prev.y + newPosition.y }));
+					}
+				}
+			});
 		}
 	});
 
 	return (
-		<mesh ref={meshRef} position={position}>
-			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ playerState.color } />
+		<mesh ref={meshRef}>
+			<boxGeometry args={rotated ? [30, 4, 4] : [4, 30, 4]} />
+			<meshBasicMaterial color={color} />
 		</mesh>
-	);
+	)
 });
+Paddle.displayName = 'Paddle';
 
-// export const LeftPaddle = forwardRef<Mesh, Paddle>(({ position }, ref) => {
-//     const { playerState, gameState } = useContext(PongContext);
-//     const paddleSpeed = 300;
-//     const borderPositionY = 103;
-//     const meshRef = ref as MutableRefObject<Mesh | null>;
-//     const paddlePositionRef = useRef<Vector3>(new Vector3(position[0], position[1], position[2]));
-
-//     const movePaddle = (delta: number) => {
-//         const direction = new Vector3().subVectors(paddlePositionRef.current, meshRef.current!.position).normalize();
-//         const movement = direction.multiplyScalar(delta * paddleSpeed);
-//         meshRef.current!.position.add(movement);
-//     }
-
-//     useFrame((_, delta) => {
-//         movePaddle(delta);
-//     });
-
-//     useKey(['w','W'], (state) => {
-//         if (state) {
-//             const newY = Math.min(paddlePositionRef.current.y + paddleSpeed, borderPositionY - 15);
-//             paddlePositionRef.current.y = newY;
-//             meshRef.current!.position.setY(newY);
-//         }
-//     });
-
-//     useKey(['s','S'], (state) => {
-//         if (state) {
-//             const newY = Math.max(paddlePositionRef.current.y - paddleSpeed, -borderPositionY + 15);
-//             paddlePositionRef.current.y = newY;
-//             meshRef.current!.position.setY(newY);
-//         }
-//     });
-
-//     return (
-//         <mesh ref={meshRef} position={paddlePositionRef.current.toArray()}>
-//             <boxGeometry args={[4, 30, 4]} />
-//             <meshBasicMaterial color={ playerState.color } />
-//         </mesh>
-//     );
-// });
+export { Paddle };

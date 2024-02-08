@@ -3,10 +3,15 @@
 import React, { MutableRefObject, useContext, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei'; 
-import { Mesh } from 'three'
+// import THREE, { Mesh } from 'three';
+
 
 import { Border } from './components/Border';
-import { RightPaddle, LeftPaddle } from './components/Paddle';
+// import { RightPaddle, LeftPaddle } from './components/Paddle';
+
+import { Paddle, PaddleRef } from './components/Paddle';
+import { useKey } from '@/components/inputHandler';
+
 import { Ball } from './components/Ball';
 import { Scoreboard } from './components/Scoreboard';
 import EndModal from './components/EndModal';
@@ -33,13 +38,17 @@ import { useWebSocket } from './hooks/useWebSocket';
  */
 export default function PongScene(/* maybe get gameId as param */) { // PlayerState needs to set too
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const { rightPaddleRef, leftPaddleRef, ballRef} = useContext(PongContext);
-	const { p1Score, p2Score, setP1Score, setP2Score, isScoreVisible, setScoreVisibility,
-		setWinner, isGameOver, setGameOver, isBallVisible, setBallVisibility, showModal, closeModal,
-		winner, sendRequest, setRequestRematch, setSendRequest, requestRematch} = useGameState();
-	const keyMap = inputHandler();
 
-	useWebSocket( isGameOver, sendRequest, setGameOver, setRequestRematch, setSendRequest );
+	const rightPaddleRef = useRef<PaddleRef>(null);
+	const leftPaddleRef = useRef<PaddleRef>(null);
+
+	// const { rightPaddleRef, leftPaddleRef, ballRef} = useContext(PongContext);
+	// const { p1Score, p2Score, setP1Score, setP2Score, isScoreVisible, setScoreVisibility,
+	// 	setWinner, isGameOver, setGameOver, isBallVisible, setBallVisibility, showModal, closeModal,
+	// 	winner, sendRequest, setRequestRematch, setSendRequest, requestRematch} = useGameState();
+	// const keyMap = inputHandler();
+
+	// useWebSocket( isGameOver, sendRequest, setGameOver, setRequestRematch, setSendRequest );
 
 	// Updates window dimensions on window resizing.
 	useEffect(() => {
@@ -59,16 +68,32 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 		};
 	}, []);
 
+	useKey(['ArrowUp'], () => {
+		rightPaddleRef.current?.setY((value) => value + 10);
+	});
+	useKey(['ArrowDown'], () => {
+		rightPaddleRef.current?.setY((value) => value - 10);
+	});
+
+	useKey(['w', 'W'], () => {
+		leftPaddleRef.current?.setY((value) => value + 10);
+	});
+	useKey(['s', 'S'], () => {
+		leftPaddleRef.current?.setY((value) => value - 10);
+	});
+
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<Countdown scoreVisible={isScoreVisible} setScoreVisibility={setScoreVisibility} rotation={[0, 0, 0]} />
+				{/* <Countdown scoreVisible={isScoreVisible} setScoreVisibility={setScoreVisibility} rotation={[0, 0, 0]} /> */}
 				<Camera position={[0, -100, 300]} />
 				<Border position={[0,105,0]} />
 				<Border position={[0,-105,0]} />
-				<RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
-				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} />
-				<Ball
+				<Paddle x={151} y={0} ref={rightPaddleRef}/>
+				<Paddle x={-151} y={0} ref={leftPaddleRef}/>
+				{/* <RightPaddle ref={rightPaddleRef} position={[151, 0, 0]} />
+				<LeftPaddle ref={leftPaddleRef} position={[-151, 0, 0]} keyMap={keyMap} /> */}
+				{/* <Ball
 					rightPaddleRef={rightPaddleRef}
 					leftPaddleRef={leftPaddleRef}
 					p1Score={p1Score} setP1Score={setP1Score}
@@ -78,25 +103,25 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 					scoreVisible={isScoreVisible}
 					isBallVisible={isBallVisible} setBallVisibility={setBallVisibility}
 					ref={ballRef}
-				/>
+				/> */}
 				<CubeLine />
 				<OrbitControls enablePan={false} />
-				<Scoreboard
+				{/* <Scoreboard
 					player1={p1Score}
 					player2={p2Score}
 					rightPaddleRef={rightPaddleRef}
 					leftPaddleRef={leftPaddleRef}
 					scoreVisible={isScoreVisible} 
-				/>
+				/> */}
 			</Canvas>
-			<EndModal
+			{/* <EndModal
 				isOpen={showModal}
 				onClose={closeModal}
 				winner={winner}
 				setSendRequest={setSendRequest}
 				sendRequest={sendRequest}
 				requestRematch={requestRematch}
-			/>
+			/> */}
 		</div>
 	);
 }
