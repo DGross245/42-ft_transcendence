@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls } from "@react-three/drei";
+import { Environment } from "@react-three/drei";
 
 import { useWindow } from "../../../components/hooks/useWindow";
 import { Grid } from "@/components/TTT/Grid";
@@ -44,15 +44,6 @@ const TTTScene = () => {
 				<TurnDisplay />
 				<FinishLine />
 				<Table />
-				<OrbitControls
-					makeDefault
-					enableZoom={false}
-					target={[3, 11.8, 3]}
-					enableRotate={true}
-					enablePan={false}
-					minPolarAngle={0}
-					maxPolarAngle={Math.PI / 2}
-				/>
 				<Environment preset="city" />
 			</Canvas>
 			<EndModal />
