@@ -4,7 +4,7 @@ interface KeyMap {
 	[key: string]: boolean;
 }
 
-export default function inputHandler () {
+export default function useInputHandler () {
 	const keyMap = useRef<KeyMap>({});
 
 	useEffect(() => {
@@ -23,33 +23,31 @@ export default function inputHandler () {
 	return (keyMap.current);
 }
 
-// const pressed: any = []
-
-// const useKey = (target: string[], event: (state: boolean) => void) => {
-// 	useEffect(() => {
-// 		const onDocumentKeyUp = (e: KeyboardEvent ) => {
-// 			if (target.indexOf(e.key) !== -1) {
-// 				// const isRepeating = !!pressed[e.code as any];
-// 				pressed[e.code as any] = true;
-// 				// if (!isRepeating)
-// 					event(true);
-// 			}
-// 		}
-
-// 		const onDocumentKeyDown = (e: KeyboardEvent ) => {
-// 			if (target.indexOf(e.key) !== -1) {
-// 				pressed[e.code] = false;
-// 				event(false);
-// 			}
-// 		}
-
-// 		document.addEventListener('keydown', onDocumentKeyUp)
-// 		document.addEventListener('keyup', onDocumentKeyDown)
-// 		return () => {
-// 			document.removeEventListener('keydown', onDocumentKeyUp)
-// 			document.removeEventListener('keyup', onDocumentKeyDown)
-// 		}
-// 	}, [target, event, pressed]);
-// }
+const pressed: any = []
+const useKey = (target: string[], event: (state: boolean) => void) => {
+    useEffect(() => {
+        const onDocumentKeyUp = (e: KeyboardEvent) => {
+            if (target.indexOf(e.key) !== -1) {
+				const isRepeating = !!pressed[e.code as any];
+                pressed[e.code as any] = true;
+                if (!isRepeating)
+                    event(true);
+            }
+        }
+        const onDocumentKeyDown = (e: KeyboardEvent) => {
+            if (target.indexOf(e.key) !== -1) {
+                pressed[e.code] = false;
+                event(false);
+            }
+        }
+        document.addEventListener('keydown', onDocumentKeyDown)
+        document.addEventListener('keyup', onDocumentKeyUp)
+        return () => {
+            document.removeEventListener('keydown', onDocumentKeyDown)
+            document.removeEventListener('keyup', onDocumentKeyUp)
+        }
+    }, [event, target]);
+}
+export { useKey };
 
 // export default useKey;
