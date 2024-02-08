@@ -18,7 +18,6 @@ interface SocketApiResponse extends NextApiResponse {
 // FIXME: Paddle movement based on player number (need to be inverted or adjusted to player rotation)
 // TODO: Add paddle socket data transfer in OneForAll
 // TODO: Maybe replacing the Rematch button with a continue button in tournaments / div modal
-// FIXME: Ball collision problem
 
 // FIXME: (Fix documentation)
 

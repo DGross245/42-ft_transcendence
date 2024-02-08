@@ -70,10 +70,8 @@ export const useBall = () => {
 		const { min, max } = ranges[Math.floor(Math.random() * ranges.length)];
 		const angle = (Math.random() * (max - min) + min) * (Math.PI / 180);
 
-		// ball.velocityX = ball.speed * Math.sin(angle + (Math.PI / 2));
-		// ball.velocityZ = ball.speed * Math.cos(angle + (Math.PI / 2));
-		ball.velocityX = 1;
-		ball.velocityZ = 1.22;
+		ball.velocityX = ball.speed * Math.sin(angle + (Math.PI / 2));
+		ball.velocityZ = ball.speed * Math.cos(angle + (Math.PI / 2));
 	}
 
 	/**
@@ -159,15 +157,6 @@ export const useBall = () => {
 
 		const rightPaddlePos = rightPaddleRef.current.position;
 		const leftPaddlePos = leftPaddleRef.current.position;
-
-		// const isCollidingWithPaddle = (paddle: { x: number; z: number; }) => {
-		// 	return (
-		// 		ball.x + halfBall >= paddle.x - halfPaddleWidth &&
-		// 		ball.x - halfBall <= paddle.x + halfPaddleWidth &&
-		// 		ball.z - halfBall <= paddle.z + halfPaddleHeight &&
-		// 		ball.z + halfBall >= paddle.z - halfPaddleHeight
-		// 	);
-		// }
 
 		const isCollidingWithPaddleX = (paddle: { x: number; z: number; }) => {
 			return (
