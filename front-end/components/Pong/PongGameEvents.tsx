@@ -1,6 +1,7 @@
 import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
 import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 import { useEffect } from "react";
+import { useKey } from "../hooks/useKey";
 
 export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 	const { setScores, pongGameState, setPongGameState, setWinner, setBallVisibility, setScoreVisibility, setCamPos, setCountdownRot, setContdownPos, isGameMode } = usePongGameState();
@@ -53,6 +54,8 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 		]
 	}
 
+	const escape = useKey(['Escape']);
+
 	useEffect(() => {
 		if (playerState.client !== -1) {
 			if (!isGameMode) {
@@ -85,6 +88,11 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 			setPongGameState({ ...pongGameState, reset: false, gameOver: false });
 		}
 	}, [pongGameState.reset]);
+
+	useEffect(() => {
+		if (escape.isKeyDown)
+			setPongGameState({ ...pongGameState, pause: true});
+	},[escape])
 
 	useEffect(() => {
 		if (rematchIndex === maxClients) {

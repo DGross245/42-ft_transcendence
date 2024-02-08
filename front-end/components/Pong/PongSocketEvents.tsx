@@ -156,5 +156,28 @@ export const PongSocketEvents = () => {
 		}
 	}, [sendRequest]);
 
+	useEffect(() => {
+		if (pongGameState.pause && wsclient) {
+			wsclient?.emitMessageToGame("true", `Pause-${pongGameState.gameId}`, pongGameState.gameId);
+		}
+	}, [pongGameState.pause]);
+
+	useEffect(() => {
+		if (wsclient) {
+			const setPause = (msg: string) => {
+				if (msg === "true")
+					setPongGameState({ ...pongGameState, pause: true });
+				else
+					setPongGameState({ ...pongGameState, pause: false });
+			};
+
+			wsclient?.addMessageListener(`Pause-${pongGameState.gameId}`, pongGameState.gameId, setPause)
+
+			return () => {
+				wsclient?.removeMessageListener(`Pause-${pongGameState.gameId}`, pongGameState.gameId);
+			} 
+		}
+	}, [wsclient]);
+
 	return (null);
 }

@@ -24,7 +24,10 @@ const Countdown = () => {
 	const soundEngine = useSound();
 
 	useEffect(() => {
-		if (pongGameState.pause) return ;
+		if (pongGameState.pause) {
+			setScoreVisibility(false);
+			return ;
+		}
 		if (!isScoreVisible) {
 			const countdownInterval = setInterval(() => {
 				
