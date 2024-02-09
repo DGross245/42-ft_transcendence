@@ -166,15 +166,12 @@ export const useBall = () => {
 
 		updateBallPosition(ball, deltaTime);
 
-		const rightPaddlePos = rightPaddleRef.current.position;
-		const leftPaddlePos = leftPaddleRef.current.position;
-
 		const isCollidingWithPaddleX = (paddle: { x: number; z: number; }) => {
 			return (
 				ball.x + halfBall + ball.velocityX > paddle.x - halfPaddleWidth &&
 				ball.x - halfBall + ball.velocityX < paddle.x + halfPaddleWidth &&
 				ball.z + halfBall > paddle.z - halfPaddleHeight &&
-				ball.z + halfBall < paddle.z + halfPaddleHeight
+				ball.z - halfBall < paddle.z + halfPaddleHeight
 			);
 		}
 
@@ -183,7 +180,7 @@ export const useBall = () => {
 				ball.x + halfBall > paddle.x - halfPaddleWidth &&
 				ball.x - halfBall < paddle.x + halfPaddleWidth &&
 				ball.z + halfBall + ball.velocityZ > paddle.z - halfPaddleHeight &&
-				ball.z + halfBall + ball.velocityZ < paddle.z + halfPaddleHeight
+				ball.z - halfBall + ball.velocityZ < paddle.z + halfPaddleHeight
 			);
 		}
 
@@ -193,17 +190,17 @@ export const useBall = () => {
 			updateBallPosition(ball, deltaTime);
 		}
 		// Handling ball collision with paddles.
-		else if (isCollidingWithPaddleX(leftPaddlePos)) {
-			changeBallDir(leftPaddlePos, 1);
+		else if (isCollidingWithPaddleX(leftPaddleRef.current.position)) {
+			changeBallDir(leftPaddleRef.current.position, 1);
 		}
-		else if (isCollidingWithPaddleX(rightPaddlePos)) {
-			changeBallDir(rightPaddlePos, -1);
+		else if (isCollidingWithPaddleX(rightPaddleRef.current.position)) {
+			changeBallDir(rightPaddleRef.current.position, -1);
 		}
-		if (isCollidingWithPaddleY(leftPaddlePos)) {
-			changeBallDir(leftPaddlePos, 1);
+		if (isCollidingWithPaddleY(leftPaddleRef.current.position)) {
+			changeBallDir(leftPaddleRef.current.position, 1);
 		}
-		else if (isCollidingWithPaddleY(rightPaddlePos)) {
-			changeBallDir(rightPaddlePos, -1);
+		else if (isCollidingWithPaddleY(rightPaddleRef.current.position)) {
+			changeBallDir(rightPaddleRef.current.position, -1);
 		}
 		// Handling scoring when the ball is outside of the play area.
 		else if ((ball.x > 200 || ball.x < -200) && 
@@ -213,8 +210,6 @@ export const useBall = () => {
 			else
 				setScores({ ...scores, p1Score: scores.p1Score + 1 })
 			randomBallDir();
-			ballRef.current.position.x = 0;
-			ballRef.current.position.z = 0;
 		}
 	});
 }
