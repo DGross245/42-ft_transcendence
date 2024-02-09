@@ -99,6 +99,29 @@ export const PongSocketEvents = () => {
 	}, [wsclient]);
 
 	useEffect(() => {
+		const setPaddlePos = (msg: string) => {
+			const paddleData = JSON.parse(msg);
+
+			if (paddleData.client === 0)
+				bottomPaddleRef.current.position.x = paddleData.pos;
+			else if (paddleData.client === 1)
+				leftPaddleRef.current.position.z = paddleData.pos;
+			else if (paddleData.client === 2)
+				topPaddleRef.current.position.x = paddleData.pos;
+			else if (paddleData.client === 3)
+				rightPaddleRef.current.position.z = paddleData.pos;
+		};
+
+		if (wsclient) {
+			wsclient?.addMessageListener(`Paddle-${pongGameState.gameId}`, pongGameState.gameId, setPaddlePos);
+
+			return () => {
+				wsclient?.removeMessageListener(`Paddle-${pongGameState.gameId}`, pongGameState.gameId);
+			} 
+		}
+	},[wsclient, pongGameState.gameId, playerState]);
+
+	useEffect(() => {
 		const setPlayer = (msg: string) => {
 			const playerData = JSON.parse(msg);
 			let newPlayerData = { ...playerState };
@@ -115,7 +138,7 @@ export const PongSocketEvents = () => {
 		};
 
 		if (wsclient) {
-			wsclient?.addMessageListener(`PlayerData-${pongGameState.gameId}`, pongGameState.gameId, setPlayer)
+			wsclient?.addMessageListener(`PlayerData-${pongGameState.gameId}`, pongGameState.gameId, setPlayer);
 
 			return () => {
 				wsclient?.removeMessageListener(`PlayerData-${pongGameState.gameId}`, pongGameState.gameId);

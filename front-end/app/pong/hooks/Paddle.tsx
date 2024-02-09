@@ -22,8 +22,8 @@ const Paddle = forwardRef<Mesh, Paddle>(({ position, color, rotation }, ref) => 
 })
 
 export const PaddleControl = () => {
-	const { playerState } = usePongSocket();
-	const { bottomPaddleRef, leftPaddleRef, topPaddleRef, rightPaddleRef, playerPaddle } = usePongGameState();
+	const { playerState, wsclient } = usePongSocket();
+	const { bottomPaddleRef, leftPaddleRef, topPaddleRef, rightPaddleRef, playerPaddle, pongGameState } = usePongGameState();
 	const paddleSpeed = 300;
 
 	const right = useKey(['d', 'D']);
@@ -46,6 +46,11 @@ export const PaddleControl = () => {
 				playerPaddle.ref.current.position.x = playerPaddle.pos;
 			else
 				playerPaddle.ref.current.position.z = playerPaddle.pos;
+			const newPaddleData = {
+				client: playerState.client,
+				pos: playerPaddle.pos
+			}
+			wsclient?.emitMessageToGame(JSON.stringify(newPaddleData), `Paddle-${pongGameState.gameId}`, pongGameState.gameId);
 		}
 	});
 
