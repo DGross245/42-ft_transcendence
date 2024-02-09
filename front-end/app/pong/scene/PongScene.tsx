@@ -15,8 +15,6 @@ import { LongBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
 
-// FIXME: Someotimes the guest or not host, counts the score twice
-
 /**
  * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
  * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.

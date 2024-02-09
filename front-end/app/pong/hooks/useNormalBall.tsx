@@ -53,6 +53,52 @@ export const useBall = () => {
 	},[pongGameState.gameOver]);
 
 	/**
+	 * Updates the new position of the ball based on its velocity and the time passed since last frame (deltaTime).
+	 * @param ball - The ball object containing position and velocity properties.
+	 * 				 Contains 'x', 'z', 'velocityX', and 'velocityZ' fields.
+	 * @param deltaTime - The time passed since the last frame, in seconds.
+	 * 					  Used to ensure independence from the frame rate.
+	*/
+	const updateBallPosition = (ball: { x: number; z: number; velocityX: number; velocityZ: number; }, deltaTime: number) => {
+		if (pongGameState.pause) return ;
+		if (!playerState.master) {
+			const { position, velocity, deltaTime } = PositionRef.current;
+			ball.x = -position.x + -velocity.x * deltaTime;
+			ball.z = position.z + velocity.z * deltaTime;
+			ballRef.current.position.x = ball.x;
+			ballRef.current.position.z = ball.z;
+		} else {
+			ball.x += ball.velocityX * 100 * deltaTime;
+			ball.z += ball.velocityZ * 100 * deltaTime;
+			ballRef.current.position.x = ball.x;
+			ballRef.current.position.z = ball.z;
+			const msg = {
+				position: { x: ball.x, z: ball.z },
+				velocity: { x: ball.velocityX, z: ball.velocityZ },
+				deltaTime: deltaTime
+			}
+			wsclient?.emitMessageToGame(JSON.stringify(msg), `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+		}
+	
+		// if (props.onPositionChange && ballRef.current) {
+		// 		props.onPositionChange(ballRef.current.position);
+		// }
+	}
+
+	useEffect(() => {
+		const setNewCoords = (msg: string) => {
+			const newPosition = JSON.parse(msg);
+			PositionRef.current = newPosition;
+		};
+
+		wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
+
+		return () => {
+			wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+		};
+	}, [wsclient]);
+
+	/**
 	 * Sets the ball back to the middle and generates a random direction for the ball.
 	 * It randomly takes one specified range and calculates with it a angle to determin the ball's direction.
 	 */
@@ -72,41 +118,6 @@ export const useBall = () => {
 
 		ball.velocityX = ball.speed * Math.sin(angle + (Math.PI / 2));
 		ball.velocityZ = ball.speed * Math.cos(angle + (Math.PI / 2));
-	}
-
-	/**
-	 * Updates the new position of the ball based on its velocity and the time passed since last frame (deltaTime).
-	 * @param ball - The ball object containing position and velocity properties.
-	 * 				 Contains 'x', 'z', 'velocityX', and 'velocityZ' fields.
-	 * @param deltaTime - The time passed since the last frame, in seconds.
-	 * 					  Used to ensure independence from the frame rate.
-	 */
-	const updateBallPosition = (ball: { x: number; z: number; velocityX: number; velocityZ: number; }, deltaTime: number) => {
-		if (pongGameState.pause)
-			return ;
-		if (playerState.master) {
-			ball.x += ball.velocityX * 100 * deltaTime;
-			ball.z += ball.velocityZ * 100 * deltaTime;
-			const msg = {
-				position: { x: ball.x, z: ball.z },
-				velocity: { x: ball.velocityX, z: ball.velocityZ },
-				deltaTime: deltaTime
-			}
-			const stringPos = JSON.stringify(msg);
-			wsclient?.emitMessageToGame(stringPos, `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
-		} else {
-			const { position, velocity, deltaTime } = PositionRef.current;
-			ball.x = -position.x + -velocity.x * deltaTime;
-			ball.z = position.z + velocity.z * deltaTime;
-		}
-
-		if (ballRef.current) {
-			ballRef.current.position.x = ball.x;
-			ballRef.current.position.z = ball.z;
-		}
-		// if (props.onPositionChange && ballRef.current) {
-		// 	props.onPositionChange(ballRef.current.position);
-		// }
 	}
 
 	useEffect(() => {
@@ -202,6 +213,8 @@ export const useBall = () => {
 			else
 				setScores({ ...scores, p1Score: scores.p1Score + 1 })
 			randomBallDir();
+			ballRef.current.position.x = 0;
+			ballRef.current.position.z = 0;
 		}
 	});
 }
