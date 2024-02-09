@@ -4,7 +4,7 @@ import OneForAllScene from "./scene/OneForAllScene";
 import PongScene from "./scene/PongScene";
 
 export default function PongPage() {
-	const gameMode = false;
+	const gameMode = true;
 
 	return (
 		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>

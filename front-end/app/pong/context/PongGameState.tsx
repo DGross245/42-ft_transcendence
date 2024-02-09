@@ -29,6 +29,13 @@ interface PongGameStateContextValue {
 		strength: number,
 		client: number
 	},
+	playerPaddle: {
+		ref?:  MutableRefObject<Mesh> | null,
+		pos: number,
+		maxPos: number,
+		minPos: number
+	},
+	setPlayerPaddle: Dispatch<SetStateAction<PongGameStateContextValue['playerPaddle']>>,
 	setScores: Dispatch<SetStateAction<PongGameStateContextValue['scores']>>,
 	setPongGameState: Dispatch<SetStateAction<PongGameStateContextValue['pongGameState']>>,
 	winner: string,
@@ -66,12 +73,13 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 	const [camPos, setCamPos] = useState<[number, number, number]>([0, 350, 400]);
 	const [countdownRot, setCountdownRot] = useState<[number, number, number]>([0, 0, 0]);
 	const [countdownPos, setContdownPos] = useState<[number, number, number][]>([ [-23, 50, 0], [-35, 50, 0] ]);
-
+	
 	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const topPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const bottomPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const ballRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
+	const [playerPaddle, setPlayerPaddle] = useState<PongGameStateContextValue['playerPaddle']>({ ref: null, pos: 0, minPos: 0, maxPos: 0});
 
 	const value: PongGameStateContextValue = {
 		scores,
@@ -98,6 +106,8 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 		setCountdownRot,
 		countdownPos,
 		setContdownPos,
+		playerPaddle,
+		setPlayerPaddle
 	};
 
 	return (

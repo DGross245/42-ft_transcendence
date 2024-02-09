@@ -17,6 +17,8 @@ import { TTTGameEvents } from "@/components/TTT/TTTGameEvents";
 import { TTTSocketEvents } from "@/components/TTT/TTTSocketEvents";
 import { TTTBot } from "@/components/TTT/TTTBot";
 
+// FIXME: Sometimes if host is player2, his symbol isnt set and the game crashes
+
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
  * It handles game state, user interactions, and 3D rendering of the game board.

@@ -85,19 +85,6 @@ export const useBall = () => {
 		// }
 	}
 
-	useEffect(() => {
-		const setNewCoords = (msg: string) => {
-			const newPosition = JSON.parse(msg);
-			PositionRef.current = newPosition;
-		};
-
-		wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
-
-		return () => {
-			wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
-		};
-	}, [wsclient]);
-
 	/**
 	 * Sets the ball back to the middle and generates a random direction for the ball.
 	 * It randomly takes one specified range and calculates with it a angle to determin the ball's direction.

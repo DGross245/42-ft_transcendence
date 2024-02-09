@@ -19,7 +19,7 @@ export const PongSocketEvents = () => {
 		setRequestRematch,
 		setSendRequest
 	} = usePongSocket();
-	const { pongGameState, setPongGameState, isGameMode } = usePongGameState();
+	const { pongGameState, setPongGameState, isGameMode, setPlayerPaddle, bottomPaddleRef, leftPaddleRef, topPaddleRef, rightPaddleRef } = usePongGameState();
 	const [isFull, setIsFull] = useState("");
 	const soundEngine = useSound();
 
@@ -35,6 +35,17 @@ export const PongSocketEvents = () => {
 		waitForSocket();
 	}, [newClient]);
 
+	const chooseRef = (clients: number) => {
+		if (clients === 0)
+			setPlayerPaddle({ ref: bottomPaddleRef, pos: bottomPaddleRef.current.position.x, maxPos: 111 - 15, minPos: -111 + 15});
+		else if (clients === 1)
+			setPlayerPaddle({ ref: leftPaddleRef, pos: leftPaddleRef.current.position.z, maxPos: 111 - 15, minPos: -111 + 15});
+		else if (clients === 2)
+			setPlayerPaddle({ ref: topPaddleRef, pos: topPaddleRef.current.position.x, maxPos: 111 - 15, minPos: -111 + 15});
+		else if (clients === 3)
+			setPlayerPaddle({ ref: rightPaddleRef, pos: rightPaddleRef.current.position.z, maxPos: 111 - 15, minPos: -111 + 15});
+	}
+
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (wsclient) {
@@ -49,6 +60,7 @@ export const PongSocketEvents = () => {
 				newPlayerData.master = clients === 0 ? true : false,
 				newPlayerData.client = clients
 				setPlayerState( newPlayerData );
+				chooseRef(clients);
 			}
 		};
 

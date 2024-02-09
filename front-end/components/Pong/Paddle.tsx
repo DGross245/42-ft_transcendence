@@ -90,8 +90,8 @@ export const TopPaddle = () => {
 	const borderPositionX = 111;
 	const { topPaddleRef } = usePongGameState();
 
-	const right = useKey('KeyD');
-	const left = useKey('KeyA');
+	const right = useKey(['d', 'D']);
+	const left = useKey(['a', 'A']);
 
 	useFrame((_, delta) => {
 		if (topPaddleRef && topPaddleRef.current) {
