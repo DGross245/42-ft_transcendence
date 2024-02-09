@@ -2,39 +2,32 @@
 
 import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
-
-import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
-import { useUI } from "@/app/tic-tac-toe/hooks/useUI";
-import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
-
-// maybe change the View to something like go into queue 
+import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
+import { usePongUI } from "@/app/pong/hooks/usePongUI";
+import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 
 const EndModal = () => {
-	const { winner, gameState, isGameMode } = useGameState();
-	const { disconnected, requestRematch, setSendRequest, sendRequest, playerState } = useSocket();
-	const { showModal, closeModal, openModal } = useUI();
+	const { pongGameState, winner  } = usePongGameState();
+	const { disconnected, requestRematch, setSendRequest, sendRequest, playerState } = usePongSocket();
+	const { openModal, closeModal, showModal} = usePongUI();
 	const [showResult, setShowResult] = useState("");
-	const escape = useKey(['Escape']);
 
-	const getOwnImage = () => {
-		if (playerState.players[playerState.client].symbol === 'O')
-			return ('/images/o.png');
-		else if (playerState.players[playerState.client].symbol === 'X')
-			return ('/images/x.png');
-		else if (playerState.players[playerState.client].symbol === '🔳')
-			return ('/images/square.png')
-		else if (isGameMode)
-			return ('/images/Qubic_draw.png');
-		else
-			return ('/images/draw.png');
-	}
+	const escape = useKey(['Escape'])
+
+	useEffect(() => {
+		if (escape.isKeyDown && pongGameState.gameOver)
+			openModal();
+	},[escape]);
+
+	useEffect(() => {
+		if (pongGameState.reset)
+			closeModal();
+	},[pongGameState.reset])
 
 	const getResult = () => {
-		if (winner === playerState.players[playerState.client].symbol)
+		if (winner === String(playerState.players[0].number + 1) || (winner === '' && disconnected))
 			return ('Wins');
-		if (winner === "draw")
-			return ('Draw');
 		else
 			return ('Loses');
 	};
@@ -43,16 +36,6 @@ const EndModal = () => {
 		if (showModal)
 			setShowResult(getResult());
 	}, [showModal])
-
-	useEffect(() => {
-		if (escape.isKeyDown && gameState.gameOver)
-			openModal();
-	},[escape]);
-
-	useEffect(() => {
-		if (gameState.reset)
-			closeModal();
-	},[gameState.reset])
 
 	return (
 		<>
@@ -72,18 +55,6 @@ const EndModal = () => {
 			>
 				<ModalContent style={{ position: 'relative', overflow: 'visible' }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-					{showModal && (
-						<div style={{ marginTop: '20px' }}>
-							<img
-								src={getOwnImage()}
-								style={{
-									width: winner === 'draw' ? '160px' : '80px',
-									height: '80px',
-								}}
-								alt="Image"
-							/>
-						</div>
-					)}
 					<ModalHeader className="flex flex-col gap-1 items-center justify-center">
 						{ showResult }
 					</ModalHeader>

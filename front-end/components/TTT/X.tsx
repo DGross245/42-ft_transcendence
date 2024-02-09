@@ -46,7 +46,7 @@ const X : React.FC<XProps> = (props) => {
 	return (
 		<mesh {...props} position={[x, y + 0.3, z + 3]} rotation={[Math.PI / 2, 0, 0]}>
 			<Extrude args={[shape, extrudeSettings]}>
-				<meshBasicMaterial 
+				<meshStandardMaterial 
 					color={props.color}
 					transparent={props.transparent}
 					side={DoubleSide}

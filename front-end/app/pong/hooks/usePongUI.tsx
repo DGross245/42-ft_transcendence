@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-
 import { useSound } from "@/components/hooks/Sound";
-import { useGameState } from "./useGameState";
-import { useSocket } from "./useSocket";
+import { useEffect, useState } from "react";
+import { usePongGameState } from "./usePongGameState";
+import { usePongSocket } from "./usePongSocket";
+import { disconnect } from "process";
 
-export const useUI = () => {
+export const usePongUI = () => {
 	const [showModal, setShowModal] = useState(false);
+	const { pongGameState, winner } = usePongGameState();
+	const { playerState, disconnected } = usePongSocket();
 	const soundEngine = useSound();
-	const { gameState, winner } = useGameState();
-	const { playerState } = useSocket();
 
 	const closeModal = () => {
 		setShowModal(false);
@@ -20,14 +20,13 @@ export const useUI = () => {
 
 	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
-		if (gameState.gameOver) {
-			const delay = 2000;
+		if (pongGameState.gameOver) {
+			const delay = 1000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
-				if (winner === playerState.players[playerState.client].symbol)
+				console.log(winner)
+				if (winner === String(playerState.players[0].number + 1) || (winner === '' && disconnected))
 					soundEngine?.playSound("win");
-				else if (winner === "draw")
-					soundEngine?.playSound("door");
 				else
 					soundEngine?.playSound("losing");
 			}, delay);
@@ -36,7 +35,7 @@ export const useUI = () => {
 				clearTimeout(modalTimeout)
 			});
 		}
-	}, [gameState.gameOver]);
+	}, [pongGameState.gameOver]);
 
 	return {
 		closeModal,

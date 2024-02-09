@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 
-import { useGameState } from "./useGameState";
-import { initialBoard, winningCoords } from "../context/TTTGameState";
-import { useSocket } from "./useSocket";
+import { initialBoard, winningCoords } from "@/app/tic-tac-toe/context/TTTGameState";
+import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
+import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 
-export const useGameEvent = ( maxClients: number ) => {
+export const TTTGameEvents = () => {
 	const {
 		gameState,
 		setBoard,
@@ -14,7 +14,8 @@ export const useGameEvent = ( maxClients: number ) => {
 		setWinner,
 		setCountdownVisible,
 		countdownVisible,
-		setLineVisible
+		setLineVisible,
+		isGameMode
 	} = useGameState();
 	const { rematchIndex, setRematchIndex, setRequestRematch, setSendRequest } = useSocket();
 
@@ -32,7 +33,7 @@ export const useGameEvent = ( maxClients: number ) => {
 	}, [gameState]);
 
 	useEffect(() => {
-		if (rematchIndex === maxClients) {
+		if (rematchIndex === (isGameMode ? 3 : 2)) {
 			updateGameState({ ...gameState, reset: true});
 			setRequestRematch(false);
 			setSendRequest(false);
@@ -44,4 +45,6 @@ export const useGameEvent = ( maxClients: number ) => {
 		if (!countdownVisible)
 			setTurn('X');
 	}, [countdownVisible]);
+
+	return (null);
 }

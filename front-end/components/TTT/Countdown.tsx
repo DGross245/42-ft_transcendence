@@ -3,7 +3,7 @@ import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { extend, useThree } from '@react-three/fiber';
 import { useEffect, useRef, useState } from 'react';
 
-import { useSound } from '@/components/Sound';
+import { useSound } from '@/components/hooks/Sound';
 import { useGameState } from '../../app/tic-tac-toe/hooks/useGameState';
 import Silkscreen_Regular from '../../public/fonts/Silkscreen_Regular.json';
 
@@ -37,7 +37,6 @@ const Countdown = () => {
 		if (countdownVisible) {
 			soundEngine?.playSound("countSound");
 			const countdownInterval = setInterval(() => {
-	
 				setCount((prevCount) => {
 					if (prevCount > 1) {
 						soundEngine?.playSound("countSound");
@@ -61,7 +60,7 @@ const Countdown = () => {
 	return (
 		<mesh ref={ref} visible={countdownVisible} position={[-5, -4, -30]}>
 			<textGeometry args={[String(count), {font, size: 10, height: 2}]} />
-			<meshBasicMaterial color={ 0xffffff } />
+			<meshStandardMaterial color={ 0xffffff } />
 		</mesh>
 	)
 }

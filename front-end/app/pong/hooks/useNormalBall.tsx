@@ -1,17 +1,24 @@
-import { Dispatch, MutableRefObject, SetStateAction, useContext, useEffect, useRef } from "react";
-import { Mesh } from 'three'
-import { PongContext } from "../../PongProvider";
+import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { BallProps } from "../components/Ball";
+import { usePongGameState } from "./usePongGameState";
+import { usePongSocket } from "./usePongSocket";
 
-// FIXME: Ball laggs on school macs and the ball can move through the paddle on high speed
-// TODO: Refactor code for remote play
-// FIXME: Fix update logic by also taking into account remote communication, implementing client-side prediction, lag compensation and synchronization.
+export const useBall = () => {
+	const {
+		ballRef,
+		scores,
+		setWinner,
+		setBallVisibility,
+		setPongGameState,
+		pongGameState,
+		isScoreVisible,
+		leftPaddleRef,
+		rightPaddleRef,
+		setScores
+	} = usePongGameState();
+	const { wsclient, playerState } = usePongSocket();
 
-export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
-	const { playerState, gameState } = useContext(PongContext);
-	const meshRef = ref as MutableRefObject<Mesh | null>;
-	const ballRef = useRef({ x: 0, z: 0, velocityX: 0, velocityZ: 0, speed: 0.1 });
+	const temp = useRef({ x: 0, z: 0, velocityX: 0, velocityZ: 0, speed: 0.1 });
 	const PositionRef = useRef({position: {x:0, z:0}, velocity: {x:0, z:0}, deltaTime: 0});
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
@@ -26,7 +33,7 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 	 * 					  - -1: Collided with the right paddle.
 	 */
 	const changeBallDir = (paddlePos: THREE.Vector3, direction: number) => {
-		const ball = ballRef.current;
+		const ball = temp.current;
 		const deltaZ = ball.z - paddlePos.z;
 		const normalizedY = deltaZ / halfPaddleHeight;
 
@@ -37,20 +44,20 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 	}
 
 	useEffect(() => {
-		if (props.gameOver && meshRef && meshRef.current) {
-			ballRef.current.velocityX = 0
-			ballRef.current.velocityZ = 0
-			meshRef.current.position.x = 0;
-			meshRef.current.position.z = 0;
+		if (pongGameState.gameOver && ballRef && ballRef.current) {
+			temp.current.velocityX = 0
+			temp.current.velocityZ = 0
+			ballRef.current.position.x = 0;
+			ballRef.current.position.z = 0;
 		}
-	},[props.gameOver]);
+	},[pongGameState.gameOver]);
 
 	/**
 	 * Sets the ball back to the middle and generates a random direction for the ball.
 	 * It randomly takes one specified range and calculates with it a angle to determin the ball's direction.
 	 */
 	const randomBallDir = () => {
-		let ball = ballRef.current;
+		let ball = temp.current;
 		ball.x = 0;
 		ball.z = 0;
 		ball.speed = 1.2;
@@ -75,9 +82,9 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 	 * 					  Used to ensure independence from the frame rate.
 	 */
 	const updateBallPosition = (ball: { x: number; z: number; velocityX: number; velocityZ: number; }, deltaTime: number) => {
-		if (gameState.pause)
+		if (pongGameState.pause)
 			return ;
-		if (playerState.players[0].master) {
+		if (playerState.master) {
 			ball.x += ball.velocityX * 100 * deltaTime;
 			ball.z += ball.velocityZ * 100 * deltaTime;
 			const msg = {
@@ -86,20 +93,20 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 				deltaTime: deltaTime
 			}
 			const stringPos = JSON.stringify(msg);
-			gameState.wsclient?.emitMessageToGame(stringPos, `ballUpdate-${gameState.gameId}`, gameState.gameId);
+			wsclient?.emitMessageToGame(stringPos, `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 		} else {
 			const { position, velocity, deltaTime } = PositionRef.current;
 			ball.x = -position.x + -velocity.x * deltaTime;
 			ball.z = position.z + velocity.z * deltaTime;
 		}
 
-		if (meshRef.current) {
-			meshRef.current.position.x = ball.x;
-			meshRef.current.position.z = ball.z;
+		if (ballRef.current) {
+			ballRef.current.position.x = ball.x;
+			ballRef.current.position.z = ball.z;
 		}
-		if (props.onPositionChange && meshRef.current) {
-			props.onPositionChange(meshRef.current.position);
-		}
+		// if (props.onPositionChange && ballRef.current) {
+		// 	props.onPositionChange(ballRef.current.position);
+		// }
 	}
 
 	useEffect(() => {
@@ -107,56 +114,65 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 			const newPosition = JSON.parse(msg);
 			PositionRef.current = newPosition;
 		};
-		gameState.wsclient?.addMessageListener(`ballUpdate-${gameState.gameId}`, gameState.gameId, setNewCoords);
+		wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
 
 		return () => {
-			gameState.wsclient?.removeMessageListener(`ballUpdate-${gameState.gameId}`, gameState.gameId);
+			wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 		};
-	}, []);
+	}, [wsclient]);
 
 	/**
 	 * Initiates the game by providing a random direction to the ball after the countdown 
 	 * sets the score visibility to true.
 	 */
 	useEffect(() => {
-		if (props.scoreVisible)
+		if (isScoreVisible)
 			randomBallDir();
-	}, [props.scoreVisible]);
+	}, [isScoreVisible]);
 
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
 			if (playerScore === 7) {
-				let ball = ballRef.current;
+				let ball = temp.current;
 				ball.x = 0;
 				ball.z = 0;
 				ball.velocityX = 0;
 				ball.velocityZ = 0;
 				ball.speed = 0.1;
-				props.setGameOver(true);
-				props.setWinner(player);
-				props.setBallVisibility(false);
+				setPongGameState({ ...pongGameState, gameOver: true })
+				setWinner(player);
+				setBallVisibility(false);
 			}
 		}
 
-		checkWinner('P1', props.p1Score);
-		checkWinner('P2', props.p2Score);
-	}, [props.p1Score, props.p2Score]);
+		checkWinner('1', scores.p1Score);
+		checkWinner('2', scores.p2Score);
+	}, [scores.p1Score, scores.p2Score]);
 
 	// Game/render loop for the ball.
 	useFrame((_, deltaTime) => {
-		const ball = ballRef.current;
+		const ball = temp.current;
 
 		updateBallPosition(ball, deltaTime);
 
-		const rightPaddlePos = props.rightPaddleRef.current.position;
-		const leftPaddlePos = props.leftPaddleRef.current.position;
+		const rightPaddlePos = rightPaddleRef.current.position;
+		const leftPaddlePos = leftPaddleRef.current.position;
 
-		const isCollidingWithPaddle = (paddle: { x: number; z: number; }) => {
+		const isCollidingWithPaddleX = (paddle: { x: number; z: number; }) => {
 			return (
-				ball.x + halfBall >= paddle.x - halfPaddleWidth &&
-				ball.x - halfBall <= paddle.x + halfPaddleWidth &&
-				ball.z - halfBall <= paddle.z + halfPaddleHeight &&
-				ball.z + halfBall >= paddle.z - halfPaddleHeight
+				ball.x + halfBall + ball.velocityX > paddle.x - halfPaddleWidth &&
+				ball.x - halfBall + ball.velocityX < paddle.x + halfPaddleWidth &&
+				ball.z + halfBall > paddle.z - halfPaddleHeight &&
+				ball.z + halfBall < paddle.z + halfPaddleHeight
+			);
+		}
+
+		const isCollidingWithPaddleY = (paddle: { x: number; z: number; }) => {
+			return (
+				ball.x + halfBall > paddle.x - halfPaddleWidth &&
+				ball.x - halfBall < paddle.x + halfPaddleWidth &&
+				ball.z + halfBall + ball.velocityZ > paddle.z - halfPaddleHeight &&
+				ball.z + halfBall + ball.velocityZ < paddle.z + halfPaddleHeight
 			);
 		}
 
@@ -166,22 +182,26 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 			updateBallPosition(ball, deltaTime);
 		}
 		// Handling ball collision with paddles.
-		else if (isCollidingWithPaddle(leftPaddlePos)) {
+		else if (isCollidingWithPaddleX(leftPaddlePos)) {
 			changeBallDir(leftPaddlePos, 1);
 		}
-		else if (isCollidingWithPaddle(rightPaddlePos)) {
+		else if (isCollidingWithPaddleX(rightPaddlePos)) {
+			changeBallDir(rightPaddlePos, -1);
+		}
+		if (isCollidingWithPaddleY(leftPaddlePos)) {
+			changeBallDir(leftPaddlePos, 1);
+		}
+		else if (isCollidingWithPaddleY(rightPaddlePos)) {
 			changeBallDir(rightPaddlePos, -1);
 		}
 		// Handling scoring when the ball is outside of the play area.
 		else if ((ball.x > 200 || ball.x < -200) && 
-				props.p2Score !== 7 && props.p1Score !== 7) {
+			scores.p2Score !== 7 && scores.p1Score !== 7) {
 			if (ball.x < -200)
-				props.setP2Score(props.p2Score + 1);
+				setScores({ ...scores, p2Score: scores.p2Score + 1 })
 			else
-				props.setP1Score(props.p1Score + 1);
+				setScores({ ...scores, p1Score: scores.p1Score + 1 })
 			randomBallDir();
 		}
 	});
-
-	return ( meshRef );
 }

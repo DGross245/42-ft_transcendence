@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { useGameState } from "./useGameState";
 import useWSClient from "@/helpers/wsclient";
-import { useSocket } from "./useSocket";
 import { useSound } from "@/components/hooks/Sound";
+import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
+import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 
-export const useSocketEvent = () => {
+export const TTTSocketEvents = () => {
 	const newClient = useWSClient();
 	const {
 		wsclient,
@@ -44,7 +44,7 @@ export const useSocketEvent = () => {
 
 				newPlayerData.players[numClients] = {
 						name: "KEK",
-						color: 0x00ff00,
+						color: 0xffffff,
 						number: numClients,
 						symbol: 'Undefined',
 				}
@@ -79,7 +79,6 @@ export const useSocketEvent = () => {
 		const setPlayer = (msg: string) => {
 			const playerData = JSON.parse(msg);
 			let newPlayerData = { ...playerState };
-
 			newPlayerData.players[playerData.number] = {
 					name: playerData.name,
 					color: playerData.color,
@@ -94,14 +93,14 @@ export const useSocketEvent = () => {
 			setPlayerSet(true);
 		};
 
-		if (wsclient && playerState.client > -1) {
+		if (wsclient) {
 			wsclient?.addMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId, setPlayer)
 
 			return () => {
 				wsclient?.removeMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
-	},[wsclient, gameState.gameId, playerState]);
+	},[wsclient, gameState.gameId, playerState, updatePlayerState]);
 
 	useEffect(() => {
 		if (wsclient) {
@@ -236,4 +235,6 @@ export const useSocketEvent = () => {
 			}
 		}
 	}, [wsclient, playerState]);
+
+	return (null);
 };

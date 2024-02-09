@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useGameState } from "../app/tic-tac-toe/hooks/useGameState";
+import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
 
 export const useKey = (key: string | string []) => {
 	const [isKeyDown, setKeyDown] = useState(false);

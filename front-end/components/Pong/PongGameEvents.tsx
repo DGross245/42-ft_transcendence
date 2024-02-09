@@ -1,14 +1,10 @@
-import { useEffect, useState } from "react";
-import { usePongGameState } from "./usePongGameState";
-import { usePongSocket } from "./usePongSocket";
+import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
+import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
+import { useEffect } from "react";
 
-export const usePongGameEvent = ( maxClients: number ) => {
-	const { setScores, pongGameState, setPongGameState, setWinner, setBallVisibility, setScoreVisibility } = usePongGameState();
+export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
+	const { setScores, pongGameState, setPongGameState, setWinner, setBallVisibility, setScoreVisibility, setCamPos, setCountdownRot, setContdownPos, isGameMode } = usePongGameState();
 	const { playerState, rematchIndex, setRequestRematch, setSendRequest, setRematchIndex } = usePongSocket();
-
-	const [camPos, setCamPos] = useState<[number, number, number]>([0, 350, 400]);
-	const [countdownRot, setCountdownRot] = useState<[number, number, number]>([0, 0, 0]);
-	const [countdownPos, setContdownPos] = useState<[number, number, number][]>([ [-23, 50, 0], [-35, 50, 0] ]);
 
 	var positionInfo: { 
 		camPosition: [number, number, number],
@@ -59,6 +55,16 @@ export const usePongGameEvent = ( maxClients: number ) => {
 
 	useEffect(() => {
 		if (playerState.client !== -1) {
+			if (!isGameMode) {
+				setCamPos([0, 400, 100]);
+				const newCountdownPos = [
+					[-23, 50, 0] as [number, number, number],
+					[-35, 50, 0] as [number, number, number]
+				]
+				setContdownPos(newCountdownPos);
+				setCountdownRot([-Math.PI /2, 0, 0]);
+				return ;
+			}
 			setCamPos(positionInfo[playerState.client].camPosition);
 			const newCountdownPos = [
 				positionInfo[playerState.client].countdownPosition[0],
@@ -89,9 +95,5 @@ export const usePongGameEvent = ( maxClients: number ) => {
 		}
 	}, [rematchIndex]);
 
-	return {
-		camPos,
-		countdownRot,
-		countdownPos
-	};
+	return (null);
 }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 
 const sounds = {
-	"pong": "sounds/plinkaphone-164106.mp3",
 	"tictactoe": "sounds/chango-clique-164103.mp3",
 	"countSound": "sounds/nine-140664.mp3",
 	"door": "sounds/door-slam-172171.mp3",
@@ -10,7 +9,7 @@ const sounds = {
 	"win": "sounds/game-level-complete-143022.mp3",
 	"pongCountdown": "sounds/happy-pop-2-185287.mp3",
 	"losing1": "sounds/violin-lose-1-175615.mp3",
-	"losing2": "sounds/violin-lose-3-180434.mp3"
+	"losing2": "sounds/violin-lose-3-180434.mp3",
 }
 
 class SoundEngine {
@@ -23,9 +22,15 @@ class SoundEngine {
 	}
 
 	playSound(sound: string) {
+		if (sound === 'losing') {
+			const randomNum = Math.floor(Math.random() * 2);
+			sound = randomNum === 0 ? "losing1" : "losing2";
+		}
+
 		if (!this.soundElement || !(sound in sounds)) {
 			return;
 		}
+
 		this.soundElement.src = (sounds as any)[sound];
 		this.soundElement.play();
 	}

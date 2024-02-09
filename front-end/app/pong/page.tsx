@@ -1,15 +1,19 @@
-import { title } from "@/components/primitives";
-import PongScene from "@/app/pong/scene/PongScene";
+import { PongGameState } from "./context/PongGameState";
+import { PongSocket } from "./context/PongSockets";
 import OneForAllScene from "./scene/OneForAllScene";
-import { PongProvider } from "./PongProvider";
+import PongScene from "./scene/PongScene";
 
 export default function PongPage() {
+	const gameMode = false;
+
 	return (
 		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
 			<div>
-				<PongProvider>
-					<PongScene />
-				</PongProvider>
+				<PongGameState gameMode={gameMode} isBotActive={false}>
+					<PongSocket>
+						{ gameMode ? (<OneForAllScene />) : (<PongScene />) }
+					</PongSocket>
+				</PongGameState>
 			</div>
 		 </div>
 	);

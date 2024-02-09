@@ -1,10 +1,19 @@
+"use client"
+
+import {
+	Dispatch,
+	ReactNode,
+	SetStateAction,
+	createContext,
+	useState
+} from "react";
+
 import { WSClientType } from "@/helpers/wsclient";
-import { Dispatch, ReactNode, SetStateAction, createContext, useState } from "react";
 
 interface PongPlayer {
 	name: string,
 	color: number,
-	rotation: [number, number, number],
+	number: number
 };
 
 interface PongSocketContextValue {
@@ -38,7 +47,7 @@ export const PongSocket: React.FC<{ initialWsClient?: WSClientType | null, child
 		players: Array.from({ length: 4 }, () => ({
 			name: "None",
 			color: 0xffffff,
-			rotation: [ 0, 0, 0] as [number, number, number],
+			number: -1
 		})),
 		client: -1,
 		master: false
