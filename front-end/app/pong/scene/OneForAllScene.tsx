@@ -13,8 +13,6 @@ import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
 import { GameControl } from "../../../components/Pong/Paddle";
 
-// FIXME: Scoring doesnt work anymore
-
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
  * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.

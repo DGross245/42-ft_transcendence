@@ -94,19 +94,19 @@ export const useBallLogic = (onPositionChange) => {
 	 */
 	const handleScore = (ball: { x: number; z: number; }) => {
 		const paddleCollision: CollisionInfo = {
-			bottom: { player: 'bottom', score: scores.p1Score, isOwnGoal: ball.z >= 170 ? true : false },
-			left:   { player: 'left', score: scores.p2Score, isOwnGoal: ball.x <= -170 ? true : false },
-			top:    { player: 'top', score: scores.p3Score, isOwnGoal: ball.z <= -170 ? true : false },
-			right:  { player: 'right', score: scores.p4Score, isOwnGoal: ball.x >= 170 ? true : false },
+			bottom: { player: 'p1Score', score: scores.p1Score, isOwnGoal: ball.z >= 170 ? true : false },
+			left:   { player: 'p2Score', score: scores.p2Score, isOwnGoal: ball.x <= -170 ? true : false },
+			top:    { player: 'p3Score', score: scores.p3Score, isOwnGoal: ball.z <= -170 ? true : false },
+			right:  { player: 'p4Score', score: scores.p4Score, isOwnGoal: ball.x >= 170 ? true : false },
 		}
 
 		if (lastPaddleHit !== '') {
 			const { player, score, isOwnGoal } = paddleCollision[lastPaddleHit];
-			console.log(player, score, isOwnGoal)
 			if (isOwnGoal && score !== 0)
 				setScores({ ...scores, [player]: score - 1})
-			else if (!isOwnGoal)
+			else if (!isOwnGoal) {
 				setScores({ ...scores, [player]: score + 1})
+			}
 
 		} else {
 			if (ball.z >= 170 && scores.p1Score !== 0) 
