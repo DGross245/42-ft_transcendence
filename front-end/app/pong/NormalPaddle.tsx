@@ -1,17 +1,10 @@
 import { useFrame } from "@react-three/fiber";
-import { MutableRefObject, forwardRef, useContext, useEffect, useRef } from "react";
-import { Mesh } from 'three';
-import { Direction } from "./hooks/PongBot";
+import { useEffect, useRef } from "react";
+import { Direction } from "./hooks/usePongBot";
 
 import { useKey } from "@/components/hooks/useKey";
 import { usePongGameState } from "./hooks/usePongGameState";
 import { usePongSocket } from "./hooks/usePongSocket";
-
-interface Paddle {
-	position: [number, number, number];
-	botActive?: boolean;
-	botDirection?: Direction;
-}
 
 /**
  * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
@@ -19,10 +12,13 @@ interface Paddle {
  * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
-export const RightPaddle = () => {
+export const RightPaddle = ({direction}) => {
 	const { pongGameState, rightPaddleRef } = usePongGameState()
 	const { wsclient, playerState } = usePongSocket();
 	const PositionRef = useRef<number>(0);
+	const { botState } = usePongGameState();
+	const paddleSpeed = 300;
+	const borderPositionZ = 103;
 
 	useEffect(() => {
 		const setNewCoords = (msg: string) => {
@@ -37,29 +33,20 @@ export const RightPaddle = () => {
 		};
 	}, [wsclient]);
 
-	// if (botActive) {
-	// 	useFrame((_, delta) => {
-	// 		if (meshRef && meshRef.current) {
-	// 			if (meshRef && meshRef.current) {
-	// 				if (botDirection === Direction.Up) {
-	// 					meshRef.current.position.y = Math.min(meshRef.current.position.y + paddleSpeed * delta, borderPositionY - 15);
-	// 				}
-	// 				else if (botDirection === Direction.Down) {
-	// 					meshRef.current.position.y = Math.max(meshRef.current.position.y - paddleSpeed * delta, -borderPositionY + 15);
-	// 				}
-	// 			}
-	// 		}
-	// 	});
-	// }
-
-	// if (!botActive) {
-		// Moves the paddle based on pressed key for each frame.
-		useFrame(() => {
-			if (rightPaddleRef && rightPaddleRef.current) {
-				rightPaddleRef.current.position.z = PositionRef.current;
+	useFrame((_, delta) => {
+		if (rightPaddleRef && rightPaddleRef.current) {
+			if (botState.isActive && playerState.master) {
+				if (direction === Direction.Up) {
+					rightPaddleRef.current.position.z = Math.min(rightPaddleRef.current.position.z + paddleSpeed * delta, borderPositionZ - 15);
+				}
+				else if (direction === Direction.Down) {
+					rightPaddleRef.current.position.z = Math.max(rightPaddleRef.current.position.z - paddleSpeed * delta, -borderPositionZ + 15);
+				}
 			}
-		});
-	// } 
+			else
+				rightPaddleRef.current.position.z = PositionRef.current;
+		}
+	});
 
 	return (
 		<mesh ref={rightPaddleRef} position={[151, 0, 0]} rotation={[Math.PI / 2, 0, 0]} >

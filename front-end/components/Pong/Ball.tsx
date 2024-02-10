@@ -12,16 +12,16 @@ import { useBall } from "@/app/pong/hooks/useNormalBall";
  * 				  `setWinner`, `gameOver`, `setGameOver`, `scoreVisible`, `isBallVisible` and `setBallVisibility`
  * @returns A Three.js mesh representing a ball.
  */
-export const Ball = () => {
+export const Ball = ({ onPositionChange }) => {
 	const { isBallVisible, ballRef, isGameMode } = usePongGameState();
 	let color;
 
 	if (isGameMode) {
-		const {color : ballColor } = useBallLogic();
+		const {color : ballColor } = useBallLogic(onPositionChange);
 		color = ballColor;
 	}
 	else {
-		useBall();
+		useBall(onPositionChange);
 		color = 0xffffff;
 	}
 

@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
 
-export const useBall = () => {
+export const useBall = (onPositionChange) => {
 	const {
 		ballRef,
 		scores,
@@ -14,7 +14,8 @@ export const useBall = () => {
 		isScoreVisible,
 		leftPaddleRef,
 		rightPaddleRef,
-		setScores
+		setScores,
+		botState
 	} = usePongGameState();
 	const { wsclient, playerState } = usePongSocket();
 
@@ -80,9 +81,9 @@ export const useBall = () => {
 			wsclient?.emitMessageToGame(JSON.stringify(msg), `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 		}
 	
-		// if (props.onPositionChange && ballRef.current) {
-		// 		props.onPositionChange(ballRef.current.position);
-		// }
+		if (onPositionChange && ballRef.current) {
+				onPositionChange(ballRef.current.position);
+		}
 	}
 
 	/**

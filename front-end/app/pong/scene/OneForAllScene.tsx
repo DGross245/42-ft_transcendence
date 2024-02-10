@@ -4,7 +4,6 @@ import { useWindow } from "@/components/hooks/useWindow";
 import { Canvas } from "@react-three/fiber";
 import Countdown from "@/components/Pong/Countdown";
 import Camera from "@/components/Pong/Camera";
-import { Ball } from "@/components/Pong/Ball";
 import { CubeLineX, CubeLineY } from "@/components/Pong/CubeLine";
 import { OrbitControls } from "@react-three/drei";
 import Scoreboard from "@/components/Pong/Scoreboard";
@@ -12,7 +11,7 @@ import EndModal from "@/components/Pong/EndModal";
 import { CornerBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
-import { PaddleControl } from "../../../components/Pong/Paddle";
+import { GameControl } from "../../../components/Pong/Paddle";
 
 // FIXME: Scoring doesnt work anymore
 
@@ -32,12 +31,7 @@ export default function OneForAllScene() {
 				<Countdown />
 				<Camera/> 
 				<CornerBorder />
-				<PaddleControl />
-				{/* <TopPaddle />
-				<BottomPaddle />
-				<RightPaddle />
-				<LeftPaddle /> */}
-				<Ball />
+				<GameControl />
 				<CubeLineY />
 				<CubeLineX />
 				<OrbitControls

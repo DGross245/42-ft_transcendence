@@ -9,7 +9,7 @@ type CollisionInfo = {
 	[key: string]: {player: any, score: any, isOwnGoal: boolean};
 };
 
-export const useBallLogic = () => {
+export const useBallLogic = (onPositionChange) => {
 	const {
 		ballRef,
 		scores,
@@ -148,6 +148,10 @@ export const useBallLogic = () => {
 		if (ballRef.current) {
 			ballRef.current.position.x = ball.x;
 			ballRef.current.position.z = ball.z;
+		}
+	
+		if (onPositionChange && ballRef.current) {
+			onPositionChange(ballRef.current.position);
 		}
 	}
 
