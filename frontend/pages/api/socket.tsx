@@ -4,8 +4,13 @@ import { Server } from "Socket.IO";
 import cache from "memory-cache";
 import crypto from 'crypto';
 
+import tournamentAbi from '@/public/tournamentManager_abi.json';
+import { ethers } from 'ethers';
+
+const contract_address = '0xBC0657E28Ccac38597f6c417CA2996378935Db28'
+
 /* -------------------------------------------------------------------------- */
-/*                                  Interface                                 */
+/*                                Interface(s)                                */
 /* -------------------------------------------------------------------------- */
 interface SocketApiResponse extends NextApiResponse {
 	socket: ServerResponse<IncomingMessage>['socket'] & {
@@ -15,10 +20,37 @@ interface SocketApiResponse extends NextApiResponse {
 	};
 }
 
+interface Player {
+	address: string
+	name: string
+	color: string
+}
+interface PlayerScore {
+	player: string
+	score: number
+}
+interface Game {
+	player_scores: PlayerScore[]
+	finished: boolean
+}
+interface Tournament {
+	master: string
+	duration_in_blocks: number
+	start_block: number
+	end_block: number
+	players: Player[]
+	games: Game[]
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                   Handler                                  */
 /* -------------------------------------------------------------------------- */
 const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promise<void> => {
+	const provider = new ethers.providers.JsonRpcProvider("https://ethereum-goerli.publicnode.com");
+	const contract = new ethers.Contract(contract_address, tournamentAbi, provider);
+	const eloScore = await contract.getPlayerRankedElo("address") as number;		// get the ranked elo of the player
+	const games = await contract.getTournamentTree(0) as Game[];					// get the tournament tree by id
+
 	if (!res.socket.server?.io) {
 		const io = new Server(res.socket.server as any);
 		res.socket.server!.io = io;
