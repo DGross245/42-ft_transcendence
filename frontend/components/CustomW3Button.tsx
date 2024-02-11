@@ -21,7 +21,7 @@ const CustomW3Button: React.FC = () => {
 	}
 
 	return (
-		<Button size="lg" color="primary" variant="shadow" className="ghost-button gradient" onClick={() => openModal()} isLoading={connecting}>
+		<Button size="lg" color="primary" variant="shadow" className="ghost-button gradient !border-0" onClick={() => openModal()} isLoading={connecting}>
 			{connecting ? "Connecting..." : "Connect Wallet"}
 		</Button>
 	);
