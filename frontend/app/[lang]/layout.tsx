@@ -10,7 +10,6 @@ import "@/styles/globals.css";
 /* -------------------------------------------------------------------------- */
 /*                                    Meta                                    */
 /* -------------------------------------------------------------------------- */
-
 export const metadata: Metadata = {
 	title: {
 		default: siteConfig.name,
@@ -23,18 +22,18 @@ export const metadata: Metadata = {
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
 /* -------------------------------------------------------------------------- */
-
-interface RootLayoutProps {
+interface LangLayoutProps {
 	children: React.ReactNode;
+	params: {locale: string};
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                    Root                                    */
+/*                                 LangLayout                                 */
 /* -------------------------------------------------------------------------- */
-
-const RootLayout: React.FC<RootLayoutProps> = ({children}) => {
+const LangLayout: React.FC<LangLayoutProps> = ({children, params: {locale}}) => {
+	// dir={dir(locale)}
 	return (
-		<html lang="en">
+		<html lang={locale}>
 			<body
 				className={clsx(
 					"font-sans antialiased dark text-foreground bg-background",
@@ -54,4 +53,4 @@ const RootLayout: React.FC<RootLayoutProps> = ({children}) => {
 	);
 }
 
-export default RootLayout;
+export default LangLayout;

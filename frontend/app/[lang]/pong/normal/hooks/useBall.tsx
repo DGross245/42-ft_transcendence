@@ -144,46 +144,46 @@ export const useBall = (props: BallProps, ref: React.Ref<Mesh | null>) => {
 		checkWinner('P2', props.p2Score);
 	}, [props.p1Score, props.p2Score]);
 
-	// Game/render loop for the ball.
-	useFrame((_, deltaTime) => {
-		const ball = ballRef.current;
+	// // Game/render loop for the ball.
+	// useFrame((_, deltaTime) => {
+	// 	const ball = ballRef.current;
 
-		updateBallPosition(ball, deltaTime);
+	// 	updateBallPosition(ball, deltaTime);
 
-		const rightPaddlePos = props.rightPaddleRef.current.position;
-		const leftPaddlePos = props.leftPaddleRef.current.position;
+	// 	const rightPaddlePos = props.rightPaddleRef.current.position;
+	// 	const leftPaddlePos = props.leftPaddleRef.current.position;
 
-		const isCollidingWithPaddle = (paddle: { x: number; y: number; }) => {
-			return (
-				ball.x + halfBall >= paddle.x - halfPaddleWidth &&
-				ball.x - halfBall <= paddle.x + halfPaddleWidth &&
-				ball.y - halfBall <= paddle.y + halfPaddleHeight &&
-				ball.y + halfBall >= paddle.y - halfPaddleHeight
-			);
-		}
+	// 	const isCollidingWithPaddle = (paddle: { x: number; y: number; }) => {
+	// 		return (
+	// 			ball.x + halfBall >= paddle.x - halfPaddleWidth &&
+	// 			ball.x - halfBall <= paddle.x + halfPaddleWidth &&
+	// 			ball.y - halfBall <= paddle.y + halfPaddleHeight &&
+	// 			ball.y + halfBall >= paddle.y - halfPaddleHeight
+	// 		);
+	// 	}
 
-		// Handling ball collision with top and bottom boarders.
-		if (ball.y > 100 || ball.y < -100) {
-			ball.velocityY *= -1;
-			updateBallPosition(ball, deltaTime);
-		}
-		// Handling ball collision with paddles.
-		else if (isCollidingWithPaddle(leftPaddlePos)) {
-			changeBallDir(leftPaddlePos, 1);
-		}
-		else if (isCollidingWithPaddle(rightPaddlePos)) {
-			changeBallDir(rightPaddlePos, -1);
-		}
-		// Handling scoring when the ball is outside of the play area.
-		else if ((ball.x > 200 || ball.x < -200) && 
-				props.p2Score !== 7 && props.p1Score !== 7) {
-			if (ball.x < -200)
-				props.setP2Score(props.p2Score + 1);
-			else
-				props.setP1Score(props.p1Score + 1);
-			randomBallDir();
-		}
-	});
+	// 	// Handling ball collision with top and bottom boarders.
+	// 	if (ball.y > 100 || ball.y < -100) {
+	// 		ball.velocityY *= -1;
+	// 		updateBallPosition(ball, deltaTime);
+	// 	}
+	// 	// Handling ball collision with paddles.
+	// 	else if (isCollidingWithPaddle(leftPaddlePos)) {
+	// 		changeBallDir(leftPaddlePos, 1);
+	// 	}
+	// 	else if (isCollidingWithPaddle(rightPaddlePos)) {
+	// 		changeBallDir(rightPaddlePos, -1);
+	// 	}
+	// 	// Handling scoring when the ball is outside of the play area.
+	// 	else if ((ball.x > 200 || ball.x < -200) && 
+	// 			props.p2Score !== 7 && props.p1Score !== 7) {
+	// 		if (ball.x < -200)
+	// 			props.setP2Score(props.p2Score + 1);
+	// 		else
+	// 			props.setP1Score(props.p1Score + 1);
+	// 		randomBallDir();
+	// 	}
+	// });
 
 	return ( meshRef );
 }

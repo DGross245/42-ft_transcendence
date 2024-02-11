@@ -1,6 +1,6 @@
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
-import Orbitron_Regular from '../../../../public/fonts/Orbitron_Regular.json';
+import Orbitron_Regular from '../../../../../public/fonts/Orbitron_Regular.json';
 import { Vector3, extend } from '@react-three/fiber';
 import { MutableRefObject } from 'react';
 import { Mesh, MeshBasicMaterial } from 'three';

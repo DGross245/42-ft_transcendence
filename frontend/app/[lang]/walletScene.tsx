@@ -37,12 +37,7 @@ const Text = () => {
 				Connect your Wallet!
 			</Html>
 			<Html position={[-0.65, -1.8, 0]}>
-					<CustomW3Button />
-				{/* <Tooltip showArrow color={"primary"} content={"Click on the top right Button"} className="capitalize">
-					<Button size="lg" variant="ghost" className="ghost-button gradient">
-						How to connect?
-					</Button>
-				</Tooltip> */}
+				<CustomW3Button size="lg"/>
 			</Html>
 		</>
 	)
@@ -76,7 +71,7 @@ export const WalletScene = () => {
 				<ambientLight intensity={0.4} />
 				<pointLight position={[0, 3, 0]} intensity={10} color="white" />
 				<Wallet />
-				<Text />
+				{/* <Text /> */}
 				<gridHelper position={[0,-1,0]} args={[200,200]} />
 			</Canvas>
 		</div>

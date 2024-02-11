@@ -9,6 +9,9 @@ import pongGameImage from "@/assets/pongGame.png";
 import tttGameImage from "@/assets/tttGame.png";
 import { WalletScene } from "./walletScene";
 
+import { useTranslation } from "../i18n";
+import { useEffect, useState } from "react";
+
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
@@ -41,33 +44,34 @@ const GameCard: React.FC<GameCardProps> = ({title, image, path}) => {
 }
 
 export default function Home() {
+	const [connected, setConnected] = useState(false);
 	const { isConnected } = useWeb3ModalAccount();
+	const { t } = useTranslation("common");
 
-	if (!isConnected) {
+	useEffect(() => {
+		setConnected(isConnected);
+	}, [isConnected]);
+
+	if (!connected) {
 		return (
-			<section className="flex flex-col items-center justify-center h-full">
-				{/* <div className="flex flex-col text-center">
-					<p style={{fontSize: '120px', verticalAlign: 'middle'}}>🪪</p>
-					<p className="font-bold text-xl">🕹️ Please connect your Wallet to play 🕹️</p>
-				</div> */}
+			<section className="flex-col items-center justify-center h-full" hidden={connected}>
 				<WalletScene />
 			</section>
-		);
+		)
 	}
 
 	return (
 		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">
 			<GameCard
-				title="❌ Tic Tac Toe (3D) ⭕️"
+				title={t('ttt')}
 				image={tttGameImage}
 				path="/tic-tac-toe"
 			/>
 			<GameCard
-				title="🏓 Pong (3D) 🏓"
+				title={t('pong')}
 				image={pongGameImage}
 				path="/pong"
 			/>
-            {/* <WSClient /> */}
 		</section>
 	);
 }
