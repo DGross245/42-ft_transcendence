@@ -6,11 +6,13 @@ import crypto from 'crypto';
 
 export type WSClientType = {
 	createGame: () => Promise<string>;
+	waitingRoom: () => Promise<string>;
 	joinGame: (gameId: string, gameType: string, isBot: boolean) => Promise<number>;
 	waitingForSocket: () => Promise<void>;
 	emitMessageToGame: (msg: string, topic: string, gameId: string) => void;
 	addMessageListener: (topic: string, gameId: string, callback: (msg: string) => void) => void;
 	removeMessageListener: (topic: string, gameId: string) => void;
+	joinQueue: (game: string) => void;
 
 };
 
@@ -49,6 +51,10 @@ class WSClient {
 		});
 	}
 
+	joinQueue(game: string) {
+		this.socket!.emit('join-queue', game);
+	}
+
 	async waitingForSocket(): Promise<void> {
 		await this.waitForSocket();
 		return ;
@@ -60,6 +66,15 @@ class WSClient {
 			this.socket!.on(`room-joined-${gameId}`, (numClients: number) => {
 				this.socket!.removeListener(`room-joined-${gameId}`);
 				resolve(numClients);
+			});
+		});
+	}
+
+	async waitingRoom(): Promise<string> {
+		return new Promise((resolve, reject) => {
+			this.socket!.on('match-found', (gameID: string) => {
+				this.socket!.removeListener('match-found');
+				resolve(gameID);
 			});
 		});
 	}

@@ -29,12 +29,23 @@ export const TTTSocketEvents = () => {
 			if (newClient) {
 				await newClient.waitingForSocket();
 				setWsclient(newClient);
-				updateGameState({ ...gameState, gameId: "1"});
 			}
 		};
 
 		waitForSocket();
 	}, [newClient]);
+
+	useEffect(() => {
+		const waiting = async () => {
+			if (wsclient) {
+				wsclient.joinQueue(isGameMode ? "Qubic" : "TTT");
+				const msg = await wsclient.waitingRoom();
+				updateGameState({ ...gameState, gameId: msg});
+			}
+		}
+
+		waiting();
+	}, [wsclient]);
 
 	useEffect(() => {
 		const joinTheGame = async () => {
@@ -50,11 +61,13 @@ export const TTTSocketEvents = () => {
 				}
 				newPlayerData.client = numClients
 				updatePlayerState( newPlayerData );
+				console.log("num", numClients)
 			}
 		};
 
-		joinTheGame();
-	}, [wsclient]);
+		if (wsclient && gameState.gameId !== "-1")
+			joinTheGame();
+	}, [wsclient, gameState.gameId]);
 
 	useEffect(() => {
 		const sendPlayerData = () => {
@@ -103,7 +116,7 @@ export const TTTSocketEvents = () => {
 	},[wsclient, gameState.gameId, playerState, updatePlayerState]);
 
 	useEffect(() => {
-		if (wsclient) {
+		if (wsclient && gameState.gameId !== "-1") {
 			const setPause = (msg: string) => {
 				if (msg === "FULL") {
 					setIsFull(msg);
@@ -116,11 +129,10 @@ export const TTTSocketEvents = () => {
 				wsclient?.removeMessageListener(`Players-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
-	}, [wsclient]);
+	}, [wsclient, gameState.gameId]);
 
-	
 	useEffect(() => {
-		if (wsclient) {
+		if (wsclient && gameState.gameId !== "-1") {
 			const endGame = (msg: string) => {
 				setDisconnected(true);
 				setRequestRematch(false);
@@ -138,10 +150,10 @@ export const TTTSocketEvents = () => {
 				wsclient?.removeMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, playerState, gameState, gameState.gameOver]);
+	}, [wsclient, playerState, gameState, gameState.gameOver, gameState.gameId]);
 
 	useEffect(() => {
-		if (wsclient) {
+		if (wsclient && gameState.gameId !== "-1") {
 			const rematch = (msg: string) => {
 				if (msg === "true") {
 					setRematchIndex(rematchIndex + 1);
@@ -172,7 +184,7 @@ export const TTTSocketEvents = () => {
 	}, [gameState.pause]);
 
 	useEffect(() => {
-		if (wsclient) {
+		if (wsclient && gameState.gameId !== "-1") {
 			const setPause = (msg: string) => {
 				if (msg === "true")
 					updateGameState({ ...gameState, pause: true });
@@ -186,7 +198,7 @@ export const TTTSocketEvents = () => {
 				wsclient?.removeMessageListener(`Pause-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
-	}, [wsclient]);
+	}, [wsclient, gameState.gameId]);
 
 	useEffect(() => {
 		const shuffleArray = (array: string[]) => {

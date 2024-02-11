@@ -5,7 +5,31 @@ import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers5/re
 import scoresAbi from '../public/tournamentManager_abi.json';
 import erc20Abi from '../public/erc20_abi.json';
 
-const contract_address = '0x25390Ad585801633B3f39e45D2DdC0de43Bd526b'
+export const contract_address = '0x25390Ad585801633B3f39e45D2DdC0de43Bd526b'
+
+// data structures for tournament manager contract
+interface Player {
+	address: string
+	name: string
+	color: string
+}
+interface PlayerScore {
+	player: string
+	score: number
+}
+export interface Game {
+	player_scores: PlayerScore[]
+	finished: boolean
+}
+interface Tournament {
+	master: string
+	duration_in_blocks: number
+	start_block: number
+	end_block: number
+	players: Player[]
+	games: Game[]
+}
+
 
 function Scores() {
 	const { address, chainId, isConnected } = useWeb3ModalAccount()
@@ -18,29 +42,6 @@ function Scores() {
 		const signer = provider.getSigner()
 		const tmContract = new ethers.Contract(contract_address, scoresAbi, signer)
 		return tmContract
-	}
-
-	// data structures for tournament manager contract
-	interface Player {
-		address: string
-		name: string
-		color: string
-	}
-	interface PlayerScore {
-		player: string
-		score: number
-	}
-	interface Game {
-		player_scores: PlayerScore[]
-		finished: boolean
-	}
-	interface Tournament {
-		master: string
-		duration_in_blocks: number
-		start_block: number
-		end_block: number
-		players: Player[]
-		games: Game[]
 	}
 
 	// creates a new tournament and adds calling address as master

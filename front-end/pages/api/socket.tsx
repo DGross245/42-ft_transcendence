@@ -2,6 +2,10 @@ import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Server } from "Socket.IO";
 import crypto from 'crypto';
+import { Game, contract_address } from "@/app/tournamentManager";
+import { ethers } from 'ethers';
+import tournamentAbi from '@/public/tournamentManager_abi.json';
+import { matchmaking } from "./matchmaking";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -18,15 +22,28 @@ interface SocketApiResponse extends NextApiResponse {
 
 // FIXME: (Fix documentation)
 
+const provider = new ethers.providers.JsonRpcProvider("https://ethereum-goerli.publicnode.com");
+export const contract = new ethers.Contract(contract_address, tournamentAbi, provider);
+
 /* -------------------------------------------------------------------------- */
 /*                                   Handler                                  */
 /* -------------------------------------------------------------------------- */
 const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promise<void> => {
+	// const eloScore = await contract.getPlayerRankedElo("address") as number;		// get the ranked elo of the player
+	// const games = await contract.getTournamentTree(0) as Game[];					// get the tournament tree by id
+
 	if (!res.socket.server?.io) {
 		const io = new Server(res.socket.server as any);
 		res.socket.server!.io = io;
 
 		io.on('connection', (socket) => {
+
+			socket.on('join-queue', async (gameType: string) => {
+				socket.join(gameType);
+				const sockets = await io.in(gameType).fetchSockets();
+				matchmaking({sockets, gameType});
+
+			});
 
 			socket.on('join-game', ( gameId: string, gameType: string, isBot: boolean ) => {
 				const room = io.sockets.adapter.rooms.get(gameId);
