@@ -13,6 +13,7 @@ export type WSClientType = {
 	addMessageListener: (topic: string, gameId: string, callback: (msg: string) => void) => void;
 	removeMessageListener: (topic: string, gameId: string) => void;
 	joinQueue: (game: string) => void;
+	sendAddress: (address: `0x${string}` | undefined) => void;
 
 };
 
@@ -53,6 +54,10 @@ class WSClient {
 
 	joinQueue(game: string) {
 		this.socket!.emit('join-queue', game);
+	}
+
+	sendAddress(address: `0x${string}` | undefined) {
+		this.socket!.emit('WalletAdress', address);
 	}
 
 	async waitingForSocket(): Promise<void> {

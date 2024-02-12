@@ -18,6 +18,11 @@ interface SocketApiResponse extends NextApiResponse {
 	};
 }
 
+interface SocketData {
+	getElo: number;
+	address: number;
+}
+
 // TODO: Maybe replacing the Rematch button with a continue button in tournaments / div modal
 
 // FIXME: (Fix documentation)
@@ -29,20 +34,35 @@ export const contract = new ethers.Contract(contract_address, tournamentAbi, pro
 /*                                   Handler                                  */
 /* -------------------------------------------------------------------------- */
 const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promise<void> => {
-	// const eloScore = await contract.getPlayerRankedElo("address") as number;		// get the ranked elo of the player
-	// const games = await contract.getTournamentTree(0) as Game[];					// get the tournament tree by id
+	// const eloScore = await contract.getPlayerRankedElo("address") as number;
+	// const games = await contract.getTournamentTree(0) as Game[];
+
+	const getElo = async (address: `0x${string}` | undefined) => {
+		if (address) {
+			const eloScore = await contract.getPlayerRankedElo(address) as number;
+			return (eloScore);
+		}
+	}
 
 	if (!res.socket.server?.io) {
 		const io = new Server(res.socket.server as any);
 		res.socket.server!.io = io;
-
+		
 		io.on('connection', (socket) => {
+
+			socket.on('WalletAdress', (address: `0x${string}` | undefined) => {
+				socket.data = {
+					walletAddress: address,
+					elo: async () => {
+						return await getElo(address);
+					}
+				}
+			});
 
 			socket.on('join-queue', async (gameType: string) => {
 				socket.join(gameType);
 				const sockets = await io.in(gameType).fetchSockets();
 				matchmaking({sockets, gameType});
-
 			});
 
 			socket.on('join-game', ( gameId: string, gameType: string, isBot: boolean ) => {

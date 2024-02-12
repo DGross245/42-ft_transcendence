@@ -22,14 +22,13 @@ export interface Game {
 	finished: boolean
 }
 interface Tournament {
-	master: string
+	master: string // addresse
 	duration_in_blocks: number
 	start_block: number
 	end_block: number
 	players: Player[]
 	games: Game[]
 }
-
 
 function Scores() {
 	const { address, chainId, isConnected } = useWeb3ModalAccount()

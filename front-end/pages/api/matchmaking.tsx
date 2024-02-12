@@ -10,16 +10,15 @@ interface Matchmaking {
 	gameType: string,
 }
 
-// const eloScore = await contract.getPlayerRankedElo("address") as number;
 const searchForOpponent = (sockets :Matchmaking['sockets'], gameType: string, maxClients: number) => {
 	const maxDiff = 0.3;
 
 	for (let i = 0; i < sockets.length; i++) {
 		let sequence = [sockets[i]];
-		// let maxDifference = sockets[i].elo * maxDiff;
+		let maxDifference = sockets[i].data.elo * maxDiff;
 
 		for (let j = i + 1; j < sockets.length; j++) {
-			// if (Math.abs(sockets[j].elo - sequence[sequence.length - 1].elo) <= maxDifference) {
+			if (Math.abs(sockets[j].data.elo - sequence[sequence.length - 1].data.elo) <= maxDifference)
 				sequence.push(sockets[j]);
 			if (sequence.length === length)
 				return (sequence);
@@ -29,7 +28,7 @@ const searchForOpponent = (sockets :Matchmaking['sockets'], gameType: string, ma
 }
 
 export const matchmaking = ({sockets, gameType} : Matchmaking) => {
-	var players = [];
+	var players : Matchmaking['sockets'] = [];
 	let maxClients = 2;
 
 	if (gameType === "OneForAll")
@@ -38,17 +37,15 @@ export const matchmaking = ({sockets, gameType} : Matchmaking) => {
 		maxClients = 3;
 
 	if (sockets.length >= maxClients) {
-		searchForOpponent(sockets, gameType, maxClients);
+		players = searchForOpponent(sockets, gameType, maxClients);
 
-		for (let i = 0; i < maxClients; i++) {
-			players.push(sockets[i]);
-		}
+		if (players.length > 0) {
+			var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 
-		var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
-
-		for (let i = 0; i < maxClients; i++) {
-			players[i].emit('match-found', id);
-			players[i].leave(gameType);
+			for (let i = 0; i < maxClients; i++) {
+				players[i].emit('match-found', id);
+				players[i].leave(gameType);
+			}
 		}
 	}
 

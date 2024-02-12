@@ -4,9 +4,11 @@ import useWSClient from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
+import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 
 export const TTTSocketEvents = () => {
 	const newClient = useWSClient();
+	const { address } = useWeb3ModalAccount();
 	const {
 		wsclient,
 		setWsclient,
@@ -28,6 +30,7 @@ export const TTTSocketEvents = () => {
 		const waitForSocket = async () => {
 			if (newClient) {
 				await newClient.waitingForSocket();
+				newClient?.sendAddress(address);
 				setWsclient(newClient);
 			}
 		};
