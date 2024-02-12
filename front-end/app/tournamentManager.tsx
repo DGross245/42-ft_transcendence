@@ -47,7 +47,8 @@ function Scores() {
 	// the caller HAS to join separately as a player if he wants to participate
 	async function createTournament(duration_in_blocks: number) {
 		const tmContract = await prepareContract()
-		await tmContract.createTournament(duration_in_blocks)
+		const id = await tmContract.createTournament(duration_in_blocks)
+		return (id);
 	}
 
 	// starts a previously created tournament and creates game tree

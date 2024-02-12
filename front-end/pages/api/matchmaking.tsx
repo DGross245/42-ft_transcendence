@@ -24,6 +24,7 @@ const searchForOpponent = (sockets :Matchmaking['sockets'], gameType: string, ma
 				return (sequence);
 		}
 	}
+
 	return ([]);
 }
 
@@ -50,4 +51,8 @@ export const matchmaking = ({sockets, gameType} : Matchmaking) => {
 	}
 
 	return (null)
+}
+
+export const tournamentHandler = () => {
+	
 }

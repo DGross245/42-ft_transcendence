@@ -59,6 +59,16 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				}
 			});
 
+			socket.on('create-tournaments', async (gameType: string) => {
+				const tournamentID = await contract.createTournament(10000000);
+				socket.emit('tournament-created', tournamentID);
+			});
+
+			socket.on('join-tournament', (tournamentID: number) => {
+				socket.join(`tournament-${tournamentID}`);
+				socket.emit(`tournament-${tournamentID}-joined`, tournamentID);
+			})
+
 			socket.on('join-queue', async (gameType: string) => {
 				socket.join(gameType);
 				const sockets = await io.in(gameType).fetchSockets();
