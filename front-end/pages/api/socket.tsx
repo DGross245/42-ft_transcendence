@@ -5,7 +5,7 @@ import crypto from 'crypto';
 import { Game, contract_address } from "@/app/tournamentManager";
 import { ethers } from 'ethers';
 import tournamentAbi from '@/public/tournamentManager_abi.json';
-import { matchmaking } from "./matchmaking";
+import { matchmaking, tournamentHandler } from "./matchmaking";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -59,9 +59,14 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				}
 			});
 
-			socket.on('create-tournaments', async (gameType: string) => {
-				const tournamentID = await contract.createTournament(10000000);
-				socket.emit('tournament-created', tournamentID);
+			// socket.on('create-tournaments', async (gameType: string) => {
+			// 	const tournamentID = await contract.createTournament(10000000);
+			// 	socket.emit('tournament-created', tournamentID);
+			// });
+
+			socket.on('start-tournament', async (tournamentID: number) => {
+				const sockets = await io.in(`tournament-${tournamentID}`).fetchSockets();
+				tournamentHandler(sockets, tournamentID);
 			});
 
 			socket.on('join-tournament', (tournamentID: number) => {

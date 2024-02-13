@@ -1,7 +1,9 @@
+import { Game } from '@/app/tournamentManager';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { RemoteSocket } from 'Socket.IO';
 import { DecorateAcknowledgementsWithMultipleResponses } from 'Socket.IO/dist/typed-events';
 import crypto from 'crypto';
+import { contract } from './socket';
 
 // TODO: Add a timer or something for the case where a match is found but the opponent never joints because of quit
 
@@ -53,6 +55,11 @@ export const matchmaking = ({sockets, gameType} : Matchmaking) => {
 	return (null)
 }
 
-export const tournamentHandler = () => {
-	
+export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number ) => {
+	const games = await contract.getTournamentTree(tournamentID) as Game[];
+
+	for (let i = 0; i < games.length; i++) {
+
+
+	}
 }
