@@ -46,6 +46,8 @@ contract TournamentManager {
 	PlayerScore _player_score;
 	Tournament _tournament;
 
+	event TournamentCreated(uint256 tournament_id);
+
 	/* -------------------------------------------------------------------------- */
 	/*                                  Modifiers                                 */
 	/* -------------------------------------------------------------------------- */
@@ -139,6 +141,8 @@ contract TournamentManager {
 		tournament.master = msg.sender;
 		tournament.duration_in_blocks = duration_in_blocks;
 		tournaments.push(tournament);
+
+		emit TournamentCreated(tournaments.length - 1);
 		return tournaments.length - 1;
 	}
 

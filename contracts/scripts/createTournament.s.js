@@ -1,17 +1,8 @@
-[
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "tournament_id",
-        "type": "uint256"
-      }
-    ],
-    "name": "TournamentCreated",
-    "type": "event"
-  },
+const { ethers } = require('ethers');
+
+// Define your contract address and ABI
+const contractAddress = '0x25390Ad585801633B3f39e45D2DdC0de43Bd526b'; // Replace with your contract address
+const contractAbi = [
   {
     "inputs": [
       {
@@ -496,4 +487,34 @@
     "stateMutability": "view",
     "type": "function"
   }
-]
+];
+
+// Define your provider for the Goerli test network
+const providerUrl = 'https://eth-goerli.public.blastapi.io';
+const provider = new ethers.JsonRpcProvider(providerUrl);
+
+// Define your wallet with private key (for sending transactions)
+const privateKey = '4388cf1e59726bc1f0f66b1f452ce14ac425ef169262c72c3ac75a4c103b17b6';
+const wallet = new ethers.Wallet(privateKey, provider);
+
+// Connect to the contract
+const contract = new ethers.Contract(contractAddress, contractAbi, wallet);
+
+// Define the function you want to call and its parameters
+const functionName = 'getTournaments';
+const functionParams = []; // Replace with actual parameters
+
+// Call the function and handle the result
+async function callContractFunction() {
+  try {
+    // Make the contract call
+    const tx = await contract[functionName](...functionParams);
+
+    // Process the result
+    console.log('Result:', tx.length);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+// Execute the function
+callContractFunction();

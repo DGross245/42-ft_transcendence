@@ -46,7 +46,9 @@ contract TournamentManagerTest is Test {
     function testCreateTournament() public {
         uint256 duration_in_blocks = 10;
         uint256 tournament_id = tm.createTournament(duration_in_blocks);
+        uint256 tournament_id2 = tm.createTournament(duration_in_blocks);
         TournamentManager.Tournament memory tournament = tm.getTournament(tournament_id);
+        assertEq(tournament_id2, 0);
         assertEq(tournament.master, address(this));
         assertEq(tournament.duration_in_blocks, duration_in_blocks);
         assertEq(tournament.start_block, 0);
