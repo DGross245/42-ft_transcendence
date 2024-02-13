@@ -5,7 +5,7 @@ import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers5/re
 import scoresAbi from '../public/tournamentManager_abi.json';
 import erc20Abi from '../public/erc20_abi.json';
 
-const contract_address = '0xa8C581a44635291286d15d5a4662adc35Ba9a78A'
+const contract_address = '0xE3ffA6Cd53637Cda7e64C029Aa41f72770ee625f'
 
 function Scores() {
 	const { address, chainId, isConnected } = useWeb3ModalAccount()
@@ -46,8 +46,10 @@ function Scores() {
 	// creates a new tournament and adds calling address as master
 	// the caller HAS to join separately as a player if he wants to participate
 	async function createTournament(duration_in_blocks: number) {
-		const tmContract = await prepareContract()
-		await tmContract.createTournament(duration_in_blocks)
+		const tmContract = await prepareContract();
+		const result = await tmContract.createTournament(duration_in_blocks);
+		const res = await result.wait();
+		console.log(res.events.find((event: any) => event.event === 'TournamentCreated'));
 	}
 
 	// starts a previously created tournament and creates game tree

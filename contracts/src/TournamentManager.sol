@@ -117,8 +117,8 @@ contract TournamentManager {
 
 	function joinTournament(uint256 tournament_id)
 	external checkTournamentValid(tournament_id) {
-		require (players[msg.sender].addr != address(0), "Player does not exist");
-		require (tournaments[tournament_id].start_block == 0, "Tournament already started");
+		// require (players[msg.sender].addr != address(0), "Player does not exist");
+		// require (tournaments[tournament_id].start_block == 0, "Tournament already started");
 
 		for (uint256 i = 0; i < tournaments[tournament_id].players.length; i++) {
 			if (tournaments[tournament_id].players[i] == players[msg.sender].addr) {
@@ -218,7 +218,7 @@ contract TournamentManager {
 	function getPlayer(address addr)
 	external view
 	returns (Player memory) {
-		require (players[addr].addr != address(0), "Player does not exist");
+		// require (players[addr].addr != address(0), "Player does not exist");
 
 		return players[addr];
 	}
@@ -232,7 +232,7 @@ contract TournamentManager {
 	function getPlayerRankedElo(address addr)
 	external view
 	returns (uint256) {
-		require (players[addr].addr != address(0), "Player does not exist");
+		// require (players[addr].addr != address(0), "Player does not exist");
 
 		uint256 total_score = 0;
 		uint256 played_games = 0;

@@ -1,7 +1,7 @@
 const { ethers } = require('ethers');
 
 // Define your contract address and ABI
-const contractAddress = '0x25390Ad585801633B3f39e45D2DdC0de43Bd526b'; // Replace with your contract address
+const contractAddress = '0xE3ffA6Cd53637Cda7e64C029Aa41f72770ee625f'; // Replace with your contract address
 const contractAbi = [
   {
     "inputs": [
@@ -501,14 +501,22 @@ const wallet = new ethers.Wallet(privateKey, provider);
 const contract = new ethers.Contract(contractAddress, contractAbi, wallet);
 
 // Define the function you want to call and its parameters
-const functionName = 'getTournaments';
-const functionParams = []; // Replace with actual parameters
+const createTournament = 'createTournament'
+const createTournamentParams = [100]; // Replace with actual parameters
+
+const joinTournament = 'joinTournament';
+const joinTournamentParams = [0]; // Replace with actual parameters
+
+const getPlayer = 'getPlayer';
+const getPlayerParams = ['0x80A9eC86DCD58F657CD3f4b43C9CdaF76D65386D']; // Replace with actual parameters
 
 // Call the function and handle the result
 async function callContractFunction() {
   try {
     // Make the contract call
-    const tx = await contract[functionName](...functionParams);
+    const tx = await contract[createTournament](...createTournamentParams);
+    // const tx = await contract[joinTournament](...joinTournamentParams);
+    // const tx = await contract[getPlayer](...getPlayerParams);
 
     // Process the result
     console.log('Result:', tx.length);
