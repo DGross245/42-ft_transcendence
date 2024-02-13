@@ -86,7 +86,7 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 			if (games[i - 1].finished === true) {
 				if (games[i].finished === false) {
 					var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
-	
+
 					for (let k = 0; i < maxClients; i++) {
 						players[k]?.emit('match-found', id);
 						players = []; // reset
