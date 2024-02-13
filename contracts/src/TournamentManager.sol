@@ -149,6 +149,8 @@ contract TournamentManager {
 	function startTournament(uint256 tournament_id)
 	external checkTournamentValid(tournament_id) {
 		require (tournaments[tournament_id].master == msg.sender, "Only master can start tournament");
+		require (tournaments[tournament_id].players.length > 1, "Not enough players");
+		require (tournaments[tournament_id].start_block == 0, "Tournament already started");
 
 		createTournamentTree(tournament_id);
 		tournaments[tournament_id].start_block = block.number;
