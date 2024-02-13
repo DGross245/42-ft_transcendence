@@ -55,11 +55,53 @@ export const matchmaking = ({sockets, gameType} : Matchmaking) => {
 	return (null)
 }
 
-export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number ) => {
+const findPlayer = (sockets: Matchmaking['sockets'], address: string) => {
+	const player = sockets.find(socket => socket.data.walletAddress === address);
+
+	if (player)
+		return (player)
+	else
+		console.error("Player not found in tournaments") // implement function to auto win the game for current game
+}
+
+export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number, gameType: string ) => {
 	const games = await contract.getTournamentTree(tournamentID) as Game[];
+	var players = [];
+
+	// vllt ne function schreiben für sowas wie findGameTypePlayerSize oder so
+	let maxClients = 2;
+
+	if (gameType === 'OneForAll')
+		maxClients = 4;
+	if (gameType === 'Qubic')
+		maxClients = 3;
 
 	for (let i = 0; i < games.length; i++) {
 
+		for (let j = 0; j < maxClients; j++) {
+			const player = findPlayer(sockets, games[i].player_scores[j].player);
+			players.push(player);
+		}
+		if (i !== 0) {
+			if (games[i - 1].finished === true) {
+				if (games[i].finished === false) {
+					var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
+	
+					for (let k = 0; i < maxClients; i++) {
+						players[k]?.emit('match-found', id);
+						players = []; // reset
+					}
+				}
+			}
+		}
+		else if (i === 0) {
+			var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
+
+			for (let k = 0; i < maxClients; i++) {
+				players[k]?.emit('match-found', id);
+				players = []; // reset
+			}
+		}
 
 	}
 }

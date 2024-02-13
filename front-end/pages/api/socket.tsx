@@ -64,15 +64,15 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			// 	socket.emit('tournament-created', tournamentID);
 			// });
 
-			socket.on('start-tournament', async (tournamentID: number) => {
+			socket.on('tournament', async (tournamentID: number, gameType: string) => {
 				const sockets = await io.in(`tournament-${tournamentID}`).fetchSockets();
-				tournamentHandler(sockets, tournamentID);
+				tournamentHandler(sockets, tournamentID, gameType);
 			});
 
-			socket.on('join-tournament', (tournamentID: number) => {
+			socket.on('join-tournament', (tournamentID: number, gameType: string) => {
 				socket.join(`tournament-${tournamentID}`);
 				socket.emit(`tournament-${tournamentID}-joined`, tournamentID);
-			})
+			});
 
 			socket.on('join-queue', async (gameType: string) => {
 				socket.join(gameType);
