@@ -505,7 +505,7 @@ const createTournament = 'createTournament'
 const createTournamentParams = [100]; // Replace with actual parameters
 
 const joinTournament = 'joinTournament';
-const joinTournamentParams = [0]; // Replace with actual parameters
+const joinTournamentParams = [2]; // Replace with actual parameters
 
 const getPlayer = 'getPlayer';
 const getPlayerParams = ['0x80A9eC86DCD58F657CD3f4b43C9CdaF76D65386D']; // Replace with actual parameters
@@ -514,8 +514,8 @@ const getPlayerParams = ['0x80A9eC86DCD58F657CD3f4b43C9CdaF76D65386D']; // Repla
 async function callContractFunction() {
   try {
     // Make the contract call
-    const tx = await contract[createTournament](...createTournamentParams);
-    // const tx = await contract[joinTournament](...joinTournamentParams);
+    // const tx = await contract[createTournament](...createTournamentParams);
+    const tx = await contract[joinTournament](...joinTournamentParams);
     // const tx = await contract[getPlayer](...getPlayerParams);
 
     // Process the result
