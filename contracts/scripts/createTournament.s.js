@@ -1,7 +1,7 @@
 const { ethers } = require('ethers');
 
 // Define your contract address and ABI
-const contractAddress = '0xBD7862926360b8535D098276ccb5Be40d2C01202'; // Replace with your contract address
+const contractAddress = '0x85a8454Ed9255C9Fd22f9741AA5bCc9532c556D2'; // Replace with your contract address
 const contractAbi = [
   {
     "inputs": [
@@ -515,7 +515,7 @@ const setNameAndColor = 'setNameAndColor';
 const setNameAndColorParams = ['testPlayer', 1]; // Replace with actual parameters
 
 const getTournamentTree = 'getTournamentTree';
-const getTournamentTreeParams = [1]; // Replace with actual parameters
+const getTournamentTreeParams = [0]; // Replace with actual parameters
 
 // Call the function and handle the result
 async function callContractFunction() {
@@ -526,6 +526,9 @@ async function callContractFunction() {
     // const tx = await contract[getPlayer](...getPlayerParams);
     // const tx = await contract[setNameAndColor](...setNameAndColorParams);
     const tx = await contract[getTournamentTree](...getTournamentTreeParams);
+    for (let i = 0; i < tx.length; i++) {
+      console.log('game ', i, ' players: ', tx[i][0][0][0], ' ', tx[i][0][1][0])
+    }
 
     // Process the result
     console.log('Result:', tx);
