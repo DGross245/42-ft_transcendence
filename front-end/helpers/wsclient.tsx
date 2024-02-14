@@ -3,6 +3,7 @@
 import io, { Socket } from 'socket.io-client';
 import { useEffect, useState } from 'react';
 import crypto from 'crypto';
+import { contract } from '@/pages/api/socket';
 
 export type WSClientType = {
 	createGame: () => Promise<string>;
@@ -14,7 +15,8 @@ export type WSClientType = {
 	removeMessageListener: (topic: string, gameId: string) => void;
 	joinQueue: (game: string) => void;
 	sendAddress: (address: `0x${string}` | undefined) => void;
-
+	joinTournament: (tournamentID: number) => void;
+	tournament: (tournamentID: number, gameType: string) => void;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -50,6 +52,13 @@ class WSClient {
 				resolve(msg);
 			});
 		});
+	}
+
+	joinTournament(tournamentID: number) {
+		this.socket!.emit('join-tournament', tournamentID);
+	}
+	tournament(tournamentID: number, gameType: string) {
+		this.socket!.emit('tournament', tournamentID, gameType);
 	}
 
 	joinQueue(game: string) {

@@ -6,9 +6,8 @@ import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 
-export const TTTSocketEvents = () => {
+export const TTTSocketEvents = (address) => {
 	const newClient = useWSClient();
-	const { address } = useWeb3ModalAccount();
 	const {
 		wsclient,
 		setWsclient,

@@ -12,7 +12,7 @@ interface Matchmaking {
 	gameType: string,
 }
 
-const searchForOpponent = (sockets :Matchmaking['sockets'], gameType: string, maxClients: number) => {
+const searchForOpponent = (sockets :Matchmaking['sockets'], length: number) => {
 	const maxDiff = 0.3;
 
 	for (let i = 0; i < sockets.length; i++) {
@@ -40,7 +40,7 @@ export const matchmaking = ({sockets, gameType} : Matchmaking) => {
 		maxClients = 3;
 
 	if (sockets.length >= maxClients) {
-		players = searchForOpponent(sockets, gameType, maxClients);
+		players = searchForOpponent(sockets, maxClients);
 
 		if (players.length > 0) {
 			var id = crypto.randomBytes(20).toString('hex').substring(0, 7);

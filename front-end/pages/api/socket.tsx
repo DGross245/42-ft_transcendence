@@ -66,10 +66,11 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 
 			socket.on('tournament', async (tournamentID: number, gameType: string) => {
 				const sockets = await io.in(`tournament-${tournamentID}`).fetchSockets();
+				console.log("Tournament started");
 				tournamentHandler(sockets, tournamentID, gameType);
 			});
 
-			socket.on('join-tournament', (tournamentID: number, gameType: string) => {
+			socket.on('join-tournament', (tournamentID: number) => {
 				socket.join(`tournament-${tournamentID}`);
 				socket.emit(`tournament-${tournamentID}-joined`, tournamentID);
 			});

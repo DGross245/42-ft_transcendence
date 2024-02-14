@@ -10,8 +10,9 @@ import { useKey } from "../hooks/useKey";
 
 // maybe change the View to something like go into queue 
 
-const EndModal = () => {
+const EndModal = (topic) => {
 	const { winner, gameState, isGameMode } = useGameState();
+	const { wsclient } = useSocket();
 	const { disconnected, requestRematch, setSendRequest, sendRequest, playerState } = useSocket();
 	const { showModal, closeModal, openModal } = useUI();
 	const [showResult, setShowResult] = useState("");
@@ -38,6 +39,10 @@ const EndModal = () => {
 		else
 			return ('Loses');
 	};
+
+	const sendKEK = () => {
+		wsclient?.tournament(topic, 'TTT');
+	}
 
 	useEffect (() => {
 		if (showModal)
@@ -98,7 +103,7 @@ const EndModal = () => {
 					<Button color="primary" isDisabled={disconnected} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
 						Rematch
 					</Button>
-					<Button color="success" variant="ghost" onClick={closeModal}>
+					<Button color="success" variant="ghost" onClick={sendKEK}>
 						View
 					</Button>
 					</ModalFooter>
