@@ -57,7 +57,7 @@ export const matchmaking = ({sockets, gameType} : Matchmaking) => {
 
 const findPlayer = (sockets: Matchmaking['sockets'], address: string) => {
 	const player = sockets.find(socket => socket.data.walletAddress === address);
-
+	console.log("KEK", address);
 	if (player)
 		return (player)
 	else
@@ -65,7 +65,16 @@ const findPlayer = (sockets: Matchmaking['sockets'], address: string) => {
 }
 
 export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number, gameType: string ) => {
-	const games = await contract.getTournamentTree(tournamentID) as Game[];
+	console.log("Check ID", tournamentID);
+	for (let i = 0; 0 < sockets.length; i++) {
+		console.log("Socket address", sockets[i].data.walletAddress);
+	}
+	console.log("All sockets", sockets);
+	const games = (await contract.getTournamentTree(tournamentID)) as Game[];
+	console.log(games)
+	// for (let i = 0; i < games.length; i++) {
+	// 	console.log('game ', i, ' players: ', games[i][0][0][0], ' ', games[i][0][1][0])
+	// }
 	var players = [];
 
 	// vllt ne function schreiben für sowas wie findGameTypePlayerSize oder so
@@ -76,31 +85,35 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 	if (gameType === 'Qubic')
 		maxClients = 3;
 
+	console.log("GAME:", games.length);
 	for (let i = 0; i < games.length; i++) {
-
 		for (let j = 0; j < maxClients; j++) {
-			const player = findPlayer(sockets, games[i].player_scores[j].player);
+			const player = findPlayer(sockets, games[i].player_scores[j].addr);
+			console.log("player pushed");
 			players.push(player);
 		}
 		if (i !== 0) {
 			if (games[i - 1].finished === true) {
 				if (games[i].finished === false) {
+					console.log("Found unfinished game");
 					var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 
 					for (let k = 0; i < maxClients; i++) {
 						players[k]?.emit('match-found', id);
-						players = []; // reset
 					}
+					players = []; // reset
 				}
 			}
 		}
 		else if (i === 0) {
+			console.log("Starting first game");
+			console.log("player:", players)
 			var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 
 			for (let k = 0; i < maxClients; i++) {
 				players[k]?.emit('match-found', id);
-				players = []; // reset
 			}
+			players = []; // reset
 		}
 
 	}

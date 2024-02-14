@@ -93,8 +93,8 @@ const TTTScene = () => {
 		wsclient?.joinTournament(topic);
 	}
 
-	const onStartTournament = () => {
-		startTournament(topic);
+	const onStartTournament = async () => {
+		await startTournament(topic);
 		wsclient?.tournament(topic, 'TTT');
 	}
 
@@ -109,6 +109,10 @@ const TTTScene = () => {
 		console.log(t);
 	}
 
+	const onkek = () => {
+		wsclient?.tournament(topic, 'TTT');
+	}
+
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 				<input
@@ -121,6 +125,7 @@ const TTTScene = () => {
 			<button onClick={onJoinTournament}> Join Tournament </button>
 			<button onClick={onStartTournament}> Start Tournament </button>
 			<button onClick={onGetTournaments}> lol Tournament </button>
+			<button onClick={onkek}> print </button>
 			<Canvas  style={{ width: dimensions.width, height: dimensions.height }}>
 				<Camera />
 				<Countdown />

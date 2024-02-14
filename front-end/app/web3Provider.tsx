@@ -6,11 +6,11 @@ import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5/react'
 const projectId = 'e724641375a102581d38c8ee62fc81dd'
 
 const goerli = {
-	chainId: 5,
-	name: 'goerli',
-	currency: 'ETH',
-	explorerUrl: 'https://goerli.etherscan.io',
-	rpcUrl: 'https://ethereum-goerli.publicnode.com'
+	chainId: 84532,
+	name: 'base sepolia',
+	currency: 'SepoliaETH',
+	explorerUrl: 'https://sepolia.basescan.org',
+	rpcUrl: 'https://sepolia.base.org'
 }
 
 const metadata = {

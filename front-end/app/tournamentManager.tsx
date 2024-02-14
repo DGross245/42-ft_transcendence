@@ -5,7 +5,7 @@ import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers5/re
 import scoresAbi from '../public/tournamentManager_abi.json';
 import erc20Abi from '../public/erc20_abi.json';
 
-export const contract_address = '0xfa02418e2a7661b6c9A0aEE69DCef916F2454249'
+export const contract_address = '0x85a8454Ed9255C9Fd22f9741AA5bCc9532c556D2'
 
 // data structures for tournament manager contract
 interface Player {
@@ -14,7 +14,7 @@ interface Player {
 	color: string
 }
 interface PlayerScore {
-	player: string
+	addr: string
 	score: number
 }
 export interface Game {

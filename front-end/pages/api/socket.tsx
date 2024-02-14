@@ -27,7 +27,7 @@ interface SocketData {
 
 // FIXME: (Fix documentation)
 
-const provider = new ethers.providers.JsonRpcProvider("https://ethereum-goerli.publicnode.com");
+const provider = new ethers.providers.JsonRpcProvider("https://sepolia.base.org");
 export const contract = new ethers.Contract(contract_address, tournamentAbi, provider);
 
 /* -------------------------------------------------------------------------- */
@@ -71,6 +71,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			});
 
 			socket.on('join-tournament', (tournamentID: number) => {
+				console.log("SOCKET JOINED", tournamentID);
 				socket.join(`tournament-${tournamentID}`);
 				socket.emit(`tournament-${tournamentID}-joined`, tournamentID);
 			});
