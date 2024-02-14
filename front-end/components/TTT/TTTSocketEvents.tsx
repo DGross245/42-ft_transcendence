@@ -19,7 +19,7 @@ export const TTTSocketEvents = () => {
 		rematchIndex,
 		sendRequest,
 	} = useSocket();
-	const { gameState, updateGameState, setWinner, isGameMode, botState, setBot } = useGameState();
+	const { gameState, updateGameState, setWinner, isGameMode, botState, setBot, setCountdownVisible } = useGameState();
 	const [isFull, setIsFull] = useState("");
 	const [playerSet, setPlayerSet] = useState(false);
 	const soundEngine = useSound();
@@ -164,6 +164,12 @@ export const TTTSocketEvents = () => {
 			wsclient?.emitMessageToGame("true", `Request-Rematch-${gameState.gameId}`, gameState.gameId);
 		}
 	}, [sendRequest]);
+
+	useEffect(() => {
+		if (gameState.pause && wsclient) {
+			wsclient?.emitMessageToGame("true", `Pause-${gameState.gameId}`, gameState.gameId);
+		}
+	}, [gameState.pause]);
 
 	useEffect(() => {
 		if (wsclient) {

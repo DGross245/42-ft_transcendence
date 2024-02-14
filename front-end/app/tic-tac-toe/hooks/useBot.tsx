@@ -38,7 +38,6 @@ export const useBot = () => {
 		}
 
 		if (botState.isActive && wsclient) {
-			console.log(botState.isActive, "kek")
 			joinTheGame();
 		}
 	},[botState.isActive, wsclient, playerState])

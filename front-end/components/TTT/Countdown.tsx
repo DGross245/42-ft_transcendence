@@ -33,7 +33,11 @@ const Countdown = () => {
 		if (meshRef) camera.add(meshRef);
 		setCount(3);
 
-		if (gameState.pause) return ;
+		if (gameState.pause) {
+			setCountdownVisible(true);
+			return ;
+		}
+
 		if (countdownVisible) {
 			soundEngine?.playSound("countSound");
 			const countdownInterval = setInterval(() => {

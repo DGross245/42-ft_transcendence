@@ -3,7 +3,7 @@ import { useFrame } from "@react-three/fiber";
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
 
-export const useBall = () => {
+export const useBall = (onPositionChange) => {
 	const {
 		ballRef,
 		scores,
@@ -14,7 +14,8 @@ export const useBall = () => {
 		isScoreVisible,
 		leftPaddleRef,
 		rightPaddleRef,
-		setScores
+		setScores,
+		botState
 	} = usePongGameState();
 	const { wsclient, playerState } = usePongSocket();
 
@@ -53,6 +54,39 @@ export const useBall = () => {
 	},[pongGameState.gameOver]);
 
 	/**
+	 * Updates the new position of the ball based on its velocity and the time passed since last frame (deltaTime).
+	 * @param ball - The ball object containing position and velocity properties.
+	 * 				 Contains 'x', 'z', 'velocityX', and 'velocityZ' fields.
+	 * @param deltaTime - The time passed since the last frame, in seconds.
+	 * 					  Used to ensure independence from the frame rate.
+	*/
+	const updateBallPosition = (ball: { x: number; z: number; velocityX: number; velocityZ: number; }, deltaTime: number) => {
+		if (pongGameState.pause) return ;
+		if (!playerState.master) {
+			const { position, velocity, deltaTime } = PositionRef.current;
+			ball.x = -position.x + -velocity.x * deltaTime;
+			ball.z = position.z + velocity.z * deltaTime;
+			ballRef.current.position.x = ball.x;
+			ballRef.current.position.z = ball.z;
+		} else {
+			ball.x += ball.velocityX * 100 * deltaTime;
+			ball.z += ball.velocityZ * 100 * deltaTime;
+			ballRef.current.position.x = ball.x;
+			ballRef.current.position.z = ball.z;
+			const msg = {
+				position: { x: ball.x, z: ball.z },
+				velocity: { x: ball.velocityX, z: ball.velocityZ },
+				deltaTime: deltaTime
+			}
+			wsclient?.emitMessageToGame(JSON.stringify(msg), `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+		}
+	
+		if (onPositionChange && ballRef.current) {
+				onPositionChange(ballRef.current.position);
+		}
+	}
+
+	/**
 	 * Sets the ball back to the middle and generates a random direction for the ball.
 	 * It randomly takes one specified range and calculates with it a angle to determin the ball's direction.
 	 */
@@ -72,41 +106,6 @@ export const useBall = () => {
 
 		ball.velocityX = ball.speed * Math.sin(angle + (Math.PI / 2));
 		ball.velocityZ = ball.speed * Math.cos(angle + (Math.PI / 2));
-	}
-
-	/**
-	 * Updates the new position of the ball based on its velocity and the time passed since last frame (deltaTime).
-	 * @param ball - The ball object containing position and velocity properties.
-	 * 				 Contains 'x', 'z', 'velocityX', and 'velocityZ' fields.
-	 * @param deltaTime - The time passed since the last frame, in seconds.
-	 * 					  Used to ensure independence from the frame rate.
-	 */
-	const updateBallPosition = (ball: { x: number; z: number; velocityX: number; velocityZ: number; }, deltaTime: number) => {
-		if (pongGameState.pause)
-			return ;
-		if (playerState.master) {
-			ball.x += ball.velocityX * 100 * deltaTime;
-			ball.z += ball.velocityZ * 100 * deltaTime;
-			const msg = {
-				position: { x: ball.x, z: ball.z },
-				velocity: { x: ball.velocityX, z: ball.velocityZ },
-				deltaTime: deltaTime
-			}
-			const stringPos = JSON.stringify(msg);
-			wsclient?.emitMessageToGame(stringPos, `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
-		} else {
-			const { position, velocity, deltaTime } = PositionRef.current;
-			ball.x = -position.x + -velocity.x * deltaTime;
-			ball.z = position.z + velocity.z * deltaTime;
-		}
-
-		if (ballRef.current) {
-			ballRef.current.position.x = ball.x;
-			ballRef.current.position.z = ball.z;
-		}
-		// if (props.onPositionChange && ballRef.current) {
-		// 	props.onPositionChange(ballRef.current.position);
-		// }
 	}
 
 	useEffect(() => {
@@ -155,15 +154,12 @@ export const useBall = () => {
 
 		updateBallPosition(ball, deltaTime);
 
-		const rightPaddlePos = rightPaddleRef.current.position;
-		const leftPaddlePos = leftPaddleRef.current.position;
-
 		const isCollidingWithPaddleX = (paddle: { x: number; z: number; }) => {
 			return (
 				ball.x + halfBall + ball.velocityX > paddle.x - halfPaddleWidth &&
 				ball.x - halfBall + ball.velocityX < paddle.x + halfPaddleWidth &&
 				ball.z + halfBall > paddle.z - halfPaddleHeight &&
-				ball.z + halfBall < paddle.z + halfPaddleHeight
+				ball.z - halfBall < paddle.z + halfPaddleHeight
 			);
 		}
 
@@ -172,7 +168,7 @@ export const useBall = () => {
 				ball.x + halfBall > paddle.x - halfPaddleWidth &&
 				ball.x - halfBall < paddle.x + halfPaddleWidth &&
 				ball.z + halfBall + ball.velocityZ > paddle.z - halfPaddleHeight &&
-				ball.z + halfBall + ball.velocityZ < paddle.z + halfPaddleHeight
+				ball.z - halfBall + ball.velocityZ < paddle.z + halfPaddleHeight
 			);
 		}
 
@@ -182,17 +178,17 @@ export const useBall = () => {
 			updateBallPosition(ball, deltaTime);
 		}
 		// Handling ball collision with paddles.
-		else if (isCollidingWithPaddleX(leftPaddlePos)) {
-			changeBallDir(leftPaddlePos, 1);
+		else if (isCollidingWithPaddleX(leftPaddleRef.current.position)) {
+			changeBallDir(leftPaddleRef.current.position, 1);
 		}
-		else if (isCollidingWithPaddleX(rightPaddlePos)) {
-			changeBallDir(rightPaddlePos, -1);
+		else if (isCollidingWithPaddleX(rightPaddleRef.current.position)) {
+			changeBallDir(rightPaddleRef.current.position, -1);
 		}
-		if (isCollidingWithPaddleY(leftPaddlePos)) {
-			changeBallDir(leftPaddlePos, 1);
+		if (isCollidingWithPaddleY(leftPaddleRef.current.position)) {
+			changeBallDir(leftPaddleRef.current.position, 1);
 		}
-		else if (isCollidingWithPaddleY(rightPaddlePos)) {
-			changeBallDir(rightPaddlePos, -1);
+		else if (isCollidingWithPaddleY(rightPaddleRef.current.position)) {
+			changeBallDir(rightPaddleRef.current.position, -1);
 		}
 		// Handling scoring when the ball is outside of the play area.
 		else if ((ball.x > 200 || ball.x < -200) && 

@@ -55,15 +55,15 @@ const Field : React.FC<FieldProps> = (props) => {
 
 			{/* Projects a transparent verison of the symbol on the field the user hovers over based on the current turn */}
 
-			{hovered && !symbol && currentTurn == 'X' && !gameState.gameOver && (
+			{hovered && !symbol && currentTurn == 'X' && !gameState.gameOver && !gameState.pause && (
 				<X {...props} color={colors[0]} transparent={true} />
 			)}
 
-			{hovered && !symbol && currentTurn == 'O' && !gameState.gameOver && (
+			{hovered && !symbol && currentTurn == 'O' && !gameState.gameOver && !gameState.pause && (
 				<Torus {...props} color={colors[1]} transparent={true} />
 			)}
 
-			{hovered && !symbol && currentTurn == '🔳' && !gameState.gameOver && (
+			{hovered && !symbol && currentTurn == '🔳' && !gameState.gameOver && !gameState.pause && (
 				<Square {...props} color={colors[2]} transparent={true} />
 			)}
 

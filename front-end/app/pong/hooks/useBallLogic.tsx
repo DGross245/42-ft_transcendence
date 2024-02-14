@@ -9,7 +9,7 @@ type CollisionInfo = {
 	[key: string]: {player: any, score: any, isOwnGoal: boolean};
 };
 
-export const useBallLogic = () => {
+export const useBallLogic = (onPositionChange) => {
 	const {
 		ballRef,
 		scores,
@@ -53,10 +53,12 @@ export const useBallLogic = () => {
 		ball.velocityZ = isHorizontal ? direction * ball.speed : normalized * ball.speed;
 	}
 
-	const changeColor = ( ref:  MutableRefObject<Mesh>) => {
-		const material = ref.current.material as MeshBasicMaterial;
-		const currentColor = material.color.getHex();
-		setColor(currentColor);
+	const changeColor = ( ref: MutableRefObject<Mesh>) => {
+		if (ref && ref.current) {
+			const material = ref.current.material as MeshBasicMaterial;
+			const currentColor = material.color.getHex();
+			setColor(currentColor);
+		}
 	}
 
 	/**
@@ -92,19 +94,19 @@ export const useBallLogic = () => {
 	 */
 	const handleScore = (ball: { x: number; z: number; }) => {
 		const paddleCollision: CollisionInfo = {
-			bottom: { player: 'bottom', score: scores.p1Score, isOwnGoal: ball.z >= 170 ? true : false },
-			left:   { player: 'left', score: scores.p2Score, isOwnGoal: ball.x <= -170 ? true : false },
-			top:    { player: 'top', score: scores.p3Score, isOwnGoal: ball.z <= -170 ? true : false },
-			right:  { player: 'right', score: scores.p4Score, isOwnGoal: ball.x >= 170 ? true : false },
+			bottom: { player: 'p1Score', score: scores.p1Score, isOwnGoal: ball.z >= 170 ? true : false },
+			left:   { player: 'p2Score', score: scores.p2Score, isOwnGoal: ball.x <= -170 ? true : false },
+			top:    { player: 'p3Score', score: scores.p3Score, isOwnGoal: ball.z <= -170 ? true : false },
+			right:  { player: 'p4Score', score: scores.p4Score, isOwnGoal: ball.x >= 170 ? true : false },
 		}
 
 		if (lastPaddleHit !== '') {
 			const { player, score, isOwnGoal } = paddleCollision[lastPaddleHit];
-			console.log(player, score, isOwnGoal)
 			if (isOwnGoal && score !== 0)
 				setScores({ ...scores, [player]: score - 1})
-			else if (!isOwnGoal)
+			else if (!isOwnGoal) {
 				setScores({ ...scores, [player]: score + 1})
+			}
 
 		} else {
 			if (ball.z >= 170 && scores.p1Score !== 0) 
@@ -137,8 +139,7 @@ export const useBallLogic = () => {
 				velocity: { x: ball.velocityX, z: ball.velocityZ },
 				deltaTime: deltaTime
 			}
-			const stringPos = JSON.stringify(msg);
-			wsclient?.emitMessageToGame(stringPos, `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+			wsclient?.emitMessageToGame(JSON.stringify(msg), `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 		} else {
 			const { position, velocity, deltaTime } = PositionRef.current;
 			ball.x = position.x + velocity.x * deltaTime;
@@ -147,6 +148,10 @@ export const useBallLogic = () => {
 		if (ballRef.current) {
 			ballRef.current.position.x = ball.x;
 			ballRef.current.position.z = ball.z;
+		}
+	
+		if (onPositionChange && ballRef.current) {
+			onPositionChange(ballRef.current.position);
 		}
 	}
 
@@ -160,13 +165,14 @@ export const useBallLogic = () => {
 		return () => {
 			wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 		};
-	}, []);
+	}, [wsclient]);
 
 	const handleBallMovement = (ball: { x: any; z: any; velocityX: any; velocityZ: any; speed: number; }, deltaTime: number) => {
-		const rightPaddlePos = rightPaddleRef.current.position;
-		const leftPaddlePos = leftPaddleRef.current.position;
-		const TopPaddlePos = topPaddleRef.current.position;
-		const BottomPaddlePos = bottomPaddleRef.current.position;
+
+		const rightPaddlePos = rightPaddleRef.current ? rightPaddleRef.current.position: {x:0, y:0, z:0};
+		const leftPaddlePos = leftPaddleRef.current ? leftPaddleRef.current.position : {x:0, y:0, z:0};
+		const TopPaddlePos = topPaddleRef.current ? topPaddleRef.current.position : {x:0, y:0, z:0};
+		const BottomPaddlePos = bottomPaddleRef.current ? bottomPaddleRef.current.position : {x:0, y:0, z:0};
 
 		/**
 		 * The function checks if a ball is colliding with a rectangle given its position, width, and height.

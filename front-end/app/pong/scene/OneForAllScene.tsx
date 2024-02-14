@@ -4,8 +4,6 @@ import { useWindow } from "@/components/hooks/useWindow";
 import { Canvas } from "@react-three/fiber";
 import Countdown from "@/components/Pong/Countdown";
 import Camera from "@/components/Pong/Camera";
-import { BottomPaddle, LeftPaddle, RightPaddle, TopPaddle } from "@/components/Pong/Paddle";
-import { Ball } from "@/components/Pong/Ball";
 import { CubeLineX, CubeLineY } from "@/components/Pong/CubeLine";
 import { OrbitControls } from "@react-three/drei";
 import Scoreboard from "@/components/Pong/Scoreboard";
@@ -13,8 +11,8 @@ import EndModal from "@/components/Pong/EndModal";
 import { CornerBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
+import { GameControl } from "../../../components/Pong/Paddle";
 
-// FIXME: Scoring doesnt work anymore
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
  * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.
@@ -31,11 +29,7 @@ export default function OneForAllScene() {
 				<Countdown />
 				<Camera/> 
 				<CornerBorder />
-				<TopPaddle />
-				<BottomPaddle />
-				<RightPaddle />
-				<LeftPaddle />
-				<Ball />
+				<GameControl />
 				<CubeLineY />
 				<CubeLineX />
 				<OrbitControls

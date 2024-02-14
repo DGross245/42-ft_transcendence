@@ -15,12 +15,14 @@ export const useField = (props: FieldProps) => {
 
 	const handleHover = ( state: boolean) => {
 		if (playerState.client === -1) return ;
+		if (gameState.pause) return ;
 		if (playerState.players[playerState.client].symbol == currentTurn)
 			hover(state);
 	};
 
 	const handleClick = () => {
 		if (playerState.client === -1) return ;
+		if (gameState.pause) return ;
 		if (!symbol && playerState.players[playerState.client].symbol === currentTurn && !gameState.gameOver) {
 			click(true);
 			setSymbol(currentTurn);

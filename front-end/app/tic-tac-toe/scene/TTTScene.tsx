@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber";
-import { Environment, OrbitControls } from "@react-three/drei";
+import { Environment } from "@react-three/drei";
 
 import { useWindow } from "../../../components/hooks/useWindow";
 import { Grid } from "@/components/TTT/Grid";
@@ -16,6 +16,8 @@ import { Table } from "@/components/TTT/Table";
 import { TTTGameEvents } from "@/components/TTT/TTTGameEvents";
 import { TTTSocketEvents } from "@/components/TTT/TTTSocketEvents";
 import { TTTBot } from "@/components/TTT/TTTBot";
+
+// FIXME: Sometimes if host is player2, his symbol isnt set and the game crashes
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
@@ -44,15 +46,6 @@ const TTTScene = () => {
 				<TurnDisplay />
 				<FinishLine />
 				<Table />
-				<OrbitControls
-					makeDefault
-					enableZoom={false}
-					target={[3, 11.8, 3]}
-					enableRotate={true}
-					enablePan={false}
-					minPolarAngle={0}
-					maxPolarAngle={Math.PI / 2}
-				/>
 				<Environment preset="city" />
 			</Canvas>
 			<EndModal />

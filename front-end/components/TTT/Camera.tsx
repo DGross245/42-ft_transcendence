@@ -1,4 +1,4 @@
-import { PerspectiveCamera } from "@react-three/drei"
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei"
 import { useEffect, useRef } from "react";
 
 import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
@@ -36,15 +36,26 @@ const Camera = () => {
 	},[keyOne])
 
 	return (
-		<PerspectiveCamera
-			makeDefault
-			ref={ref}
-			fov={60}
-			aspect={window.innerWidth / window.innerHeight}
-			near={0.1}
-			far={1000}
-			position={[44, 35, 47]}
-		/>
+		<>
+			<PerspectiveCamera
+				makeDefault
+				ref={ref}
+				fov={60}
+				aspect={window.innerWidth / window.innerHeight}
+				near={0.1}
+				far={1000}
+				position={[44, 35, 47]}
+			/>
+			<OrbitControls
+				makeDefault
+				enableZoom={false}
+				target={[3, 11.8, 3]}
+				enableRotate={gameState.pause ? false :true}
+				enablePan={false}
+				minPolarAngle={0}
+				maxPolarAngle={Math.PI / 2}
+			/>
+		</>
 	);
 }
 

@@ -8,14 +8,11 @@ import { useWindow } from "@/components/hooks/useWindow";
 import Camera from "@/components/Pong/Camera";
 import EndModal from "@/components/Pong/EndModal";
 import { CubeLine } from "@/components/Pong/CubeLine";
-import { Ball } from "@/components/Pong/Ball";
 import { Scoreboard } from "../NormalScoreboard";
-import { LeftPaddle, RightPaddle } from "../NormalPaddle";
 import { LongBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
-
-// FIXME: Someotimes the guest or not host, counts the score twice
+import { GameControl } from "@/components/Pong/GameControl";
 
 /**
  * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
@@ -37,10 +34,8 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 				<Camera />
 				<LongBorder position={[0, 0, -105]} />
 				<LongBorder position={[0,0,105]} />
-				<RightPaddle />
-				<LeftPaddle />
-				<Ball />
 				<CubeLine />
+				<GameControl />
 				<OrbitControls
 					enableZoom={false}
 					enablePan={false}
