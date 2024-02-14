@@ -71,28 +71,51 @@ contract TournamentManager {
 	function createTournamentTree(uint256 tournament_id)
 	internal checkTournamentValid(tournament_id) {
 		uint256 num_players = tournaments[tournament_id].players.length;
-		// uint256 num_games = num_players * (num_players - 1) / 2;
 
-		Game[] storage games = _games;
 		for (uint256 i = 0; i < num_players; i++) {
 			for (uint256 j = i + 1; j < num_players; j++) {
-				PlayerScore[] storage player_scores = _player_scores;
-				PlayerScore storage first_player_score = _player_score;
-				first_player_score.addr = tournaments[tournament_id].players[i];
-				first_player_score.score = 0;
-				player_scores.push(first_player_score);
-				PlayerScore storage second_player_score = _player_score;
-				second_player_score.addr = tournaments[tournament_id].players[j];
-				second_player_score.score = 0;
-				player_scores.push(second_player_score);
-				Game storage game = _game;
-				game.player_scores = player_scores;
-				game.finished = false;
-				games.push(game);
+				Game storage newGame = tournaments[tournament_id].games.push();
+
+				newGame.player_scores.push(PlayerScore({
+					addr: tournaments[tournament_id].players[i],
+					score: 0
+				}));
+				newGame.player_scores.push(PlayerScore({
+					addr: tournaments[tournament_id].players[j],
+					score: 0
+				}));
+
+				newGame.finished = false;
 			}
 		}
-		tournaments[tournament_id].games = games;
 	}
+
+	// function createTournamentTree(uint256 tournament_id)
+	// internal checkTournamentValid(tournament_id) {
+	// 	uint256 num_players = tournaments[tournament_id].players.length;
+	// 	// uint256 num_games = num_players * (num_players - 1) / 2;
+
+	// 	Game[] storage games = _games;
+	// 	for (uint256 i = 0; i < num_players; i++) {
+	// 		for (uint256 j = i + 1; j < num_players; j++) {
+	// 			PlayerScore[] storage player_scores = _player_scores;
+	// 			PlayerScore storage first_player_score = _player_score;
+	// 			first_player_score.addr = tournaments[tournament_id].players[i];
+	// 			first_player_score.score = 0;
+	// 			player_scores.push(first_player_score);
+	// 			PlayerScore storage second_player_score = _player_score;
+	// 			second_player_score.addr = tournaments[tournament_id].players[j];
+	// 			second_player_score.score = 0;
+	// 			player_scores.push(second_player_score);
+	// 			Game storage game = _game;
+	// 			game.player_scores = player_scores;
+	// 			game.finished = false;
+	// 			games.push(game);
+	// 		}
+	// 	}
+	// 	tournaments[tournament_id].games = games;
+	// }
+
 
 	/* -------------------------------------------------------------------------- */
 	/*                              Player Functions                              */
@@ -156,6 +179,32 @@ contract TournamentManager {
 		tournaments[tournament_id].start_block = block.number;
 		tournaments[tournament_id].end_block = block.number + tournaments[tournament_id].duration_in_blocks;
 	}
+
+	// function submitGameResultTournament(uint256 tournament_id, uint256 game_id, PlayerScore[] calldata player_scores)
+	// external checkTournamentValid(tournament_id) checkTournamentOngoing(tournament_id) {
+	// 	require(game_id < tournaments[tournament_id].games.length, "Game does not exist");
+	// 	require(tournaments[tournament_id].games[game_id].finished == false, "Game already finished");
+	// 	require(player_scores.length == 2, "Invalid number of players");
+
+	// 	address player1 = tournaments[tournament_id].games[game_id].player_scores[0].addr;
+	// 	address player2 = tournaments[tournament_id].games[game_id].player_scores[1].addr;
+
+	// 	bool player1Found = (player_scores[0].addr == player1 || player_scores[1].addr == player1);
+	// 	bool player2Found = (player_scores[0].addr == player2 || player_scores[1].addr == player2);
+
+	// 	require(player1Found && player2Found, "Player not in game");
+
+	// 	if (player_scores[0].addr == player1) {
+	// 		tournaments[tournament_id].games[game_id].player_scores[0].score = player_scores[0].score;
+	// 		tournaments[tournament_id].games[game_id].player_scores[1].score = player_scores[1].score;
+	// 	} else {
+	// 		tournaments[tournament_id].games[game_id].player_scores[0].score = player_scores[1].score;
+	// 		tournaments[tournament_id].games[game_id].player_scores[1].score = player_scores[0].score;
+	// 	}
+
+	// 	tournaments[tournament_id].games[game_id].finished = true;
+	// }
+
 
 	function submitGameResultTournament(uint256 tournament_id, uint256 game_id, PlayerScore[] calldata player_scores)
 	external checkTournamentValid(tournament_id) checkTournamentOngoing(tournament_id) {
