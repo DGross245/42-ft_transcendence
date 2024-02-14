@@ -17,6 +17,7 @@ export const TTTGameEvents = () => {
 		countdownVisible,
 		setLineVisible,
 		isGameMode,
+		tournament
 	} = useGameState();
 	const { rematchIndex, setRematchIndex, setRequestRematch, setSendRequest } = useSocket();
 
@@ -31,7 +32,10 @@ export const TTTGameEvents = () => {
 			setWinner('');
 			setCountdownVisible(true);
 			setLineVisible(false)
-			updateGameState({ ...gameState, reset: false, gameOver: false })
+			updateGameState({ ...gameState, reset: false, gameOver: false})
+			if (tournament.id) {
+				updateGameState(prevState => ({ ...prevState, pause: true, gameId: "-1" }));
+			}
 		}
 	}, [gameState]);
 

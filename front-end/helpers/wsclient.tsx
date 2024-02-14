@@ -7,7 +7,7 @@ import { contract } from '@/pages/api/socket';
 
 export type WSClientType = {
 	createGame: () => Promise<string>;
-	waitingRoom: () => Promise<string>;
+	waitingRoom: () => Promise<{gameID: string, tournamentId: number, gameIndex: number}>;
 	joinGame: (gameId: string, gameType: string, isBot: boolean) => Promise<number>;
 	waitingForSocket: () => Promise<void>;
 	emitMessageToGame: (msg: string, topic: string, gameId: string) => void;
@@ -88,11 +88,11 @@ class WSClient {
 		});
 	}
 
-	async waitingRoom(): Promise<string> {
+	async waitingRoom(): Promise<{ gameID: string, tournamentId: number, gameIndex: number }> {
 		return new Promise((resolve, reject) => {
-			this.socket!.on('match-found', (gameID: string) => {
+			this.socket!.on('match-found', (gameID: string, tournamentId: number, gameIndex: number) => {
 				this.socket!.removeListener('match-found');
-				resolve(gameID);
+				resolve({ gameID, tournamentId, gameIndex});
 			});
 		});
 	}

@@ -18,9 +18,15 @@ export const TTTSocketEvents = (address) => {
 		setRequestRematch,
 		setSendRequest,
 		rematchIndex,
-		sendRequest,
-	} = useSocket();
-	const { gameState, updateGameState, setWinner, isGameMode, botState, setBot, setCountdownVisible } = useGameState();
+		sendRequest } = useSocket();
+	const {
+		gameState,
+		updateGameState,
+		setWinner,
+		isGameMode,
+		botState,
+		setTournament,
+		setBot } = useGameState();
 	const [isFull, setIsFull] = useState("");
 	const [playerSet, setPlayerSet] = useState(false);
 	const soundEngine = useSound();
@@ -39,16 +45,22 @@ export const TTTSocketEvents = (address) => {
 
 	useEffect(() => {
 		const waiting = async () => {
-			if (wsclient) {
-				wsclient.joinQueue(isGameMode ? "Qubic" : "TTT");
-				const msg = await wsclient.waitingRoom();
-				wsclient.updateStatus(true);
-				updateGameState({ ...gameState, gameId: msg});
+			if (wsclient && gameState.gameId === "-1") {
+				setIsFull("");
+				setPlayerSet(false);
+				const { gameID, tournamentId, gameIndex} = await wsclient.waitingRoom();
+				if (!tournamentId) {// TODO: Need to be edited for custome games (add another condition)
+					wsclient.joinQueue(isGameMode ? "Qubic" : "TTT");
+				} else {
+					setTournament({ id: tournamentId, index: gameIndex })
+				}
+				// wsclient.updateStatus(true);
+				updateGameState({ ...gameState, gameId: gameID});
 			}
 		}
 
 		waiting();
-	}, [wsclient]);
+	}, [wsclient, gameState.gameId]);
 
 	useEffect(() => {
 		const joinTheGame = async () => {
@@ -134,6 +146,7 @@ export const TTTSocketEvents = (address) => {
 				wsclient?.removeMessageListener(`Players-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
+	
 	}, [wsclient, gameState.gameId]);
 
 	useEffect(() => {

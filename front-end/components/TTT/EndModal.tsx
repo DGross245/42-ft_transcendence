@@ -12,7 +12,7 @@ import { PlayerScore } from "@/app/tournamentManager";
 // maybe change the View to something like go into queue 
 
 const EndModal = (topic, submitGameResultTournament) => {
-	const { winner, gameState, isGameMode, tournamentID, updateGameState} = useGameState();
+	const { winner, gameState, isGameMode, tournament, updateGameState} = useGameState();
 	const { wsclient } = useSocket();
 	const { disconnected, requestRematch, setSendRequest, sendRequest, playerState } = useSocket();
 	const { showModal, closeModal, openModal } = useUI();
@@ -53,7 +53,7 @@ const EndModal = (topic, submitGameResultTournament) => {
 			}
 
 			// TODO: 2 need to be replaced with the real game_ID
-			await submitGameResultTournament(tournamentID, 2, playerScore);
+			await submitGameResultTournament(tournament.id, tournament.index, playerScore);
 		}
 		updateGameState({ ...gameState, reset: true, pause: true });
 		wsclient?.requestTournament(topic, isGameMode ? 'Qubic' : 'TTT');

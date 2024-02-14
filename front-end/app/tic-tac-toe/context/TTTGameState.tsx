@@ -109,15 +109,18 @@ interface GameStateContextValue {
 	setLineVisible: Dispatch<SetStateAction<boolean>>,
 	symbolArray: string[],
 	setSymbolArray: Dispatch<SetStateAction<string[]>>,
-	tournamentID: number,
-	setTournamentID: Dispatch<SetStateAction<number>>,
+	tournament: {id: number, index: number},
+	setTournament: Dispatch<SetStateAction<{id: number, index: number}>>,
 }
 
 export const GameStateContext = createContext<GameStateContextValue>({} as GameStateContextValue);
 
 export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, children: ReactNode }> = ({ gameMode = false, isBotActive = false, children }) => {
 	const [isGameMode, setGameMode] = useState(gameMode);
-	const [tournamentID, setTournamentID] = useState(-1);
+	const [tournament, setTournament] = useState({
+		id: -1,
+		index: -1,
+	});
 	const [countdownVisible, setCountdownVisible] = useState(true);
 	const [currentTurn, setTurn] = useState('');
 	const [board, setBoard] = useState(initialBoard());
@@ -159,8 +162,8 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 		setBot,
 		symbolArray,
 		setSymbolArray,
-		tournamentID,
-		setTournamentID
+		tournament,
+		setTournament
 	};
 
 	return (

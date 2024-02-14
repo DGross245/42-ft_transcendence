@@ -46,7 +46,7 @@ export const matchmaking = ({sockets, gameType} : Matchmaking) => {
 			var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 
 			for (let i = 0; i < maxClients; i++) {
-				players[i].emit('match-found', id);
+				players[i].emit('match-found', id, -1, -1);
 				players[i].leave(gameType);
 			}
 		}
@@ -104,7 +104,7 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 				continue ; // ADD mechanic to enable bot for this round (or auto win)
 			else if (players[k] !== null) {
 				players[k]!.data.isInGame = true;
-				players[k]!.emit('match-found', id);
+				players[k]!.emit('match-found', id, tournamentID, i);
 			}
 		}
 

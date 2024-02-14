@@ -2,7 +2,7 @@ import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Server } from "Socket.IO";
 import crypto from 'crypto';
-import { Game, contract_address } from "@/app/tournamentManager";
+import { contract_address } from "@/app/tournamentManager";
 import { ethers } from 'ethers';
 import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
