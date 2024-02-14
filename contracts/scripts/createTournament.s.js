@@ -490,7 +490,8 @@ const contractAbi = [
 ];
 
 // Define your provider for the Goerli test network
-const providerUrl = 'https://eth-goerli.public.blastapi.io';
+// const providerUrl = 'https://eth-goerli.public.blastapi.io';
+const providerUrl = 'https://sepolia.base.org';
 const provider = new ethers.JsonRpcProvider(providerUrl);
 
 // Define your wallet with private key (for sending transactions)
@@ -513,17 +514,21 @@ const getPlayerParams = ['0x80A9eC86DCD58F657CD3f4b43C9CdaF76D65386D']; // Repla
 const setNameAndColor = 'setNameAndColor';
 const setNameAndColorParams = ['testPlayer', 1]; // Replace with actual parameters
 
+const getTournamentTree = 'getTournamentTree';
+const getTournamentTreeParams = [1]; // Replace with actual parameters
+
 // Call the function and handle the result
 async function callContractFunction() {
   try {
     // Make the contract call
     // const tx = await contract[createTournament](...createTournamentParams);
-    const tx = await contract[joinTournament](...joinTournamentParams);
+    // const tx = await contract[joinTournament](...joinTournamentParams);
     // const tx = await contract[getPlayer](...getPlayerParams);
     // const tx = await contract[setNameAndColor](...setNameAndColorParams);
+    const tx = await contract[getTournamentTree](...getTournamentTreeParams);
 
     // Process the result
-    console.log('Result:', tx.length);
+    console.log('Result:', tx);
   } catch (error) {
     console.error('Error:', error);
   }
