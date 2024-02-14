@@ -42,6 +42,7 @@ export const TTTSocketEvents = (address) => {
 			if (wsclient) {
 				wsclient.joinQueue(isGameMode ? "Qubic" : "TTT");
 				const msg = await wsclient.waitingRoom();
+				wsclient.updateStatus(true);
 				updateGameState({ ...gameState, gameId: msg});
 			}
 		}
@@ -57,13 +58,13 @@ export const TTTSocketEvents = (address) => {
 
 				newPlayerData.players[numClients] = {
 						name: "KEK",
+						addr: address,
 						color: 0xffffff,
 						number: numClients,
 						symbol: 'Undefined',
 				}
 				newPlayerData.client = numClients
 				updatePlayerState( newPlayerData );
-				console.log("num", numClients)
 			}
 		};
 
@@ -75,6 +76,7 @@ export const TTTSocketEvents = (address) => {
 		const sendPlayerData = () => {
 			const playerData = {
 				name: playerState.players[playerState.client].name,
+				addr: playerState.players[playerState.client].addr,
 				color: playerState.players[playerState.client].color,
 				number: playerState.players[playerState.client].number,
 				symbol: playerState.players[playerState.client].symbol,
@@ -96,6 +98,7 @@ export const TTTSocketEvents = (address) => {
 			let newPlayerData = { ...playerState };
 			newPlayerData.players[playerData.number] = {
 					name: playerData.name,
+					addr: playerData.addr,
 					color: playerData.color,
 					number: playerData.number,
 					symbol: playerData.symbol,

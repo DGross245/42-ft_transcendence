@@ -37,9 +37,9 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 	// const eloScore = await contract.getPlayerRankedElo("address") as number;
 	// const games = await contract.getTournamentTree(0) as Game[];
 
-	const getElo = async (address: `0x${string}` | undefined) => {
+	const getElo = async (address: string) => {
 		if (address) {
-			const eloScore = await contract.getPlayerRankedElo(address) as number;
+			const eloScore = (await contract.getPlayerRankedElo(address)) as number;
 			return (eloScore);
 		}
 	}
@@ -50,13 +50,23 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 		
 		io.on('connection', (socket) => {
 
-			socket.on('WalletAdress', (address: `0x${string}` | undefined) => {
-				socket.data = {
-					walletAddress: address,
-					elo: async () => {
-						return await getElo(address);
+			socket.on('WalletAdress', (addressObj: { address: string } | undefined) => {
+				if (addressObj) {
+					const { address } = addressObj;
+					console.log("ADR", address);
+					socket.data = {
+						walletAddress: address,
+						elo: async () => {
+							return await getElo(address);
+						},
+						isInGame: false
 					}
+					console.log("SET ADDR")
 				}
+			});
+
+			socket.on('Update-Status', (isInGame: boolean) => {
+				socket.data.isInGame = isInGame;
 			});
 
 			// socket.on('create-tournaments', async (gameType: string) => {
@@ -66,7 +76,6 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 
 			socket.on('tournament', async (tournamentID: number, gameType: string) => {
 				const sockets = await io.in(`tournament-${tournamentID}`).fetchSockets();
-				console.log("Tournament started");
 				tournamentHandler(sockets, tournamentID, gameType);
 			});
 

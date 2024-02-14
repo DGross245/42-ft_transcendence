@@ -16,7 +16,8 @@ export type WSClientType = {
 	joinQueue: (game: string) => void;
 	sendAddress: (address: `0x${string}` | undefined) => void;
 	joinTournament: (tournamentID: number) => void;
-	tournament: (tournamentID: number, gameType: string) => void;
+	requestTournament: (tournamentID: number, gameType: string) => void;
+	updateStatus: (isInGame: boolean) => void;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -54,10 +55,13 @@ class WSClient {
 		});
 	}
 
+	updateStatus(isInGame: boolean) {
+		this.socket!.emit('Update-Status');
+	}
 	joinTournament(tournamentID: number) {
 		this.socket!.emit('join-tournament', tournamentID);
 	}
-	tournament(tournamentID: number, gameType: string) {
+	requestTournament(tournamentID: number, gameType: string) {
 		this.socket!.emit('tournament', tournamentID, gameType);
 	}
 

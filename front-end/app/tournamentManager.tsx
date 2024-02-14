@@ -9,11 +9,11 @@ export const contract_address = '0x85a8454Ed9255C9Fd22f9741AA5bCc9532c556D2'
 
 // data structures for tournament manager contract
 interface Player {
-	address: string
+	addr: string
 	name: string
 	color: string
 }
-interface PlayerScore {
+export interface PlayerScore {
 	addr: string
 	score: number
 }
@@ -22,11 +22,11 @@ export interface Game {
 	finished: boolean
 }
 export interface Tournament {
-	master: string // addresse
+	master: string
 	duration_in_blocks: number
 	start_block: number
 	end_block: number
-	players: Player[]
+	players: string[]
 	games: Game[]
 }
 

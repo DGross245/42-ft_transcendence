@@ -7,11 +7,12 @@ import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import { useUI } from "@/app/tic-tac-toe/hooks/useUI";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
+import { PlayerScore } from "@/app/tournamentManager";
 
 // maybe change the View to something like go into queue 
 
-const EndModal = (topic) => {
-	const { winner, gameState, isGameMode } = useGameState();
+const EndModal = (topic, submitGameResultTournament) => {
+	const { winner, gameState, isGameMode, tournamentID, updateGameState} = useGameState();
 	const { wsclient } = useSocket();
 	const { disconnected, requestRematch, setSendRequest, sendRequest, playerState } = useSocket();
 	const { showModal, closeModal, openModal } = useUI();
@@ -40,8 +41,22 @@ const EndModal = (topic) => {
 			return ('Loses');
 	};
 
-	const sendKEK = () => {
-		wsclient?.tournament(topic, 'TTT');
+	const sendScoreAndContinue = async () => {
+		if (playerState.client === 0) {
+			const maxClient = isGameMode ? 3 : 2;
+			const playerScore: PlayerScore[] = [];
+	
+			for (let i = 0; i < maxClient; i++) {
+				playerScore.push({
+					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1,
+				})
+			}
+
+			// TODO: 2 need to be replaced with the real game_ID
+			await submitGameResultTournament(tournamentID, 2, playerScore);
+		}
+		updateGameState({ ...gameState, reset: true, pause: true });
+		wsclient?.requestTournament(topic, isGameMode ? 'Qubic' : 'TTT');
 	}
 
 	useEffect (() => {
@@ -77,35 +92,41 @@ const EndModal = (topic) => {
 			>
 				<ModalContent style={{ position: 'relative', overflow: 'visible' }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-					{showModal && (
-						<div style={{ marginTop: '20px' }}>
-							<img
-								src={getOwnImage()}
-								style={{
-									width: winner === 'draw' ? '160px' : '80px',
-									height: '80px',
-								}}
-								alt="Image"
-							/>
-						</div>
-					)}
-					<ModalHeader className="flex flex-col gap-1 items-center justify-center">
-						{ showResult }
-					</ModalHeader>
+						{showModal && (
+							<div style={{ marginTop: '20px' }}>
+								<img
+									src={getOwnImage()}
+									style={{
+										width: winner === 'draw' ? '160px' : '80px',
+										height: '80px',
+									}}
+									alt="Image"
+								/>
+							</div>
+						)}
+						<ModalHeader className="flex flex-col gap-1 items-center justify-center">
+							{ showResult }
+						</ModalHeader>
 					</div>
 					<ModalBody style={{ textAlign: 'center' }} >
 						{ disconnected && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
-					<Button color="danger" variant="ghost" onClick={closeModal}>
-						Leave
-					</Button>
-					<Button color="primary" isDisabled={disconnected} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
-						Rematch
-					</Button>
-					<Button color="success" variant="ghost" onClick={sendKEK}>
-						View
-					</Button>
+						<Button color="danger" variant="ghost" onClick={closeModal}>
+							Leave
+						</Button>
+						{tournamentID ? (
+							<Button color="primary" variant={"shadow"} onClick={() => sendScoreAndContinue()} >
+								Next
+							</Button>
+						):(
+							<Button color="primary" isDisabled={disconnected} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
+								Rematch
+							</Button>
+						)}
+						<Button color="success" variant="ghost" onClick={sendScoreAndContinue}>
+							View
+						</Button>
 					</ModalFooter>
 				</ModalContent>
 			</Modal>

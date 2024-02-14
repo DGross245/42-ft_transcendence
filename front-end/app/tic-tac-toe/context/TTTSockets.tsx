@@ -10,6 +10,7 @@ import { WSClientType } from "@/helpers/wsclient";
 
 export interface Player {
 	name: string;
+	addr: string;
 	color: number;
 	number: number;
 	symbol: string,
@@ -44,6 +45,7 @@ export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children:
 	const [playerState, setPlayerState] = useState({
 		players: Array.from({ length: 3 }, () => ({
 			name: "None",
+			addr: "UNDEFINED",
 			color: 0xffffff,
 			number: -1,
 			symbol: "",

@@ -22,11 +22,12 @@ import { useSocket } from "../hooks/useSocket";
 
 import { useWeb3ModalAccount, useWeb3ModalProvider } from "@web3modal/ethers5/react";
 import { ethers, BigNumber } from 'ethers';
-import { Tournament, contract_address } from "@/app/tournamentManager";
+import { PlayerScore, Tournament, contract_address } from "@/app/tournamentManager";
 import scoresAbi from '@/public/tournamentManager_abi.json';
 
 // FIXME: Sometimes if host is player2, his symbol isnt set and the game crashes
 
+// TODO: Add a repeat or rematch loop for tournament if the gameresult is a draw
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
  * It handles game state, user interactions, and 3D rendering of the game board.
@@ -51,6 +52,16 @@ const TTTScene = () => {
 		return tmContract
 	}
 
+	async function submitGameResultTournament(tournament_id: number, game_id: number, scores: PlayerScore[]) {
+		const tmContract = await prepareContract()
+		// const scores: PlayerScore[] = [
+		// 	// addresses HAVE to differ from each other, otherwise second score submission will overwrite the first one
+		// 	{ player: '0x0000000000', score: 1 },
+		// 	{ player: '0x4242424242', score: 2 },
+		// ]
+		await tmContract.submitGameResultTournament(tournament_id, game_id, scores)
+	}
+
 	async function createTournament(duration_in_blocks: number) {
 		const tmContract = await prepareContract();
 		const result = await tmContract.createTournament(duration_in_blocks);
@@ -68,10 +79,10 @@ const TTTScene = () => {
 		await tmContract.startTournament(tournament_id)
 	}
 
-	async function setNameAndColor(name: string, color: string) {
-		const tmContract = await prepareContract()
-		await tmContract.setNameAndColor(name, color)
-	}
+	// async function setNameAndColor(name: string, color: string) {
+	// 	const tmContract = await prepareContract()
+	// 	await tmContract.setNameAndColor(name, color)
+	// }
 
 	const onTopicChange = (e: any) => {
 		setTopic(e.target.value);
@@ -83,9 +94,9 @@ const TTTScene = () => {
 		setTopic((await getTournaments()).length - 1);
 	}
 
-	const onSetNameAndColor = async () => {
-		await setNameAndColor('KEK', '0x00ff00');
-	}
+	// const onSetNameAndColor = async () => {
+	// 	await setNameAndColor('KEK', '0x00ff00');
+	// }
 
 	const onJoinTournament = async () =>{
 		console.log("Topic", topic)
@@ -95,7 +106,7 @@ const TTTScene = () => {
 
 	const onStartTournament = async () => {
 		await startTournament(topic);
-		wsclient?.tournament(topic, 'TTT');
+		wsclient?.requestTournament(topic, 'TTT');
 	}
 
 	async function getTournaments() {
@@ -110,9 +121,12 @@ const TTTScene = () => {
 	}
 
 	const onkek = () => {
-		wsclient?.tournament(topic, 'TTT');
+		wsclient?.requestTournament(topic, 'TTT');
 	}
 
+	const onJoin = () => {
+		wsclient?.joinTournament(topic);
+	} 
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 				<input
@@ -121,7 +135,8 @@ const TTTScene = () => {
 					onChange={onTopicChange}
 				/>
 			<button onClick={onCreateTournament}> Create Tournament </button>
-			<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
+			<button onClick={onJoin}>  JOIN  </button>
+			{/* <button onClick={onSetNameAndColor}> NAMEANDCOLOR </button> */}
 			<button onClick={onJoinTournament}> Join Tournament </button>
 			<button onClick={onStartTournament}> Start Tournament </button>
 			<button onClick={onGetTournaments}> lol Tournament </button>
@@ -143,7 +158,7 @@ const TTTScene = () => {
 				<Table />
 				<Environment preset="city" />
 			</Canvas>
-			<EndModal topic={topic} />
+			<EndModal topic={topic} submitGameResultTournament={submitGameResultTournament} />
 		</div> 
 	);
 }
