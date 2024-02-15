@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-// @todo add events
-// @todo add elo score function for matchmaking
 contract TournamentManager {
 
 	/* -------------------------------------------------------------------------- */
@@ -47,6 +45,7 @@ contract TournamentManager {
 	Tournament _tournament;
 
 	event TournamentCreated(uint256 tournament_id);
+	event TournamentStarted(uint256 tournament_id);
 	event GameResultSubmitted(bool success);
 
 	/* -------------------------------------------------------------------------- */
@@ -179,6 +178,8 @@ contract TournamentManager {
 		createTournamentTree(tournament_id);
 		tournaments[tournament_id].start_block = block.number;
 		tournaments[tournament_id].end_block = block.number + tournaments[tournament_id].duration_in_blocks;
+
+		emit TournamentStarted(tournament_id);
 	}
 
 	// function submitGameResultTournament(uint256 tournament_id, uint256 game_id, PlayerScore[] calldata player_scores)

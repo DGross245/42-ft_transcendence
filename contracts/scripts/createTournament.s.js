@@ -1,7 +1,7 @@
 const { ethers } = require('ethers');
 
 // Define your contract address and ABI
-const contractAddress = '0x181242Cc8290CC779cd267520c27527aCc465578'; // Replace with your contract address
+const contractAddress = '0x78eB50eE209a4DEE099Acc422c650825FD5D1771'; // Replace with your contract address
 const contractAbi = [
   {
     "inputs": [
