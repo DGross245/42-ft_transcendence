@@ -32,6 +32,8 @@ class WSClient {
 		return ;
 	}
 
+	// @note wait for socket initialization
+	// @note first to be called
 	private async waitForSocket(): Promise<void> {
 		if (!this.socket) {
 			await this.socketInitialized;
@@ -54,6 +56,9 @@ class WSClient {
 		return ;
 	}
 
+	// @note second function to be called
+	// @note see PongSocketEvents.tsx for usage
+	// @note gameId can be null for cli-pong
 	async joinGame(gameId: string, gameType: string, isBot: boolean): Promise<number> {
 		return new Promise((resolve, reject) => {
 			this.socket!.emit('join-game', gameId, gameType, isBot);
@@ -64,6 +69,7 @@ class WSClient {
 		});
 	}
 
+	// @note third: emitMessageToGame to send player data
 	emitMessageToGame(msg: string, topic: string, gameId: string): void {
 		if (!this.socket)
 			console.error("Sockets not defined, tried to send topic ", topic);
@@ -71,6 +77,7 @@ class WSClient {
 			this.socket!.emit('send-message-to-game', msg, topic, gameId);
 	}
 
+	// @note third: addMessageListener to get opponent data
 	addMessageListener(topic: string, gameId: string, callback: (msg: string) => void): void {
 		if (!this.socket)
 			console.error("Sockets not defined, tried to listen to topic ", topic);
@@ -85,6 +92,19 @@ class WSClient {
 			this.socket!.removeListener(`message-${gameId}-${topic}`);
 	}
 }
+
+// course of things:
+	// create Socket
+	// joinGame
+	// addMessageListener if game full
+	// if full
+		// emitMessageToGame with my player data
+		// addMessageListener for opponent data
+	// removeMessageListener?
+	// gameplay
+		// addMessageListener for opponent paddle data
+		// emitMessageToGame with my paddle data
+		// addMessageListener for opponent ball data
 
 /* -------------------------------------------------------------------------- */
 /*                                    Hook                                    */
