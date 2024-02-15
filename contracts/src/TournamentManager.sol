@@ -47,6 +47,7 @@ contract TournamentManager {
 	Tournament _tournament;
 
 	event TournamentCreated(uint256 tournament_id);
+	event GameResultSubmitted(bool success);
 
 	/* -------------------------------------------------------------------------- */
 	/*                                  Modifiers                                 */
@@ -223,6 +224,8 @@ contract TournamentManager {
 			require (player_found, "Player not in game");
 		}
 		tournaments[tournament_id].games[game_id].finished = true;
+
+		emit GameResultSubmitted(true);
 	}
 
 	/* -------------------------------------------------------------------------- */
@@ -242,6 +245,8 @@ contract TournamentManager {
 		game.player_scores = scores;
 		game.finished = true;
 		ranked_games.push(game);
+
+		emit GameResultSubmitted(true);
 	}
 
 	/* -------------------------------------------------------------------------- */
