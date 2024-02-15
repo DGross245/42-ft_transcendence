@@ -35,7 +35,6 @@ export const TTTSocketEvents = (address) => {
 		const waitForSocket = async () => {
 			if (newClient) {
 				await newClient.waitingForSocket();
-				console.log("KEK", address)
 				newClient?.sendAddress(address);
 				setWsclient(newClient);
 			}
@@ -50,9 +49,11 @@ export const TTTSocketEvents = (address) => {
 				setIsFull("");
 				setPlayerSet(false);
 				const { gameID, tournamentId, gameIndex} = await wsclient.waitingRoom();
-				if (!tournamentId) {// TODO: Need to be edited for custome games (add another condition)
+				if (tournamentId === -1 && !gameID.includes("Costume-Game-")) {// TODO: Need to be edited for custome games (add another condition)
 					wsclient.joinQueue(isGameMode ? "Qubic" : "TTT");
+					console.log("QUEEUE")
 				} else {
+					console.log(tournamentId, gameIndex)
 					setTournament({ id: tournamentId, index: gameIndex })
 				}
 				// wsclient.updateStatus(true);
@@ -66,11 +67,8 @@ export const TTTSocketEvents = (address) => {
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (wsclient) {
-				console.log("CHECK")
 				if (address) {
 					const { walletAddress } = address;
-					console.log("POINT", walletAddress, address)
-					console.log("k", address);
 					const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
 					let newPlayerData = { ...playerState };
 	
@@ -178,21 +176,21 @@ export const TTTSocketEvents = (address) => {
 	}, [wsclient, playerState, gameState, gameState.gameOver, gameState.gameId]);
 
 	useEffect(() => {
-		if (wsclient && gameState.gameId !== "-1") {
-			const rematch = (msg: string) => {
-				if (msg === "true") {
-					setRematchIndex(rematchIndex + 1);
-					setRequestRematch(true);
-				}
-			};
-			
+		const rematch = (msg: string) => {
+			if (msg === "true") {
+				setRematchIndex(rematchIndex + 1);
+				setRequestRematch(true);
+			}
+		};
+
+		if (wsclient) {
 			wsclient?.addMessageListener(`Request-Rematch-${gameState.gameId}`, gameState.gameId, rematch)
 			
 			return () => {
 				wsclient?.removeMessageListener(`Request-Rematch-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, rematchIndex]);
+	}, [wsclient, rematchIndex, gameState.gameId]);
 
 	useEffect(() => {
 		if (sendRequest) {

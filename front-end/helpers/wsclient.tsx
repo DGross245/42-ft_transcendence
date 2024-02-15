@@ -6,7 +6,8 @@ import crypto from 'crypto';
 import { contract } from '@/pages/api/socket';
 
 export type WSClientType = {
-	createGame: () => Promise<string>;
+	// createGame: () => Promise<string>;
+	createGame: () => void;
 	waitingRoom: () => Promise<{gameID: string, tournamentId: number, gameIndex: number}>;
 	joinGame: (gameId: string, gameType: string, isBot: boolean) => Promise<number>;
 	waitingForSocket: () => Promise<void>;
@@ -44,17 +45,20 @@ class WSClient {
 		}
 	}
 
-	async createGame(): Promise<string> {
-		return new Promise((resolve, reject) => {
-			var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
-			this.socket!.emit('create-game', id);
-			this.socket!.on(`game-created-${id}`, (msg: string) => {
-				this.socket!.removeListener(`game-created-${msg}`);
-				resolve(msg);
-			});
-		});
-	}
+	// async createGame(): Promise<string> {
+	// 	return new Promise((resolve, reject) => {
+	// 		var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
+	// 		this.socket!.emit('create-game', id);
+	// 		this.socket!.on(`game-created-${id}`, (msg: string) => {
+	// 			this.socket!.removeListener(`game-created-${msg}`);
+	// 			resolve(msg);
+	// 		});
+	// 	});
+	// }
 
+	createGame() {
+		this.socket!.emit('create-game');
+	}
 	async updateStatus(isInGame: boolean) : Promise<boolean> {
 		return new Promise((resolve, reject) => {
 			this.socket!.emit('Update-Status', isInGame);

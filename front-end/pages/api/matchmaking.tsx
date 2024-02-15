@@ -106,11 +106,9 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 				continue ; // ADD mechanic to enable bot for this round (or auto win)
 			else if (players[k] !== null) {
 				players[k]!.data.isInGame = true;
-				console.log(`Player${k}:`, players[k]?.data.walletAddress)
 				players[k]!.emit('match-found', id, tournamentID, i);
 			}
 		}
 
-		console.log("MATCH FOUND")
 	}
 }

@@ -116,7 +116,7 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 						<Button color="danger" variant="ghost" onClick={closeModal}>
 							Leave
 						</Button>
-						{tournament.id ? (
+						{tournament.id !== -1 ? (
 							<Button color="primary" variant={"shadow"} onClick={() => sendScoreAndContinue()} >
 								Next
 							</Button>

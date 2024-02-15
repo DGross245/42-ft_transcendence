@@ -117,9 +117,16 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				});
 			});
 
-			socket.on('create-game', (msg: string) => {
+			// socket.on('create-game', (msg: string) => {
+			// 	var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
+			// 	socket.emit(`game-created-${msg}`, id);
+			// });
+
+			socket.on('create-game', () => {
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
-				socket.emit(`game-created-${msg}`, id);
+				const customeGame = `Costume-Game-${id}`;
+				socket.emit('match-found', customeGame, -1, -1);
+				console.log(customeGame);
 			});
 
 			socket.on('send-message-to-game', (msg: string, topic: string, gameId: string) => {
