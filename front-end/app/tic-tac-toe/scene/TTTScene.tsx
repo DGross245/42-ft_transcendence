@@ -77,7 +77,8 @@ const TTTScene = () => {
 
 	async function startTournament(tournament_id: number){
 		const tmContract = await prepareContract()
-		await tmContract.startTournament(tournament_id)
+		const result = await tmContract.startTournament(tournament_id)
+		await result.wait();
 	}
 
 	async function setNameAndColor(name: string, color: string) {
