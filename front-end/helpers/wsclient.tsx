@@ -93,6 +93,7 @@ class WSClient {
 	}
 }
 
+// @note daniels function implementations are in PongSocketEvents
 // course of things:
 	// create Socket
 	// joinGame
