@@ -35,6 +35,7 @@ export const TTTSocketEvents = (address) => {
 		const waitForSocket = async () => {
 			if (newClient) {
 				await newClient.waitingForSocket();
+				console.log("KEK", address)
 				newClient?.sendAddress(address);
 				setWsclient(newClient);
 			}
@@ -65,18 +66,24 @@ export const TTTSocketEvents = (address) => {
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (wsclient) {
-				const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
-				let newPlayerData = { ...playerState };
-
-				newPlayerData.players[numClients] = {
-						name: "KEK",
-						addr: address,
-						color: 0xffffff,
-						number: numClients,
-						symbol: 'Undefined',
+				console.log("CHECK")
+				if (address) {
+					const { walletAddress } = address;
+					console.log("POINT", walletAddress, address)
+					console.log("k", address);
+					const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
+					let newPlayerData = { ...playerState };
+	
+					newPlayerData.players[numClients] = {
+							name: "KEK",
+							addr: walletAddress,
+							color: 0xffffff,
+							number: numClients,
+							symbol: 'Undefined',
+					}
+					newPlayerData.client = numClients
+					updatePlayerState( newPlayerData );
 				}
-				newPlayerData.client = numClients
-				updatePlayerState( newPlayerData );
 			}
 		};
 

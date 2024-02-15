@@ -59,7 +59,8 @@ const TTTScene = () => {
 		// 	{ player: '0x0000000000', score: 1 },
 		// 	{ player: '0x4242424242', score: 2 },
 		// ]
-		await tmContract.submitGameResultTournament(tournament_id, game_id, scores)
+		const result = await tmContract.submitGameResultTournament(tournament_id, game_id, scores)
+		await result.wait();
 	}
 
 	async function createTournament(duration_in_blocks: number) {
@@ -79,10 +80,10 @@ const TTTScene = () => {
 		await tmContract.startTournament(tournament_id)
 	}
 
-	// async function setNameAndColor(name: string, color: string) {
-	// 	const tmContract = await prepareContract()
-	// 	await tmContract.setNameAndColor(name, color)
-	// }
+	async function setNameAndColor(name: string, color: string) {
+		const tmContract = await prepareContract()
+		await tmContract.setNameAndColor(name, color)
+	}
 
 	const onTopicChange = (e: any) => {
 		setTopic(e.target.value);
@@ -90,13 +91,13 @@ const TTTScene = () => {
 
 	const onCreateTournament = async () => {
 		if (!wsclient) return;
-		await createTournament(3000);
+		await createTournament(300000000);
 		setTopic((await getTournaments()).length - 1);
 	}
 
-	// const onSetNameAndColor = async () => {
-	// 	await setNameAndColor('KEK', '0x00ff00');
-	// }
+	const onSetNameAndColor = async () => {
+		await setNameAndColor('KEK', '0x00ff00');
+	}
 
 	const onJoinTournament = async () =>{
 		console.log("Topic", topic)
@@ -136,7 +137,7 @@ const TTTScene = () => {
 				/>
 			<button onClick={onCreateTournament}> Create Tournament </button>
 			<button onClick={onJoin}>  JOIN  </button>
-			{/* <button onClick={onSetNameAndColor}> NAMEANDCOLOR </button> */}
+			<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
 			<button onClick={onJoinTournament}> Join Tournament </button>
 			<button onClick={onStartTournament}> Start Tournament </button>
 			<button onClick={onGetTournaments}> lol Tournament </button>
@@ -147,7 +148,7 @@ const TTTScene = () => {
 				<Grid />
 				<TTTBot />
 				<TTTGameEvents />
-				<TTTSocketEvents address={address} />
+				<TTTSocketEvents walletAddress={address} />
 				<FieldLayers />
 				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
 				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />

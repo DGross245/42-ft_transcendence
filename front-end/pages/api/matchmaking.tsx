@@ -80,6 +80,8 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 		var players = [];
 		let allPlayersAvailable = true;
 
+		if (games[i].finished)
+			continue ;
 		for (let j = 0; j < maxClients; j++) {
 			const player = findPlayer(sockets, games[i].player_scores[j].addr);
 			players.push(player);
@@ -94,7 +96,7 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 			}
 		}
 
-		if (!allPlayersAvailable)
+		if (allPlayersAvailable === false)
 			continue ;
 
 		var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
@@ -104,6 +106,7 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 				continue ; // ADD mechanic to enable bot for this round (or auto win)
 			else if (players[k] !== null) {
 				players[k]!.data.isInGame = true;
+				console.log(`Player${k}:`, players[k]?.data.walletAddress)
 				players[k]!.emit('match-found', id, tournamentID, i);
 			}
 		}

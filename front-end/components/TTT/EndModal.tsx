@@ -11,7 +11,7 @@ import { PlayerScore } from "@/app/tournamentManager";
 
 // maybe change the View to something like go into queue 
 
-const EndModal = (topic, submitGameResultTournament) => {
+const EndModal = ({topic, submitGameResultTournament}) => {
 	const { winner, gameState, isGameMode, tournament, updateGameState} = useGameState();
 	const { wsclient } = useSocket();
 	const { disconnected, requestRematch, setSendRequest, sendRequest, playerState } = useSocket();
@@ -51,12 +51,13 @@ const EndModal = (topic, submitGameResultTournament) => {
 					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1,
 				})
 			}
-
-			// TODO: 2 need to be replaced with the real game_ID
 			await submitGameResultTournament(tournament.id, tournament.index, playerScore);
 		}
-		updateGameState({ ...gameState, reset: true, pause: true });
-		wsclient?.requestTournament(topic, isGameMode ? 'Qubic' : 'TTT');
+		const status = await wsclient?.updateStatus(false);
+		if (status) {
+			updateGameState({ ...gameState, reset: true, pause: true, gameId: "-1" });
+			wsclient?.requestTournament(topic, isGameMode ? 'Qubic' : 'TTT');
+		}
 	}
 
 	useEffect (() => {
@@ -115,7 +116,7 @@ const EndModal = (topic, submitGameResultTournament) => {
 						<Button color="danger" variant="ghost" onClick={closeModal}>
 							Leave
 						</Button>
-						{tournamentID ? (
+						{tournament.id ? (
 							<Button color="primary" variant={"shadow"} onClick={() => sendScoreAndContinue()} >
 								Next
 							</Button>

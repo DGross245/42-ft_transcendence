@@ -50,23 +50,23 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 		
 		io.on('connection', (socket) => {
 
-			socket.on('WalletAdress', (addressObj: { address: string } | undefined) => {
+			socket.on('WalletAdress', (addressObj: { walletAddress: string } | undefined) => {
 				if (addressObj) {
-					const { address } = addressObj;
-					console.log("ADR", address);
+					const { walletAddress } = addressObj;
 					socket.data = {
-						walletAddress: address,
+						walletAddress: walletAddress,
 						elo: async () => {
-							return await getElo(address);
+							return await getElo(walletAddress);
 						},
 						isInGame: false
 					}
-					console.log("SET ADDR")
 				}
 			});
 
 			socket.on('Update-Status', (isInGame: boolean) => {
 				socket.data.isInGame = isInGame;
+				console.log(`SERVER TEST socket-${socket.data.walletAddress}`, socket.data.isInGame)
+				socket.emit('Status-Changed', true);
 			});
 
 			// socket.on('create-tournaments', async (gameType: string) => {
@@ -80,7 +80,6 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			});
 
 			socket.on('join-tournament', (tournamentID: number) => {
-				console.log("SOCKET JOINED", tournamentID);
 				socket.join(`tournament-${tournamentID}`);
 				socket.emit(`tournament-${tournamentID}-joined`, tournamentID);
 			});
