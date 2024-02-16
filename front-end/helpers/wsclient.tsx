@@ -20,7 +20,7 @@ export type WSClientType = {
 	sendAddress: (address: `0x${string}` | undefined) => void;
 	joinTournament: (tournamentID: number) => void;
 	requestTournament: (tournamentID: number, gameType: string) => void;
-	updateStatus: (isInGame: boolean) => Promise<boolean>;
+	updateStatus: (isInGame: boolean, gameID: string) => Promise<boolean>;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -61,9 +61,9 @@ class WSClient {
 	createGame() {
 		this.socket!.emit('create-game');
 	}
-	async updateStatus(isInGame: boolean) : Promise<boolean> {
+	async updateStatus(isInGame: boolean, gameID: string) : Promise<boolean> {
 		return new Promise((resolve, reject) => {
-			this.socket!.emit('Update-Status', isInGame);
+			this.socket!.emit('Update-Status', isInGame, gameID);
 			this.socket!.on('Status-Changed', (status: boolean) => {
 				this.socket!.removeListener('Status-Changed');
 				resolve(status);

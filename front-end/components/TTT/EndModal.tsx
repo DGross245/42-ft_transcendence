@@ -12,12 +12,29 @@ import { PlayerScore } from "@/app/tournamentManager";
 // maybe change the View to something like go into queue 
 
 const EndModal = ({topic, submitGameResultTournament}) => {
-	const { winner, gameState, isGameMode, tournament, updateGameState} = useGameState();
-	const { wsclient } = useSocket();
-	const { disconnected, requestRematch, setSendRequest, sendRequest, playerState } = useSocket();
+	// Provider hooks
+	const {
+		winner,
+		gameState,
+		isGameMode,
+		tournament,
+		updateGameState
+	} = useGameState();
+	const {
+		disconnected,
+		requestRematch,
+		setSendRequest,
+		sendRequest,
+		playerState,
+		wsclient
+	} = useSocket();
+
+	// Normal hooks
+	const escape = useKey(['Escape']);
+
+	// State variables
 	const { showModal, closeModal, openModal } = useUI();
 	const [showResult, setShowResult] = useState("");
-	const escape = useKey(['Escape']);
 
 	const getOwnImage = () => {
 		if (playerState.players[playerState.client].symbol === 'O')
@@ -45,7 +62,7 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 		if (playerState.client === 0 || disconnected) {
 			const maxClient = isGameMode ? 3 : 2;
 			const playerScore: PlayerScore[] = [];
-	
+
 			for (let i = 0; i < maxClient; i++) {
 				playerScore.push({
 					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1,
@@ -53,7 +70,7 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 			}
 			await submitGameResultTournament(tournament.id, tournament.index, playerScore);
 		}
-		const status = await wsclient?.updateStatus(false);
+		const status = await wsclient?.updateStatus(false, gameState.gameId);
 		if (status) {
 			updateGameState({ ...gameState, reset: true, pause: true, gameId: "-1" });
 			wsclient?.requestTournament(topic, isGameMode ? 'Qubic' : 'TTT');
