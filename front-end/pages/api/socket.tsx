@@ -2,7 +2,7 @@ import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Server } from "Socket.IO";
 import crypto from 'crypto';
-import { contract_address } from "@/app/tournamentManager";
+import { Game, contract_address } from "@/app/tournamentManager";
 import { ethers } from 'ethers';
 import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
@@ -16,11 +16,6 @@ interface SocketApiResponse extends NextApiResponse {
 		io?: Server | undefined;
 	  };
 	};
-}
-
-interface SocketData {
-	getElo: number;
-	address: number;
 }
 
 // TODO: Maybe replacing the Rematch button with a continue button in tournaments / div modal
@@ -63,23 +58,12 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				}
 			});
 
-			socket.on('Update-Status', (isInGame: boolean) => {
-				socket.data.isInGame = isInGame;
-				console.log(`SERVER TEST socket-${socket.data.walletAddress}`, socket.data.isInGame)
-				socket.emit('Status-Changed', true);
-			});
-
-			// socket.on('create-tournaments', async (gameType: string) => {
-			// 	const tournamentID = await contract.createTournament(10000000);
-			// 	socket.emit('tournament-created', tournamentID);
-			// });
-
 			socket.on('tournament', async (tournamentID: number, gameType: string) => {
 				const sockets = await io.in(`tournament-${tournamentID}`).fetchSockets();
 				tournamentHandler(sockets, tournamentID, gameType);
 			});
 
-			socket.on('join-tournament', (tournamentID: number) => {
+			socket.on('join-tournament', async (tournamentID: number) => {
 				socket.join(`tournament-${tournamentID}`);
 				socket.emit(`tournament-${tournamentID}-joined`, tournamentID);
 			});
@@ -89,16 +73,21 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				const sockets = await io.in(gameType).fetchSockets();
 				matchmaking({sockets, gameType});
 			});
+			
+			socket.on('Update-Status', (isInGame: boolean) => {
+				socket.data.isInGame = isInGame;
+				socket.emit('Status-Changed', true);
+			});
 
-			socket.on('join-game', ( gameId: string, gameType: string, isBot: boolean ) => {
+			socket.on('join-game', ( gameId: string, gameType: string, offset: number ) => {
 				const room = io.sockets.adapter.rooms.get(gameId);
 				const numClients = room ? room.size : 0;
-				let maxClients = isBot ? 1 : 2;
+				let maxClients = 2 - offset;
 
 				if (gameType === "OneForAll")
-					maxClients = isBot ? 3: 4;
+					maxClients = 4 - offset;
 				else if (gameType === "Qubic")
-					maxClients = isBot ? 2: 3;
+					maxClients = 3 - offset;
 
 				if (numClients < maxClients) {
 						socket.join(gameId);
@@ -126,7 +115,6 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 				const customeGame = `Costume-Game-${id}`;
 				socket.emit('match-found', customeGame, -1, -1);
-				console.log(customeGame);
 			});
 
 			socket.on('send-message-to-game', (msg: string, topic: string, gameId: string) => {

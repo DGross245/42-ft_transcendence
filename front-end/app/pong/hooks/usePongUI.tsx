@@ -24,7 +24,6 @@ export const usePongUI = () => {
 			const delay = 1000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
-				console.log(winner)
 				if (winner === String(playerState.players[0].number + 1) || (winner === '' && disconnected))
 					soundEngine?.playSound("win");
 				else

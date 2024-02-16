@@ -6,6 +6,8 @@ import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 
+// TODO: WORKING ON CASE WHERE PLAYER ISNT IN THE TOURNAMENT ANYMORE : still online players need to skip this game (auto win)
+
 export const TTTSocketEvents = (address) => {
 	const newClient = useWSClient();
 	const {
@@ -29,6 +31,8 @@ export const TTTSocketEvents = (address) => {
 		setBot } = useGameState();
 	const [isFull, setIsFull] = useState("");
 	const [playerSet, setPlayerSet] = useState(false);
+	const [skip, setSkip] = useState({ _skip: false, address: "" })
+	const [symbolSet, setSymbolSet] = useState(false);
 	const soundEngine = useSound();
 
 	useEffect(() => {
@@ -44,19 +48,29 @@ export const TTTSocketEvents = (address) => {
 	}, [newClient]);
 
 	useEffect(() => {
+		const skipGame = (msg: string) => {
+			setSkip({ _skip: true, address: msg });
+		};
+
+		if (wsclient) {
+			wsclient?.listenToSkip(skipGame);
+			return () => {
+				wsclient?.removeSkipListener();
+			} 
+		}
+	}, [wsclient]);
+
+	useEffect(() => {
 		const waiting = async () => {
 			if (wsclient && gameState.gameId === "-1") {
 				setIsFull("");
 				setPlayerSet(false);
-				const { gameID, tournamentId, gameIndex} = await wsclient.waitingRoom();
+				const { gameID, tournamentId, gameIndex } = await wsclient.waitingRoom();
 				if (tournamentId === -1 && !gameID.includes("Costume-Game-")) {// TODO: Need to be edited for custome games (add another condition)
 					wsclient.joinQueue(isGameMode ? "Qubic" : "TTT");
-					console.log("QUEEUE")
 				} else {
-					console.log(tournamentId, gameIndex)
 					setTournament({ id: tournamentId, index: gameIndex })
 				}
-				// wsclient.updateStatus(true);
 				updateGameState({ ...gameState, gameId: gameID});
 			}
 		}
@@ -80,6 +94,17 @@ export const TTTSocketEvents = (address) => {
 							symbol: 'Undefined',
 					}
 					newPlayerData.client = numClients
+					if (skip._skip) {
+						newPlayerData.players[1] = {
+							name: "Unknown",
+							addr: skip.address,
+							color: 0xffffff,
+							number: 1,
+							symbol: 'Undefined',
+						}
+						setPlayerSet(true);
+						updateGameState({ ...gameState, pause: false });
+					}
 					updatePlayerState( newPlayerData );
 				}
 			}
@@ -167,6 +192,9 @@ export const TTTSocketEvents = (address) => {
 				}
 			};
 			
+			if (skip._skip && gameState.gameId !== "-1" && symbolSet)
+				endGame("SKIP");
+
 			wsclient?.addMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId, endGame)
 			
 			return () => {
@@ -250,6 +278,7 @@ export const TTTSocketEvents = (address) => {
 
 			if (botState.isActive)
 				setBot({ ...botState, symbol: playerState.players[botClientNumber].symbol })
+			setSymbolSet(true);
 		};
 	
 		if (playerSet && playerState.client === 0) {

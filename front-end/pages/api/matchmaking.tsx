@@ -57,11 +57,12 @@ export const matchmaking = ({sockets, gameType} : Matchmaking) => {
 
 const findPlayer = (sockets: Matchmaking['sockets'], address: string) => {
 	const player = sockets.find(socket => socket.data.walletAddress === address);
-	if (player)
-		return (player)
+	if (player) {
+		return ({ player, address })
+	}
 	else {
-		console.error("Player not found in tournaments") // implement function to auto win the game for current game
-		return (null);
+		// player socket is not in the tournament
+		return ({ player : null, address});
 	}
 }
 
@@ -79,6 +80,7 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 	for (let i = 0; i < games.length; i++) {
 		var players = [];
 		let allPlayersAvailable = true;
+		let skipGame = false;
 
 		if (games[i].finished)
 			continue ;
@@ -88,9 +90,10 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 		}
 
 		for(let j = 0; j < maxClients; j++) {
-			if (players[j] === null)
-				continue
-			else if (players[j]?.data.isInGame) {
+			if (players[j].player === null) {
+				skipGame = true;
+			}
+			else if (players[j].player?.data.isInGame) {
 				allPlayersAvailable = false;
 				break ;
 			}
@@ -102,11 +105,17 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 		var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 
 		for (let k = 0; k < maxClients; k++) {
-			if (players[k] === null)
-				continue ; // ADD mechanic to enable bot for this round (or auto win)
-			else if (players[k] !== null) {
-				players[k]!.data.isInGame = true;
-				players[k]!.emit('match-found', id, tournamentID, i);
+			if (players[k].player !== null) {
+				players[k].player!.data.isInGame = true;
+				players[k].player!.emit('match-found', id, tournamentID, i);
+				if (skipGame) {
+					let address;
+					if (players[0].player === null)
+						address = players[0].address;
+					else
+						address = players[1].address
+					players[k].player!.emit('Skip', address);
+				}
 			}
 		}
 

@@ -13,7 +13,9 @@ export type WSClientType = {
 	waitingForSocket: () => Promise<void>;
 	emitMessageToGame: (msg: string, topic: string, gameId: string) => void;
 	addMessageListener: (topic: string, gameId: string, callback: (msg: string) => void) => void;
+	listenToSkip: (callback: (msg: string) => void) => void;
 	removeMessageListener: (topic: string, gameId: string) => void;
+	removeSkipListener: () => void;
 	joinQueue: (game: string) => void;
 	sendAddress: (address: `0x${string}` | undefined) => void;
 	joinTournament: (tournamentID: number) => void;
@@ -82,7 +84,13 @@ class WSClient {
 	sendAddress(address: `0x${string}` | undefined) {
 		this.socket!.emit('WalletAdress', address);
 	}
+	listenToSkip(callback: (msg: string) => void) {
+		this.socket!.on('Skip', callback);
+	}
 
+	removeSkipListener() {
+		this.socket!.removeListener('Skip');
+	}
 	async waitingForSocket(): Promise<void> {
 		await this.waitForSocket();
 		return ;
@@ -102,7 +110,7 @@ class WSClient {
 		return new Promise((resolve, reject) => {
 			this.socket!.on('match-found', (gameID: string, tournamentId: number, gameIndex: number) => {
 				this.socket!.removeListener('match-found');
-				resolve({ gameID, tournamentId, gameIndex});
+				resolve({ gameID, tournamentId, gameIndex });
 			});
 		});
 	}

@@ -42,7 +42,7 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 	};
 
 	const sendScoreAndContinue = async () => {
-		if (playerState.client === 0) {
+		if (playerState.client === 0 || disconnected) {
 			const maxClient = isGameMode ? 3 : 2;
 			const playerScore: PlayerScore[] = [];
 	
@@ -125,7 +125,7 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 								Rematch
 							</Button>
 						)}
-						<Button color="success" variant="ghost" onClick={sendScoreAndContinue}>
+						<Button color="success" variant="ghost" onClick={closeModal}>
 							View
 						</Button>
 					</ModalFooter>

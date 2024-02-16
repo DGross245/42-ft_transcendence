@@ -40,7 +40,7 @@ const TTTScene = () => {
 	const { gameState, updateGameState } = useGameState()
 	const { address, chainId, isConnected } = useWeb3ModalAccount();
 	const { walletProvider } = useWeb3ModalProvider();
-	const [topic, setTopic] = useState("");
+	const [topic, setTopic] = useState(-1);
 
 	async function prepareContract() {
 		if (!isConnected) throw Error("User disconnected")
@@ -62,53 +62,51 @@ const TTTScene = () => {
 		await result.wait();
 	}
 
-	// async function createTournament(duration_in_blocks: number) {
-	// 	const tmContract = await prepareContract();
-	// 	const result = await tmContract.createTournament(duration_in_blocks);
-	// 	const res = await result.wait();
-	// 	console.log(res.events.find((event: any) => event.event === 'TournamentCreated'));
-	// }
+	async function createTournament(duration_in_blocks: number) {
+		const tmContract = await prepareContract();
+		const result = await tmContract.createTournament(duration_in_blocks);
+		await result.wait();
+	}
 
-	// async function joinTournament(tournament_id: number) {
-	// 	const tmContract = await prepareContract()
-	// 	await tmContract.joinTournament(tournament_id)
-	// }
+	async function joinTournament(tournament_id: number) {
+		const tmContract = await prepareContract()
+		await tmContract.joinTournament(tournament_id)
+	}
 
-	// async function startTournament(tournament_id: number){
-	// 	const tmContract = await prepareContract()
-	// 	const result = await tmContract.startTournament(tournament_id)
-	// 	await result.wait();
-	// }
+	async function startTournament(tournament_id: number){
+		const tmContract = await prepareContract()
+		const result = await tmContract.startTournament(tournament_id)
+		await result.wait();
+	}
 
-	// async function setNameAndColor(name: string, color: string) {
-	// 	const tmContract = await prepareContract()
-	// 	await tmContract.setNameAndColor(name, color)
-	// }
+	async function setNameAndColor(name: string, color: string) {
+		const tmContract = await prepareContract()
+		await tmContract.setNameAndColor(name, color)
+	}
 
 	const onTopicChange = (e: any) => {
 		setTopic(e.target.value);
 	}
 
-	// const onCreateTournament = async () => {
-	// 	if (!wsclient) return;
-	// 	await createTournament(300000000);
-	// 	setTopic((await getTournaments()).length - 1);
-	// }
+	const onCreateTournament = async () => {
+		if (!wsclient) return;
+		await createTournament(300000000);
+		setTopic((await getTournaments()).length - 1);
+	}
 
-	// const onSetNameAndColor = async () => {
-	// 	await setNameAndColor('KEK', '0x00ff00');
-	// }
+	const onSetNameAndColor = async () => {
+		await setNameAndColor('KEK', '0x00ff00');
+	}
 
-	// const onJoinTournament = async () =>{
-	// 	console.log("Topic", topic)
-	// 	await joinTournament(topic);
-	// 	wsclient?.joinTournament(topic);
-	// }
+	const onJoinTournament = async () =>{
+		await joinTournament(topic);
+		wsclient?.joinTournament(topic);
+	}
 
-	// const onStartTournament = async () => {
-	// 	await startTournament(topic);
-	// 	wsclient?.requestTournament(topic, 'TTT');
-	// }
+	const onStartTournament = async () => {
+		await startTournament(topic);
+		wsclient?.requestTournament(topic, 'TTT');
+	}
 
 	async function getTournaments() {
 		const tmContract = await prepareContract()
@@ -116,25 +114,17 @@ const TTTScene = () => {
 		return tournaments as Tournament[]
 	}
 
-	// const onGetTournaments = async () => {
-	// 	const t = await getTournaments();
-	// 	console.log(t);
-	// }
+	const onGetTournaments = async () => {
+		const t = await getTournaments();
+		console.log(t);
+	}
 
-	// const onkek = () => {
-	// 	wsclient?.requestTournament(topic, 'TTT');
-	// }
-
-	// const onJoin = () => {
-	// 	wsclient?.joinTournament(topic);
-	// }
-
-	const onCreate = async () => {
-		wsclient?.createGame();
+	const onkek = () => {
+		wsclient?.requestTournament(topic, 'TTT');
 	}
 
 	const onJoin = () => {
-		updateGameState({ ...gameState, gameId: topic })
+		wsclient?.joinTournament(topic);
 	}
 
 	return (
@@ -144,15 +134,13 @@ const TTTScene = () => {
 					value={topic}
 					onChange={onTopicChange}
 				/>
-			<button onClick={onCreate}> Create </button>
-			<button onClick={onJoin}> join </button>
-			{/* <button onClick={onCreateTournament}> Create Tournament </button>
+			<button onClick={onCreateTournament}> Create Tournament </button>
 			<button onClick={onJoin}>  JOIN  </button>
 			<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
 			<button onClick={onJoinTournament}> Join Tournament </button>
 			<button onClick={onStartTournament}> Start Tournament </button>
 			<button onClick={onGetTournaments}> lol Tournament </button>
-			<button onClick={onkek}> print </button> */}
+			<button onClick={onkek}> print </button>
 			<Canvas  style={{ width: dimensions.width, height: dimensions.height }}>
 				<Camera />
 				<Countdown />
