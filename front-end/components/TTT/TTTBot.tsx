@@ -28,6 +28,7 @@ export const TTTBot = () => {
 			
 				newPlayerData.players[client] = {
 					name: "BOT",
+					addr: "0xBotBOB01245",
 					color: 0xff0000,
 					number: client,
 					symbol: ''

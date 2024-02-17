@@ -80,8 +80,8 @@ export const TTTSocketEvents = (address) => {
 				setIsFull("");
 				setPlayerSet(false);
 				const { gameID, tournamentId, gameIndex } = await wsclient.waitingRoom();
-				if (tournamentId === -1 && !gameID.includes("Costume-Game-")) {
-					wsclient.joinQueue(isGameMode ? "Qubic" : "TTT");
+				if (tournamentId === -1 && !gameID.includes("Costume-Game-") && !isGameMode) {
+					wsclient.joinQueue("TTT");
 				} else {
 					setTournament({ id: tournamentId, index: gameIndex })
 				}

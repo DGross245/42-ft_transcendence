@@ -77,7 +77,7 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 		if (status) {
 			updateGameState({ ...gameState, reset: true, pause: true, gameId: "-1" });
 			if (tournament.id !== -1)
-				wsclient?.requestTournament(topic, isGameMode ? 'Qubic' : 'TTT');
+				wsclient?.requestTournament(topic, 'TTT');
 		}
 	}
 
