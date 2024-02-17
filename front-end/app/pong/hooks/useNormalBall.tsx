@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
@@ -15,7 +15,8 @@ export const useBall = (onPositionChange) => {
 		leftPaddleRef,
 		rightPaddleRef,
 		setScores,
-		botState
+		botState,
+
 	} = usePongGameState();
 	const { wsclient, playerState } = usePongSocket();
 
@@ -24,6 +25,7 @@ export const useBall = (onPositionChange) => {
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
 	const halfBall = 2;
+	const [started, setStarted] = useState(false);
 
 	/**
 	 * Changes the ball's direction after it collided with a paddle.
@@ -61,7 +63,7 @@ export const useBall = (onPositionChange) => {
 	 * 					  Used to ensure independence from the frame rate.
 	*/
 	const updateBallPosition = (ball: { x: number; z: number; velocityX: number; velocityZ: number; }, deltaTime: number) => {
-		if (pongGameState.pause) return ;
+		if (pongGameState.pause || !isScoreVisible) return ;
 		if (!playerState.master) {
 			const { position, velocity, deltaTime } = PositionRef.current;
 			ball.x = -position.x + -velocity.x * deltaTime;
@@ -128,8 +130,10 @@ export const useBall = (onPositionChange) => {
 	 * sets the score visibility to true.
 	 */
 	useEffect(() => {
-		if (isScoreVisible)
+		if (isScoreVisible && !started) {
 			randomBallDir();
+			setStarted(true);
+		}
 	}, [isScoreVisible]);
 
 	useEffect(() => {
