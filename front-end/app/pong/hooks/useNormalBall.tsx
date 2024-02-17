@@ -113,12 +113,15 @@ export const useBall = (onPositionChange) => {
 			const newPosition = JSON.parse(msg);
 			PositionRef.current = newPosition;
 		};
-		wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
 
-		return () => {
-			wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
-		};
-	}, [wsclient]);
+		if (wsclient && pongGameState.gameId !== '-1') {
+			wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
+	
+			return () => {
+				wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+			};
+		}
+	}, [wsclient, pongGameState.gameId]);
 
 	/**
 	 * Initiates the game by providing a random direction to the ball after the countdown 

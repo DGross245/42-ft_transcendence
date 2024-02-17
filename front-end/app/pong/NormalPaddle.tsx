@@ -26,12 +26,14 @@ export const RightPaddle = ({direction}) => {
 			PositionRef.current = newPosition;
 		};
 
-		wsclient?.addMessageListener(`paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
+		if (wsclient && pongGameState.gameId !== '-1') {
+			wsclient?.addMessageListener(`paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
 
-		return () => {
-			wsclient?.removeMessageListener(`paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId);
-		};
-	}, [wsclient]);
+			return () => {
+				wsclient?.removeMessageListener(`paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+			};
+		}
+	}, [wsclient, pongGameState.gameId]);
 
 	useFrame((_, delta) => {
 		if (rightPaddleRef && rightPaddleRef.current) {
