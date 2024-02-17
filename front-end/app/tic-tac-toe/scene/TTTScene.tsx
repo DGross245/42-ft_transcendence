@@ -2,6 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
+import { useState } from "react";
 
 import { useWindow } from "../../../components/hooks/useWindow";
 import { Grid } from "@/components/TTT/Grid";
@@ -16,15 +17,10 @@ import { Table } from "@/components/TTT/Table";
 import { TTTGameEvents } from "@/components/TTT/TTTGameEvents";
 import { TTTSocketEvents } from "@/components/TTT/TTTSocketEvents";
 import { TTTBot } from "@/components/TTT/TTTBot";
-import { useState } from "react";
-import { useGameState } from "../hooks/useGameState";
 import { useSocket } from "../hooks/useSocket";
-
-import { useWeb3ModalAccount, useWeb3ModalProvider } from "@web3modal/ethers5/react";
-import { ethers } from 'ethers';
-import useContract, { PlayerScore, Tournament, contract_address } from "@/app/useContract";
-import scoresAbi from '@/public/tournamentManager_abi.json';
+import useContract from "@/app/useContract";
 import { PauseButton } from "@/components/TTT/Pause";
+
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.

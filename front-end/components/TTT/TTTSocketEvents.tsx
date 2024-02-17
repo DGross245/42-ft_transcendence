@@ -4,6 +4,7 @@ import useWSClient from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
+import useContract from "@/app/useContract";
 
 export const TTTSocketEvents = (address) => {
 	// Provider hooks
@@ -35,6 +36,9 @@ export const TTTSocketEvents = (address) => {
 	// Normal hooks
 	const newClient = useWSClient();
 	const soundEngine = useSound();
+	const {
+		getPlayer
+	} = useContract();
 
 	// State variables
 	const [isFull, setIsFull] = useState("");
@@ -94,13 +98,14 @@ export const TTTSocketEvents = (address) => {
 			if (wsclient && gameState.gameId !== "-1") {
 				if (address) {
 					const { walletAddress } = address;
+					const player = await getPlayer(walletAddress)
 					const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
 					let newPlayerData = { ...playerState };
 	
 					newPlayerData.players[numClients] = {
-							name: "KEK",
+							name: player.name,
 							addr: walletAddress,
-							color: 0xffffff,
+							color: Number(player.color),
 							number: numClients,
 							symbol: 'Undefined',
 					}
