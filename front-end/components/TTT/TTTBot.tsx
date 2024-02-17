@@ -20,6 +20,7 @@ export const TTTBot = () => {
 		}
 	},[currentTurn, botState])
 
+	// Function to simulate a bot joining the game as a player
 	useEffect(() => {
 		const joinTheGame = () => {
 			if (wsclient && botState.symbol === 'NOT DEFINED') {

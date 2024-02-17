@@ -13,20 +13,80 @@ import { LongBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
 import { GameControl } from "@/components/Pong/GameControl";
+import useContract from "@/app/useContract";
+import { useState } from "react";
+import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
+import { usePongSocket } from "../hooks/usePongSocket";
 
 /**
  * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
  * ball, borders, camera, countdown, scoreboard, and a modal for displaying the winner.
  * @returns The entire Three.js scene, including the modal.
  */
-export default function PongScene(/* maybe get gameId as param */) { // PlayerState needs to set too
-	// const { active, direction, ballAidsHook } = usePongBot(true, 100, rightPaddleRef.current?.position);
+export default function PongScene() { 
 	const {dimensions} = useWindow();
+	const { wsclient } = usePongSocket();
+	const {
+		createTournament,
+		setNameAndColor,
+		joinTournament,
+		startTournament,
+		getTournaments,
+		submitGameResultTournament
+	} = useContract();
+	const [topic, setTopic] = useState(-1);
 
-	// botActive={active} botDirection={direction}
-	// onPositionChange={ballAidsHook}
+	const onTopicChange = (e: any) => {
+		setTopic(e.target.value);
+	}
+
+	const onCreateTournament = async () => {
+		if (!wsclient) return;
+		await createTournament(300000000);
+		setTopic((await getTournaments()).length - 1);
+	}
+
+	const onSetNameAndColor = async () => {
+		await setNameAndColor('KEK', '0x00ff00');
+	}
+
+	const onJoinTournament = async () =>{
+		await joinTournament(topic);
+		wsclient?.joinTournament(topic);
+	}
+
+	const onStartTournament = async () => {
+		await startTournament(topic);
+		wsclient?.requestTournament(topic, 'Pong');
+	}
+
+	const onGetTournaments = async () => {
+		const t = await getTournaments();
+		console.log(t);
+	}
+
+	const onkek = () => {
+		wsclient?.requestTournament(topic, 'Pong');
+	}
+
+	const onJoin = () => {
+		wsclient?.joinTournament(topic);
+	}
+
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
+					<input
+					placeholder="Topic"
+					value={topic}
+					onChange={onTopicChange}
+				/>
+			<button onClick={onCreateTournament}> Create Tournament </button>
+			<button onClick={onJoin}>  JOIN  </button>
+			<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
+			<button onClick={onJoinTournament}> Join Tournament </button>
+			<button onClick={onStartTournament}> Start Tournament </button>
+			<button onClick={onGetTournaments}> lol Tournament </button>
+			<button onClick={onkek}> print </button>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<PongSocketEvents />
 				<PongGameEvents maxClients={2}/>
@@ -45,7 +105,7 @@ export default function PongScene(/* maybe get gameId as param */) { // PlayerSt
 				<Scoreboard />
 				<Stats />
 			</Canvas>
-			<EndModal />
+			<EndModal topic={topic} submitGameResultTournament={submitGameResultTournament}/>
 		</div>
 	);
 }

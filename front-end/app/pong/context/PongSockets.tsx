@@ -12,6 +12,7 @@ import { WSClientType } from "@/helpers/wsclient";
 
 interface PongPlayer {
 	name: string,
+	addr: string;
 	color: number,
 	number: number
 };
@@ -33,6 +34,10 @@ interface PongSocketContextValue {
 	setDisconnected: Dispatch<SetStateAction<boolean>>,
 	rematchIndex: number,
 	setRematchIndex: Dispatch<SetStateAction<number>>,
+	continueIndex: number,
+	setContinueIndex: Dispatch<SetStateAction<number>>,
+	sendContinueRequest: boolean,
+	setSendContinueRequest: Dispatch<SetStateAction<boolean>>
 };
 
 export const PongSocketContext = createContext<PongSocketContextValue>({} as PongSocketContextValue);
@@ -43,9 +48,12 @@ export const PongSocket: React.FC<{ initialWsClient?: WSClientType | null, child
 	const [requestRematch, setRequestRematch] = useState(false);
 	const [disconnected, setDisconnected] = useState(false);
 	const [rematchIndex, setRematchIndex] = useState(0);
+	const [continueIndex, setContinueIndex] = useState(0);
+	const [sendContinueRequest, setSendContinueRequest] = useState(false);
 	const [playerState, setPlayerState] = useState({
 		players: Array.from({ length: 4 }, () => ({
 			name: "None",
+			addr: 'UNDEFINED',
 			color: 0xffffff,
 			number: -1
 		})),
@@ -65,7 +73,11 @@ export const PongSocket: React.FC<{ initialWsClient?: WSClientType | null, child
 		rematchIndex,
 		setRematchIndex,
 		playerState,
-		setPlayerState
+		setPlayerState,
+		continueIndex,
+		setContinueIndex,
+		sendContinueRequest,
+		setSendContinueRequest
 	}
 
 	return (

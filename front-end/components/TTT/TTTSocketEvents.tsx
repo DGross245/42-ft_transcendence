@@ -6,7 +6,7 @@ import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import useContract from "@/app/useContract";
 
-export const TTTSocketEvents = (address) => {
+export const TTTSocketEvents = () => {
 	// Provider hooks
 	const {
 		wsclient,
@@ -37,7 +37,8 @@ export const TTTSocketEvents = (address) => {
 	const newClient = useWSClient();
 	const soundEngine = useSound();
 	const {
-		getPlayer
+		getPlayer,
+		address
 	} = useContract();
 
 	// State variables
@@ -85,7 +86,7 @@ export const TTTSocketEvents = (address) => {
 				} else {
 					setTournament({ id: tournamentId, index: gameIndex })
 				}
-				updateGameState({ ...gameState, gameId: gameID});
+				updateGameState({ ...gameState, gameId: gameID });
 			}
 		}
 
@@ -96,36 +97,33 @@ export const TTTSocketEvents = (address) => {
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (wsclient && gameState.gameId !== "-1") {
-				if (address) {
-					const { walletAddress } = address;
-					const player = await getPlayer(walletAddress)
-					const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
-					let newPlayerData = { ...playerState };
-	
-					newPlayerData.players[numClients] = {
-							name: player.name,
-							addr: walletAddress,
-							color: Number(player.color),
-							number: numClients,
-							symbol: 'Undefined',
-					}
-					newPlayerData.client = numClients
+				const player = await getPlayer(String(address))
+				const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
+				let newPlayerData = { ...playerState };
 
-					// Handle the tournament case where a player subscribed to a tournament is not present
-					if (skip._skip) {
-						newPlayerData.players[1] = {
-							name: "Unknown",
-							addr: skip.address,
-							color: 0xffffff,
-							number: 1,
-							symbol: 'Undefined',
-						}
-						setPlayerSet(true);
-						updateGameState({ ...gameState, pause: false });
-					}
-
-					updatePlayerState( newPlayerData );
+				newPlayerData.players[numClients] = {
+						name: player.name,
+						addr: String(address),
+						color: Number(player.color),
+						number: numClients,
+						symbol: 'Undefined',
 				}
+				newPlayerData.client = numClients
+
+				// Handle the tournament case where a player subscribed to a tournament is not present
+				if (skip._skip) {
+					newPlayerData.players[1] = {
+						name: "Unknown",
+						addr: skip.address,
+						color: 0xffffff,
+						number: 1,
+						symbol: 'Undefined',
+					}
+					setPlayerSet(true);
+					updateGameState({ ...gameState, pause: false });
+				}
+
+				updatePlayerState( newPlayerData );
 			}
 		};
 
@@ -175,14 +173,14 @@ export const TTTSocketEvents = (address) => {
 			setPlayerSet(true);
 		};
 
-		if (wsclient) {
+		if (wsclient && gameState.gameId !== "-1") {
 			wsclient?.addMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId, setPlayer)
 
 			return () => {
 				wsclient?.removeMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
-	},[wsclient, gameState.gameId, playerState, updatePlayerState]);
+	},[wsclient, gameState.gameId, playerState]);
 
 	// Update 'isFull' state when lobby is full
 	useEffect(() => {
@@ -235,7 +233,7 @@ export const TTTSocketEvents = (address) => {
 			}
 		};
 
-		if (wsclient) {
+		if (wsclient && gameState.gameId !== '-1') {
 			wsclient?.addMessageListener(`Request-Rematch-${gameState.gameId}`, gameState.gameId, rematch)
 
 			return () => {
@@ -261,7 +259,7 @@ export const TTTSocketEvents = (address) => {
 			}
 		};
 
-		if (wsclient) {
+		if (wsclient && gameState.gameId !== '-1') {
 			wsclient?.addMessageListener(`Continue-${gameState.gameId}`, gameState.gameId, continueGame)
 
 			return () => {

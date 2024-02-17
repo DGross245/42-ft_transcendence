@@ -51,20 +51,25 @@ interface PongGameStateContextValue {
 	bottomPaddleRef: MutableRefObject<Mesh>,
 	ballRef: MutableRefObject<Mesh>,
 	isGameMode: boolean,
-
 	camPos: [number, number, number],
 	setCamPos: Dispatch<SetStateAction<[number, number, number]>>,
 	countdownRot: [number, number, number],
 	setCountdownRot: Dispatch<SetStateAction<[number, number, number]>>,
 	countdownPos: [number, number, number][],
 	setContdownPos: Dispatch<SetStateAction<[number, number, number][]>>,
+	tournament: {id: number, index: number},
+	setTournament: Dispatch<SetStateAction<{id: number, index: number}>>,
 }
 
 export const PongGameStateContext = createContext<PongGameStateContextValue>({} as PongGameStateContextValue);
 
 export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, children: ReactNode }> = ({ gameMode = false, isBotActive = false, children }) => {
 	const [scores, setScores] = useState({ p1Score: 0, p2Score: 0, p3Score: 0, p4Score: 0 })
-	const [pongGameState, setPongGameState] = useState({ gameId: "0", pause: true, reset: false, gameOver: false });
+	const [tournament, setTournament] = useState({
+		id: -1,
+		index: -1,
+	});
+	const [pongGameState, setPongGameState] = useState({ gameId: "-1", pause: true, reset: false, gameOver: false });
 	const [winner, setWinner] = useState("");
 	const [botState, setBot] = useState({ isActive: isBotActive, strength: 100, client: -1 });
 	const [isScoreVisible, setScoreVisibility] = useState(false);
@@ -107,7 +112,9 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 		countdownPos,
 		setContdownPos,
 		playerPaddle,
-		setPlayerPaddle
+		setPlayerPaddle,
+		tournament,
+		setTournament
 	};
 
 	return (

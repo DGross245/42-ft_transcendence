@@ -35,8 +35,8 @@ interface SocketContextValue {
 	continueIndex: number,
 	setContinueIndex: Dispatch<SetStateAction<number>>,
 	sendContinueRequest: boolean,
-	setSendContinueRequest: Dispatch<SetStateAction<boolean>>,
-}
+	setSendContinueRequest: Dispatch<SetStateAction<boolean>>
+};
 
 export const SocketContext = createContext<SocketContextValue>({} as SocketContextValue);
 

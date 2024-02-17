@@ -4,8 +4,32 @@ import { useEffect } from "react";
 import { useKey } from "../hooks/useKey";
 
 export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
-	const { setScores, pongGameState, setPongGameState, setWinner, setBallVisibility, setScoreVisibility, setCamPos, setCountdownRot, setContdownPos, isGameMode } = usePongGameState();
-	const { playerState, rematchIndex, setRequestRematch, setSendRequest, setRematchIndex } = usePongSocket();
+	// Provider hooks 
+	const {
+		setScores,
+		pongGameState,
+		setPongGameState,
+		setWinner,
+		setBallVisibility,
+		setScoreVisibility,
+		setCamPos,
+		setCountdownRot,
+		setContdownPos,
+		isGameMode,
+	} = usePongGameState();
+	const {
+		playerState,
+		rematchIndex,
+		setRequestRematch,
+		setSendRequest,
+		setRematchIndex,
+		continueIndex,
+		setSendContinueRequest,
+		setContinueIndex
+	} = usePongSocket();
+
+	// Normal hooks
+	const escape = useKey(['Escape']);
 
 	var positionInfo: { 
 		camPosition: [number, number, number],
@@ -54,8 +78,6 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 		]
 	}
 
-	const escape = useKey(['Escape']);
-
 	useEffect(() => {
 		if (playerState.client !== -1) {
 			if (!isGameMode) {
@@ -89,19 +111,38 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 		}
 	}, [pongGameState.reset]);
 
+	// Handle pause when esc is pressed
 	useEffect(() => {
-		if (escape.isKeyDown)
+		if (escape.isKeyDown && !pongGameState.gameOver)
 			setPongGameState({ ...pongGameState, pause: true});
 	},[escape])
 
+	// Execute reset when all players want a rematch
 	useEffect(() => {
+		// Check if all players have requested a rematch
 		if (rematchIndex === maxClients) {
+			// Update game state to trigger a reset
 			setPongGameState({ ...pongGameState, reset: true })
+
+			// Reset rematch-related flags
 			setRequestRematch(false);
 			setSendRequest(false);
 			setRematchIndex(0);
 		}
 	}, [rematchIndex]);
+
+	// Resumes the game when all players want to continue.
+	useEffect(() => {
+		// Check if all players have requested to continue.
+		if (continueIndex === (isGameMode ? 3 : 2)) {
+			// Update game state to trigger a resume of the game
+			setPongGameState({ ...pongGameState, pause: false});
+
+			// Reset pause-related flags
+			setSendContinueRequest(false);
+			setContinueIndex(0);
+		}
+	}, [continueIndex]);
 
 	return (null);
 }

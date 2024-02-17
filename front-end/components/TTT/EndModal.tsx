@@ -30,10 +30,14 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 	} = useSocket();
 
 	// Normal hooks
+	const {
+		showModal,
+		closeModal,
+		openModal
+	} = useUI();
 	const escape = useKey(['Escape']);
 
 	// State variables
-	const { showModal, closeModal, openModal } = useUI();
 	const [showResult, setShowResult] = useState("");
 
 	const getOwnImage = () => {

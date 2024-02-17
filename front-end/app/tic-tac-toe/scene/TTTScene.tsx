@@ -36,7 +36,6 @@ const TTTScene = () => {
 		createTournament,
 		setNameAndColor,
 		joinTournament,
-		address,
 		startTournament,
 		getTournaments,
 		submitGameResultTournament
@@ -100,7 +99,7 @@ const TTTScene = () => {
 				<Grid />
 				<TTTBot />
 				<TTTGameEvents />
-				<TTTSocketEvents walletAddress={address} />
+				<TTTSocketEvents />
 				<FieldLayers />
 				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
 				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />

@@ -118,6 +118,6 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 				}
 			}
 		}
-
+		console.log("MATCH FOUND")
 	}
 }

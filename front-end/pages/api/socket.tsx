@@ -43,16 +43,13 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 		
 		io.on('connection', (socket) => {
 
-			socket.on('WalletAdress', (addressObj: { walletAddress: string } | undefined) => {
-				if (addressObj) {
-					const { walletAddress } = addressObj;
-					socket.data = {
-						walletAddress: walletAddress,
-						elo: async () => {
-							return await getElo(walletAddress);
-						},
-						isInGame: false
-					}
+			socket.on('WalletAdress', (address: `0x${string}` | undefined) => {
+				socket.data = {
+					walletAddress: address,
+					elo: async () => {
+						return await getElo(String(address));
+					},
+					isInGame: false
 				}
 			});
 
@@ -61,7 +58,8 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				tournamentHandler(sockets, tournamentID, gameType);
 			});
 
-			socket.on('join-tournament', async (tournamentID: number) => {
+			socket.on('join-tournament', (tournamentID: number) => {
+				console.log("JOINING")
 				socket.join(`tournament-${tournamentID}`);
 				socket.emit(`tournament-${tournamentID}-joined`, tournamentID);
 			});
