@@ -75,8 +75,8 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			});
 			
 			socket.on('Update-Status', (isInGame: boolean, gameId: string) => {
-				if (!isInGame)
-					socket.leave(gameId);
+				// if (!isInGame)
+				// 	socket.leave(gameId);
 				socket.data.isInGame = isInGame;
 				socket.emit('Status-Changed', true);
 			});

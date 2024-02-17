@@ -70,8 +70,8 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 			}
 			if (tournament.id !== -1)
 				await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			else
-				await submitGameResultRanked(playerScore);
+			// else
+				// await submitGameResultRanked(playerScore);
 		}
 		const status = await wsclient?.updateStatus(false, gameState.gameId);
 		if (status) {

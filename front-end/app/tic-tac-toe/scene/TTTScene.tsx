@@ -25,6 +25,8 @@ import { ethers, BigNumber } from 'ethers';
 import { PlayerScore, Tournament, contract_address } from "@/app/tournamentManager";
 import scoresAbi from '@/public/tournamentManager_abi.json';
 import { Button } from "@nextui-org/button";
+import { Chip } from "@nextui-org/react";
+import { PauseButton } from "@/components/TTT/Pause";
 
 // FIXME: Sometimes if host is player2, his symbol isnt set and the game crashes
 
@@ -159,6 +161,7 @@ const TTTScene = () => {
 				<Table />
 				<Environment preset="city" />
 			</Canvas>
+			<PauseButton />
 			<EndModal topic={topic} submitGameResultTournament={submitGameResultTournament} />
 		</div> 
 	);

@@ -18,15 +18,16 @@ export const TTTGameEvents = () => {
 		countdownVisible,
 		setLineVisible,
 		isGameMode,
+		currentTurn
 	} = useGameState();
 	const {
 		rematchIndex,
 		setRematchIndex,
 		setRequestRematch,
 		setSendRequest,
+		continueIndex,
 		setSendContinueRequest,
-		setContinueIndex,
-		continueIndex
+		setContinueIndex
 	} = useSocket();
 
 	// Normal hooks
@@ -80,7 +81,7 @@ export const TTTGameEvents = () => {
 
 	// Initializes the turn after countdown
 	useEffect(() => {
-		if (!countdownVisible)
+		if (!countdownVisible && currentTurn === '')
 			setTurn('X');
 	}, [countdownVisible]);
 

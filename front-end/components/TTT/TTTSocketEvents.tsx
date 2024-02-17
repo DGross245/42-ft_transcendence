@@ -263,16 +263,16 @@ export const TTTSocketEvents = (address) => {
 				wsclient?.removeMessageListener(`Continue-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, rematchIndex, gameState.gameId]);
+	}, [wsclient, continueIndex, gameState.gameId]);
 
 	// Send continue request
 	useEffect(() => {
-		if (gameState.pause) {
+		if (sendContinueRequest) {
 			const bot = botState.isActive ? 1 : 0;
 			setContinueIndex(continueIndex + 1 + bot)
 			wsclient?.emitMessageToGame("true", `Continue-${gameState.gameId}`, gameState.gameId);
 		}
-	}, [sendContinueRequest, gameState.pause]);
+	}, [sendContinueRequest]);
 
 	// Send pause state
 	useEffect(() => {
@@ -286,8 +286,6 @@ export const TTTSocketEvents = (address) => {
 		const setPause = (msg: string) => {
 			if (msg === "true")
 				updateGameState({ ...gameState, pause: true });
-			else
-				updateGameState({ ...gameState, pause: false });
 		};
 
 		if (wsclient && gameState.gameId !== "-1") {

@@ -26,7 +26,7 @@ export interface FieldProps {
  */
 const Field : React.FC<FieldProps> = (props) => {
 	const { playerState} = useSocket();
-	const { currentTurn, gameState } = useGameState();
+	const { currentTurn, gameState, countdownVisible } = useGameState();
 	const { hovered, handleClick, handleHover, symbol } = useField(props);
 
 	const getColorBySymbol = (symbol: string) => {
@@ -55,15 +55,15 @@ const Field : React.FC<FieldProps> = (props) => {
 
 			{/* Projects a transparent verison of the symbol on the field the user hovers over based on the current turn */}
 
-			{hovered && !symbol && currentTurn == 'X' && !gameState.gameOver && !gameState.pause && (
+			{hovered && !symbol && currentTurn == 'X' && !gameState.gameOver && !gameState.pause && !countdownVisible && (
 				<X {...props} color={colors[0]} transparent={true} />
 			)}
 
-			{hovered && !symbol && currentTurn == 'O' && !gameState.gameOver && !gameState.pause && (
+			{hovered && !symbol && currentTurn == 'O' && !gameState.gameOver && !gameState.pause && !countdownVisible && (
 				<Torus {...props} color={colors[1]} transparent={true} />
 			)}
 
-			{hovered && !symbol && currentTurn == '🔳' && !gameState.gameOver && !gameState.pause && (
+			{hovered && !symbol && currentTurn == '🔳' && !gameState.gameOver && !gameState.pause && !countdownVisible && (
 				<Square {...props} color={colors[2]} transparent={true} />
 			)}
 
