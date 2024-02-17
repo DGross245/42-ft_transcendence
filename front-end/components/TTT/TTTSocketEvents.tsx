@@ -17,7 +17,10 @@ export const TTTSocketEvents = (address) => {
 		setRequestRematch,
 		setSendRequest,
 		rematchIndex,
-		sendRequest 
+		sendRequest,
+		continueIndex,
+		setContinueIndex,
+		sendContinueRequest
 	} = useSocket();
 	const {
 		gameState,
@@ -244,6 +247,32 @@ export const TTTSocketEvents = (address) => {
 			wsclient?.emitMessageToGame("true", `Request-Rematch-${gameState.gameId}`, gameState.gameId);
 		}
 	}, [sendRequest]);
+
+	// Handle continue request
+	useEffect(() => {
+		const continueGame = (msg: string) => {
+			if (msg === "true") {
+				setContinueIndex(continueIndex + 1);
+			}
+		};
+
+		if (wsclient) {
+			wsclient?.addMessageListener(`Continue-${gameState.gameId}`, gameState.gameId, continueGame)
+
+			return () => {
+				wsclient?.removeMessageListener(`Continue-${gameState.gameId}`, gameState.gameId);
+			}
+		}
+	}, [wsclient, rematchIndex, gameState.gameId]);
+
+	// Send continue request
+	useEffect(() => {
+		if (gameState.pause) {
+			const bot = botState.isActive ? 1 : 0;
+			setContinueIndex(continueIndex + 1 + bot)
+			wsclient?.emitMessageToGame("true", `Continue-${gameState.gameId}`, gameState.gameId);
+		}
+	}, [sendContinueRequest, gameState.pause]);
 
 	// Send pause state
 	useEffect(() => {

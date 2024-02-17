@@ -68,12 +68,16 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1,
 				})
 			}
-			await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+			if (tournament.id !== -1)
+				await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+			else
+				await submitGameResultRanked(playerScore);
 		}
 		const status = await wsclient?.updateStatus(false, gameState.gameId);
 		if (status) {
 			updateGameState({ ...gameState, reset: true, pause: true, gameId: "-1" });
-			wsclient?.requestTournament(topic, isGameMode ? 'Qubic' : 'TTT');
+			if (tournament.id !== -1)
+				wsclient?.requestTournament(topic, isGameMode ? 'Qubic' : 'TTT');
 		}
 	}
 
@@ -137,10 +141,16 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 							<Button color="primary" variant={"shadow"} onClick={() => sendScoreAndContinue()} >
 								Next
 							</Button>
-						):(
+						) : (
+							gameState.gameId.includes("Costume-Game-") ? (
 							<Button color="primary" isDisabled={disconnected} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
 								Rematch
 							</Button>
+						) : (
+							<Button color="primary" variant={"ghost"} onClick={() => sendScoreAndContinue()} >
+								Queue
+							</Button>
+							)
 						)}
 						<Button color="success" variant="ghost" onClick={closeModal}>
 							View

@@ -23,7 +23,10 @@ export const TTTGameEvents = () => {
 		rematchIndex,
 		setRematchIndex,
 		setRequestRematch,
-		setSendRequest
+		setSendRequest,
+		setSendContinueRequest,
+		setContinueIndex,
+		continueIndex
 	} = useSocket();
 
 	// Normal hooks
@@ -44,7 +47,7 @@ export const TTTGameEvents = () => {
 
 	// Handle pause when esc is pressed
 	useEffect(() => {
-		if (escape.isKeyDown)
+		if (escape.isKeyDown && !gameState.gameOver)
 			updateGameState({ ...gameState, pause: true});
 	},[escape])
 
@@ -61,6 +64,19 @@ export const TTTGameEvents = () => {
 			setRematchIndex(0);
 		}
 	}, [rematchIndex]);
+
+	// Resumes the game when all players want to continue.
+	useEffect(() => {
+		// Check if all players have requested to continue.
+		if (continueIndex === (isGameMode ? 3 : 2)) {
+			// Update game state to trigger a resume of the game
+			updateGameState({ ...gameState, pause: false});
+
+			// Reset pause-related flags
+			setSendContinueRequest(false);
+			setContinueIndex(0);
+		}
+	}, [continueIndex]);
 
 	// Initializes the turn after countdown
 	useEffect(() => {

@@ -24,6 +24,7 @@ import { useWeb3ModalAccount, useWeb3ModalProvider } from "@web3modal/ethers5/re
 import { ethers, BigNumber } from 'ethers';
 import { PlayerScore, Tournament, contract_address } from "@/app/tournamentManager";
 import scoresAbi from '@/public/tournamentManager_abi.json';
+import { Button } from "@nextui-org/button";
 
 // FIXME: Sometimes if host is player2, his symbol isnt set and the game crashes
 
