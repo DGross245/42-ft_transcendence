@@ -7,7 +7,7 @@ import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import { useUI } from "@/app/tic-tac-toe/hooks/useUI";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
-import { PlayerScore } from "@/app/tournamentManager";
+import { PlayerScore } from "@/app/useContract";
 
 // maybe change the View to something like go into queue 
 

@@ -30,7 +30,7 @@ export interface Tournament {
 	games: Game[]
 }
 
-function Scores() {
+function useContract() {
 	const { address, chainId, isConnected } = useWeb3ModalAccount()
 	const { walletProvider } = useWeb3ModalProvider()
 
@@ -46,16 +46,17 @@ function Scores() {
 	// creates a new tournament and adds calling address as master
 	// the caller HAS to join separately as a player if he wants to participate
 	async function createTournament(duration_in_blocks: number) {
-		const tmContract = await prepareContract()
-		const id = await tmContract.createTournament(duration_in_blocks)
-		return (id);
+		const tmContract = await prepareContract();
+		const result = await tmContract.createTournament(duration_in_blocks);
+		await result.wait();
 	}
 
 	// starts a previously created tournament and creates game tree
 	// players cannot join after this
 	async function startTournament(tournament_id: number){
 		const tmContract = await prepareContract()
-		await tmContract.startTournament(tournament_id)
+		const result = await tmContract.startTournament(tournament_id)
+		await result.wait();
 	}
 
 	// sets name and color of the player (player = calling address)
@@ -80,7 +81,8 @@ function Scores() {
 		// 	{ player: '0x0000000000', score: 1 },
 		// 	{ player: '0x4242424242', score: 2 },
 		// ]
-		await tmContract.submitGameResultTournament(tournament_id, game_id, scores)
+		const result = await tmContract.submitGameResultTournament(tournament_id, game_id, scores)
+		await result.wait();
 	}
 
 	// ranked games cannot be created beforehand, they will automatically be created upon submission of scores
@@ -139,15 +141,21 @@ function Scores() {
 		return playerElo as number
 	}
 
-	// return (
-	// 	<section>
-	// 		<button onClick={startTournament}>Start Tournament</button>
-	// 		<br/>
-	// 		<button onClick={addScoreToTournament}>Add Score</button>
-	// 		<br/>
-	// 		<button onClick={getScoresOfTournament}>Get Scores</button>
-	// 	</section>
-	// )
+	return {
+		address,
+		createTournament,
+		startTournament,
+		getPlayerRankedElo,
+		getRankedGames,
+		getPlayer,
+		getTournamentTree,
+		getTournament,
+		getTournaments,
+		submitGameResultRanked,
+		submitGameResultTournament,
+		joinTournament,
+		setNameAndColor,
+	}
 };
 
-export default Scores;
+export default useContract;

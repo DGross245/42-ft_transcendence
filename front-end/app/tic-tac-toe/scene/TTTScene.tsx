@@ -21,14 +21,10 @@ import { useGameState } from "../hooks/useGameState";
 import { useSocket } from "../hooks/useSocket";
 
 import { useWeb3ModalAccount, useWeb3ModalProvider } from "@web3modal/ethers5/react";
-import { ethers, BigNumber } from 'ethers';
-import { PlayerScore, Tournament, contract_address } from "@/app/tournamentManager";
+import { ethers } from 'ethers';
+import useContract, { PlayerScore, Tournament, contract_address } from "@/app/useContract";
 import scoresAbi from '@/public/tournamentManager_abi.json';
-import { Button } from "@nextui-org/button";
-import { Chip } from "@nextui-org/react";
 import { PauseButton } from "@/components/TTT/Pause";
-
-// FIXME: Sometimes if host is player2, his symbol isnt set and the game crashes
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
@@ -40,52 +36,16 @@ import { PauseButton } from "@/components/TTT/Pause";
 const TTTScene = () => {
 	const { dimensions } = useWindow();
 	const { wsclient } = useSocket();
-	const { gameState, updateGameState } = useGameState()
-	const { address, chainId, isConnected } = useWeb3ModalAccount();
-	const { walletProvider } = useWeb3ModalProvider();
+	const {
+		createTournament,
+		setNameAndColor,
+		joinTournament,
+		address,
+		startTournament,
+		getTournaments,
+		submitGameResultTournament
+	} = useContract();
 	const [topic, setTopic] = useState(-1);
-
-	async function prepareContract() {
-		if (!isConnected) throw Error("User disconnected")
-		if (!walletProvider) throw Error("No wallet provider found")
-		const provider =  new ethers.providers.Web3Provider(walletProvider)
-		const signer = provider.getSigner()
-		const tmContract = new ethers.Contract(contract_address, scoresAbi, signer)
-		return tmContract
-	}
-
-	async function submitGameResultTournament(tournament_id: number, game_id: number, scores: PlayerScore[]) {
-		const tmContract = await prepareContract()
-		// const scores: PlayerScore[] = [
-		// 	// addresses HAVE to differ from each other, otherwise second score submission will overwrite the first one
-		// 	{ player: '0x0000000000', score: 1 },
-		// 	{ player: '0x4242424242', score: 2 },
-		// ]
-		const result = await tmContract.submitGameResultTournament(tournament_id, game_id, scores)
-		await result.wait();
-	}
-
-	async function createTournament(duration_in_blocks: number) {
-		const tmContract = await prepareContract();
-		const result = await tmContract.createTournament(duration_in_blocks);
-		await result.wait();
-	}
-
-	async function joinTournament(tournament_id: number) {
-		const tmContract = await prepareContract()
-		await tmContract.joinTournament(tournament_id)
-	}
-
-	async function startTournament(tournament_id: number){
-		const tmContract = await prepareContract()
-		const result = await tmContract.startTournament(tournament_id)
-		await result.wait();
-	}
-
-	async function setNameAndColor(name: string, color: string) {
-		const tmContract = await prepareContract()
-		await tmContract.setNameAndColor(name, color)
-	}
 
 	const onTopicChange = (e: any) => {
 		setTopic(e.target.value);
@@ -109,12 +69,6 @@ const TTTScene = () => {
 	const onStartTournament = async () => {
 		await startTournament(topic);
 		wsclient?.requestTournament(topic, 'TTT');
-	}
-
-	async function getTournaments() {
-		const tmContract = await prepareContract()
-		const tournaments = await tmContract.getTournaments()
-		return tournaments as Tournament[]
 	}
 
 	const onGetTournaments = async () => {

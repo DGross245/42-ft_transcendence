@@ -2,7 +2,7 @@ import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequest, NextApiResponse } from "next";
 import { Server } from "Socket.IO";
 import crypto from 'crypto';
-import { Game, contract_address } from "@/app/tournamentManager";
+import { Game, contract_address } from "@/app/useContract";
 import { ethers } from 'ethers';
 import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
@@ -17,8 +17,6 @@ interface SocketApiResponse extends NextApiResponse {
 	  };
 	};
 }
-
-// TODO: Maybe replacing the Rematch button with a continue button in tournaments / div modal
 
 // FIXME: (Fix documentation)
 
