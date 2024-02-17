@@ -21,11 +21,11 @@ const projectId = 'e724641375a102581d38c8ee62fc81dd'; // @note put this in a .en
 
 /* -------------------------------- Chain(s) -------------------------------- */
 const goerli = {
-	chainId: 5,
-	name: 'goerli',
-	currency: 'ETH',
-	explorerUrl: 'https://goerli.etherscan.io',
-	rpcUrl: 'https://ethereum-goerli.publicnode.com'
+	chainId: 84532,
+	name: 'SepoliaBase',
+	currency: 'SepoliaETH',
+	explorerUrl: 'https://sepolia.basescan.org/',
+	rpcUrl: 'https://sepolia.base.org'
 };
 
 /* ---------------------------------- Modal --------------------------------- */
