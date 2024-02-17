@@ -5,9 +5,7 @@ import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { useEffect, useRef, useState } from "react";
 import { Html } from '@react-three/drei';
-import { Button } from "@nextui-org/button";
-import { Tooltip } from "@nextui-org/react";
-import CustomW3Button from "@/components/CustomW3Button";
+import { useTranslation } from "../i18n";
 
 const Wallet = () => {
 	const walletGLTF = useLoader(GLTFLoader, '/wallet/scene.gltf');
@@ -27,25 +25,25 @@ const Wallet = () => {
 	)
 }
 
-const Text = () => {
-	return (
-		<>
-			<Html position={[-3, 0, 0]} style={{ width: '500px' }} className="text-white text-6xl font-sans font-bold flex justify-center items-center">
-				Ready to Play?
-			</Html>
-			<Html position={[-0.5, -0.7, 0]} style={{ width: '700px' }} className="text-transparent bg-clip-text bg-gradient-to-b from-[#5EA2EF] to-[#0072F5] text-5xl font-semibold tracking-tight inline">
-				Connect your Wallet!
-			</Html>
-			<Html position={[-0.65, -1.8, 0]}>
-				<CustomW3Button size="lg"/>
-			</Html>
-		</>
-	)
+interface TextProps {
+	leftTitle: string;
+	rightTitle: string;
+}
+const Text = ({leftTitle, rightTitle}: TextProps) => {
+	return (<>
+		<Html position={[-3, 0, 0]} style={{ width: '1000px' }} className="text-white text-start text-6xl font-sans font-bold" zIndexRange={[-20]}>
+			{leftTitle}
+		</Html>
+		<Html position={[-0.5, -0.7, 0]} style={{ width: '1000px' }} className="text-transparent bg-clip-text bg-gradient-to-b from-[#5EA2EF] to-[#0072F5] text-5xl font-semibold tracking-tight inline" zIndexRange={[-20]}>
+			{rightTitle}
+		</Html>
+	</>)
 }
 
 export const WalletScene = () => {
 	// const { dimensions } = useWindow(); // TODO: Change back to useWindow after merge
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+	const { t } = useTranslation("common");
 
 	// Updates window dimensions on window resizing
 	useEffect(() => {
@@ -66,12 +64,12 @@ export const WalletScene = () => {
 	}, []);
 
 	return (
-		<div style={{ width: '100%', height: '100%', zIndex: 0 }}>
+		<div style={{ width: '100%', height: '100%', zIndex: -1 }}>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<ambientLight intensity={0.4} />
 				<pointLight position={[0, 3, 0]} intensity={10} color="white" />
 				<Wallet />
-				{/* <Text /> */}
+				<Text leftTitle={t("ready_to_play")} rightTitle={t("connect_wallet")}/>
 				<gridHelper position={[0,-1,0]} args={[200,200]} />
 			</Canvas>
 		</div>
