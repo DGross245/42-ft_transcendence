@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
+import { Vector3 } from "three";
 
-export const useBall = (onPositionChange) => {
+export const useBall = (onPositionChange: (position: Vector3) => void) => {
 	const {
 		ballRef,
 		scores,
