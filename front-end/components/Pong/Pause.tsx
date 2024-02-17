@@ -1,25 +1,24 @@
+import { usePongGameState } from '@/app/pong/hooks/usePongGameState';
+import { usePongSocket } from '@/app/pong/hooks/usePongSocket';
 import { Button } from '@nextui-org/button';
 import { Chip } from '@nextui-org/react';
-
-import { useSocket } from '@/app/tic-tac-toe/hooks/useSocket';
-import { useGameState } from '@/app/tic-tac-toe/hooks/useGameState';
 
 export const PauseButton = () => {
 	// Provider hooks
 	const {
 		continueIndex,
 		setSendContinueRequest,
-	} = useSocket();
+	} = usePongSocket();
 	const {
 		isGameMode,
-		gameState
-	} = useGameState();
+		pongGameState
+	} = usePongGameState();
 
 	const handleButtonClick = () => {
 		setSendContinueRequest(true);
 	};
 
-	if (!gameState.pause || (gameState.pause && gameState.gameOver) || (gameState.pause && gameState.gameId === '-1'))
+	if (!pongGameState.pause || (pongGameState.pause && pongGameState.gameOver) || (pongGameState.pause && pongGameState.gameId === '-1'))
 		return (null)
 
 	return (
