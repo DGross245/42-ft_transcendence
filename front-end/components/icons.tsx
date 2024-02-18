@@ -94,3 +94,23 @@ export const SearchIcon = (props: IconSvgProps) => (
 		/>
 	</svg>
 );
+
+export const RightArrowIcon = ({ width = 24, height = 24, color = 'currentColor', ...props }) => (
+	<svg
+		xmlns="http://www.w3.org/2000/svg"
+		width={width}
+		height={height}
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke={color}
+		strokeWidth="2"
+		strokeLinecap="round"
+		strokeLinejoin="round"
+		className="arrow-icon echo-right"
+		{...props}
+	>
+		<path d="M5 12L19 12M12 5l7 7-7 7" />
+	</svg>
+);
+
+export default RightArrowIcon;

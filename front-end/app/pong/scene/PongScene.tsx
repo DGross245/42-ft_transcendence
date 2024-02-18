@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { usePongSocket } from "../hooks/usePongSocket";
 import { PauseButton } from "@/components/Pong/Pause";
+import { PongModals } from "@/components/Pong/PongModals";
 
 /**
  * The PongScene component is a Three.js scene representing a Pong game that includes various elements such as paddles,
@@ -106,8 +107,7 @@ export default function PongScene() {
 				<Scoreboard />
 				<Stats />
 			</Canvas>
-			<PauseButton />
-			<EndModal topic={topic} submitGameResultTournament={submitGameResultTournament}/>
+			<PongModals />
 		</div>
 	);
 }

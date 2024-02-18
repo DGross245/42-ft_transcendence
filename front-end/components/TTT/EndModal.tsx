@@ -7,11 +7,11 @@ import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import { useUI } from "@/app/tic-tac-toe/hooks/useUI";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
-import { PlayerScore } from "@/app/useContract";
+import useContract, { PlayerScore } from "@/app/useContract";
 
 // maybe change the View to something like go into queue 
 
-const EndModal = ({topic, submitGameResultTournament}) => {
+const EndModal = () => {
 	// Provider hooks
 	const {
 		winner,
@@ -36,6 +36,7 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 		openModal
 	} = useUI();
 	const escape = useKey(['Escape']);
+	const { submitGameResultRanked, submitGameResultTournament } = useContract();
 
 	// State variables
 	const [showResult, setShowResult] = useState("");
@@ -74,14 +75,14 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 			}
 			if (tournament.id !== -1)
 				await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			// else
-				// await submitGameResultRanked(playerScore);
+			else
+				await submitGameResultRanked(playerScore);
 		}
 		const status = await wsclient?.updateStatus(false, gameState.gameId);
 		if (status) {
 			updateGameState({ ...gameState, reset: true, pause: true, gameId: "-1" });
 			if (tournament.id !== -1)
-				wsclient?.requestTournament(topic, 'TTT');
+				wsclient?.requestTournament(tournament.id, 'TTT');
 		}
 	}
 
@@ -101,6 +102,14 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 	},[gameState.reset])
 
 	return (
+			// <div style={{ position: 'relative', overflow: 'visible' }}>
+			// 	{/* {!showModal && gameState.gameOver &&  */}
+			// 	{
+			// 		<Button size="lg">
+
+			// 		</Button>
+			// 	}
+			// </div>
 		<>
 			<Modal
 				backdrop="opaque"

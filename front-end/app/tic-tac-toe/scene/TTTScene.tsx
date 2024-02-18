@@ -19,7 +19,9 @@ import { TTTSocketEvents } from "@/components/TTT/TTTSocketEvents";
 import { TTTBot } from "@/components/TTT/TTTBot";
 import { useSocket } from "../hooks/useSocket";
 import useContract from "@/app/useContract";
-import { PauseButton } from "@/components/TTT/Pause";
+import { PauseButton } from "@/components/Pause";
+import { PauseModal } from "@/components/PauseModal";
+import { TTTModals } from "@/components/TTT/TTTModals";
 
 
 /**
@@ -110,8 +112,7 @@ const TTTScene = () => {
 				<Table />
 				<Environment preset="city" />
 			</Canvas>
-			<PauseButton />
-			<EndModal topic={topic} submitGameResultTournament={submitGameResultTournament} />
+			<TTTModals />
 		</div> 
 	);
 }

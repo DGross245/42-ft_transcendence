@@ -5,3 +5,27 @@
 /* body {
 	overflow: hidden;
 } */
+
+.button-with-arrow .arrow-icon {
+	transition: opacity 0.3s;
+}
+
+.button-with-arrow:hover .arrow-icon {
+	animation: echoRight 1.5s ease-out infinite;
+}
+
+@keyframes echoRight {
+	  0% { opacity: 0; transform: translateX(0); }
+	  5% { opacity: 1; transform: translateX(4px); }
+	 25% { opacity: 1; transform: translateX(8px); }
+	 50% { opacity: 0; transform: translateX(16px); }
+	 75% { opacity: 0; transform: translateX(24px); }
+	100% { opacity: 0; transform: translateX(32px); }
+}
+
+.pause {
+	width: 12px;
+	height: 16px;
+	border-right: 4px solid #ffffff;
+	border-left: 4px solid #ffffff;
+}

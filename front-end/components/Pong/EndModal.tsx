@@ -6,9 +6,9 @@ import { useKey } from "../hooks/useKey";
 import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
 import { usePongUI } from "@/app/pong/hooks/usePongUI";
 import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
-import { PlayerScore } from "@/app/useContract";
+import useContract, { PlayerScore } from "@/app/useContract";
 
-const EndModal = ({topic, submitGameResultTournament}) => {
+const EndModal = () => {
 	// Provider hooks
 	const {
 		pongGameState,
@@ -33,6 +33,7 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 		showModal
 	} = usePongUI();
 	const escape = useKey(['Escape'])
+	const { submitGameResultRanked, submitGameResultTournament } = useContract();
 
 	// State variables
 	const [showResult, setShowResult] = useState("");
@@ -56,14 +57,14 @@ const EndModal = ({topic, submitGameResultTournament}) => {
 			}
 			if (tournament.id !== -1)
 				await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			// else
-				// await submitGameResultRanked(playerScore);
+			else
+				await submitGameResultRanked(playerScore);
 		}
 		const status = await wsclient?.updateStatus(false, pongGameState.gameId);
 		if (status) {
 			setPongGameState({ ...pongGameState, reset: true, pause: true, gameId: "-1" });
 			if (tournament.id !== -1)
-				wsclient?.requestTournament(topic, 'TTT');
+				wsclient?.requestTournament(tournament.id, 'TTT');
 		}
 	}
 
