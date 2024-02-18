@@ -48,7 +48,7 @@ export const TTTGameEvents = () => {
 
 	// Handle pause when esc is pressed
 	useEffect(() => {
-		if (escape.isKeyDown && !gameState.gameOver)
+		if (escape.isKeyDown && !gameState.gameOver && !countdownVisible)
 			updateGameState({ ...gameState, pause: true});
 	},[escape])
 
@@ -56,13 +56,13 @@ export const TTTGameEvents = () => {
 	useEffect(() => {
 		// Check if all players have requested a rematch
 		if (rematchIndex === (isGameMode ? 3 : 2)) {
-			// Update game state to trigger a reset
-			updateGameState({ ...gameState, reset: true});
-
 			// Reset rematch-related flags
+			setRematchIndex(0);
 			setRequestRematch(false);
 			setSendRequest(false);
-			setRematchIndex(0);
+
+			// Update game state to trigger a reset
+			updateGameState({ ...gameState, reset: true});
 		}
 	}, [rematchIndex]);
 
@@ -70,12 +70,12 @@ export const TTTGameEvents = () => {
 	useEffect(() => {
 		// Check if all players have requested to continue.
 		if (continueIndex === (isGameMode ? 3 : 2)) {
-			// Update game state to trigger a resume of the game
-			updateGameState({ ...gameState, pause: false});
-
 			// Reset pause-related flags
 			setSendContinueRequest(false);
 			setContinueIndex(0);
+
+			// Update game state to trigger a resume of the game
+			updateGameState({ ...gameState, pause: false});
 		}
 	}, [continueIndex]);
 

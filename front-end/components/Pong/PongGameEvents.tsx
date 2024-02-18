@@ -16,6 +16,7 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 		setCountdownRot,
 		setContdownPos,
 		isGameMode,
+		isScoreVisible
 	} = usePongGameState();
 	const {
 		playerState,
@@ -113,7 +114,7 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 
 	// Handle pause when esc is pressed
 	useEffect(() => {
-		if (escape.isKeyDown && !pongGameState.gameOver)
+		if (escape.isKeyDown && !pongGameState.gameOver && isScoreVisible)
 			setPongGameState({ ...pongGameState, pause: true});
 	},[escape])
 
@@ -121,13 +122,13 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 	useEffect(() => {
 		// Check if all players have requested a rematch
 		if (rematchIndex === maxClients) {
-			// Update game state to trigger a reset
-			setPongGameState({ ...pongGameState, reset: true })
-
 			// Reset rematch-related flags
 			setRequestRematch(false);
 			setSendRequest(false);
 			setRematchIndex(0);
+
+			// Update game state to trigger a reset
+			setPongGameState({ ...pongGameState, reset: true })
 		}
 	}, [rematchIndex]);
 
@@ -135,12 +136,12 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 	useEffect(() => {
 		// Check if all players have requested to continue.
 		if (continueIndex === (isGameMode ? 3 : 2)) {
+			// Reset pause-related flags
+			setContinueIndex(0);
+			setSendContinueRequest(false);
+
 			// Update game state to trigger a resume of the game
 			setPongGameState({ ...pongGameState, pause: false});
-
-			// Reset pause-related flags
-			setSendContinueRequest(false);
-			setContinueIndex(0);
 		}
 	}, [continueIndex]);
 

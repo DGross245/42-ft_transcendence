@@ -275,7 +275,7 @@ export const TTTSocketEvents = () => {
 			setContinueIndex(continueIndex + 1 + bot)
 			wsclient?.emitMessageToGame("true", `Continue-${gameState.gameId}`, gameState.gameId);
 		}
-	}, [sendContinueRequest]);
+	}, [sendContinueRequest, wsclient, gameState.gameId]);
 
 	// Send pause state
 	useEffect(() => {

@@ -5,10 +5,11 @@ import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 
 export function TTTModals() {
 	const { gameState, isGameMode } = useGameState();
-	const { continueIndex, setSendContinueRequest} = useSocket();
+	const { continueIndex, setSendContinueRequest, sendContinueRequest } = useSocket();
 
 	const handleButtonClick = () => {
-		setSendContinueRequest(true);
+		if (!sendContinueRequest)
+			setSendContinueRequest(true);
 	};
 
 	return (

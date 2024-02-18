@@ -299,7 +299,7 @@ export const PongSocketEvents = () => {
 			setContinueIndex(continueIndex + 1 + bot)
 			wsclient?.emitMessageToGame("true", `Continue-${pongGameState.gameId}`, pongGameState.gameId);
 		}
-	}, [sendContinueRequest]);
+	}, [sendContinueRequest,  wsclient, pongGameState.gameId]);
 
 	// Send pause state
 	useEffect(() => {
@@ -311,7 +311,7 @@ export const PongSocketEvents = () => {
 	useEffect(() => {
 		const setPause = (msg: string) => {
 			if (msg === "true")
-			setPongGameState({ ...pongGameState, pause: true });
+				setPongGameState({ ...pongGameState, pause: true });
 	};
 	
 		if (wsclient && pongGameState.gameId !== "-1") {

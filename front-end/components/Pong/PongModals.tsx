@@ -5,10 +5,11 @@ import EndModal from "./EndModal";
 
 export function PongModals() {
 	const { pongGameState, isGameMode } = usePongGameState();
-	const { continueIndex, setSendContinueRequest} = usePongSocket();
+	const { continueIndex, setSendContinueRequest, sendContinueRequest } = usePongSocket();
 
 	const handleButtonClick = () => {
-		setSendContinueRequest(true);
+		if (!sendContinueRequest)
+			setSendContinueRequest(true);
 	};
 
 	return (
