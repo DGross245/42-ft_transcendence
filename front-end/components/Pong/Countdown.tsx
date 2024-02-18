@@ -20,7 +20,14 @@ extend({ TextGeometry })
 const Countdown = () => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 	const [count, setCount] = useState(4);
-	const { pongGameState, isScoreVisible, setScoreVisibility, countdownPos, countdownRot} = usePongGameState();
+	const {
+		pongGameState,
+		isScoreVisible,
+		setScoreVisibility,
+		countdownPos,
+		countdownRot,
+		setStarted
+	} = usePongGameState();
 	const soundEngine = useSound();
 
 	useEffect(() => {
@@ -38,6 +45,7 @@ const Countdown = () => {
 					} else {
 						clearInterval(countdownInterval);
 						setScoreVisibility(true);
+						setStarted(true);
 						setCount(4);
 						return (0);
 					}

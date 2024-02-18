@@ -4,7 +4,7 @@ import { PauseModal } from "../PauseModal";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 
 export function TTTModals() {
-	const { gameState, isGameMode } = useGameState();
+	const { gameState, isGameMode, started } = useGameState();
 	const { continueIndex, setSendContinueRequest, sendContinueRequest } = useSocket();
 
 	const handleButtonClick = () => {
@@ -19,6 +19,7 @@ export function TTTModals() {
 				continueIndex={continueIndex}
 				handleButtonClick={handleButtonClick}
 				maxClient={isGameMode ? 3 : 2}
+				started={started}
 			/>
 			<EndModal />
 		</>

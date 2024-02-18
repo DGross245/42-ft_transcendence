@@ -23,7 +23,7 @@ extend({ TextGeometry })
 const Countdown = () => {
 	const [count, setCount] = useState(3);
 	const { camera } = useThree();
-	const { countdownVisible, setCountdownVisible, gameState } = useGameState()
+	const { countdownVisible, setCountdownVisible, gameState, setStarted } = useGameState()
 	const font = new FontLoader().parse(Silkscreen_Regular);
 	const ref = useRef<THREE.Mesh | null>(null);
 	const soundEngine = useSound();
@@ -48,6 +48,7 @@ const Countdown = () => {
 					} else {
 						clearInterval(countdownInterval);
 						setCountdownVisible(false);
+						setStarted(true);
 						soundEngine?.playSound("end");
 						return (1);
 					}

@@ -111,6 +111,8 @@ interface GameStateContextValue {
 	setSymbolArray: Dispatch<SetStateAction<string[]>>,
 	tournament: {id: number, index: number},
 	setTournament: Dispatch<SetStateAction<{id: number, index: number}>>,
+	started: boolean,
+	setStarted: Dispatch<SetStateAction<boolean>>,
 }
 
 export const GameStateContext = createContext<GameStateContextValue>({} as GameStateContextValue);
@@ -131,6 +133,7 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 	const [isLineVisible, setLineVisible] = useState(false);
 	const [botState, setBot] = useState({ isActive: isBotActive, symbol: 'NOT DEFINED', strength: 0.9, client: -1});
 	const [symbolArray, setSymbolArray] = useState(['', '', '']);
+	const [started, setStarted] = useState(false);
 
 	const updateGameState : Dispatch<SetStateAction<GameStateContextValue['gameState']>> = ( newState ) => {
 		setGameState(prevState => ({
@@ -163,7 +166,9 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 		symbolArray,
 		setSymbolArray,
 		tournament,
-		setTournament
+		setTournament,
+		started,
+		setStarted
 	};
 
 	return (

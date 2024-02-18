@@ -4,12 +4,12 @@ import { Modal, ModalContent, ModalHeader, ModalFooter } from "@nextui-org/react
 import { PauseButton } from "./Pause";
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 
-export const PauseModal = ({ gameState, continueIndex, handleButtonClick, maxClient}) => {
+export const PauseModal = ({ gameState, continueIndex, handleButtonClick, maxClient, started }) => {
 	return (
 		<>
 			<Modal
 				backdrop={"blur"}
-				isOpen={gameState.pause && !gameState.gameOver && gameState.gameId !== '-1'}
+				isOpen={started && gameState.pause && !gameState.gameOver && gameState.gameId !== '-1'}
 				isDismissable={false}
 				style={{
 					overflow: 'visible'
