@@ -38,6 +38,8 @@ export default function OneForAllScene() {
 					enableRotate={true}
 					minPolarAngle={0}
 					maxPolarAngle={Math.PI / 2}
+					minDistance={10}
+					maxDistance={800}
 				/>
 				<Scoreboard />
 			</Canvas>
