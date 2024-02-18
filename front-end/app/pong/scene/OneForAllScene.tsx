@@ -12,6 +12,7 @@ import { CornerBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
 import { GameControl } from "../../../components/Pong/Paddle";
+import { PongModals } from "@/components/Pong/PongModals";
 
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
@@ -40,7 +41,7 @@ export default function OneForAllScene() {
 				/>
 				<Scoreboard />
 			</Canvas>
-			<EndModal />
+			<PongModals />
 		</div>
 	);
 }
