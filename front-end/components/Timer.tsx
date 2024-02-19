@@ -1,7 +1,7 @@
 import { Chip, Tooltip } from "@nextui-org/react";
 import { useEffect, useRef, useState } from "react"
-import { CheckIcon, CrossIcon } from "../icons";
-import { useWindow } from "../hooks/useWindow";
+import { CheckIcon, CrossIcon } from "./icons";
+import { useWindow } from "./hooks/useWindow";
 
 export const Timer = ({playerClient, isFull, started, showChip, timerState, setTimerState, disappear, setDisappear }) => {
 	const { dimensions } = useWindow();

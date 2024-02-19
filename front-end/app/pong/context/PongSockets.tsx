@@ -38,6 +38,12 @@ interface PongSocketContextValue {
 	setContinueIndex: Dispatch<SetStateAction<number>>,
 	sendContinueRequest: boolean,
 	setSendContinueRequest: Dispatch<SetStateAction<boolean>>
+	isFull: string,
+	setIsFull: Dispatch<SetStateAction<string>>,
+	timerState: string,
+	setTimerState: Dispatch<SetStateAction<string>>
+	chipDisappear: boolean,
+	setChipDisappear: Dispatch<SetStateAction<boolean>>
 };
 
 export const PongSocketContext = createContext<PongSocketContextValue>({} as PongSocketContextValue);
@@ -50,6 +56,9 @@ export const PongSocket: React.FC<{ initialWsClient?: WSClientType | null, child
 	const [rematchIndex, setRematchIndex] = useState(0);
 	const [continueIndex, setContinueIndex] = useState(0);
 	const [sendContinueRequest, setSendContinueRequest] = useState(false);
+	const [chipDisappear, setChipDisappear] = useState(false);
+	const [isFull, setIsFull] = useState("");
+	const [timerState, setTimerState] = useState("");
 	const [playerState, setPlayerState] = useState({
 		players: Array.from({ length: 4 }, () => ({
 			name: "None",
@@ -77,7 +86,13 @@ export const PongSocket: React.FC<{ initialWsClient?: WSClientType | null, child
 		continueIndex,
 		setContinueIndex,
 		sendContinueRequest,
-		setSendContinueRequest
+		setSendContinueRequest,
+		isFull,
+		setIsFull,
+		timerState,
+		setTimerState,
+		chipDisappear,
+		setChipDisappear
 	}
 
 	return (

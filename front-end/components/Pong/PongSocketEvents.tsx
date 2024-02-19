@@ -22,7 +22,11 @@ export const PongSocketEvents = () => {
 		setSendRequest,
 		continueIndex,
 		setContinueIndex,
-		sendContinueRequest
+		sendContinueRequest,
+		isFull,
+		setIsFull,
+		timerState,
+		chipDisappear
 	} = usePongSocket();
 	const {
 		pongGameState,
@@ -46,7 +50,6 @@ export const PongSocketEvents = () => {
 	} = useContract();
 
 	// State variables
-	const [isFull, setIsFull] = useState("");
 	const [skip, setSkip] = useState({ _skip: false, address: "" })
 
 	// Wait until socket is initialized
@@ -131,7 +134,6 @@ export const PongSocketEvents = () => {
 						number: 1,
 					}
 					// setPlayerSet(true);
-					setPongGameState({ ...pongGameState, pause: false });
 				}
 
 				setPlayerState( newPlayerData );
@@ -237,7 +239,7 @@ export const PongSocketEvents = () => {
 		};
 
 		if (wsclient && pongGameState.gameId !== '-1') {
-			if (skip._skip && pongGameState.gameId !== "-1")
+			if (skip._skip && pongGameState.gameId !== "-1" && timerState === 'cross')
 				endGame("SKIP");
 
 			wsclient?.addMessageListener(`player-disconnected-${pongGameState.gameId}`, pongGameState.gameId, endGame)
@@ -246,7 +248,7 @@ export const PongSocketEvents = () => {
 				wsclient?.removeMessageListener(`player-disconnected-${pongGameState.gameId}`, pongGameState.gameId);
 			}
 		}
-	}, [wsclient, disconnected, pongGameState.gameOver, pongGameState.gameId]);
+	}, [wsclient, disconnected, pongGameState.gameOver, pongGameState.gameId, timerState]);
 
 	// Handle rematch request
 	useEffect(() => {

@@ -2,7 +2,7 @@ import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import EndModal from "./EndModal";
 import { PauseModal } from "../PauseModal";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
-import { Timer } from "./Timer";
+import { Timer } from "../Timer";
 
 export function TTTModals() {
 	const {
