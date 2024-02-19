@@ -66,6 +66,17 @@ const findPlayer = (sockets: Matchmaking['sockets'], address: string) => {
 	}
 }
 
+const shufflePlayers = (array: any) => {
+
+	for (let i = array.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		let temp = array[i];
+		array[i] = array[j];
+		array[j] = temp
+	}
+	return array;
+}
+
 export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number, gameType: string ) => {
 	const games = (await contract.getTournamentTree(tournamentID)) as Game[];
 
@@ -104,19 +115,24 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 
 		var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 
+		var shuffledPlayers = shufflePlayers(players);
+
+		let l = 0
 		for (let k = 0; k < maxClients; k++) {
-			if (players[k].player !== null) {
-				players[k].player!.data.isInGame = true;
-				players[k].player!.emit('match-found', id, tournamentID, i);
+			if (shuffledPlayers[k].player !== null) {
+				shuffledPlayers[k].player!.data.isInGame = true;
+				console.log(l, shuffledPlayers[k].address)
+				shuffledPlayers[k].player!.emit('match-found', id, tournamentID, i);
 				if (skipGame) {
 					let address;
-					if (players[0].player === null)
-						address = players[0].address;
+					if (shuffledPlayers[0].player === null)
+						address = shuffledPlayers[0].address;
 					else
-						address = players[1].address
-					players[k].player!.emit('Skip', address);
+						address = shuffledPlayers[1].address
+						shuffledPlayers[k].player!.emit('Skip', address);
 				}
 			}
+			l++
 		}
 		console.log("MATCH FOUND")
 	}

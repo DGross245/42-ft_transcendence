@@ -38,7 +38,7 @@ const TTTScene = () => {
 		startTournament,
 		getTournaments,
 	} = useContract();
-	const [topic, setTopic] = useState(-1);
+	const [topic, setTopic] = useState(0);
 
 	const onTopicChange = (e: any) => {
 		setTopic(e.target.value);
