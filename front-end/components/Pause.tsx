@@ -1,8 +1,6 @@
 import { Button } from '@nextui-org/button';
 import { Chip } from '@nextui-org/react';
 
-import { useSocket } from '@/app/tic-tac-toe/hooks/useSocket';
-import { useGameState } from '@/app/tic-tac-toe/hooks/useGameState';
 import RightArrowIcon from './icons';
 
 export const PauseButton = ({ continueIndex, handleButtonClick, maxClient }) => {
@@ -13,19 +11,21 @@ export const PauseButton = ({ continueIndex, handleButtonClick, maxClient }) => 
 			size="lg"
 			variant="shadow"
 			onClick={handleButtonClick}
+			isDisabled={continueIndex === maxClient}
+			isLoading={continueIndex === maxClient}
 		>
 			<span
 				style={{
 					transition: 'margin-right 0.3s ease-out',
 					marginRight: '0.3rem',
 					display: 'flex',
-					alignItems: 'center'
+					alignItems: 'center',
 				}}
 			>
-				Continue
+				{ continueIndex === 0 ? "Continue" : continueIndex === maxClient ? "Starting ..." : "Waiting ..."}
 			</span>
 			{ continueIndex === 0 && <RightArrowIcon /> }
-			{ continueIndex !== 0 && (
+			{ continueIndex !== 0 && continueIndex !== maxClient && (
 				<Chip
 					className="chip"
 					style={{

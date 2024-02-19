@@ -70,12 +70,15 @@ export const TTTGameEvents = () => {
 	useEffect(() => {
 		// Check if all players have requested to continue.
 		if (continueIndex === (isGameMode ? 3 : 2)) {
-			// Reset pause-related flags
-			setSendContinueRequest(false);
-			setContinueIndex(0);
+			// Add delay so the game won't start right away
+			setTimeout(() => {
+				// Reset pause-related flags
+				setSendContinueRequest(false);
+				setContinueIndex(0);
 
-			// Update game state to trigger a resume of the game
-			updateGameState({ ...gameState, pause: false});
+				// Update game state to trigger a resume of the game
+				updateGameState({ ...gameState, pause: false});
+			}, 1000);
 		}
 	}, [continueIndex]);
 

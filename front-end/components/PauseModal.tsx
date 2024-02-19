@@ -2,7 +2,6 @@ import React from "react";
 import { Modal, ModalContent, ModalHeader, ModalFooter } from "@nextui-org/react";
 
 import { PauseButton } from "./Pause";
-import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 
 export const PauseModal = ({ gameState, continueIndex, handleButtonClick, maxClient, started }) => {
 	return (

@@ -136,12 +136,15 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 	useEffect(() => {
 		// Check if all players have requested to continue.
 		if (continueIndex === (isGameMode ? 3 : 2)) {
-			// Reset pause-related flags
-			setContinueIndex(0);
-			setSendContinueRequest(false);
+			// Add delay so the game won't start right away
+			setTimeout(() => {
+				// Reset pause-related flags
+				setContinueIndex(0);
+				setSendContinueRequest(false);
 
-			// Update game state to trigger a resume of the game
-			setPongGameState({ ...pongGameState, pause: false});
+				// Update game state to trigger a resume of the game
+				setPongGameState({ ...pongGameState, pause: false});
+			}, 1000);
 		}
 	}, [continueIndex]);
 

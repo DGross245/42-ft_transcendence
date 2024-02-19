@@ -12,15 +12,12 @@ import Camera from "@/components/TTT/Camera";
 import Floor from "@/components/TTT/Floor";
 import TurnDisplay from "@/components/TTT/TurnDisplay";
 import FinishLine from "@/components/TTT/FinishLine";
-import EndModal from "@/components/TTT/EndModal";
 import { Table } from "@/components/TTT/Table";
 import { TTTGameEvents } from "@/components/TTT/TTTGameEvents";
 import { TTTSocketEvents } from "@/components/TTT/TTTSocketEvents";
 import { TTTBot } from "@/components/TTT/TTTBot";
 import { useSocket } from "../hooks/useSocket";
 import useContract from "@/app/useContract";
-import { PauseButton } from "@/components/Pause";
-import { PauseModal } from "@/components/PauseModal";
 import { TTTModals } from "@/components/TTT/TTTModals";
 
 
@@ -40,7 +37,6 @@ const TTTScene = () => {
 		joinTournament,
 		startTournament,
 		getTournaments,
-		submitGameResultTournament
 	} = useContract();
 	const [topic, setTopic] = useState(-1);
 
