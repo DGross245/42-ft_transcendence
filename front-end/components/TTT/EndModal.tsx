@@ -1,13 +1,14 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Chip } from "@nextui-org/react";
 
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import { useUI } from "@/app/tic-tac-toe/hooks/useUI";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
 import useContract, { PlayerScore } from "@/app/useContract";
+import { ChevronDownIcon } from "../icons";
 
 // maybe change the View to something like go into queue 
 
@@ -103,15 +104,14 @@ const EndModal = () => {
 	},[gameState.reset])
 
 	return (
-			// <div style={{ position: 'relative', overflow: 'visible' }}>
-			// 	{/* {!showModal && gameState.gameOver &&  */}
-			// 	{
-			// 		<Button size="lg">
-
-			// 		</Button>
-			// 	}
-			// </div>
 		<>
+			<div style={{ position: 'fixed', top: '90%', left: '50%', transform: 'translate(-50%, -50%)', overflow: 'visible' }}>
+				{!showModal && gameState.gameOver && 
+					<Button isIconOnly size="lg" variant="shadow" className="bordered-button" onClick={openModal}>
+						<ChevronDownIcon />
+					</Button>
+				}
+			</div>
 			<Modal
 				backdrop="opaque"
 				isOpen={showModal}
