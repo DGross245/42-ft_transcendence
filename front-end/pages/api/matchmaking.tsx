@@ -121,7 +121,6 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 		for (let k = 0; k < maxClients; k++) {
 			if (shuffledPlayers[k].player !== null) {
 				shuffledPlayers[k].player!.data.isInGame = true;
-				console.log(l, shuffledPlayers[k].address)
 				shuffledPlayers[k].player!.emit('match-found', id, tournamentID, i);
 				if (skipGame) {
 					let address;
@@ -134,6 +133,5 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 			}
 			l++
 		}
-		console.log("MATCH FOUND")
 	}
 }

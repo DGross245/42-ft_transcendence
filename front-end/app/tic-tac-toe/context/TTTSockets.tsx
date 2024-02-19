@@ -36,6 +36,12 @@ interface SocketContextValue {
 	setContinueIndex: Dispatch<SetStateAction<number>>,
 	sendContinueRequest: boolean,
 	setSendContinueRequest: Dispatch<SetStateAction<boolean>>
+	isFull: string,
+	setIsFull: Dispatch<SetStateAction<string>>,
+	timerState: string,
+	setTimerState: Dispatch<SetStateAction<string>>
+	chipDisappear: boolean,
+	setChipDisappear: Dispatch<SetStateAction<boolean>>
 };
 
 export const SocketContext = createContext<SocketContextValue>({} as SocketContextValue);
@@ -48,6 +54,9 @@ export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children:
 	const [rematchIndex, setRematchIndex] = useState(0);
 	const [continueIndex, setContinueIndex] = useState(0);
 	const [sendContinueRequest, setSendContinueRequest] = useState(false);
+	const [chipDisappear, setChipDisappear] = useState(false);
+	const [isFull, setIsFull] = useState("");
+	const [timerState, setTimerState] = useState("");
 	const [playerState, setPlayerState] = useState({
 		players: Array.from({ length: 3 }, () => ({
 			name: "None",
@@ -82,7 +91,13 @@ export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children:
 		continueIndex,
 		setContinueIndex,
 		sendContinueRequest,
-		setSendContinueRequest
+		setSendContinueRequest,
+		isFull,
+		setIsFull,
+		timerState,
+		setTimerState,
+		chipDisappear,
+		setChipDisappear
 	}
 
 	return (

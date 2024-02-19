@@ -26,7 +26,8 @@ const EndModal = () => {
 		setSendRequest,
 		sendRequest,
 		playerState,
-		wsclient
+		wsclient,
+		timerState
 	} = useSocket();
 
 	// Normal hooks
@@ -144,7 +145,8 @@ const EndModal = () => {
 						</ModalHeader>
 					</div>
 					<ModalBody style={{ textAlign: 'center' }} >
-						{ disconnected && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
+						{ disconnected &&  timerState !== 'cross' && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
+						{ disconnected &&  timerState === 'cross' && <p style={{ color: 'grey' }}> Your opponent didn't connect </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
 						<Button color="danger" variant="ghost" onClick={closeModal}>

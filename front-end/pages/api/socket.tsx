@@ -59,7 +59,6 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			});
 
 			socket.on('join-tournament', (tournamentID: number) => {
-				console.log("JOINING")
 				socket.join(`tournament-${tournamentID}`);
 				socket.emit(`tournament-${tournamentID}-joined`, tournamentID);
 			});

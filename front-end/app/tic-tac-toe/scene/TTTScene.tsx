@@ -19,6 +19,7 @@ import { TTTBot } from "@/components/TTT/TTTBot";
 import { useSocket } from "../hooks/useSocket";
 import useContract from "@/app/useContract";
 import { TTTModals } from "@/components/TTT/TTTModals";
+import { useGameState } from "../hooks/useGameState";
 
 
 /**
@@ -38,6 +39,7 @@ const TTTScene = () => {
 		startTournament,
 		getTournaments,
 	} = useContract();
+	const { updateGameState, gameState } = useGameState()
 	const [topic, setTopic] = useState(0);
 
 	const onTopicChange = (e: any) => {
@@ -74,7 +76,12 @@ const TTTScene = () => {
 	}
 
 	const onJoin = () => {
+		// updateGameState({ ...gameState, gameId: topic })
 		wsclient?.joinTournament(topic);
+	}
+
+	const onCreate = async () => {
+		wsclient?.createGame();
 	}
 
 	return (
@@ -84,6 +91,8 @@ const TTTScene = () => {
 					value={topic}
 					onChange={onTopicChange}
 				/>
+			{/* <button onClick={onCreate}> Create </button>
+			<button onClick={onJoin}> join </button> */}
 			<button onClick={onCreateTournament}> Create Tournament </button>
 			<button onClick={onJoin}>  JOIN  </button>
 			<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>

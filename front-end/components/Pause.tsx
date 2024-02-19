@@ -1,7 +1,6 @@
 import { Button } from '@nextui-org/button';
 import { Chip } from '@nextui-org/react';
-
-import RightArrowIcon from './icons';
+import { RightArrowIcon } from './icons';
 
 export const PauseButton = ({ continueIndex, handleButtonClick, maxClient }) => {
 	return (

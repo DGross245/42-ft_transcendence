@@ -21,7 +21,11 @@ export const TTTSocketEvents = () => {
 		sendRequest,
 		continueIndex,
 		setContinueIndex,
-		sendContinueRequest
+		sendContinueRequest,
+		isFull,
+		setIsFull,
+		timerState,
+		chipDisappear
 	} = useSocket();
 	const {
 		gameState,
@@ -30,7 +34,7 @@ export const TTTSocketEvents = () => {
 		isGameMode,
 		botState,
 		setTournament,
-		setBot
+		setBot,
 	} = useGameState();
 
 	// Normal hooks
@@ -42,7 +46,7 @@ export const TTTSocketEvents = () => {
 	} = useContract();
 
 	// State variables
-	const [isFull, setIsFull] = useState("");
+	// const [isFull, setIsFull] = useState("");
 	const [playerSet, setPlayerSet] = useState(false);
 	const [skip, setSkip] = useState({ _skip: false, address: "" })
 	const [symbolSet, setSymbolSet] = useState(false);
@@ -73,6 +77,14 @@ export const TTTSocketEvents = () => {
 			} 
 		}
 	}, [wsclient]);
+
+
+	useEffect(() => {
+		if (timerState === 'cross') {
+			setPlayerSet(true);
+			// updateGameState({ ...gameState, pause: false })
+		}
+	}, [timerState, chipDisappear])
 
 	// Wait until a game is found
 	useEffect(() => {
@@ -119,8 +131,6 @@ export const TTTSocketEvents = () => {
 						number: 1,
 						symbol: 'Undefined',
 					}
-					setPlayerSet(true);
-					updateGameState({ ...gameState, pause: false });
 				}
 
 				updatePlayerState( newPlayerData );
