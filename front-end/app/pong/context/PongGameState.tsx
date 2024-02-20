@@ -37,7 +37,7 @@ interface PongGameStateContextValue {
 	},
 	setPlayerPaddle: Dispatch<SetStateAction<PongGameStateContextValue['playerPaddle']>>,
 	setScores: Dispatch<SetStateAction<PongGameStateContextValue['scores']>>,
-	setPongGameState: Dispatch<SetStateAction<PongGameStateContextValue['pongGameState']>>,
+	updatePongGameState: Dispatch<SetStateAction<PongGameStateContextValue['pongGameState']>>,
 	winner: string,
 	setWinner: Dispatch<SetStateAction<string>>,
 	isScoreVisible: boolean,
@@ -88,11 +88,18 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 	const ballRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const [playerPaddle, setPlayerPaddle] = useState<PongGameStateContextValue['playerPaddle']>({ ref: null, pos: 0, minPos: 0, maxPos: 0});
 
+	const updatePongGameState : Dispatch<SetStateAction<PongGameStateContextValue['pongGameState']>> = ( newState ) => {
+		setPongGameState(prevState => ({
+			...prevState,
+			...newState,
+		}));
+	};
+
 	const value: PongGameStateContextValue = {
 		scores,
 		setScores,
 		pongGameState,
-		setPongGameState,
+		updatePongGameState,
 		winner,
 		setWinner,
 		botState,

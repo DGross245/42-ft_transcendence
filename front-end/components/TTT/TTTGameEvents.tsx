@@ -50,7 +50,7 @@ export const TTTGameEvents = () => {
 	useEffect(() => {
 		if (escape.isKeyDown && !gameState.gameOver && !countdownVisible)
 			updateGameState({ ...gameState, pause: true});
-	},[escape])
+	},[escape, gameState.gameOver, countdownVisible])
 
 	// Execute reset when all players want a rematch
 	useEffect(() => {

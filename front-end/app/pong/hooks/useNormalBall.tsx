@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
+
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
 import { Vector3 } from "three";
@@ -10,14 +11,15 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		scores,
 		setWinner,
 		setBallVisibility,
-		setPongGameState,
+		updatePongGameState,
 		pongGameState,
 		isScoreVisible,
 		leftPaddleRef,
 		rightPaddleRef,
 		setScores,
 		botState,
-
+		setStarted,
+		started
 	} = usePongGameState();
 	const { wsclient, playerState } = usePongSocket();
 
@@ -26,7 +28,6 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
 	const halfBall = 2;
-	const [started, setStarted] = useState(false);
 
 	/**
 	 * Changes the ball's direction after it collided with a paddle.
@@ -131,11 +132,10 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 	 * sets the score visibility to true.
 	 */
 	useEffect(() => {
-		if (isScoreVisible && !started) {
+		if (started) {
 			randomBallDir();
-			setStarted(true);
 		}
-	}, [isScoreVisible]);
+	}, [started]);
 
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
@@ -146,7 +146,8 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 				ball.velocityX = 0;
 				ball.velocityZ = 0;
 				ball.speed = 0.1;
-				setPongGameState({ ...pongGameState, gameOver: true })
+				console.log("GAMEOVER TRUE")
+				updatePongGameState({ ...pongGameState, gameOver: true })
 				setWinner(player);
 				setBallVisibility(false);
 			}

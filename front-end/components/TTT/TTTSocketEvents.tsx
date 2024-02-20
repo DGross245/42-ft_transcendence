@@ -84,7 +84,7 @@ export const TTTSocketEvents = () => {
 			setPlayerSet(true);
 			// updateGameState({ ...gameState, pause: false })
 		}
-	}, [timerState, chipDisappear])
+	}, [timerState])
 
 	// Wait until a game is found
 	useEffect(() => {

@@ -8,7 +8,7 @@ export function PongModals() {
 	const {
 		pongGameState,
 		isGameMode,
-		started
+		started,
 	} = usePongGameState();
 	const {
 		continueIndex,

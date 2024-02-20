@@ -25,7 +25,7 @@ export default function OneForAllScene() {
 	return (
 		<div >
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<PongGameEvents maxClients={4} />
+				<PongGameEvents />
 				<PongSocketEvents />
 				<Countdown />
 				<Camera/> 

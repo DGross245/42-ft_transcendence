@@ -1,11 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
-
 export const useKey = (key: string | string []) => {
 	const [isKeyDown, setKeyDown] = useState(false);
 	const keys = Array.isArray(key) ? key : [key];
-	//const { gameState } = useGameState();
 
 	const onKeyDown = useCallback((e: KeyboardEvent) => {
 		if (!isKeyDown && keys.includes(e.key))
@@ -24,7 +21,7 @@ export const useKey = (key: string | string []) => {
 			window.removeEventListener('keydown', onKeyDown);
 			window.removeEventListener('keyup', onKeyUp);
 		};
-	}, [onKeyDown, onKeyUp, keys]);
+	}, [keys, isKeyDown, onKeyDown, onKeyUp]);
 
 	return { isKeyDown }
 };

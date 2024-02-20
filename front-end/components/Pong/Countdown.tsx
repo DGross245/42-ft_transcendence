@@ -2,6 +2,7 @@ import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
 import { extend } from '@react-three/fiber';
 import { useEffect, useState } from 'react';
+
 import Orbitron_Regular from '@/public/fonts/Orbitron_Regular.json';
 import { usePongGameState } from '@/app/pong/hooks/usePongGameState';
 import { useSound } from '../hooks/Sound';
