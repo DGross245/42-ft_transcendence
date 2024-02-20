@@ -9,6 +9,7 @@ import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
 import useContract, { PlayerScore } from "@/app/useContract";
 import { ChevronDownIcon } from "../icons";
+import { initialTTTPlayerState } from "@/app/tic-tac-toe/context/TTTSockets";
 
 // maybe change the View to something like go into queue 
 
@@ -28,7 +29,8 @@ const EndModal = () => {
 		sendRequest,
 		playerState,
 		wsclient,
-		timerState
+		timerState,
+		updatePlayerState
 	} = useSocket();
 
 	// Normal hooks
@@ -85,6 +87,7 @@ const EndModal = () => {
 			updateGameState({ ...gameState, reset: true, pause: true, gameId: "-1" });
 			if (tournament.id !== -1)
 				wsclient?.requestTournament(tournament.id, 'TTT');
+			updatePlayerState(initialTTTPlayerState());
 		}
 	}
 

@@ -44,6 +44,17 @@ interface SocketContextValue {
 	setChipDisappear: Dispatch<SetStateAction<boolean>>
 };
 
+export const initialTTTPlayerState = () => ({
+	players: Array.from({ length: 3 }, () => ({
+		name: "None",
+		addr: "UNDEFINED",
+		color: 0xffffff,
+		number: -1,
+		symbol: "",
+	})),
+	client: -1
+});
+
 export const SocketContext = createContext<SocketContextValue>({} as SocketContextValue);
 
 export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children: ReactNode }> = ({ initialWsClient, children }) => {
@@ -57,16 +68,7 @@ export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children:
 	const [chipDisappear, setChipDisappear] = useState(false);
 	const [isFull, setIsFull] = useState("");
 	const [timerState, setTimerState] = useState("");
-	const [playerState, setPlayerState] = useState({
-		players: Array.from({ length: 3 }, () => ({
-			name: "None",
-			addr: "UNDEFINED",
-			color: 0xffffff,
-			number: -1,
-			symbol: "",
-		})),
-		client: -1
-	});
+	const [playerState, setPlayerState] = useState(initialTTTPlayerState());
 
 	const updatePlayerState : Dispatch<SetStateAction<{ players: Player[], client: number }>>  = ( newState ) => {
 		setPlayerState((prevState) => ({

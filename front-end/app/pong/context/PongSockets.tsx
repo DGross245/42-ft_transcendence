@@ -46,6 +46,17 @@ interface PongSocketContextValue {
 	setChipDisappear: Dispatch<SetStateAction<boolean>>
 };
 
+export const initialPongPlayerState = () => ({
+	players: Array.from({ length: 4 }, () => ({
+		name: "None",
+		addr: 'UNDEFINED',
+		color: 0xffffff,
+		number: -1
+	})),
+	client: -1,
+	master: false
+})
+
 export const PongSocketContext = createContext<PongSocketContextValue>({} as PongSocketContextValue);
 
 export const PongSocket: React.FC<{ initialWsClient?: WSClientType | null, children: ReactNode }> = ({ initialWsClient, children }) => {
@@ -59,16 +70,7 @@ export const PongSocket: React.FC<{ initialWsClient?: WSClientType | null, child
 	const [chipDisappear, setChipDisappear] = useState(false);
 	const [isFull, setIsFull] = useState("");
 	const [timerState, setTimerState] = useState("");
-	const [playerState, setPlayerState] = useState({
-		players: Array.from({ length: 4 }, () => ({
-			name: "None",
-			addr: 'UNDEFINED',
-			color: 0xffffff,
-			number: -1
-		})),
-		client: -1,
-		master: false
-	});
+	const [playerState, setPlayerState] = useState(initialPongPlayerState());
 
 	const value: PongSocketContextValue = {
 		wsclient,

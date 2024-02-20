@@ -8,6 +8,7 @@ import { usePongUI } from "@/app/pong/hooks/usePongUI";
 import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 import useContract, { PlayerScore } from "@/app/useContract";
 import { ChevronDownIcon } from "../icons";
+import { initialPongPlayerState } from "@/app/pong/context/PongSockets";
 
 const EndModal = () => {
 	// Provider hooks
@@ -16,7 +17,8 @@ const EndModal = () => {
 		winner,
 		isGameMode,
 		tournament,
-		setPongGameState
+		setPongGameState,
+		setStarted
 	} = usePongGameState();
 	const {
 		disconnected,
@@ -24,7 +26,8 @@ const EndModal = () => {
 		setSendRequest,
 		sendRequest,
 		playerState,
-		wsclient
+		wsclient,
+		setPlayerState,
 	} = usePongSocket();
 
 	// Normal hooks
@@ -66,6 +69,8 @@ const EndModal = () => {
 			setPongGameState({ ...pongGameState, reset: true, pause: true, gameId: "-1" });
 			if (tournament.id !== -1)
 				wsclient?.requestTournament(tournament.id, 'TTT');
+			setPlayerState(initialPongPlayerState());
+			setStarted(false);
 		}
 	}
 
