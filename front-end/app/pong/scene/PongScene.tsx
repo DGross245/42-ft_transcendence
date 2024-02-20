@@ -82,6 +82,8 @@ export default function PongScene() {
 					value={topic}
 					onChange={onTopicChange}
 				/>
+			{/* <button onClick={onCreate}> Create </button>
+			<button onClick={onJoin}> join </button> */}
 			<button onClick={onCreateTournament}> Create Tournament </button>
 			<button onClick={onJoin}>  JOIN  </button>
 			<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
@@ -91,7 +93,7 @@ export default function PongScene() {
 			<button onClick={onkek}> print </button>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
 				<PongSocketEvents />
-				<PongGameEvents maxClients={2}/>
+				<PongGameEvents />
 				<Countdown />
 				<Camera />
 				<LongBorder position={[0, 0, -105]} />

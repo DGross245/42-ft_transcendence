@@ -3,12 +3,12 @@ import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 import { useEffect } from "react";
 import { useKey } from "../hooks/useKey";
 
-export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
+export const PongGameEvents = () => {
 	// Provider hooks 
 	const {
 		setScores,
 		pongGameState,
-		setPongGameState,
+		updatePongGameState,
 		setWinner,
 		setBallVisibility,
 		setScoreVisibility,
@@ -107,34 +107,34 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 			setScores({ p1Score: 0, p2Score: 0, p3Score: 0, p4Score: 0 });
 			setWinner('');
 			setScoreVisibility(false);
-			setPongGameState({ ...pongGameState, reset: false, gameOver: false });
+			updatePongGameState({ ...pongGameState, reset: false, gameOver: false });
 		}
 	}, [pongGameState.reset]);
 
 	// Handle pause when esc is pressed
 	useEffect(() => {
 		if (escape.isKeyDown && !pongGameState.gameOver && isScoreVisible)
-			setPongGameState({ ...pongGameState, pause: true});
-	},[escape])
+			updatePongGameState({ ...pongGameState, pause: true});
+	},[escape, pongGameState.gameOver, isScoreVisible])
 
 	// Execute reset when all players want a rematch
 	useEffect(() => {
 		// Check if all players have requested a rematch
-		if (rematchIndex === maxClients) {
+		if (rematchIndex === (isGameMode ? 4 : 2)) {
 			// Reset rematch-related flags
 			setRequestRematch(false);
 			setSendRequest(false);
 			setRematchIndex(0);
 
 			// Update game state to trigger a reset
-			setPongGameState({ ...pongGameState, reset: true })
+			updatePongGameState({ ...pongGameState, reset: true })
 		}
 	}, [rematchIndex]);
 
 	// Resumes the game when all players want to continue.
 	useEffect(() => {
 		// Check if all players have requested to continue.
-		if (continueIndex === (isGameMode ? 3 : 2)) {
+		if (continueIndex === (isGameMode ? 4 : 2)) {
 			// Add delay so the game won't start right away
 			setTimeout(() => {
 				// Reset pause-related flags
@@ -142,7 +142,7 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 				setSendContinueRequest(false);
 
 				// Update game state to trigger a resume of the game
-				setPongGameState({ ...pongGameState, pause: false});
+				updatePongGameState({ ...pongGameState, pause: false});
 			}, 1000);
 		}
 	}, [continueIndex]);

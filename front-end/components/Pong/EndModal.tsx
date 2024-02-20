@@ -2,13 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
-import { useKey } from "../hooks/useKey";
+
 import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
-import { usePongUI } from "@/app/pong/hooks/usePongUI";
 import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
+import { usePongUI } from "@/app/pong/hooks/usePongUI";
+import { useKey } from "../hooks/useKey";
 import useContract, { PlayerScore } from "@/app/useContract";
-import { ChevronDownIcon } from "../icons";
 import { initialPongPlayerState } from "@/app/pong/context/PongSockets";
+import { ChevronDownIcon } from "../icons";
 
 const EndModal = () => {
 	// Provider hooks
@@ -17,7 +18,7 @@ const EndModal = () => {
 		winner,
 		isGameMode,
 		tournament,
-		setPongGameState,
+		updatePongGameState,
 		setStarted
 	} = usePongGameState();
 	const {
@@ -41,6 +42,7 @@ const EndModal = () => {
 
 	// State variables
 	const [showResult, setShowResult] = useState("");
+	const [wasOpen, setWasOpen] = useState(false);
 
 	const getResult = () => {
 		if (winner === String(playerState.players[0].number + 1) || (winner === '' && disconnected))
@@ -59,24 +61,32 @@ const EndModal = () => {
 					addr: playerState.players[i].addr, score: 1,
 				})
 			}
-			if (tournament.id !== -1)
-				await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			else
-				await submitGameResultRanked(playerScore);
+			// if (tournament.id !== -1)
+			// 	await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+			// else
+			// 	await submitGameResultRanked(playerScore);
 		}
 		const status = await wsclient?.updateStatus(false, pongGameState.gameId);
+		updatePongGameState({ ...pongGameState, reset: true, pause: true, gameId: "-1" });
+		setPlayerState(initialPongPlayerState());
+		setStarted(false);
+		console.log("SEND")
 		if (status) {
-			setPongGameState({ ...pongGameState, reset: true, pause: true, gameId: "-1" });
 			if (tournament.id !== -1)
-				wsclient?.requestTournament(tournament.id, 'TTT');
-			setPlayerState(initialPongPlayerState());
-			setStarted(false);
+				wsclient?.requestTournament(tournament.id, 'Pong');
 		}
 	}
 
+	const normalClose = () => {
+		closeModal();
+		setWasOpen(true)
+	}
+
 	useEffect(() => {
-		if (pongGameState.reset)
+		if (pongGameState.reset) {
 			closeModal();
+			setWasOpen(false);
+		}
 	},[pongGameState.reset]);
 
 	useEffect (() => {
@@ -85,14 +95,16 @@ const EndModal = () => {
 	}, [showModal]);
 
 	useEffect(() => {
-		if (escape.isKeyDown && pongGameState.gameOver)
+		console.log("gameOver:", pongGameState.gameOver);
+		if (escape.isKeyDown && pongGameState.gameOver) {
 			openModal();
-	},[escape]);
+		}
+	},[escape.isKeyDown, pongGameState.gameOver]);
 
 	return (
 		<>
 			<div style={{ position: 'fixed', top: '90%', left: '50%', transform: 'translate(-50%, -50%)', overflow: 'visible' }}>
-				{!showModal && pongGameState.gameOver && 
+				{!showModal && pongGameState.gameOver && wasOpen && 
 					<Button isIconOnly size="lg" variant="shadow" className="bordered-button" onClick={openModal}>
 						<ChevronDownIcon />
 					</Button>
@@ -101,7 +113,7 @@ const EndModal = () => {
 			<Modal
 				backdrop="opaque"
 				isOpen={showModal}
-				onClose={closeModal}
+				onClose={normalClose}
 				classNames={{
 					backdrop: 'bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20'
 				}}
@@ -142,7 +154,7 @@ const EndModal = () => {
 						{ disconnected && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
-						<Button color="danger" variant="ghost" onClick={closeModal}>
+						<Button color="danger" variant="ghost" onClick={normalClose}>
 							Leave
 						</Button>
 						{tournament.id !== -1 ? (
@@ -150,7 +162,7 @@ const EndModal = () => {
 								Next
 							</Button>
 						) : (
-							pongGameState.gameId.includes("Costume-Game-") ? (
+							pongGameState.gameId.includes("Costome-Game-") ? (
 							<Button color="primary" isDisabled={disconnected} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
 								Rematch
 							</Button>
@@ -160,7 +172,7 @@ const EndModal = () => {
 								</Button>
 							)
 						)}
-						<Button color="success" variant="ghost" onClick={closeModal}>
+						<Button color="success" variant="ghost" onClick={normalClose}>
 							View
 						</Button>
 					</ModalFooter>

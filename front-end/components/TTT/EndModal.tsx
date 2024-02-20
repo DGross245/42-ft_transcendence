@@ -44,6 +44,7 @@ const EndModal = () => {
 
 	// State variables
 	const [showResult, setShowResult] = useState("");
+	const [wasOpen, setWasOpen] = useState(false);
 
 	const getOwnImage = () => {
 		if (playerState.players[playerState.client].symbol === 'O')
@@ -85,11 +86,23 @@ const EndModal = () => {
 		const status = await wsclient?.updateStatus(false, gameState.gameId);
 		if (status) {
 			updateGameState({ ...gameState, reset: true, pause: true, gameId: "-1" });
+			// updatePlayerState(initialTTTPlayerState());
 			if (tournament.id !== -1)
 				wsclient?.requestTournament(tournament.id, 'TTT');
-			updatePlayerState(initialTTTPlayerState());
 		}
 	}
+
+	const normalClose = () => {
+		closeModal();
+		setWasOpen(true)
+	}
+	
+	useEffect(() => {
+		if (gameState.reset) {
+			closeModal();
+			setWasOpen(false);
+		}
+	},[gameState.reset])
 
 	useEffect (() => {
 		if (showModal)
@@ -99,17 +112,13 @@ const EndModal = () => {
 	useEffect(() => {
 		if (escape.isKeyDown && gameState.gameOver)
 			openModal();
-	},[escape]);
+	},[escape, gameState.gameOver]);
 
-	useEffect(() => {
-		if (gameState.reset)
-			closeModal();
-	},[gameState.reset])
 
 	return (
 		<>
 			<div style={{ position: 'fixed', top: '90%', left: '50%', transform: 'translate(-50%, -50%)', overflow: 'visible' }}>
-				{!showModal && gameState.gameOver && 
+				{!showModal && gameState.gameOver && wasOpen && 
 					<Button isIconOnly size="lg" variant="shadow" className="bordered-button" onClick={openModal}>
 						<ChevronDownIcon />
 					</Button>
@@ -118,7 +127,7 @@ const EndModal = () => {
 			<Modal
 				backdrop="opaque"
 				isOpen={showModal}
-				onClose={closeModal}
+				onClose={normalClose}
 				classNames={{
 					backdrop: 'bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20'
 				}}
@@ -172,7 +181,7 @@ const EndModal = () => {
 						{ disconnected &&  timerState === 'cross' && <p style={{ color: 'grey' }}> Your opponent didn't connect </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
-						<Button color="danger" variant="ghost" onClick={closeModal}>
+						<Button color="danger" variant="ghost" onClick={normalClose}>
 							Leave
 						</Button>
 						{tournament.id !== -1 ? (
@@ -180,7 +189,7 @@ const EndModal = () => {
 								Next
 							</Button>
 						) : (
-							gameState.gameId.includes("Costume-Game-") ? (
+							gameState.gameId.includes("Costome-Game-") ? (
 							<Button color="primary" isDisabled={disconnected} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
 								Rematch
 							</Button>
@@ -190,7 +199,7 @@ const EndModal = () => {
 							</Button>
 							)
 						)}
-						<Button color="success" variant="ghost" onClick={closeModal}>
+						<Button color="success" variant="ghost" onClick={normalClose}>
 							View
 						</Button>
 					</ModalFooter>

@@ -70,8 +70,8 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			});
 			
 			socket.on('Update-Status', (isInGame: boolean, gameId: string) => {
-				// if (!isInGame)
-				// 	socket.leave(gameId);
+				if (!isInGame)
+					socket.leave(gameId);
 				socket.data.isInGame = isInGame;
 				socket.emit('Status-Changed', true);
 			});
@@ -110,7 +110,8 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 
 			socket.on('create-game', () => {
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
-				const customeGame = `Costume-Game-${id}`;
+				const customeGame = `Costome-Game-${id}`;
+				console.log(customeGame)
 				socket.emit('match-found', customeGame, -1, -1);
 			});
 

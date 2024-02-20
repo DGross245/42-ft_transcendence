@@ -30,7 +30,7 @@ export const PongSocketEvents = () => {
 	} = usePongSocket();
 	const {
 		pongGameState,
-		setPongGameState,
+		updatePongGameState,
 		isGameMode,
 		setPlayerPaddle,
 		bottomPaddleRef,
@@ -83,15 +83,16 @@ export const PongSocketEvents = () => {
 	useEffect(() => {
 		const waiting = async () => {
 			if (wsclient && pongGameState.gameId === "-1") {
+				setSkip({ _skip: false, address: ""});
 				setIsFull("");
 				// setPlayerSet(false);
 				const { gameID, tournamentId, gameIndex } = await wsclient.waitingRoom();
-				if (tournamentId === -1 && !gameID.includes("Costume-Game-") && !isGameMode) {
+				if (tournamentId === -1 && !gameID.includes("Costome-Game-") && !isGameMode) {
 					wsclient.joinQueue("Pong");
 				} else {
 					setTournament({ id: tournamentId, index: gameIndex })
 				}
-				setPongGameState({ ...pongGameState, gameId: gameID });
+				updatePongGameState({ ...pongGameState, gameId: gameID });
 			}
 		}
 
@@ -158,7 +159,7 @@ export const PongSocketEvents = () => {
 		
 		if (playerState.client !== -1 && isFull === "FULL") {
 			sendPlayerData();
-			setPongGameState({ ...pongGameState, pause: false });
+			updatePongGameState({ ...pongGameState, pause: false });
 		}
 	}, [playerState.client, isFull]);
 
@@ -234,8 +235,10 @@ export const PongSocketEvents = () => {
 			
 			if (!disconnected)
 				setDisconnected(true);
-			if (!pongGameState.gameOver)
-				setPongGameState({ ...pongGameState, gameOver: true });
+			if (!pongGameState.gameOver) {
+				console.log("EXECUTE GAMEOVER TRUE")
+				updatePongGameState({ ...pongGameState, gameOver: true });
+			}
 		};
 
 		if (wsclient && pongGameState.gameId !== '-1') {
@@ -313,7 +316,7 @@ export const PongSocketEvents = () => {
 	useEffect(() => {
 		const setPause = (msg: string) => {
 			if (msg === "true")
-				setPongGameState({ ...pongGameState, pause: true });
+				updatePongGameState({ ...pongGameState, pause: true });
 	};
 	
 		if (wsclient && pongGameState.gameId !== "-1") {
