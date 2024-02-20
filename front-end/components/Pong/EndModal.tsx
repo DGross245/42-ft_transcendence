@@ -99,7 +99,7 @@ const EndModal = () => {
 		if (escape.isKeyDown && pongGameState.gameOver) {
 			openModal();
 		}
-	},[escape.isKeyDown, pongGameState.gameOver]);
+	},[escape.isKeyDown, pongGameState.gameOver, openModal]);
 
 	return (
 		<>
