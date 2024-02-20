@@ -1,9 +1,11 @@
 import { PerspectiveCamera } from "@react-three/drei"
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from 'three'
 
 import { useKey } from "../hooks/useKey";
 import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
+import { useFrame } from "@react-three/fiber";
+import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 
 /**
  * Ceates a perspective camera for a 3D scene and updates its position and orientation based on a key map.
@@ -13,7 +15,8 @@ import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
  */
 const Camera = () => {
 	const ref = useRef<THREE.PerspectiveCamera>(null);
-	const { camPos } = usePongGameState();
+	const { camPos, isGameMode } = usePongGameState();
+	const { playerState } = usePongSocket();
 	const [x, y, z] = [...camPos];
 
 	const digit1 = useKey(['1']);
@@ -34,6 +37,13 @@ const Camera = () => {
 			}
 		}
 	},[digit1])
+
+	useFrame(() => {
+		if (ref.current && playerState.client !== -1 && !isGameMode) {
+			const targetPos = new THREE.Vector3(0, 400, 100);
+			ref.current.position.lerp(targetPos, 0.02);
+		}
+	});
 
 	return (
 		<PerspectiveCamera

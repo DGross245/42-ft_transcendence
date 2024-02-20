@@ -82,7 +82,6 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 	useEffect(() => {
 		if (playerState.client !== -1) {
 			if (!isGameMode) {
-				setCamPos([0, 400, 100]);
 				const newCountdownPos = [
 					[-23, 50, 0] as [number, number, number],
 					[-35, 50, 0] as [number, number, number]

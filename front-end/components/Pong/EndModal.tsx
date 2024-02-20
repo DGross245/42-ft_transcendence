@@ -7,6 +7,7 @@ import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
 import { usePongUI } from "@/app/pong/hooks/usePongUI";
 import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 import useContract, { PlayerScore } from "@/app/useContract";
+import { ChevronDownIcon } from "../icons";
 
 const EndModal = () => {
 	// Provider hooks
@@ -85,6 +86,13 @@ const EndModal = () => {
 
 	return (
 		<>
+			<div style={{ position: 'fixed', top: '90%', left: '50%', transform: 'translate(-50%, -50%)', overflow: 'visible' }}>
+				{!showModal && pongGameState.gameOver && 
+					<Button isIconOnly size="lg" variant="shadow" className="bordered-button" onClick={openModal}>
+						<ChevronDownIcon />
+					</Button>
+				}
+			</div>
 			<Modal
 				backdrop="opaque"
 				isOpen={showModal}
@@ -98,6 +106,26 @@ const EndModal = () => {
 					overflow: 'visible',
 					backdropFilter: 'blur(5px)',
 				}}
+				motionProps={{
+					variants: {
+					  enter: {
+						y: -20,
+						opacity: 1,
+						transition: {
+						  duration: 0.2,
+						  ease: "easeIn",
+						},
+					  },
+					  exit: {
+						y: 0,
+						opacity: 0,
+						transition: {
+						  duration: 0.3,
+						  ease: "easeOut",
+						},
+					  },
+					}
+				  }}
 			>
 				<ModalContent style={{ position: 'relative', overflow: 'visible' }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>

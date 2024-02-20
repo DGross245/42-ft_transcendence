@@ -125,6 +125,26 @@ const EndModal = () => {
 					overflow: 'visible',
 					backdropFilter: 'blur(5px)',
 				}}
+				motionProps={{
+					variants: {
+						enter: {
+							y: -20,
+							opacity: 1,
+							transition: {
+								duration: 0.2,
+								ease: "easeIn",
+							},
+						},
+						exit: {
+							y: 0,
+							opacity: 0,
+							transition: {
+								duration: 0.3,
+								ease: "easeOut",
+							},
+						},
+					}
+				}}
 			>
 				<ModalContent style={{ position: 'relative', overflow: 'visible' }}>
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
