@@ -6,7 +6,6 @@ import { OrbitControls, Stats } from "@react-three/drei";
 import Countdown from "@/components/Pong/Countdown";
 import { useWindow } from "@/components/hooks/useWindow";
 import Camera from "@/components/Pong/Camera";
-import EndModal from "@/components/Pong/EndModal";
 import { CubeLine } from "@/components/Pong/CubeLine";
 import { Scoreboard } from "../NormalScoreboard";
 import { LongBorder } from "@/components/Pong/Border";
@@ -15,9 +14,7 @@ import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
 import { GameControl } from "@/components/Pong/GameControl";
 import useContract from "@/app/useContract";
 import { useState } from "react";
-import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { usePongSocket } from "../hooks/usePongSocket";
-import { PauseButton } from "@/components/Pong/Pause";
 import { PongModals } from "@/components/Pong/PongModals";
 
 /**

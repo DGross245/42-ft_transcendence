@@ -6,7 +6,7 @@ import { usePongSocket } from "../../app/pong/hooks/usePongSocket";
 import { usePongGameState } from "../../app/pong/hooks/usePongGameState";
 import { useKey } from "@/components/hooks/useKey";
 import { usePongBot, Direction } from "@/app/pong/hooks/usePongBot";
-import { Ball } from "./Ball";
+import { OneForAllBall } from "./OneForAllBall";
 
 interface Paddle {
 	position: [number, number, number];
@@ -77,7 +77,7 @@ export const GameControl = () => {
 			<Paddle ref={leftPaddleRef} position={[-151, 0, 0]}	color={playerState.players[1].color} rotation={[0, Math.PI / 2, Math.PI / 2]} />
 			<Paddle ref={topPaddleRef} position={[0, 0, -151]}	color={playerState.players[2].color} rotation={[Math.PI / 2, 0, Math.PI / 2]} />
 			<Paddle ref={rightPaddleRef} position={[151, 0, 0]}	color={playerState.players[3].color} rotation={[0, Math.PI / 2, Math.PI / 2]} />
-			<Ball onPositionChange={ballAidsHook}/>
+			<OneForAllBall onPositionChange={ballAidsHook}/>
 		</>
 	);
 }
