@@ -7,7 +7,8 @@ import {
 	Dispatch,
 	SetStateAction,
 	MutableRefObject,
-	useRef
+	useRef,
+	useCallback
 } from "react";
 import { Mesh } from 'three'
 
@@ -37,7 +38,7 @@ interface PongGameStateContextValue {
 	},
 	setPlayerPaddle: Dispatch<SetStateAction<PongGameStateContextValue['playerPaddle']>>,
 	setScores: Dispatch<SetStateAction<PongGameStateContextValue['scores']>>,
-	updatePongGameState: Dispatch<SetStateAction<PongGameStateContextValue['pongGameState']>>,
+	updatePongGameState: (newState: Partial<PongGameStateContextValue['pongGameState']>) => void,
 	winner: string,
 	setWinner: Dispatch<SetStateAction<string>>,
 	isScoreVisible: boolean,
@@ -88,12 +89,12 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 	const ballRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const [playerPaddle, setPlayerPaddle] = useState<PongGameStateContextValue['playerPaddle']>({ ref: null, pos: 0, minPos: 0, maxPos: 0});
 
-	const updatePongGameState : Dispatch<SetStateAction<PongGameStateContextValue['pongGameState']>> = ( newState ) => {
+	const updatePongGameState = useCallback((newState: Partial<PongGameStateContextValue['pongGameState']>) => {
 		setPongGameState(prevState => ({
 			...prevState,
 			...newState,
 		}));
-	};
+	}, []);
 
 	const value: PongGameStateContextValue = {
 		scores,
