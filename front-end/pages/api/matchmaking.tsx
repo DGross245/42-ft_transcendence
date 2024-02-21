@@ -1,4 +1,4 @@
-import { Game } from '@/app/useContract';
+import { Game } from '@/components/hooks/useContract';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { RemoteSocket } from 'Socket.IO';
 import { DecorateAcknowledgementsWithMultipleResponses } from 'Socket.IO/dist/typed-events';

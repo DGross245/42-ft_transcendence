@@ -7,7 +7,7 @@ import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import { useUI } from "@/app/tic-tac-toe/hooks/useUI";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
-import useContract, { PlayerScore } from "@/app/useContract";
+import useContract, { PlayerScore } from "@/components/hooks/useContract";
 import { ChevronDownIcon } from "../icons";
 import { initialTTTPlayerState } from "@/app/tic-tac-toe/context/TTTSockets";
 

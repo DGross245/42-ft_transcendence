@@ -1,7 +1,7 @@
 "use client";
 
 import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers5/react'
-import scoresAbi from '../public/tournamentManager_abi.json';
+import scoresAbi from '../../public/tournamentManager_abi.json';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';

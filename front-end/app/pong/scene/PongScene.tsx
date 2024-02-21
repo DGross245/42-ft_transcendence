@@ -12,7 +12,7 @@ import { LongBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
 import { GameControl } from "@/components/Pong/GameControl";
-import useContract from "@/app/useContract";
+import useContract from "@/components/hooks/useContract";
 import { useState } from "react";
 import { usePongSocket } from "../hooks/usePongSocket";
 import { PongModals } from "@/components/Pong/PongModals";

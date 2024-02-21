@@ -4,7 +4,7 @@ import useWSClient from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
-import useContract from "@/app/useContract";
+import useContract from "@/components/hooks/useContract";
 
 export const TTTSocketEvents = () => {
 	// Provider hooks

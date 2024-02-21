@@ -4,7 +4,7 @@ import useWSClient from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
 import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
-import useContract from "@/app/useContract";
+import useContract from "@/components/hooks/useContract";
 
 export const PongSocketEvents = () => {
 	// Provider hooks

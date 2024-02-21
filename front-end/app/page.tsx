@@ -6,7 +6,7 @@ import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import { StrictMode } from 'react';
 
-import Scores from "./useContract";
+import Scores from "../components/hooks/useContract";
 
 export default function Home() {
 	return (
