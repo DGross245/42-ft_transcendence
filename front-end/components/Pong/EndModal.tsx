@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
 import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
@@ -44,13 +44,6 @@ const EndModal = () => {
 	const [showResult, setShowResult] = useState("");
 	const [wasOpen, setWasOpen] = useState(false);
 
-	const getResult = () => {
-		if (winner === String(playerState.players[0].number + 1) || (winner === '' && disconnected))
-			return ('Wins');
-		else
-			return ('Loses');
-	};
-
 	const sendScoreAndContinue = async () => {
 		if (playerState.client === 0 || disconnected) {
 			const maxClient = isGameMode ? 3 : 2;
@@ -77,9 +70,9 @@ const EndModal = () => {
 		}
 	}
 
-	const normalClose = () => {
+	const closeDiscModal = () => {
 		closeModal();
-		setWasOpen(true)
+		setWasOpen(true);
 	}
 
 	useEffect(() => {
@@ -87,19 +80,25 @@ const EndModal = () => {
 			closeModal();
 			setWasOpen(false);
 		}
-	},[pongGameState.reset]);
+	}, [closeModal, pongGameState.reset]);
 
 	useEffect (() => {
-		if (showModal)
-			setShowResult(getResult());
-	}, [showModal]);
+		if (showModal) {
+			if (winner === String(playerState.players[0].number + 1) || (winner === '' && disconnected)) {
+				setShowResult("Wins");
+			}
+			else {
+				setShowResult("Loses");
+			}
+		}
+	}, [showModal, winner, disconnected, playerState.players]);
 
 	useEffect(() => {
 		console.log("gameOver:", pongGameState.gameOver);
 		if (escape.isKeyDown && pongGameState.gameOver) {
 			openModal();
 		}
-	},[escape.isKeyDown, pongGameState.gameOver, openModal]);
+	}, [escape.isKeyDown, pongGameState.gameOver, openModal]);
 
 	return (
 		<>
@@ -113,7 +112,7 @@ const EndModal = () => {
 			<Modal
 				backdrop="opaque"
 				isOpen={showModal}
-				onClose={normalClose}
+				onClose={closeDiscModal}
 				classNames={{
 					backdrop: 'bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20'
 				}}
@@ -154,7 +153,7 @@ const EndModal = () => {
 						{ disconnected && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
-						<Button color="danger" variant="ghost" onClick={normalClose}>
+						<Button color="danger" variant="ghost" onClick={closeDiscModal}>
 							Leave
 						</Button>
 						{tournament.id !== -1 ? (
@@ -172,7 +171,7 @@ const EndModal = () => {
 								</Button>
 							)
 						)}
-						<Button color="success" variant="ghost" onClick={normalClose}>
+						<Button color="success" variant="ghost" onClick={closeDiscModal}>
 							View
 						</Button>
 					</ModalFooter>
