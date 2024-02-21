@@ -6,7 +6,6 @@ import { OrbitControls, Stats } from "@react-three/drei";
 import Countdown from "@/components/Pong/Countdown";
 import { useWindow } from "@/components/hooks/useWindow";
 import Camera from "@/components/Pong/Camera";
-import EndModal from "@/components/Pong/EndModal";
 import { CubeLine } from "@/components/Pong/CubeLine";
 import { Scoreboard } from "../NormalScoreboard";
 import { LongBorder } from "@/components/Pong/Border";
@@ -15,9 +14,7 @@ import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
 import { GameControl } from "@/components/Pong/GameControl";
 import useContract from "@/app/useContract";
 import { useState } from "react";
-import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { usePongSocket } from "../hooks/usePongSocket";
-import { PauseButton } from "@/components/Pong/Pause";
 import { PongModals } from "@/components/Pong/PongModals";
 
 /**
@@ -91,25 +88,27 @@ export default function PongScene() {
 			<button onClick={onStartTournament}> Start Tournament </button>
 			<button onClick={onGetTournaments}> lol Tournament </button>
 			<button onClick={onkek}> print </button>
-			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<PongSocketEvents />
-				<PongGameEvents />
-				<Countdown />
-				<Camera />
-				<LongBorder position={[0, 0, -105]} />
-				<LongBorder position={[0,0,105]} />
-				<CubeLine />
-				<GameControl />
-				<OrbitControls
-					enableZoom={false}
-					enablePan={false}
-					minPolarAngle={0}
-					maxPolarAngle={Math.PI / 2}
-				/>
-				<Scoreboard />
-				<Stats />
-			</Canvas>
-			<PongModals />
+			<div className="scene-container">
+				<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
+					<PongSocketEvents />
+					<PongGameEvents />
+					<Countdown />
+					<Camera />
+					<LongBorder position={[0, 0, -105]} />
+					<LongBorder position={[0,0,105]} />
+					<CubeLine />
+					<GameControl />
+					<OrbitControls
+						enableZoom={false}
+						enablePan={false}
+						minPolarAngle={0}
+						maxPolarAngle={Math.PI / 2}
+					/>
+					<Scoreboard />
+					<Stats />
+				</Canvas>
+				<PongModals />
+			</div>
 		</div>
 	);
 }

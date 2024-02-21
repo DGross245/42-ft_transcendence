@@ -37,15 +37,15 @@ export const Timer = ({playerClient, isFull, started, showChip, timerState, setT
 
 	}, [playerClient, isFull, started]);
 
-	if (playerClient === -1 && !showChip || started)
+	if ((playerClient === -1 && !showChip) || started)
 		return (null);
 
 	return (
 		<div
-			className={`chip-container ${disappear ? 'fade-out' : 'fade-in'}`}
+			className={`${disappear ? 'fade-out' : 'fade-in'}`}
 			style={{
-				position: 'fixed',
-				top: dimensions.height / 4,
+				position: 'absolute',
+				top: dimensions.height / 4.5,
 				left: dimensions.width / 2,
 				transform: 'translate(-50%, -50%)',
 			}}
