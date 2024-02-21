@@ -60,7 +60,7 @@ const EndModal = () => {
 			// 	await submitGameResultRanked(playerScore);
 		}
 		const status = await wsclient?.updateStatus(false, pongGameState.gameId);
-		updatePongGameState({ ...pongGameState, reset: true, pause: true, gameId: "-1" });
+		updatePongGameState({ reset: true, pause: true, gameId: "-1" });
 		setPlayerState(initialPongPlayerState());
 		setStarted(false);
 		console.log("SEND")

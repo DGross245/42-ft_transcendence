@@ -147,7 +147,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 				ball.velocityZ = 0;
 				ball.speed = 0.1;
 				console.log("GAMEOVER TRUE")
-				updatePongGameState({ ...pongGameState, gameOver: true })
+				updatePongGameState({ gameOver: true })
 				setWinner(player);
 				setBallVisibility(false);
 			}

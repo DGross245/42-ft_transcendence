@@ -253,7 +253,7 @@ export const useBallLogic = (onPositionChange:  (position: Vector3) => void) => 
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
 			if (playerScore === 7) {
-				updatePongGameState({ ...pongGameState, gameOver: true })
+				updatePongGameState({ gameOver: true });
 				setWinner(player);
 				let ball = temp.current;
 				ball.x = 0;

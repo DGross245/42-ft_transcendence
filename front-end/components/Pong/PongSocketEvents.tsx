@@ -92,7 +92,7 @@ export const PongSocketEvents = () => {
 				} else {
 					setTournament({ id: tournamentId, index: gameIndex })
 				}
-				updatePongGameState({ ...pongGameState, gameId: gameID });
+				updatePongGameState({ gameId: gameID });
 			}
 		}
 
@@ -159,7 +159,7 @@ export const PongSocketEvents = () => {
 		
 		if (playerState.client !== -1 && isFull === "FULL") {
 			sendPlayerData();
-			updatePongGameState({ ...pongGameState, pause: false });
+			updatePongGameState({ pause: false });
 		}
 	}, [playerState.client, isFull]);
 
@@ -237,7 +237,7 @@ export const PongSocketEvents = () => {
 				setDisconnected(true);
 			if (!pongGameState.gameOver) {
 				console.log("EXECUTE GAMEOVER TRUE")
-				updatePongGameState({ ...pongGameState, gameOver: true });
+				updatePongGameState({ gameOver: true });
 			}
 		};
 
@@ -315,9 +315,10 @@ export const PongSocketEvents = () => {
 
 	useEffect(() => {
 		const setPause = (msg: string) => {
-			if (msg === "true")
-				updatePongGameState({ ...pongGameState, pause: true });
-	};
+			if (msg === "true") {
+				updatePongGameState({ pause: true });
+			}
+		};
 	
 		if (wsclient && pongGameState.gameId !== "-1") {
 			wsclient?.addMessageListener(`Pause-${pongGameState.gameId}`, pongGameState.gameId, setPause)

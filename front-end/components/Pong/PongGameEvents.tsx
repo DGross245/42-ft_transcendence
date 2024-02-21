@@ -107,14 +107,14 @@ export const PongGameEvents = () => {
 			setScores({ p1Score: 0, p2Score: 0, p3Score: 0, p4Score: 0 });
 			setWinner('');
 			setScoreVisibility(false);
-			updatePongGameState({ ...pongGameState, reset: false, gameOver: false });
+			updatePongGameState({ reset: false, gameOver: false });
 		}
 	}, [pongGameState.reset]);
 
 	// Handle pause when esc is pressed
 	useEffect(() => {
 		if (escape.isKeyDown && !pongGameState.gameOver && isScoreVisible)
-			updatePongGameState({ ...pongGameState, pause: true});
+			updatePongGameState({ pause: true});
 	},[escape, pongGameState.gameOver, isScoreVisible])
 
 	// Execute reset when all players want a rematch
@@ -127,7 +127,7 @@ export const PongGameEvents = () => {
 			setRematchIndex(0);
 
 			// Update game state to trigger a reset
-			updatePongGameState({ ...pongGameState, reset: true })
+			updatePongGameState({ reset: true })
 		}
 	}, [rematchIndex]);
 
@@ -142,7 +142,7 @@ export const PongGameEvents = () => {
 				setSendContinueRequest(false);
 
 				// Update game state to trigger a resume of the game
-				updatePongGameState({ ...pongGameState, pause: false});
+				updatePongGameState({ pause: false});
 			}, 1000);
 		}
 	}, [continueIndex]);
