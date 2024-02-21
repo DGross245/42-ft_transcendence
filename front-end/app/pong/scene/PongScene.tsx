@@ -88,25 +88,27 @@ export default function PongScene() {
 			<button onClick={onStartTournament}> Start Tournament </button>
 			<button onClick={onGetTournaments}> lol Tournament </button>
 			<button onClick={onkek}> print </button>
-			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<PongSocketEvents />
-				<PongGameEvents />
-				<Countdown />
-				<Camera />
-				<LongBorder position={[0, 0, -105]} />
-				<LongBorder position={[0,0,105]} />
-				<CubeLine />
-				<GameControl />
-				<OrbitControls
-					enableZoom={false}
-					enablePan={false}
-					minPolarAngle={0}
-					maxPolarAngle={Math.PI / 2}
-				/>
-				<Scoreboard />
-				<Stats />
-			</Canvas>
-			<PongModals />
+			<div className="scene-container">
+				<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
+					<PongSocketEvents />
+					<PongGameEvents />
+					<Countdown />
+					<Camera />
+					<LongBorder position={[0, 0, -105]} />
+					<LongBorder position={[0,0,105]} />
+					<CubeLine />
+					<GameControl />
+					<OrbitControls
+						enableZoom={false}
+						enablePan={false}
+						minPolarAngle={0}
+						maxPolarAngle={Math.PI / 2}
+					/>
+					<Scoreboard />
+					<Stats />
+				</Canvas>
+				<PongModals />
+			</div>
 		</div>
 	);
 }
