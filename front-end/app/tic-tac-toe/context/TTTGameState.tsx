@@ -3,7 +3,8 @@ import {
 	createContext,
 	useState,
 	Dispatch,
-	SetStateAction
+	SetStateAction,
+	useCallback
 } from "react";
 
 // Used to track user moves for validation.
@@ -98,7 +99,7 @@ interface GameStateContextValue {
 	setSceneCoords: Dispatch<SetStateAction<number[][][][]>>,
 	winner: string,
 	setWinner: Dispatch<SetStateAction<string>>,
-	updateGameState: Dispatch<SetStateAction<GameStateContextValue['gameState']>>,
+	updateGameState: (newState: Partial<GameStateContextValue['gameState']>) => void,
 	lineCoords: [number, number, number][],
 	setLineCoords: Dispatch<SetStateAction<[number, number, number][]>>,
 	countdownVisible: boolean,
@@ -119,10 +120,7 @@ export const GameStateContext = createContext<GameStateContextValue>({} as GameS
 
 export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, children: ReactNode }> = ({ gameMode = false, isBotActive = false, children }) => {
 	const [isGameMode, setGameMode] = useState(gameMode);
-	const [tournament, setTournament] = useState({
-		id: -1,
-		index: -1,
-	});
+	const [tournament, setTournament] = useState({ id: -1, index: -1 });
 	const [countdownVisible, setCountdownVisible] = useState(true);
 	const [currentTurn, setTurn] = useState('');
 	const [board, setBoard] = useState(initialBoard());
@@ -135,12 +133,12 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 	const [symbolArray, setSymbolArray] = useState(['', '', '']);
 	const [started, setStarted] = useState(false);
 
-	const updateGameState : Dispatch<SetStateAction<GameStateContextValue['gameState']>> = ( newState ) => {
+	const updateGameState = useCallback((newState: Partial<GameStateContextValue['gameState']>) => {
 		setGameState(prevState => ({
 			...prevState,
 			...newState,
 		}));
-	};
+	}, []);
 
 	const value: GameStateContextValue = {
 		currentTurn,

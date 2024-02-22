@@ -23,6 +23,8 @@ const Paddle = forwardRef<Mesh, Paddle>(({ position, color, rotation }, ref) => 
 	);
 })
 
+Paddle.displayName = "Paddle"
+
 export const GameControl = () => {
 	const { playerState, wsclient } = usePongSocket();
 	const { bottomPaddleRef, leftPaddleRef, topPaddleRef, rightPaddleRef, playerPaddle, pongGameState, botState } = usePongGameState();

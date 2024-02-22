@@ -35,6 +35,7 @@ export const TTTGameEvents = () => {
 
 	// Handling the reset of the scene, resetting important states.
 	useEffect(() => {
+
 		if (gameState.reset) {
 			setBoard(initialBoard());
 			setTurn('');
@@ -42,15 +43,16 @@ export const TTTGameEvents = () => {
 			setWinner('');
 			setCountdownVisible(true);
 			setLineVisible(false)
-			updateGameState({ ...gameState, reset: false, gameOver: false})
+			updateGameState({ reset: false, gameOver: false})
 		}
-	}, [gameState]);
+	}, [gameState.reset, updateGameState, setBoard, setCountdownVisible, setLineCoords, setLineVisible, setTurn, setWinner]);
 
 	// Handle pause when esc is pressed
 	useEffect(() => {
-		if (escape.isKeyDown && !gameState.gameOver && !countdownVisible)
-			updateGameState({ ...gameState, pause: true});
-	},[escape, gameState.gameOver, countdownVisible])
+		if (escape.isKeyDown && !gameState.gameOver && !countdownVisible) {
+			updateGameState({ pause: true});
+		}
+	},[escape.isKeyDown, gameState.gameOver, countdownVisible, updateGameState])
 
 	// Execute reset when all players want a rematch
 	useEffect(() => {
@@ -62,9 +64,9 @@ export const TTTGameEvents = () => {
 			setSendRequest(false);
 
 			// Update game state to trigger a reset
-			updateGameState({ ...gameState, reset: true});
+			updateGameState({ reset: true});
 		}
-	}, [rematchIndex]);
+	}, [rematchIndex, setRematchIndex, isGameMode, setRequestRematch, setSendRequest, updateGameState]);
 
 	// Resumes the game when all players want to continue.
 	useEffect(() => {
@@ -77,16 +79,17 @@ export const TTTGameEvents = () => {
 				setContinueIndex(0);
 
 				// Update game state to trigger a resume of the game
-				updateGameState({ ...gameState, pause: false});
+				updateGameState({ pause: false});
 			}, 1000);
 		}
-	}, [continueIndex]);
+	}, [continueIndex, setSendContinueRequest, setContinueIndex, updateGameState, isGameMode]);
 
 	// Initializes the turn after countdown
 	useEffect(() => {
-		if (!countdownVisible && currentTurn === '')
+		if (!countdownVisible && currentTurn === '') {
 			setTurn('X');
-	}, [countdownVisible]);
+		}
+	}, [countdownVisible, currentTurn, setTurn]);
 
 	return (null);
 }

@@ -57,7 +57,7 @@ interface PongGameStateContextValue {
 	countdownRot: [number, number, number],
 	setCountdownRot: Dispatch<SetStateAction<[number, number, number]>>,
 	countdownPos: [number, number, number][],
-	setContdownPos: Dispatch<SetStateAction<[number, number, number][]>>,
+	setCountdownPos: Dispatch<SetStateAction<[number, number, number][]>>,
 	tournament: {id: number, index: number},
 	setTournament: Dispatch<SetStateAction<{id: number, index: number}>>,
 	started: boolean,
@@ -80,7 +80,7 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 	const [isGameMode] = useState(gameMode);
 	const [camPos, setCamPos] = useState<[number, number, number]>([0, 350, 400]);
 	const [countdownRot, setCountdownRot] = useState<[number, number, number]>([0, 0, 0]);
-	const [countdownPos, setContdownPos] = useState<[number, number, number][]>([ [-23, 50, 0], [-35, 50, 0] ]);
+	const [countdownPos, setCountdownPos] = useState<[number, number, number][]>([ [-23, 50, 0], [-35, 50, 0] ]);
 	const [started, setStarted] = useState(false);
 	const rightPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
 	const leftPaddleRef = useRef<Mesh>(null) as MutableRefObject<Mesh>;
@@ -120,7 +120,7 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 		countdownRot,
 		setCountdownRot,
 		countdownPos,
-		setContdownPos,
+		setCountdownPos,
 		playerPaddle,
 		setPlayerPaddle,
 		tournament,

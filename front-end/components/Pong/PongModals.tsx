@@ -3,6 +3,7 @@ import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 import { PauseModal } from "../PauseModal";
 import EndModal from "./EndModal";
 import { Timer } from "../Timer";
+import { useCallback, useEffect } from "react";
 
 export function PongModals() {
 	const {
@@ -22,10 +23,10 @@ export function PongModals() {
 		chipDisappear
 	} = usePongSocket();
 
-	const handleButtonClick = () => {
+	const handleButtonClick = useCallback(() => {
 		if (!sendContinueRequest)
 			setSendContinueRequest(true);
-	};
+	}, [setSendContinueRequest, sendContinueRequest]);
 
 	return (
 		<>

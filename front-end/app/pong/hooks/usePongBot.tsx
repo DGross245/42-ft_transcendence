@@ -48,6 +48,7 @@ export const usePongBot = () => {
 		}
 	}
 
+	// TODO: FIX LATER
 	useEffect(() => {
 		const joinTheGame = () => {
 			if (wsclient) {
@@ -68,7 +69,7 @@ export const usePongBot = () => {
 		if (botState.isActive && wsclient) {
 			joinTheGame();
 		}
-	},[botState.isActive, wsclient, playerState])
+	},[botState.isActive, wsclient, playerState, botState, isGameMode, setBot, setPlayerState])
 
 	return {
 		direction,

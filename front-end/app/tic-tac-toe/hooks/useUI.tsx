@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { useSound } from "@/components/hooks/Sound";
 import { useGameState } from "./useGameState";
@@ -10,13 +10,13 @@ export const useUI = () => {
 	const { gameState, winner } = useGameState();
 	const { playerState } = useSocket();
 
-	const closeModal = () => {
+	const closeModal = useCallback(() => {
 		setShowModal(false);
-	}
+	},[])
 
-	const openModal = () => {
+	const openModal = useCallback(() => {
 		setShowModal(true);
-	}
+	},[])
 
 	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
@@ -36,7 +36,7 @@ export const useUI = () => {
 				clearTimeout(modalTimeout)
 			});
 		}
-	}, [gameState.gameOver]);
+	}, [gameState.gameOver, openModal, playerState.client, playerState.players, soundEngine, winner]);
 
 	return {
 		closeModal,

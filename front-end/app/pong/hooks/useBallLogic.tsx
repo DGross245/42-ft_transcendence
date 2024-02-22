@@ -160,12 +160,15 @@ export const useBallLogic = (onPositionChange:  (position: Vector3) => void) => 
 			const newPosition = JSON.parse(msg);
 			PositionRef.current = newPosition;
 		};
-		wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
 
-		return () => {
-			wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
-		};
-	}, [wsclient]);
+		if (wsclient && pongGameState.gameId !== "-1") {
+			wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
+	
+			return () => {
+				wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+			};
+		}
+	}, [wsclient, pongGameState.gameId]);
 
 	const handleBallMovement = (ball: { x: any; z: any; velocityX: any; velocityZ: any; speed: number; }, deltaTime: number) => {
 
@@ -269,7 +272,7 @@ export const useBallLogic = (onPositionChange:  (position: Vector3) => void) => 
 		checkWinner('P2', scores.p2Score);
 		checkWinner('P3', scores.p3Score);
 		checkWinner('P4', scores.p4Score);
-	}, [scores.p1Score, scores.p2Score, scores.p3Score, scores.p4Score]);
+	}, [scores.p1Score, scores.p2Score, scores.p3Score, scores.p4Score, setBallVisibility, setWinner, updatePongGameState]);
 
 	// Game/render loop for the ball.
 	useFrame((_, deltaTime) => {

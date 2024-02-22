@@ -22,16 +22,18 @@ const TurnDisplay = () => {
 	const { playerState } = useSocket();
 	const { isGameMode, currentTurn } = useGameState();
 
-	const getColorBySymbol = (symbol: string) => {
-		const player = playerState.players.find(player => player.symbol === symbol);
-		return player?.color;
-	};
-
-	const colors = useMemo (() => [
-		getColorBySymbol('X'),
-		getColorBySymbol('O'),
-		getColorBySymbol('🔳'),
-	],[playerState]);
+	const colors = useMemo(() => {
+		const getColorBySymbol = (symbol: string) => {
+			const player = playerState.players.find(player => player.symbol === symbol);
+			return player?.color;
+		};
+	
+		return [
+			getColorBySymbol('X'),
+			getColorBySymbol('O'),
+			getColorBySymbol('🔳'),
+		];
+	}, [playerState.players]);
 
 	const extrudeSettings = {
 		steps: 2,
@@ -87,7 +89,7 @@ const TurnDisplay = () => {
 			if (meshRef)
 				camera.remove(meshRef);
 		};
-	}, [camera, ref.current]);
+	}, [camera]);
 
 	return (
 		<group ref={ref} scale={[0.4, 0.4, 0.4]}>

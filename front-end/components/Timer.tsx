@@ -1,9 +1,20 @@
 import { Chip, Tooltip } from "@nextui-org/react";
-import { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { CheckIcon, CrossIcon } from "./icons";
 import { useWindow } from "./hooks/useWindow";
 
-export const Timer = ({playerClient, isFull, started, showChip, timerState, setTimerState, disappear, setDisappear }) => {
+interface TimerProps {
+	playerClient: number;
+	isFull: string;
+	started: boolean;
+	showChip: boolean;
+	timerState: string;
+	setTimerState: React.Dispatch<React.SetStateAction<string>>;
+	disappear: boolean;
+	setDisappear: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, showChip, timerState, setTimerState, disappear, setDisappear }) => {
 	const { dimensions } = useWindow();
 	const [timer, setTimer] = useState(15);
 	const expiredRef = useRef(false);
@@ -35,7 +46,7 @@ export const Timer = ({playerClient, isFull, started, showChip, timerState, setT
 			return () => clearInterval(intervalId);
 		}
 
-	}, [playerClient, isFull, started]);
+	}, [playerClient, isFull, started, setDisappear, setTimerState]);
 
 	if ((playerClient === -1 && !showChip) || started)
 		return (null);
@@ -64,4 +75,6 @@ export const Timer = ({playerClient, isFull, started, showChip, timerState, setT
 			</Tooltip>
 		</div>
 	);
-};
+});
+
+Timer.displayName = "Timer"

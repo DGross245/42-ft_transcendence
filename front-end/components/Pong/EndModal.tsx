@@ -11,7 +11,7 @@ import useContract, { PlayerScore } from "@/components/hooks/useContract";
 import { initialPongPlayerState } from "@/app/pong/context/PongSockets";
 import { ChevronDownIcon } from "../icons";
 
-const EndModal = () => {
+const EndModal =  React.memo(() => {
 	// Provider hooks
 	const {
 		pongGameState,
@@ -54,21 +54,20 @@ const EndModal = () => {
 					addr: playerState.players[i].addr, score: 1,
 				})
 			}
-			if (tournament.id !== -1) {
-				const lol = getTournament(tournament.id);
-				const finished = (await lol).games[tournament.index].finished
-				if (!finished)
-					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			}
-			else
-				await submitGameResultRanked(playerScore);
+			// if (tournament.id !== -1) {
+			// 	const lol = getTournament(tournament.id);
+			// 	const finished = (await lol).games[tournament.index].finished
+			// 	if (!finished)
+			// 		await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+			// }
+			// else
+			// 	await submitGameResultRanked(playerScore);
 			
 		}
 		const status = await wsclient?.updateStatus(false, pongGameState.gameId);
 		updatePongGameState({ reset: true, pause: true, gameId: "-1" });
 		setPlayerState(initialPongPlayerState());
 		setStarted(false);
-		console.log("SEND")
 		if (status) {
 			if (tournament.id !== -1)
 				wsclient?.requestTournament(tournament.id, 'Pong');
@@ -99,7 +98,6 @@ const EndModal = () => {
 	}, [showModal, winner, disconnected, playerState.players]);
 
 	useEffect(() => {
-		console.log("gameOver:", pongGameState.gameOver);
 		if (escape.isKeyDown && pongGameState.gameOver) {
 			openModal();
 		}
@@ -184,6 +182,8 @@ const EndModal = () => {
 			</Modal>
 		</>
 	);
-}
+});
+
+EndModal.displayName = "EndModal"
 
 export default EndModal;

@@ -57,7 +57,7 @@ const Countdown = () => {
 				clearInterval(countdownInterval);
 			};
 		}
-	}, [isScoreVisible, pongGameState.pause]);
+	}, [isScoreVisible, pongGameState.pause, setScoreVisibility, setStarted, soundEngine]);
 
 	return (
 		<mesh visible={!isScoreVisible} position={ count === 1 ? countdownPos[0] : countdownPos[1]} rotation={countdownRot}>

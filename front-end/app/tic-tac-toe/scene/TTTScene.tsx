@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
+import { Environment, Stats } from "@react-three/drei";
 import { useState } from "react";
 
 import { useWindow } from "../../../components/hooks/useWindow";
@@ -39,7 +39,6 @@ const TTTScene = () => {
 		startTournament,
 		getTournaments,
 	} = useContract();
-	const { updateGameState, gameState } = useGameState()
 	const [topic, setTopic] = useState(0);
 
 	const onTopicChange = (e: any) => {
@@ -86,20 +85,20 @@ const TTTScene = () => {
 
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
-					{/* <input
+					<input
 						placeholder="Topic"
 						value={topic}
 						onChange={onTopicChange}
 					/>
-				<button onClick={onCreate}> Create </button>
-				<button onClick={onJoin}> join </button>
+				{/* <button onClick={onCreate}> Create </button>
+				<button onClick={onJoin}> join </button> */}
 				<button onClick={onCreateTournament}> Create Tournament </button>
 				<button onClick={onJoin}>  JOIN  </button>
 				<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
 				<button onClick={onJoinTournament}> Join Tournament </button>
 				<button onClick={onStartTournament}> Start Tournament </button>
 				<button onClick={onGetTournaments}> lol Tournament </button>
-				<button onClick={onkek}> print </button> */}
+				<button onClick={onkek}> print </button>
 			<div className="scene-container">
 				<Canvas  style={{ width: dimensions.width, height: dimensions.height }}>
 					<Camera />
@@ -116,6 +115,7 @@ const TTTScene = () => {
 					<TurnDisplay />
 					<FinishLine />
 					<Table />
+					<Stats />
 					<Environment preset="city" />
 				</Canvas>
 				<TTTModals />

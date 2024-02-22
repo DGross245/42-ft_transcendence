@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Chip } from "@nextui-org/react";
 
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
@@ -10,10 +10,11 @@ import { useKey } from "../hooks/useKey";
 import useContract, { PlayerScore } from "@/components/hooks/useContract";
 import { ChevronDownIcon } from "../icons";
 import { initialTTTPlayerState } from "@/app/tic-tac-toe/context/TTTSockets";
+import Image from "next/image";
 
 // maybe change the View to something like go into queue 
 
-const EndModal = () => {
+const EndModal = React.memo(() => {
 	// Provider hooks
 	const {
 		winner,
@@ -30,7 +31,7 @@ const EndModal = () => {
 		playerState,
 		wsclient,
 		timerState,
-		updatePlayerState
+		setPlayerState
 	} = useSocket();
 
 	// Normal hooks
@@ -39,34 +40,27 @@ const EndModal = () => {
 		closeModal,
 		openModal
 	} = useUI();
+
 	const escape = useKey(['Escape']);
+
 	const { submitGameResultRanked, submitGameResultTournament } = useContract();
 
 	// State variables
 	const [showResult, setShowResult] = useState("");
 	const [wasOpen, setWasOpen] = useState(false);
 
-	const getOwnImage = () => {
-		if (playerState.players[playerState.client].symbol === 'O')
+	const getOwnImage = useCallback(() => {
+		if (playerState.players[playerState.client]?.symbol === 'O')
 			return ('/images/o.png');
-		else if (playerState.players[playerState.client].symbol === 'X')
+		else if (playerState.players[playerState.client]?.symbol === 'X')
 			return ('/images/x.png');
-		else if (playerState.players[playerState.client].symbol === '🔳')
+		else if (playerState.players[playerState.client]?.symbol === '🔳')
 			return ('/images/square.png')
 		else if (isGameMode)
 			return ('/images/Qubic_draw.png');
 		else
 			return ('/images/draw.png');
-	}
-
-	const getResult = () => {
-		if (winner === playerState.players[playerState.client].symbol)
-			return ('Wins');
-		if (winner === "draw")
-			return ('Draw');
-		else
-			return ('Loses');
-	};
+	}, [isGameMode, playerState.client, playerState.players]);
 
 	const sendScoreAndContinue = async () => {
 		if (playerState.client === 0 || disconnected) {
@@ -78,42 +72,50 @@ const EndModal = () => {
 					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1,
 				})
 			}
-			if (tournament.id !== -1)
-				await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			else
-				await submitGameResultRanked(playerScore);
+			// if (tournament.id !== -1)
+			// 	await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+			// else
+			// 	await submitGameResultRanked(playerScore);
 		}
 		const status = await wsclient?.updateStatus(false, gameState.gameId);
+		updateGameState({ reset: true, pause: true, gameId: "-1" });
+		closeModal();
+		setPlayerState(initialTTTPlayerState());
 		if (status) {
-			updateGameState({ ...gameState, reset: true, pause: true, gameId: "-1" });
-			// updatePlayerState(initialTTTPlayerState());
 			if (tournament.id !== -1)
 				wsclient?.requestTournament(tournament.id, 'TTT');
 		}
 	}
 
-	const normalClose = () => {
+	const normalClose = useCallback(() => {
 		closeModal();
 		setWasOpen(true)
-	}
+	}, [closeModal]);
 	
 	useEffect(() => {
 		if (gameState.reset) {
 			closeModal();
 			setWasOpen(false);
 		}
-	},[gameState.reset])
+	}, [gameState.reset, closeModal])
 
 	useEffect (() => {
-		if (showModal)
-			setShowResult(getResult());
-	}, [showModal])
+		if (showModal) {
+			if (winner === playerState.players[playerState.client].symbol) {
+				setShowResult('Wins');
+			} else if (winner === "draw") {
+				setShowResult('Draw');
+			} else {
+				setShowResult('Loses');
+			}
+		}
+	}, [showModal, playerState, winner])
 
 	useEffect(() => {
-		if (escape.isKeyDown && gameState.gameOver)
+		if (escape.isKeyDown && gameState.gameOver) {
 			openModal();
-	},[escape, gameState.gameOver]);
-
+		} 
+	}, [escape.isKeyDown, gameState.gameOver, openModal]);
 
 	return (
 		<>
@@ -162,12 +164,10 @@ const EndModal = () => {
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 						{showModal && (
 							<div style={{ marginTop: '20px' }}>
-								<img
+								<Image
 									src={getOwnImage()}
-									style={{
-										width: winner === 'draw' ? '160px' : '80px',
-										height: '80px',
-									}}
+									width={winner === 'draw' ? 160 : 80}
+									height={80}
 									alt="Image"
 								/>
 							</div>
@@ -178,7 +178,7 @@ const EndModal = () => {
 					</div>
 					<ModalBody style={{ textAlign: 'center' }} >
 						{ disconnected &&  timerState !== 'cross' && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
-						{ disconnected &&  timerState === 'cross' && <p style={{ color: 'grey' }}> Your opponent didn't connect </p> }
+						{ disconnected &&  timerState === 'cross' && <p style={{ color: 'grey' }}> Your opponent didnt connect </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
 						<Button color="danger" variant="ghost" onClick={normalClose}>
@@ -207,6 +207,8 @@ const EndModal = () => {
 			</Modal>
 		</>
 	);
-}
+});
+
+EndModal.displayName = "EndModal"
 
 export default EndModal;

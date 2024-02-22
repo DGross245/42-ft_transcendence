@@ -84,7 +84,7 @@ const Scoreboard = () => {
 					rotation: [0, 0, 0]
 				};
 		}
-	},[playerState.client]);
+	},[]);
 
 	useEffect(() => {
 		if (playerState.client !== -1) {
@@ -95,7 +95,7 @@ const Scoreboard = () => {
 			newPosAndRot[playerState.client].rotation = rotation
 			setPosAndRot(newPosAndRot);
 		}
-	}, [playerState.client]);
+	}, [playerState.client, posAndRot, replacePosAndRot]);
 
 	const getColor = ( ref:  MutableRefObject<Mesh>) => {
 		if (ref && ref.current) {

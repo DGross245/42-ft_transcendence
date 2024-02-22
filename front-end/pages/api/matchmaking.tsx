@@ -5,8 +5,6 @@ import { DecorateAcknowledgementsWithMultipleResponses } from 'Socket.IO/dist/ty
 import crypto from 'crypto';
 import { contract } from './socket';
 
-// TODO: Add a timer or something for the case where a match is found but the opponent never joints because of quit
-
 interface Matchmaking {
 	sockets: RemoteSocket<DecorateAcknowledgementsWithMultipleResponses<DefaultEventsMap>, any>[],
 	gameType: string,

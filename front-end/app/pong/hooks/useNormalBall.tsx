@@ -55,7 +55,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 			ballRef.current.position.x = 0;
 			ballRef.current.position.z = 0;
 		}
-	},[pongGameState.gameOver]);
+	},[pongGameState.gameOver, ballRef]);
 
 	/**
 	 * Updates the new position of the ball based on its velocity and the time passed since last frame (deltaTime).
@@ -139,14 +139,13 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
-			if (playerScore === 7) {
+			if (playerScore === 1) {
 				let ball = temp.current;
 				ball.x = 0;
 				ball.z = 0;
 				ball.velocityX = 0;
 				ball.velocityZ = 0;
 				ball.speed = 0.1;
-				console.log("GAMEOVER TRUE")
 				updatePongGameState({ gameOver: true })
 				setWinner(player);
 				setBallVisibility(false);
@@ -155,7 +154,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 
 		checkWinner('1', scores.p1Score);
 		checkWinner('2', scores.p2Score);
-	}, [scores.p1Score, scores.p2Score]);
+	}, [scores.p1Score, scores.p2Score, setWinner, setBallVisibility, updatePongGameState]);
 
 	// Game/render loop for the ball.
 	useFrame((_, deltaTime) => {
@@ -201,7 +200,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		}
 		// Handling scoring when the ball is outside of the play area.
 		else if ((ball.x > 200 || ball.x < -200) && 
-			scores.p2Score !== 7 && scores.p1Score !== 7) {
+			scores.p2Score !== 1 && scores.p1Score !== 1) {
 			if (ball.x < -200)
 				setScores({ ...scores, p2Score: scores.p2Score + 1 })
 			else

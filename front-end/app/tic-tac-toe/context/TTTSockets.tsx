@@ -21,9 +21,9 @@ interface SocketContextValue {
 		players: Player[],
 		client: number
 	},
+	setPlayerState: Dispatch<SetStateAction<SocketContextValue['playerState']>>,
 	wsclient: WSClientType | null,
 	setWsclient: Dispatch<SetStateAction<WSClientType | null>>,
-	updatePlayerState : Dispatch<SetStateAction<{ players: Player[], client: number }>>,
 	sendRequest: boolean,
 	setSendRequest: Dispatch<SetStateAction<boolean>>,
 	requestRematch: boolean,
@@ -50,7 +50,7 @@ export const initialTTTPlayerState = () => ({
 		addr: "UNDEFINED",
 		color: 0xffffff,
 		number: -1,
-		symbol: "",
+		symbol: "UNDEFINED",
 	})),
 	client: -1
 });
@@ -70,13 +70,6 @@ export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children:
 	const [timerState, setTimerState] = useState("");
 	const [playerState, setPlayerState] = useState(initialTTTPlayerState());
 
-	const updatePlayerState : Dispatch<SetStateAction<{ players: Player[], client: number }>>  = ( newState ) => {
-		setPlayerState((prevState) => ({
-			...prevState,
-			...newState,
-		}));
-	};
-
 	const value : SocketContextValue = {
 		wsclient,
 		setWsclient,
@@ -89,7 +82,7 @@ export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children:
 		rematchIndex,
 		setRematchIndex,
 		playerState,
-		updatePlayerState,
+		setPlayerState,
 		continueIndex,
 		setContinueIndex,
 		sendContinueRequest,

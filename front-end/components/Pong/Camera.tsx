@@ -36,7 +36,7 @@ const Camera = () => {
 				ref.current.lookAt(0, 0, 0);
 			}
 		}
-	},[digit1.isKeyDown, digit2.isKeyDown])
+	},[digit1.isKeyDown, digit2.isKeyDown, camPos])
 
 	useFrame(() => {
 		if (ref.current && playerState.client !== -1 && !isGameMode) {

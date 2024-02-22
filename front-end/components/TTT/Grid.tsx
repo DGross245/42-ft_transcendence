@@ -50,7 +50,7 @@ export const Grid = () => {
 			rotation={line.rotation}
 			args={[0.5, 23.2, 0.5]}
 		/>
-	)),[])
+	)),[posAndRot])
 
 	return (lines);
 }

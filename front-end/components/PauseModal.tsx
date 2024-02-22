@@ -3,7 +3,19 @@ import { Modal, ModalContent, ModalHeader, ModalFooter } from "@nextui-org/react
 
 import { PauseButton } from "./Pause";
 
-export const PauseModal = ({ gameState, continueIndex, handleButtonClick, maxClient, started }) => {
+interface PauseModalProps {
+	gameState: {
+		pause: boolean;
+		gameOver: boolean;
+		gameId: string;
+	};
+	continueIndex: number;
+	handleButtonClick: () => void;
+	maxClient: number;
+	started: boolean;
+}
+
+export const PauseModal = React.memo<PauseModalProps>(({ gameState, continueIndex, handleButtonClick, maxClient, started }) => {
 	return (
 		<>
 			<Modal
@@ -32,4 +44,6 @@ export const PauseModal = ({ gameState, continueIndex, handleButtonClick, maxCli
 			</Modal>
 		</>
 	);
-}
+});
+
+PauseModal.displayName = "PauseModal"

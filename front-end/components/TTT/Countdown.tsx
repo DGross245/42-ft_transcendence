@@ -60,7 +60,7 @@ const Countdown = () => {
 				clearInterval(countdownInterval);
 			};
 		}
-	}, [countdownVisible, soundEngine, gameState.pause]);
+	}, [countdownVisible, soundEngine, gameState.pause, camera, setCountdownVisible, setStarted]);
 
 	return (
 		<mesh ref={ref} visible={countdownVisible} position={[-5, -4, -30]}>

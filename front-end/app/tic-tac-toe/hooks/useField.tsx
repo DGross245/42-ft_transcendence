@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { FieldProps } from "@/components/TTT/Field";
 import { useSocket } from "./useSocket";
@@ -13,13 +13,13 @@ export const useField = (props: FieldProps) => {
 	const { click } = useClick();
 	const { board, setSceneCoords, sceneCoords, setBoard, currentTurn, gameState, countdownVisible } = useGameState();
 
-	const handleHover = ( state: boolean) => {
+	const handleHover = useCallback(( state: boolean) => {
 		if (playerState.client === -1 || gameState.pause || countdownVisible) return ;
 		if (playerState.players[playerState.client].symbol == currentTurn)
 			hover(state);
-	};
+	},[countdownVisible, currentTurn, gameState.pause, playerState.client, playerState.players]);
 
-	const handleClick = () => {
+	const handleClick = useCallback(() => {
 		if (playerState.client === -1 || gameState.pause || countdownVisible) return ;
 		if (!symbol && playerState.players[playerState.client].symbol === currentTurn && !gameState.gameOver) {
 			click(true);
@@ -36,7 +36,7 @@ export const useField = (props: FieldProps) => {
 			updateSceneCoords[i][j][k] = props.position;
 			setSceneCoords(updateSceneCoords)
 		}
-	}
+	},[board, click, countdownVisible, currentTurn, gameState.gameOver, gameState.pause, i, j,k, playerState.client, playerState.players, props.position, sceneCoords, setBoard, setSceneCoords, symbol])
 
 	useEffect(() => {
 		if (board[i][j][k] !== '' && !symbol) {
@@ -47,13 +47,13 @@ export const useField = (props: FieldProps) => {
 			setSceneCoords(updateSceneCoords);
 			click(true);
 		}
-	}, [board[i][j][k]]);
+	}, [board, click, i, j, k, position, sceneCoords, setSceneCoords, symbol]);
 
 	useEffect(() => {
 		if (board[i][j][k] === '' && symbol) {
 			setSymbol(undefined);
 		}
-	}, [board[i][j][k]]);
+	}, [board, i, j, k, symbol]);
 
 	return {
 		hovered, hover, handleClick, handleHover, symbol

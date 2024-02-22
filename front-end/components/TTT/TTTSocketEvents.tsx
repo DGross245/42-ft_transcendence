@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
 
+import { useEffect, useState } from "react";
 import useWSClient from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import useContract from "@/components/hooks/useContract";
+import { useEffectDebugger } from "../Pong/PongSocketEvents";
 
 export const TTTSocketEvents = () => {
 	// Provider hooks
@@ -12,20 +13,17 @@ export const TTTSocketEvents = () => {
 		wsclient,
 		setWsclient,
 		playerState,
-		updatePlayerState,
+		setPlayerState,
 		setDisconnected,
 		setRematchIndex,
 		setRequestRematch,
 		setSendRequest,
-		rematchIndex,
 		sendRequest,
-		continueIndex,
 		setContinueIndex,
 		sendContinueRequest,
 		isFull,
 		setIsFull,
 		timerState,
-		chipDisappear
 	} = useSocket();
 	const {
 		gameState,
@@ -62,7 +60,7 @@ export const TTTSocketEvents = () => {
 		};
 
 		waitForSocket();
-	}, [newClient]);
+	}, [newClient, address, setWsclient]);
 
 	// Catches skip msg when player subscribed to a tournament is not present
 	useEffect(() => {
@@ -90,6 +88,7 @@ export const TTTSocketEvents = () => {
 	useEffect(() => {
 		const waiting = async () => {
 			if (wsclient && gameState.gameId === "-1") {
+				setSkip({ _skip: false, address: ""});
 				setIsFull("");
 				setPlayerSet(false);
 				const { gameID, tournamentId, gameIndex } = await wsclient.waitingRoom();
@@ -98,51 +97,65 @@ export const TTTSocketEvents = () => {
 				} else {
 					setTournament({ id: tournamentId, index: gameIndex })
 				}
-				updateGameState({ ...gameState, gameId: gameID });
+				updateGameState({ gameId: gameID });
 			}
 		}
 
 		waiting();
-	}, [wsclient, gameState.gameId]);
+	}, [wsclient, gameState.gameId, isGameMode, setIsFull, setTournament, updateGameState]);
 
 	// Initiate joining a game 
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (wsclient && gameState.gameId !== "-1") {
+				console.log("PLAYER SET")
 				const player = await getPlayer(String(address))
 				const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
-				let newPlayerData = { ...playerState };
+	
+				setPlayerState((prevState) => {
+					const updatedPlayers = prevState.players.map((prevPlayer, index) => {
+						if (index === numClients) {
+							return {
+								name: player.name,
+								addr: String(address),
+								color: Number(player.color),
+								number: numClients,
+								symbol: "",
+							};
+						} else {
+							return ( prevPlayer );
+						}
+					});
 
-				newPlayerData.players[numClients] = {
-						name: player.name,
-						addr: String(address),
-						color: Number(player.color),
-						number: numClients,
-						symbol: 'Undefined',
-				}
-				newPlayerData.client = numClients
+					const newState = {
+						...prevState,
+						players: updatedPlayers,
+						client: numClients
+					};
 
-				// Handle the tournament case where a player subscribed to a tournament is not present
-				if (skip._skip) {
-					newPlayerData.players[1] = {
-						name: "Unknown",
-						addr: skip.address,
-						color: 0xffffff,
-						number: 1,
-						symbol: 'Undefined',
+					// Handle the tournament case where a player subscribed to a tournament is not present
+					if (skip._skip && numClients === 1) {
+						newState.players[1] = {
+							name: "Unknown",
+							addr: skip.address,
+							color: 0xffffff,
+							number: 1,
+							symbol: ""
+						};
 					}
-				}
 
-				updatePlayerState( newPlayerData );
+					return ( newState );
+				});
 			}
 		};
 
 		joinTheGame();
-	}, [wsclient, gameState.gameId]);
+	}, [wsclient, gameState.gameId, address, botState.isActive, getPlayer, isGameMode, skip, setPlayerState]);
 
 	// Initial communication between both players (SEND message)
 	useEffect(() => {
 		const sendPlayerData = () => {
+			console.log("PLAYER SEND")
 			const playerData = {
 				name: playerState.players[playerState.client].name,
 				addr: playerState.players[playerState.client].addr,
@@ -157,28 +170,41 @@ export const TTTSocketEvents = () => {
 			sendPlayerData();
 			if (botState.isActive && !isGameMode)
 				setPlayerSet(true);
-			updateGameState({ ...gameState, pause: false });
+			updateGameState({ pause: false });
 		}
-	}, [playerState.client, isFull]);
+	}, [playerState.client, isFull, botState.isActive, gameState.gameId, playerState.players, isGameMode, updateGameState, wsclient]);
 
 	// Initial communication between both players (RECEIVE message)
 	useEffect(() => {
 		const setPlayer = (msg: string) => {
+			console.log("PLAYER RECEIVED")
 			const playerData = JSON.parse(msg);
-			let newPlayerData = { ...playerState };
-			newPlayerData.players[playerData.number] = {
-					name: playerData.name,
-					addr: playerData.addr,
-					color: playerData.color,
-					number: playerData.number,
-					symbol: playerData.symbol,
-			}
-			updatePlayerState( newPlayerData );
+			const player = playerState.players.find(player => player.number === playerData.number);
 
-			const player = playerState.players.find(player => player.name === "None");
+			if (!player) {
+				setPlayerState((prevState) => {
+					const updatedPlayers = prevState.players.map((prevPlayer, index) => {
+						if (index === playerData.number) {
+							return {
+								name: playerData.name,
+								addr: playerData.addr,
+								color: playerData.color,
+								number: playerData.number,
+								symbol: playerData.symbol,
+							};
+						} else {
+							return ( prevPlayer );
+						}
+					});
+
+					return { ...prevState, players: updatedPlayers };
+				});
+			}
+
+			const notSetPlayer = playerState.players.find(player => player.name === "None");
 
 			// Important for GameMode, array shouldn't be empty
-			if (player && isGameMode) return ;
+			if (notSetPlayer && isGameMode) return ;
 
 			setPlayerSet(true);
 		};
@@ -190,13 +216,14 @@ export const TTTSocketEvents = () => {
 				wsclient?.removeMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
-	},[wsclient, gameState.gameId, playerState]);
+	},[wsclient, gameState.gameId, playerState.players, isGameMode, setPlayerState]);
 
 	// Update 'isFull' state when lobby is full
 	useEffect(() => {
 		const setPause = (msg: string) => {
-			if (msg === "FULL")
+			if (msg === "FULL") {
 				setIsFull(msg);
+			}
 		};
 
 		if (wsclient && gameState.gameId !== "-1") {
@@ -207,7 +234,7 @@ export const TTTSocketEvents = () => {
 			} 
 		}
 	
-	}, [wsclient, gameState.gameId]);
+	}, [wsclient, gameState.gameId, setIsFull]);
 
 	// Handle disconnect
 	useEffect(() => {
@@ -218,7 +245,7 @@ export const TTTSocketEvents = () => {
 			soundEngine?.playSound("door");
 			if (!gameState.gameOver) {
 				setWinner(playerState.players[playerState.client].symbol);
-				updateGameState({ ...gameState, gameOver: true});
+				updateGameState({ gameOver: true});
 			}
 		};
 
@@ -232,13 +259,13 @@ export const TTTSocketEvents = () => {
 				wsclient?.removeMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, playerState, gameState, gameState.gameOver, gameState.gameId]);
+	}, [wsclient, playerState, gameState, gameState.gameOver, gameState.gameId, setDisconnected, setRequestRematch, setSendRequest, setWinner, skip, soundEngine, symbolSet, updateGameState]);
 
 	// Handle rematch request
 	useEffect(() => {
 		const rematch = (msg: string) => {
 			if (msg === "true") {
-				setRematchIndex(rematchIndex + 1);
+				setRematchIndex((prevState) => prevState + 1);
 				setRequestRematch(true);
 			}
 		};
@@ -250,22 +277,22 @@ export const TTTSocketEvents = () => {
 				wsclient?.removeMessageListener(`Request-Rematch-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, rematchIndex, gameState.gameId]);
+	}, [wsclient, gameState.gameId, setRematchIndex, setRequestRematch]);
 
 	// Send rematch request
 	useEffect(() => {
 		if (sendRequest) {
 			const bot = botState.isActive ? 1 : 0;
-			setRematchIndex(rematchIndex + 1 + bot);
+			setRematchIndex((prevState) => prevState + 1 + bot);
 			wsclient?.emitMessageToGame("true", `Request-Rematch-${gameState.gameId}`, gameState.gameId);
 		}
-	}, [sendRequest]);
+	}, [sendRequest, botState.isActive, gameState.gameId, setRematchIndex, wsclient]);
 
 	// Handle continue request
 	useEffect(() => {
 		const continueGame = (msg: string) => {
 			if (msg === "true") {
-				setContinueIndex(continueIndex + 1);
+				setContinueIndex((prevState) => prevState + 1);
 			}
 		};
 
@@ -276,29 +303,30 @@ export const TTTSocketEvents = () => {
 				wsclient?.removeMessageListener(`Continue-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, continueIndex, gameState.gameId]);
+	}, [wsclient, gameState.gameId, setContinueIndex]);
 
 	// Send continue request
 	useEffect(() => {
 		if (sendContinueRequest) {
 			const bot = botState.isActive ? 1 : 0;
-			setContinueIndex(continueIndex + 1 + bot)
+			setContinueIndex((prevState) => prevState + 1 + bot)
 			wsclient?.emitMessageToGame("true", `Continue-${gameState.gameId}`, gameState.gameId);
 		}
-	}, [sendContinueRequest, wsclient, gameState.gameId]);
+	}, [sendContinueRequest, wsclient, gameState.gameId, botState.isActive, setContinueIndex]);
 
 	// Send pause state
 	useEffect(() => {
 		if (gameState.pause && wsclient) {
 			wsclient?.emitMessageToGame("true", `Pause-${gameState.gameId}`, gameState.gameId);
 		}
-	}, [gameState.pause]);
+	}, [gameState.pause, wsclient, gameState.gameId]);
 
 	// Pause listener
 	useEffect(() => {
 		const setPause = (msg: string) => {
-			if (msg === "true")
-				updateGameState({ ...gameState, pause: true });
+			if (msg === "true") {
+				updateGameState({ pause: true });
+			}
 		};
 
 		if (wsclient && gameState.gameId !== "-1") {
@@ -308,7 +336,7 @@ export const TTTSocketEvents = () => {
 				wsclient?.removeMessageListener(`Pause-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
-	}, [wsclient, gameState.gameId]);
+	}, [wsclient, gameState.gameId, updateGameState]);
 
 	// Master shuffles symbols
 	useEffect(() => {
@@ -324,48 +352,58 @@ export const TTTSocketEvents = () => {
 
 		const sendRandomSymbol = () => {
 			const symbols = shuffleArray(isGameMode ? ['X', 'O', '🔳'] : ['X', 'O']);
-			const newPlayerState = { ...playerState };
 			const botClientNumber = isGameMode ? 2 : 1;
 
-			newPlayerState.players.forEach((player, index) => {
-				player.symbol = symbols[index];
+			setPlayerState((prevState) => {
+				const updatedPlayers = prevState.players.map((player, index) => {
+					return {
+						...player,
+						symbol: symbols[index]
+					};
+				});
+
+				return { ...prevState, players: updatedPlayers };
 			});
 
-			if (!botState.isActive || isGameMode)
+			if (!botState.isActive || isGameMode) {
 				wsclient?.emitMessageToGame(JSON.stringify(symbols), `ShuffeledPlayer-${gameState.gameId}`, gameState.gameId);
+			}
 
-			updatePlayerState({ ...newPlayerState });
-
-			if (botState.isActive)
-				setBot({ ...botState, symbol: playerState.players[botClientNumber].symbol })
+			if (botState.isActive) {
+				setBot((prevState) => ({ ...prevState, symbol: playerState.players[botClientNumber].symbol }));
+			}
 			setSymbolSet(true);
 		};
 
-		if (playerSet && playerState.client === 0) {
+		if (playerSet && playerState.client === 0 && !symbolSet) {
 			sendRandomSymbol();
 		}
-	}, [playerSet, playerState.client]);
+	}, [playerSet, symbolSet, playerState, botState.isActive, gameState.gameId, isGameMode, setBot, setPlayerState, wsclient]);
 
 	// Opponents receive newly shuffled symbols
 	useEffect(() => {
 		const setSymbols = (msg: string) => {
 			const newSymbols = JSON.parse(msg);
-			const newPlayerState = { ... playerState };
+			setPlayerState((prevState) => {
+				const updatedPlayers = prevState.players.map((player, index) => {
+					return {
+						...player,
+						symbol: newSymbols[index]
+					};
+				});
 
-			newPlayerState.players.forEach((player, index) => {
-				player.symbol = newSymbols[index];
+				return { ...prevState, players: updatedPlayers };
 			});
-			updatePlayerState(newPlayerState);
 		};
 
-		if (wsclient) {
+		if (wsclient && gameState.gameId !== "-1") {
 			wsclient?.addMessageListener(`ShuffeledPlayer-${gameState.gameId}`, gameState.gameId, setSymbols)
 			
 			return () => {
 				wsclient?.removeMessageListener(`ShuffeledPlayer-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, playerState]);
+	}, [wsclient, gameState.gameId, setPlayerState]);
 
 	return (null);
 };

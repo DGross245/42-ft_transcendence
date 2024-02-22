@@ -3,6 +3,7 @@ import EndModal from "./EndModal";
 import { PauseModal } from "../PauseModal";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { Timer } from "../Timer";
+import { useCallback } from "react";
 
 export function TTTModals() {
 	const {
@@ -22,10 +23,10 @@ export function TTTModals() {
 		chipDisappear
 	} = useSocket();
 
-	const handleButtonClick = () => {
+	const handleButtonClick = useCallback(() => {
 		if (!sendContinueRequest)
 			setSendContinueRequest(true);
-	};
+	}, [setSendContinueRequest, sendContinueRequest]);
 
 	return (
 		<>

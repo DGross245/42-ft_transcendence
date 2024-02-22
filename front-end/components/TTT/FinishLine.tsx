@@ -31,7 +31,7 @@ const FinishLine = () => {
 			if (!disconnected)
 				soundEngine?.playSound("finish");
 		} 
-	}, [winner])
+	}, [winner, disconnected, soundEngine, isGameMode])
 
 
 	return (
