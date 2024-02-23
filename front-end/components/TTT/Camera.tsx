@@ -44,7 +44,7 @@ const Camera = () => {
 	useFrame(() => {
 		if (ref.current && playerState.client !== -1 && !started) {
 			const targetPos = new THREE.Vector3(44, 35, 47);
-			ref.current.position.lerp(targetPos, 0.02);
+			ref.current.position.lerp(targetPos, 0.1);
 		}
 	});
 

@@ -2,6 +2,7 @@ import { Chip, Tooltip } from "@nextui-org/react";
 import React, { useEffect, useRef, useState } from "react"
 import { CheckIcon, CrossIcon } from "./icons";
 import { useWindow } from "./hooks/useWindow";
+import { useSound } from "./hooks/Sound";
 
 interface TimerProps {
 	playerClient: number;
@@ -18,6 +19,7 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 	const { dimensions } = useWindow();
 	const [timer, setTimer] = useState(15);
 	const expiredRef = useRef(false);
+	const soundEngine = useSound();
 
 	useEffect(() => {
 		setDisappear(false);
@@ -28,6 +30,9 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 			const intervalId = setInterval(() => {
 				setTimer((prevTimer) => {
 					if (prevTimer > 0 && !isFull) {
+						if (prevTimer <= 6) {
+							soundEngine?.playSound("timer");
+						}
 						return (prevTimer - 1);
 					} else {
 						clearInterval(intervalId);
@@ -52,7 +57,7 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 			return () => clearInterval(intervalId);
 		}
 
-	}, [playerClient, isFull, started, setDisappear, setTimerState]);
+	}, [playerClient, isFull, started, setDisappear, setTimerState, soundEngine]);
 
 	if ((playerClient === -1 && !showChip) || started)
 		return (null);

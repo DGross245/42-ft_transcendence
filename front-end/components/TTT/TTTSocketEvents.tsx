@@ -243,6 +243,8 @@ export const TTTSocketEvents = () => {
 			setSendRequest(false);
 			if (msg === "disconnect") {
 				soundEngine?.playSound("door");
+			} else if (msg === "leave") {
+				soundEngine?.playSound("leave")
 			}
 			setPlayerStatus(msg);
 			if (!gameState.gameOver && playerState.client !== -1) {
@@ -359,10 +361,7 @@ export const TTTSocketEvents = () => {
 
 			setPlayerState((prevState) => {
 				const updatedPlayers = prevState.players.map((player, index) => {
-					return {
-						...player,
-						symbol: symbols[index]
-					};
+					return { ...player, symbol: symbols[index] };
 				});
 
 				return { ...prevState, players: updatedPlayers };
@@ -389,10 +388,7 @@ export const TTTSocketEvents = () => {
 			const newSymbols = JSON.parse(msg);
 			setPlayerState((prevState) => {
 				const updatedPlayers = prevState.players.map((player, index) => {
-					return {
-						...player,
-						symbol: newSymbols[index]
-					};
+					return { ...player, symbol: newSymbols[index] };
 				});
 
 				return { ...prevState, players: updatedPlayers };
