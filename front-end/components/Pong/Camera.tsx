@@ -15,7 +15,7 @@ import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
  */
 const Camera = () => {
 	const ref = useRef<THREE.PerspectiveCamera>(null);
-	const { camPos, isGameMode } = usePongGameState();
+	const { camPos, isGameMode, pongGameState } = usePongGameState();
 	const { playerState } = usePongSocket();
 	const [x, y, z] = [...camPos];
 
@@ -25,18 +25,21 @@ const Camera = () => {
 	// Pressing on the Digit1 key, resets the camera back to its original spot.
 	useEffect(() => {
 		if (ref && ref.current) {
-			if (digit1.isKeyDown) {
-				ref.current.position.set(...camPos);
-				ref.current.lookAt(0, 0, 0);
-			}
-			// for testing
-			if (digit2.isKeyDown) {
-				const [x, y, z] = [...camPos];
-				ref.current.position.set(x, y, z + 300);
-				ref.current.lookAt(0, 0, 0);
+			if (!pongGameState.pause) {
+				if (digit1.isKeyDown) {
+					ref.current.position.set(...camPos);
+					ref.current.lookAt(0, 0, 0);
+				}
+
+				// for testing
+				if (digit2.isKeyDown) {
+					const [x, y, z] = [...camPos];
+					ref.current.position.set(x, y, z + 300);
+					ref.current.lookAt(0, 0, 0);
+				}
 			}
 		}
-	},[digit1.isKeyDown, digit2.isKeyDown, camPos])
+	},[digit1.isKeyDown, digit2.isKeyDown, camPos, pongGameState.pause])
 
 	useFrame(() => {
 		if (ref.current && playerState.client !== -1 && !isGameMode) {

@@ -21,6 +21,7 @@ export type WSClientType = {
 	joinTournament: (tournamentID: number) => void;
 	requestTournament: (tournamentID: number, gameType: string) => void;
 	updateStatus: (isInGame: boolean, gameID: string) => Promise<boolean>;
+	leave: () => void;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -58,6 +59,9 @@ class WSClient {
 	// 	});
 	// }
 
+	leave() {
+		this.socket?.emit('leave');
+	}
 	createGame() {
 		this.socket!.emit('create-game');
 	}

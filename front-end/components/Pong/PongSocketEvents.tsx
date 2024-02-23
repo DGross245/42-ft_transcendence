@@ -47,20 +47,17 @@ export const PongSocketEvents = () => {
 		wsclient,
 		playerState,
 		setPlayerState,
-		disconnected,
-		setDisconnected,
+		setPlayerStatus,
 		sendRequest,
 		setRematchIndex,
-		rematchIndex,
 		setRequestRematch,
 		setSendRequest,
-		continueIndex,
 		setContinueIndex,
 		sendContinueRequest,
 		isFull,
 		setIsFull,
 		timerState,
-		chipDisappear
+		setTimerState
 	} = usePongSocket();
 	const {
 		pongGameState,
@@ -118,7 +115,8 @@ export const PongSocketEvents = () => {
 		const waiting = async () => {
 			if (wsclient && pongGameState.gameId === "-1") {
 				setSkip({ _skip: false, address: ""});
-				setIsFull("");
+				setIsFull('');
+				setTimerState('');
 				// setPlayerSet(false);
 				const { gameID, tournamentId, gameIndex } = await wsclient.waitingRoom();
 				if (tournamentId === -1 && !gameID.includes("Costome-Game-") && !isGameMode) {
@@ -131,7 +129,7 @@ export const PongSocketEvents = () => {
 		}
 
 		waiting();
-	}, [wsclient, pongGameState.gameId, isGameMode, setIsFull, setTournament, updatePongGameState]);
+	}, [wsclient, pongGameState.gameId, isGameMode, setIsFull, setTournament, updatePongGameState, setTimerState]);
 
 	useEffect(() => {
 		const chooseRef = (clients: number) => {
@@ -287,22 +285,24 @@ export const PongSocketEvents = () => {
 		const endGame = (msg: string) => {
 			setRequestRematch(false);
 			setSendRequest(false);
-			soundEngine?.playSound("door");
-			setDisconnected(true);
+			if (msg === "disconnect") {
+				soundEngine?.playSound("door");
+			}
+			setPlayerStatus(msg);
 			updatePongGameState({ gameOver: true });
 		};
+
 
 		if (wsclient && pongGameState.gameId !== '-1') {
 			if (skip._skip && pongGameState.gameId !== "-1" && timerState === 'cross')
 				endGame("SKIP");
 
-			wsclient?.addMessageListener(`player-disconnected-${pongGameState.gameId}`, pongGameState.gameId, endGame)
-
+			wsclient?.addMessageListener(`player-left-${pongGameState.gameId}`, pongGameState.gameId, endGame)
 			return () => {
-				wsclient?.removeMessageListener(`player-disconnected-${pongGameState.gameId}`, pongGameState.gameId);
+				wsclient?.removeMessageListener(`player-left-${pongGameState.gameId}`, pongGameState.gameId);
 			}
 		}
-	}, [wsclient, pongGameState.gameId, timerState, setDisconnected, setRequestRematch, setSendRequest, skip._skip, soundEngine, updatePongGameState]);
+	}, [wsclient, pongGameState.gameId, timerState, setPlayerStatus, setRequestRematch, setSendRequest, skip._skip, soundEngine, updatePongGameState]);
 
 	// Handle rematch request
 	useEffect(() => {

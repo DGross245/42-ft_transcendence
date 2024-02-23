@@ -30,8 +30,8 @@ interface PongSocketContextValue {
 	setSendRequest: Dispatch<SetStateAction<boolean>>,
 	requestRematch: boolean,
 	setRequestRematch: Dispatch<SetStateAction<boolean>>,
-	disconnected: boolean,
-	setDisconnected: Dispatch<SetStateAction<boolean>>,
+	playerStatus: string,
+	setPlayerStatus: Dispatch<SetStateAction<string>>,
 	rematchIndex: number,
 	setRematchIndex: Dispatch<SetStateAction<number>>,
 	continueIndex: number,
@@ -63,7 +63,7 @@ export const PongSocket: React.FC<{ initialWsClient?: WSClientType | null, child
 	const [wsclient, setWsclient] = useState( initialWsClient !== undefined ? initialWsClient : null);
 	const [sendRequest, setSendRequest] = useState(false);
 	const [requestRematch, setRequestRematch] = useState(false);
-	const [disconnected, setDisconnected] = useState(false);
+	const [playerStatus, setPlayerStatus] = useState("");
 	const [rematchIndex, setRematchIndex] = useState(0);
 	const [continueIndex, setContinueIndex] = useState(0);
 	const [sendContinueRequest, setSendContinueRequest] = useState(false);
@@ -79,8 +79,8 @@ export const PongSocket: React.FC<{ initialWsClient?: WSClientType | null, child
 		setSendRequest,
 		requestRematch,
 		setRequestRematch,
-		disconnected,
-		setDisconnected,
+		playerStatus,
+		setPlayerStatus,
 		rematchIndex,
 		setRematchIndex,
 		playerState,

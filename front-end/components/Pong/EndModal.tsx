@@ -19,16 +19,17 @@ const EndModal =  React.memo(() => {
 		isGameMode,
 		tournament,
 		updatePongGameState,
-		setStarted
+		setStarted,
 	} = usePongGameState();
 	const {
-		disconnected,
+		playerStatus,
 		requestRematch,
 		setSendRequest,
 		sendRequest,
 		playerState,
 		wsclient,
 		setPlayerState,
+		timerState
 	} = usePongSocket();
 
 	// Normal hooks
@@ -45,7 +46,7 @@ const EndModal =  React.memo(() => {
 	const [wasOpen, setWasOpen] = useState(false);
 
 	const sendScoreAndContinue = async () => {
-		if (playerState.client === 0 || disconnected) {
+		if (playerState.client === 0 || playerStatus === "disconnect") {
 			const maxClient = isGameMode ? 3 : 2;
 			const playerScore: PlayerScore[] = [];
 
@@ -65,7 +66,8 @@ const EndModal =  React.memo(() => {
 			
 		}
 		const status = await wsclient?.updateStatus(false, pongGameState.gameId);
-		updatePongGameState({ reset: true, pause: true, gameId: "-1" });
+		closeModal();
+		updatePongGameState({ gameId: "-1", pause: true, reset: true });
 		setPlayerState(initialPongPlayerState());
 		setStarted(false);
 		if (status) {
@@ -88,14 +90,14 @@ const EndModal =  React.memo(() => {
 
 	useEffect (() => {
 		if (showModal) {
-			if (winner === String(playerState.players[0].number + 1) || (winner === '' && disconnected)) {
+			if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect")) {
 				setShowResult("Wins");
 			}
 			else {
 				setShowResult("Loses");
 			}
 		}
-	}, [showModal, winner, disconnected, playerState.players]);
+	}, [showModal, winner, playerStatus, playerState.players]);
 
 	useEffect(() => {
 		if (escape.isKeyDown && pongGameState.gameOver) {
@@ -153,7 +155,9 @@ const EndModal =  React.memo(() => {
 						</ModalHeader>
 					</div>
 					<ModalBody style={{ textAlign: 'center' }} >
-						{ disconnected && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
+						{ playerStatus === "disconnect" && timerState !== 'cross' && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
+						{ playerStatus === "disconnect" && timerState === 'cross' && <p style={{ color: 'grey' }}> Your opponent didnt connect </p> }
+						{ playerStatus === "leave" && <p style={{ color: 'grey' }}> Your opponent left </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
 						<Button color="danger" variant="ghost" onClick={closeDiscModal}>
@@ -165,7 +169,7 @@ const EndModal =  React.memo(() => {
 							</Button>
 						) : (
 							pongGameState.gameId.includes("Costome-Game-") ? (
-							<Button color="primary" isDisabled={disconnected} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
+							<Button color="primary" isDisabled={playerStatus !== ""} variant={ requestRematch ? "shadow" : "ghost"} onClick={() => setSendRequest(true)} isLoading={sendRequest}>
 								Rematch
 							</Button>
 						) : (

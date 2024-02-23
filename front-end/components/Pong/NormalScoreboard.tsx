@@ -5,7 +5,7 @@ import { MutableRefObject } from 'react';
 import { Mesh, MeshBasicMaterial } from 'three';
 
 import Orbitron_Regular from '../../public/fonts/Orbitron_Regular.json';
-import { usePongGameState } from './hooks/usePongGameState';
+import { usePongGameState } from '../../app/pong/hooks/usePongGameState';
 
 extend({ TextGeometry })
 

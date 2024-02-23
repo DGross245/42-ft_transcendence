@@ -1,13 +1,20 @@
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
-import { extend, useThree } from '@react-three/fiber';
-import { useEffect, useRef, useState } from 'react';
+import { extend, useFrame, useThree } from '@react-three/fiber';
+import { memo, useEffect, useRef, useState } from 'react';
+import * as THREE from 'three'
+import { MeshStandardMaterial } from 'three';
 
 import { useSound } from '@/components/hooks/Sound';
 import { useGameState } from '../../app/tic-tac-toe/hooks/useGameState';
 import Silkscreen_Regular from '../../public/fonts/Silkscreen_Regular.json';
+import { useSocket } from '@/app/tic-tac-toe/hooks/useSocket';
 
 extend({ TextGeometry })
+
+export function lerp(startValue: number, endValue: number, interpolation: number) {
+	return startValue * (1 - interpolation) + endValue * interpolation;
+}
 
 /**
  * The Countdown component is a timer that counts down from 3 to 1 and displays the count as a 3D text
@@ -20,12 +27,14 @@ extend({ TextGeometry })
  * to 3 and decrements by 1 every second until it reaches 1. The meshBasicMaterial sets the color of
  * the text to white. The mesh is only visible when the countdownVisible prop is true.
  */
-const Countdown = () => {
+const Countdown = memo(() => {
 	const [count, setCount] = useState(3);
 	const { camera } = useThree();
+	const { playerState } = useSocket();
 	const { countdownVisible, setCountdownVisible, gameState, setStarted } = useGameState()
 	const font = new FontLoader().parse(Silkscreen_Regular);
 	const ref = useRef<THREE.Mesh | null>(null);
+	const meshMatRef = useRef<MeshStandardMaterial>(null);
 	const soundEngine = useSound();
 
 	useEffect(() => {
@@ -34,7 +43,16 @@ const Countdown = () => {
 		setCount(3);
 
 		if (gameState.pause) {
-			setCountdownVisible(true);
+			if (gameState.gameId !== '-1') {
+				setCountdownVisible(true);
+			} else {
+				if (meshMatRef.current) {
+					console.log("set")
+					meshMatRef.current.opacity = 0;
+				}
+				setCountdownVisible(false);
+			}
+
 			return ;
 		}
 
@@ -56,18 +74,29 @@ const Countdown = () => {
 			}, 1000);
 
 			return () => {
-				if (meshRef) camera.remove(meshRef);
+				if (meshRef) {
+					camera.remove(meshRef);
+				}
 				clearInterval(countdownInterval);
 			};
 		}
-	}, [countdownVisible, soundEngine, gameState.pause, camera, setCountdownVisible, setStarted]);
+	}, [countdownVisible, soundEngine, gameState.pause, gameState.gameId, camera, setCountdownVisible, setStarted]);
+
+	useFrame(() => {
+		if (meshMatRef.current && playerState.client !== -1) {
+			meshMatRef.current.opacity = lerp(meshMatRef.current.opacity, countdownVisible ? 1 : 0, 0.05);
+			// meshMatRef.current.needsUpdate = true;
+		}
+	});
 
 	return (
 		<mesh ref={ref} visible={countdownVisible} position={[-5, -4, -30]}>
 			<textGeometry args={[String(count), {font, size: 10, height: 2}]} />
-			<meshStandardMaterial color={ 0xffffff } />
+			<meshStandardMaterial ref={meshMatRef} color={ 0xffffff } transparent />
 		</mesh>
 	)
-}
+});
+
+Countdown.displayName = "Countdown"
 
 export default Countdown;

@@ -20,12 +20,12 @@ const TurnDisplay = () => {
 	const ref = useRef<THREE.Group | null>(null);
 	const { camera } = useThree();
 	const { playerState } = useSocket();
-	const { isGameMode, currentTurn } = useGameState();
+	const { isGameMode, currentTurn, countdownVisible } = useGameState();
 
 	const colors = useMemo(() => {
 		const getColorBySymbol = (symbol: string) => {
 			const player = playerState.players.find(player => player.symbol === symbol);
-			return player?.color;
+			return ( player ? player.color : 0xffffff );
 		};
 	
 		return [

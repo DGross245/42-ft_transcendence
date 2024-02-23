@@ -14,7 +14,7 @@ export const TTTSocketEvents = () => {
 		setWsclient,
 		playerState,
 		setPlayerState,
-		setDisconnected,
+		setPlayerStatus,
 		setRematchIndex,
 		setRequestRematch,
 		setSendRequest,
@@ -24,6 +24,7 @@ export const TTTSocketEvents = () => {
 		isFull,
 		setIsFull,
 		timerState,
+		setTimerState
 	} = useSocket();
 	const {
 		gameState,
@@ -89,8 +90,10 @@ export const TTTSocketEvents = () => {
 		const waiting = async () => {
 			if (wsclient && gameState.gameId === "-1") {
 				setSkip({ _skip: false, address: ""});
-				setIsFull("");
+				setIsFull('');
+				setTimerState('');
 				setPlayerSet(false);
+
 				const { gameID, tournamentId, gameIndex } = await wsclient.waitingRoom();
 				if (tournamentId === -1 && !gameID.includes("Costume-Game-") && !isGameMode) {
 					wsclient.joinQueue("TTT");
@@ -102,13 +105,12 @@ export const TTTSocketEvents = () => {
 		}
 
 		waiting();
-	}, [wsclient, gameState.gameId, isGameMode, setIsFull, setTournament, updateGameState]);
+	}, [wsclient, gameState.gameId, isGameMode, setIsFull, setTournament, updateGameState, setTimerState]);
 
 	// Initiate joining a game 
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (wsclient && gameState.gameId !== "-1") {
-				console.log("PLAYER SET")
 				const player = await getPlayer(String(address))
 				const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
 	
@@ -120,7 +122,7 @@ export const TTTSocketEvents = () => {
 								addr: String(address),
 								color: Number(player.color),
 								number: numClients,
-								symbol: "",
+								symbol: numClients === 0 ? 'X' : numClients === 1 ? '0' : '🔳',
 							};
 						} else {
 							return ( prevPlayer );
@@ -140,7 +142,7 @@ export const TTTSocketEvents = () => {
 							addr: skip.address,
 							color: 0xffffff,
 							number: 1,
-							symbol: ""
+							symbol: "O"
 						};
 					}
 
@@ -155,7 +157,6 @@ export const TTTSocketEvents = () => {
 	// Initial communication between both players (SEND message)
 	useEffect(() => {
 		const sendPlayerData = () => {
-			console.log("PLAYER SEND")
 			const playerData = {
 				name: playerState.players[playerState.client].name,
 				addr: playerState.players[playerState.client].addr,
@@ -177,7 +178,6 @@ export const TTTSocketEvents = () => {
 	// Initial communication between both players (RECEIVE message)
 	useEffect(() => {
 		const setPlayer = (msg: string) => {
-			console.log("PLAYER RECEIVED")
 			const playerData = JSON.parse(msg);
 			const player = playerState.players.find(player => player.number === playerData.number);
 
@@ -239,27 +239,30 @@ export const TTTSocketEvents = () => {
 	// Handle disconnect
 	useEffect(() => {
 		const endGame = (msg: string) => {
-			setDisconnected(true);
 			setRequestRematch(false);
 			setSendRequest(false);
-			soundEngine?.playSound("door");
-			if (!gameState.gameOver) {
-				setWinner(playerState.players[playerState.client].symbol);
-				updateGameState({ gameOver: true});
+			if (msg === "disconnect") {
+				soundEngine?.playSound("door");
 			}
+			setPlayerStatus(msg);
+			if (!gameState.gameOver && playerState.client !== -1) {
+				setWinner(playerState.players[playerState.client].symbol);
+			}
+			updateGameState({ gameOver: true});
 		};
 
 		if (wsclient && gameState.gameId !== "-1") {
-			if (skip._skip && gameState.gameId !== "-1" && symbolSet)
-				endGame("SKIP");
+			if (skip._skip && gameState.gameId !== "-1" && timerState === 'cross' && symbolSet) {
+				endGame("disconnect");
+			}
 
-			wsclient?.addMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId, endGame)
+			wsclient?.addMessageListener(`player-left-${gameState.gameId}`, gameState.gameId, endGame)
 
 			return () => {
-				wsclient?.removeMessageListener(`player-disconnected-${gameState.gameId}`, gameState.gameId);
+				wsclient?.removeMessageListener(`player-left-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, playerState, gameState, gameState.gameOver, gameState.gameId, setDisconnected, setRequestRematch, setSendRequest, setWinner, skip, soundEngine, symbolSet, updateGameState]);
+	}, [wsclient, playerState, gameState, gameState.gameOver, timerState, gameState.gameId, setPlayerStatus, setRequestRematch, setSendRequest, setWinner, skip, soundEngine, symbolSet, updateGameState]);
 
 	// Handle rematch request
 	useEffect(() => {

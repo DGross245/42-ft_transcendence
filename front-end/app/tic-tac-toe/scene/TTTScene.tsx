@@ -19,7 +19,6 @@ import { TTTBot } from "@/components/TTT/TTTBot";
 import { useSocket } from "../hooks/useSocket";
 import useContract from "@/components/hooks/useContract";
 import { TTTModals } from "@/components/TTT/TTTModals";
-import { useGameState } from "../hooks/useGameState";
 
 
 /**

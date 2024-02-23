@@ -20,7 +20,11 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 	const expiredRef = useRef(false);
 
 	useEffect(() => {
+		setDisappear(false);
 		if (playerClient !== -1 && !started) {
+			setTimer(15);
+			expiredRef.current = false;
+
 			const intervalId = setInterval(() => {
 				setTimer((prevTimer) => {
 					if (prevTimer > 0 && !isFull) {
@@ -29,20 +33,22 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 						clearInterval(intervalId);
 						if (!expiredRef.current) {
 							expiredRef.current = true;
-							if (prevTimer === 0)
+							if (prevTimer === 0) {
 								setTimerState('cross');
-							else if (isFull)
+							} else if (isFull) {
 								setTimerState('check');
+							}
 
 							setTimeout(() => {
 								setDisappear(true);
 							}, 1500); 
 
 						}
-						return (prevTimer);
+						return ( prevTimer );
 					}
 				});
 			}, 1000);
+
 			return () => clearInterval(intervalId);
 		}
 

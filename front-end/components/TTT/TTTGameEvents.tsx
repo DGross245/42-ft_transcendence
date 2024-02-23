@@ -18,7 +18,8 @@ export const TTTGameEvents = () => {
 		countdownVisible,
 		setLineVisible,
 		isGameMode,
-		currentTurn
+		currentTurn,
+		started
 	} = useGameState();
 	const {
 		rematchIndex,
@@ -86,10 +87,10 @@ export const TTTGameEvents = () => {
 
 	// Initializes the turn after countdown
 	useEffect(() => {
-		if (!countdownVisible && currentTurn === '') {
+		if (!countdownVisible && currentTurn === '' && started) {
 			setTurn('X');
 		}
-	}, [countdownVisible, currentTurn, setTurn]);
+	}, [countdownVisible, currentTurn, setTurn, started]);
 
 	return (null);
 }

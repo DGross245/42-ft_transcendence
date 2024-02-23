@@ -7,7 +7,7 @@ import Countdown from "@/components/Pong/Countdown";
 import { useWindow } from "@/components/hooks/useWindow";
 import Camera from "@/components/Pong/Camera";
 import { CubeLine } from "@/components/Pong/CubeLine";
-import { Scoreboard } from "../NormalScoreboard";
+import { Scoreboard } from "../../../components/Pong/NormalScoreboard";
 import { LongBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";

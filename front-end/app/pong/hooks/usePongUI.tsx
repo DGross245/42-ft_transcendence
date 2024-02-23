@@ -2,12 +2,11 @@ import { useSound } from "@/components/hooks/Sound";
 import { useCallback, useEffect, useState } from "react";
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
-import { disconnect } from "process";
 
 export const usePongUI = () => {
 	const [showModal, setShowModal] = useState(false);
 	const { pongGameState, winner } = usePongGameState();
-	const { playerState, disconnected } = usePongSocket();
+	const { playerState, playerStatus } = usePongSocket();
 	const soundEngine = useSound();
 
 	const closeModal = useCallback(() => {
@@ -24,7 +23,7 @@ export const usePongUI = () => {
 			const delay = 1000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
-				if (winner === String(playerState.players[0].number + 1) || (winner === '' && disconnected))
+				if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect"))
 					soundEngine?.playSound("win");
 				else
 					soundEngine?.playSound("losing");
@@ -34,7 +33,7 @@ export const usePongUI = () => {
 				clearTimeout(modalTimeout)
 			});
 		}
-	}, [pongGameState.gameOver, openModal, winner, disconnected, playerState.players, soundEngine]);
+	}, [pongGameState.gameOver, openModal, winner, playerStatus, playerState.players, soundEngine]);
 
 	return {
 		closeModal,

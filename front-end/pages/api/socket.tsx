@@ -70,8 +70,6 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			});
 			
 			socket.on('Update-Status', (isInGame: boolean, gameId: string) => {
-				if (!isInGame)
-					socket.leave(gameId);
 				socket.data.isInGame = isInGame;
 				socket.emit('Status-Changed', true);
 			});
@@ -96,10 +94,16 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				}
 
 				socket.on('disconnect', () => {
-					const topic = `player-disconnected-${gameId}`;
-					io.to(gameId).emit(`message-${gameId}-${topic}`, gameId);
+					const topic = `player-left-${gameId}`;
+					io.to(gameId).emit(`message-${gameId}-${topic}`, "disconnect");
 					socket.disconnect();
 					io.in(gameId).disconnectSockets();
+				});
+
+				socket.on('leave', () => {
+					const topic = `player-left-${gameId}`;
+					io.to(gameId).emit(`message-${gameId}-${topic}`, "leave");
+					socket.leave(gameId);
 				});
 			});
 

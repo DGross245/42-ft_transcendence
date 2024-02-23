@@ -1,4 +1,4 @@
-import { LeftPaddle, RightPaddle } from "@/app/pong/NormalPaddle"
+import { LeftPaddle, RightPaddle } from "@/components/Pong/NormalPaddle"
 import { usePongBot } from "@/app/pong/hooks/usePongBot";
 import { PongBall } from "./PongBall";
 

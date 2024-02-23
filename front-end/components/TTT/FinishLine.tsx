@@ -20,7 +20,7 @@ const FinishLine = () => {
 	const [color, setColor] = useState(0x00ffff);
 	const { winner, lineCoords, isGameMode } = useGameState();
 	const { isLineVisible } = useGameState();
-	const { disconnected } = useSocket();
+	const { playerStatus } = useSocket();
 
 	useEffect(() => {
 		if (winner) {
@@ -28,10 +28,10 @@ const FinishLine = () => {
 				setColor(winner === 'X' ? 0xff0000 : winner === 'O' ? 0x1aabff : 0x008000 );
 			else
 				setColor(winner === 'X' ? 0xff0000 : 0x1aabff);
-			if (!disconnected)
+			if (!playerStatus)
 				soundEngine?.playSound("finish");
 		} 
-	}, [winner, disconnected, soundEngine, isGameMode])
+	}, [winner, playerStatus, soundEngine, isGameMode])
 
 
 	return (

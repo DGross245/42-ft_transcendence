@@ -32,7 +32,6 @@ export const useClick = () => {
 			wsclient?.emitMessageToGame(newBoard,`Board-${gameState.gameId}`, gameState.gameId);
 			const winner = gameValidation(board, sceneCoords, lineCoords, setLineCoords, setLineVisible);
 			if (winner) {
-				console.log("Winner", winner);
 				setWinner(winner);
 				updateGameState({ gameOver: true })
 				return;
