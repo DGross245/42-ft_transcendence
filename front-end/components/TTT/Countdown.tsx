@@ -41,13 +41,13 @@ const Countdown = memo(() => {
 		const meshRef = ref.current;
 		if (meshRef) camera.add(meshRef);
 		setCount(3);
+		var countdownInterval: NodeJS.Timeout;
 
 		if (gameState.pause) {
 			if (gameState.gameId !== '-1') {
 				setCountdownVisible(true);
 			} else {
 				if (meshMatRef.current) {
-					console.log("set")
 					meshMatRef.current.opacity = 0;
 				}
 				setCountdownVisible(false);
@@ -58,7 +58,7 @@ const Countdown = memo(() => {
 
 		if (countdownVisible) {
 			soundEngine?.playSound("countSound");
-			const countdownInterval = setInterval(() => {
+			countdownInterval = setInterval(() => {
 				setCount((prevCount) => {
 					if (prevCount > 1) {
 						soundEngine?.playSound("countSound");
@@ -72,20 +72,19 @@ const Countdown = memo(() => {
 					}
 				});
 			}, 1000);
-
-			return () => {
-				if (meshRef) {
-					camera.remove(meshRef);
-				}
-				clearInterval(countdownInterval);
-			};
+			
 		}
+		return () => {
+			if (meshRef) {
+				camera.remove(meshRef);
+			}
+			clearInterval(countdownInterval);
+		};
 	}, [countdownVisible, soundEngine, gameState.pause, gameState.gameId, camera, setCountdownVisible, setStarted]);
 
 	useFrame(() => {
 		if (meshMatRef.current && playerState.client !== -1) {
 			meshMatRef.current.opacity = lerp(meshMatRef.current.opacity, countdownVisible ? 1 : 0, 0.05);
-			// meshMatRef.current.needsUpdate = true;
 		}
 	});
 

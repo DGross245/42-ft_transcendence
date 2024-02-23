@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import useWSClient from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
@@ -7,7 +7,7 @@ import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import useContract from "@/components/hooks/useContract";
 import { useEffectDebugger } from "../Pong/PongSocketEvents";
 
-export const TTTSocketEvents = () => {
+export const TTTSocketEvents = memo(() => {
 	// Provider hooks
 	const {
 		wsclient,
@@ -405,4 +405,6 @@ export const TTTSocketEvents = () => {
 	}, [wsclient, gameState.gameId, setPlayerState]);
 
 	return (null);
-};
+});
+
+TTTSocketEvents.displayName = "TTTSocketEvents"

@@ -41,10 +41,10 @@ const Camera = () => {
 		}
 	},[keyOne, started, gameState.pause])
 
-	useFrame(() => {
+	useFrame((_, delta) => {
 		if (ref.current && playerState.client !== -1 && !started) {
 			const targetPos = new THREE.Vector3(44, 35, 47);
-			ref.current.position.lerp(targetPos, 0.1);
+			ref.current.position.lerp(targetPos, 1.6 * delta);
 		}
 	});
 

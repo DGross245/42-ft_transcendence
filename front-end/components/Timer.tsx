@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { CheckIcon, CrossIcon } from "./icons";
 import { useWindow } from "./hooks/useWindow";
 import { useSound } from "./hooks/Sound";
+import { useEffectDebugger } from "./Pong/PongSocketEvents";
 
 interface TimerProps {
 	playerClient: number;
@@ -18,46 +19,54 @@ interface TimerProps {
 export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, showChip, timerState, setTimerState, disappear, setDisappear }) => {
 	const { dimensions } = useWindow();
 	const [timer, setTimer] = useState(15);
-	const expiredRef = useRef(false);
 	const soundEngine = useSound();
 
+	
 	useEffect(() => {
 		setDisappear(false);
-		if (playerClient !== -1 && !started) {
-			setTimer(15);
-			expiredRef.current = false;
+		setTimer(15);
+		var intervalId: NodeJS.Timeout | undefined = undefined;
 
-			const intervalId = setInterval(() => {
+		if (playerClient !== -1 && !started && !isFull) {
+
+			console.log("RUNS")
+			intervalId = setInterval(() => {
+				console.log("kkk")
 				setTimer((prevTimer) => {
 					if (prevTimer > 0 && !isFull) {
 						if (prevTimer <= 6) {
-							soundEngine?.playSound("timer");
+							console.log("KDS", prevTimer)
+							// soundEngine?.playSound("timer");
 						}
+
 						return (prevTimer - 1);
 					} else {
 						clearInterval(intervalId);
-						if (!expiredRef.current) {
-							expiredRef.current = true;
-							if (prevTimer === 0) {
-								setTimerState('cross');
-							} else if (isFull) {
-								setTimerState('check');
-							}
-
-							setTimeout(() => {
-								setDisappear(true);
-							}, 1500); 
-
+						intervalId = undefined
+						if (prevTimer === 0) {
+							setTimerState('cross');
+						} else if (isFull) {
+							setTimerState('check');
 						}
-						return ( prevTimer );
+
+						setTimeout(() => {
+							setDisappear(true);
+						}, 1500); 
+
+						return (0);
 					}
 				});
 			}, 1000);
 
-			return () => clearInterval(intervalId);
 		}
 
-	}, [playerClient, isFull, started, setDisappear, setTimerState, soundEngine]);
+		return () => {
+			if (intervalId) {
+				clearInterval(intervalId);
+			}
+		};
+
+	}, [isFull, playerClient, started, setDisappear, setTimerState]);
 
 	if ((playerClient === -1 && !showChip) || started)
 		return (null);

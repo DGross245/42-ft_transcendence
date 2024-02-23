@@ -3,9 +3,9 @@ import EndModal from "./EndModal";
 import { PauseModal } from "../PauseModal";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { Timer } from "../Timer";
-import { useCallback } from "react";
+import { memo, useCallback } from "react";
 
-export function TTTModals() {
+export const TTTModals = memo(() => {
 	const {
 		gameState,
 		isGameMode,
@@ -50,4 +50,6 @@ export function TTTModals() {
 			/>
 		</>
 	)
-}
+})
+
+TTTModals.displayName = "TTTModals"

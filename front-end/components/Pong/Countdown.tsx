@@ -36,18 +36,13 @@ const Countdown = memo(() => {
 	const { playerState } = usePongSocket();
 	const soundEngine = useSound();
 	const meshMatRef = useRef<MeshStandardMaterial>(null);
-	const [countdownVisible, setCountdownVisible] = useState(false);
 
 	useEffect(() => {
 		if (pongGameState.pause) {
 			if (pongGameState.gameId !== '-1') {
 				setScoreVisibility(false);
-				if (!started) {
-					setCountdownVisible(false);
-				}
 			} else {
 				if (meshMatRef.current) {
-					console.log("set")
 					meshMatRef.current.opacity = 0;
 				}
 				setScoreVisibility(false);
@@ -56,7 +51,6 @@ const Countdown = memo(() => {
 		}
 
 		if (!isScoreVisible) {
-			setCountdownVisible(true);
 			const countdownInterval = setInterval(() => {
 				
 				setCount((prevCount) => {
@@ -77,11 +71,11 @@ const Countdown = memo(() => {
 				clearInterval(countdownInterval);
 			};
 		}
-	}, [isScoreVisible, pongGameState.pause, started, pongGameState.gameId,setScoreVisibility, setStarted, soundEngine]);
+	}, [isScoreVisible, pongGameState.pause, started, pongGameState.gameId, setScoreVisibility, setStarted, soundEngine]);
 
-	useFrame(() => {
+	useFrame((_, delta) => {
 		if (meshMatRef.current && playerState.client !== -1) {
-			meshMatRef.current.opacity = lerp(meshMatRef.current.opacity, !isScoreVisible ? 1 : 0, 0.05);
+			meshMatRef.current.opacity = lerp(meshMatRef.current.opacity, !isScoreVisible ? 1 : 0, 1 * delta);
 		}
 	});
 

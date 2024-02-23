@@ -1,11 +1,11 @@
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 
 import { initialBoard, winningCoords } from "@/app/tic-tac-toe/context/TTTGameState";
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
 
-export const TTTGameEvents = () => {
+export const TTTGameEvents = memo(() => {
 	// Provider hooks 
 	const {
 		gameState,
@@ -93,4 +93,6 @@ export const TTTGameEvents = () => {
 	}, [countdownVisible, currentTurn, setTurn, started]);
 
 	return (null);
-}
+})
+
+TTTGameEvents.displayName = "TTTGameEvent"

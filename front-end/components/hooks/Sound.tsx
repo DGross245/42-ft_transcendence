@@ -4,11 +4,6 @@ type Sounds = {
 	[key: string]: string;
 };
 
-interface SoundEngineTypes {
-	soundElement: HTMLAudioElement;
-	playSound(sound: string): void;
-}
-
 const sounds: Sounds = {
 	"tictactoe": "sounds/place-sound.mp3",
 	"countSound": "sounds/ttt-countdown.mp3",
@@ -24,17 +19,16 @@ const sounds: Sounds = {
 	"leave": "sounds/open-and-closed-door.mp3"
 }
 
-class SoundEngine implements SoundEngineTypes {
-	soundElement: HTMLAudioElement;
+class SoundEngine {
+	soundElement: HTMLAudioElement | undefined = undefined;
 
 	constructor() {
 		this.soundElement = new Audio();
 		document.body.appendChild(this.soundElement);
-		this.soundElement.volume = 0.5;
+		this.soundElement.volume = 0.1;
 	}
 
 	playSound(sound: string) {
-		console.log(sound)
 		if (sound === 'losing') {
 			const randomNum = Math.floor(Math.random() * 2);
 			sound = randomNum === 0 ? "losing1" : "losing2";
@@ -44,7 +38,7 @@ class SoundEngine implements SoundEngineTypes {
 			return;
 		}
 
-		this.soundElement.src = sounds[sound];
+		this.soundElement.src = (sounds as any)[sound];
 		this.soundElement.play();
 	}
 }
