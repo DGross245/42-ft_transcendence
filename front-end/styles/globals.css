@@ -75,3 +75,7 @@
 	justify-content: center;
 	align-items: center;
 }
+
+.button-gradient {
+	background: linear-gradient(to bottom, #333435, #7b7b7b);
+}

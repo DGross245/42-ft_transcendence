@@ -125,7 +125,7 @@ const EndModal = React.memo(() => {
 		<>
 			<div style={{ position: 'fixed', top: '90%', left: '50%', transform: 'translate(-50%, -50%)', overflow: 'visible' }}>
 				{!showModal && gameState.gameOver && wasOpen && 
-					<Button isIconOnly size="lg" variant="shadow" className="bordered-button" onClick={openModal}>
+					<Button isIconOnly size="lg" variant="shadow" className="bordered-button button-gradient" onClick={openModal}>
 						<ChevronDownIcon />
 					</Button>
 				}
