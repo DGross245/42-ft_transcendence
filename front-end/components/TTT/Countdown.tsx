@@ -36,7 +36,7 @@ const Countdown = memo(() => {
 	const font = new FontLoader().parse(Silkscreen_Regular);
 	const ref = useRef<THREE.Mesh | null>(null);
 	const meshMatRef = useRef<MeshStandardMaterial>(null);
-	const soundEngine = useSound();
+	const playSound = useSound();
 
 	useEffect(() => {
 		const meshRef = ref.current;
@@ -58,17 +58,17 @@ const Countdown = memo(() => {
 		}
 
 		if (countdownVisible) {
-			soundEngine?.playSound("countSound");
+			playSound("countSound");
 			countdownInterval = setInterval(() => {
 				setCount((prevCount) => {
 					if (prevCount > 1) {
-						soundEngine?.playSound("countSound");
+						playSound("countSound");
 						return (prevCount - 1);
 					} else {
 						clearInterval(countdownInterval);
 						setCountdownVisible(false);
 						setStarted(true);
-						soundEngine?.playSound("end");
+						playSound("end");
 						return (1);
 					}
 				});
@@ -81,7 +81,7 @@ const Countdown = memo(() => {
 			}
 			clearInterval(countdownInterval);
 		};
-	}, [countdownVisible, soundEngine, gameState.pause, camera, gameState.gameId, setCountdownVisible, setStarted]);
+	}, [countdownVisible, playSound, gameState.pause, camera, gameState.gameId, setCountdownVisible, setStarted]);
 
 	useFrame(() => {
 		if (meshMatRef.current && playerState.client !== -1) {

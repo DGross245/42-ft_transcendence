@@ -6,7 +6,7 @@ import { useSocket } from "./useSocket";
 import { gameValidation } from "@/components/TTT/GameValidation";
 
 export const useClick = () => {
-	const soundEngine = useSound();
+	const playSound = useSound();
 	const [clicked, click] = useState(false);
 	const { wsclient } = useSocket();
 	const {
@@ -26,7 +26,7 @@ export const useClick = () => {
 
 	useEffect(() => {
 		if (clicked) {
-			soundEngine?.playSound("tictactoe");
+			playSound("tictactoe");
 			click(false);
 			const newBoard = JSON.stringify(board);
 			wsclient?.emitMessageToGame(newBoard,`Board-${gameState.gameId}`, gameState.gameId);
@@ -41,7 +41,7 @@ export const useClick = () => {
 			else
 				setTurn(currentTurn === 'X' ? 'O' : 'X');
 		}
-	},[clicked, board, currentTurn, gameState.gameId, isGameMode, lineCoords, sceneCoords, setLineCoords, setLineVisible, setTurn, setWinner, soundEngine, updateGameState, wsclient]);
+	},[clicked, board, currentTurn, gameState.gameId, isGameMode, lineCoords, sceneCoords, setLineCoords, setLineVisible, setTurn, setWinner, playSound, updateGameState, wsclient]);
 
 	// Thinking about sending only changed array instead of all of it
 	useEffect(() => {

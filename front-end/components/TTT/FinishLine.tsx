@@ -16,7 +16,7 @@ import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
  * component is rendered with the specified `points`, `color`, and `lineWidth` props.
  */
 const FinishLine = () => {
-	const soundEngine = useSound();
+	const playSound = useSound();
 	const [color, setColor] = useState(0x00ffff);
 	const { winner, lineCoords, isGameMode } = useGameState();
 	const { isLineVisible } = useGameState();
@@ -29,9 +29,9 @@ const FinishLine = () => {
 			else
 				setColor(winner === 'X' ? 0xff0000 : 0x1aabff);
 			if (!playerStatus)
-				soundEngine?.playSound("finish");
+				playSound("finish");
 		} 
-	}, [winner, playerStatus, soundEngine, isGameMode])
+	}, [winner, playerStatus, playSound, isGameMode])
 
 
 	return (

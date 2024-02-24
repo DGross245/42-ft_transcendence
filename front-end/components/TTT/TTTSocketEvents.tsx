@@ -38,7 +38,7 @@ export const TTTSocketEvents = memo(() => {
 
 	// Normal hooks
 	const newClient = useWSClient();
-	const soundEngine = useSound();
+	const playSound = useSound();
 	const {
 		getPlayer,
 		address
@@ -242,9 +242,9 @@ export const TTTSocketEvents = memo(() => {
 			setRequestRematch(false);
 			setSendRequest(false);
 			if (msg === "disconnect") {
-				soundEngine?.playSound("door");
+				playSound("door");
 			} else if (msg === "leave") {
-				soundEngine?.playSound("leave")
+				playSound("leave")
 			}
 			setPlayerStatus(msg);
 			if (!gameState.gameOver && playerState.client !== -1) {
@@ -264,7 +264,7 @@ export const TTTSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`player-left-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, playerState, gameState, gameState.gameOver, timerState, gameState.gameId, setPlayerStatus, setRequestRematch, setSendRequest, setWinner, skip, soundEngine, symbolSet, updateGameState]);
+	}, [gameState.gameId, gameState.gameOver, setWinner, playerState.client, playerState.players, playSound, setPlayerStatus, setRequestRematch, setSendRequest, skip._skip, symbolSet, timerState, updateGameState, wsclient]);
 
 	// Handle rematch request
 	useEffect(() => {

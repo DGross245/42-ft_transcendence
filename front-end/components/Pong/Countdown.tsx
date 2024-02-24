@@ -34,7 +34,7 @@ const Countdown = memo(() => {
 		started
 	} = usePongGameState();
 	const { playerState } = usePongSocket();
-	const soundEngine = useSound();
+	const playSound = useSound();
 	const meshMatRef = useRef<MeshStandardMaterial>(null);
 
 	useEffect(() => {
@@ -55,7 +55,7 @@ const Countdown = memo(() => {
 				
 				setCount((prevCount) => {
 					if (prevCount > 0) {
-						soundEngine?.playSound("pongCountdown");
+						playSound("pongCountdown");
 						return (prevCount - 1);
 					} else {
 						clearInterval(countdownInterval);
@@ -71,7 +71,7 @@ const Countdown = memo(() => {
 				clearInterval(countdownInterval);
 			};
 		}
-	}, [isScoreVisible, pongGameState.pause, started, pongGameState.gameId, setScoreVisibility, setStarted, soundEngine]);
+	}, [isScoreVisible, pongGameState.pause, started, pongGameState.gameId, setScoreVisibility, setStarted, playSound]);
 
 	useFrame((_, delta) => {
 		if (meshMatRef.current && playerState.client !== -1) {

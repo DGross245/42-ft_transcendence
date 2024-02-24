@@ -7,7 +7,7 @@ export const usePongUI = () => {
 	const [showModal, setShowModal] = useState(false);
 	const { pongGameState, winner } = usePongGameState();
 	const { playerState, playerStatus } = usePongSocket();
-	const soundEngine = useSound();
+	const playSound = useSound();
 
 	const closeModal = useCallback(() => {
 		setShowModal(false);
@@ -24,16 +24,16 @@ export const usePongUI = () => {
 			const modalTimeout = setTimeout(() => {
 				openModal();
 				if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect"))
-					soundEngine?.playSound("win");
+					playSound("win");
 				else
-					soundEngine?.playSound("losing");
+					playSound("losing");
 			}, delay);
 
 			return (() => {
 				clearTimeout(modalTimeout)
 			});
 		}
-	}, [pongGameState.gameOver, openModal, winner, playerStatus, playerState.players, soundEngine]);
+	}, [pongGameState.gameOver, openModal, winner, playerStatus, playerState.players, playSound]);
 
 	return {
 		closeModal,

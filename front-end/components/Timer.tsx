@@ -18,54 +18,40 @@ interface TimerProps {
 
 export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, showChip, timerState, setTimerState, disappear, setDisappear }) => {
 	const { dimensions } = useWindow();
-	const [counter, setCounter] = useState(15);
-	const soundEngine = useSound();
+	const [seconds, setSeconds] = useState(15);
+	const playSound = useSound();
  
+
 	useEffect(() => {
-		var intervalId: NodeJS.Timeout | undefined = undefined;
-		
-		if (playerClient !== -1 && !started && !isFull) {
-			setDisappear(false);
-			setCounter(15);
-
-			console.log("RUNS")
-			intervalId = setInterval(() => {
-				console.log("kkk")
-				setCounter((prevTimer) => {
-					if (prevTimer > 0 && !isFull) {
-						if (prevTimer <= 6) {
-							console.log("KDS", prevTimer)
-							// soundEngine?.playSound("timer");
-						}
-
-						return (prevTimer - 1);
-					} else {
-						clearInterval(intervalId);
-						intervalId = undefined
-						if (prevTimer === 0) {
-							setTimerState('cross');
-						} else if (isFull) {
-							setTimerState('check');
-						}
-
-						setTimeout(() => {
-							setDisappear(true);
-						}, 1500); 
-
-						return (0);
+		if (playerClient !== -1 && !isFull && !disappear) {
+			const interval = setInterval(() => {
+				if (seconds > 0) {
+					if (seconds <= 6) {
+						playSound("timer");
+					} 
+					if (isFull) {
+						setTimerState('check');
+						setSeconds(15);
+						clearInterval(interval);
+						return ;
 					}
-				});
+					setSeconds(seconds - 1);
+				}
+				if (seconds === 0) {
+					setTimerState('cross');
+
+					setTimeout(() => {
+						setDisappear(true);
+						setSeconds(15);
+					}, 1500); 
+				}
 			}, 1000);
 
+			return () => {
+				clearInterval(interval);
+			};
 		}
-
-		return () => {
-			if (intervalId) {
-				clearInterval(intervalId);
-			}
-		};
-
-	}, [isFull, playerClient, started, setDisappear, setTimerState]);
+	}, [isFull, playerClient, seconds, playSound, disappear, setDisappear, setTimerState]);
 
 	if ((playerClient === -1 && !showChip) || started)
 		return (null);
@@ -89,7 +75,7 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 				<Chip variant="bordered" style={{ borderColor: '#f6f4ff' }}>
 					{ timerState === 'check' && <CheckIcon className="fade-in" /> }
 					{ timerState === 'cross' && <CrossIcon className="fade-in"/> }
-					{ timerState === '' && counter }
+					{ timerState === '' && seconds }
 				</Chip>
 			</Tooltip>
 		</div>

@@ -29,7 +29,8 @@ const EndModal =  React.memo(() => {
 		playerState,
 		wsclient,
 		setPlayerState,
-		timerState
+		timerState,
+		setChipDisappear
 	} = usePongSocket();
 
 	// Normal hooks
@@ -55,14 +56,14 @@ const EndModal =  React.memo(() => {
 					addr: playerState.players[i].addr, score: 1,
 				})
 			}
-			// if (tournament.id !== -1) {
-			// 	const lol = getTournament(tournament.id);
-			// 	const finished = (await lol).games[tournament.index].finished
-			// 	if (!finished)
-			// 		await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			// }
-			// else
-			// 	await submitGameResultRanked(playerScore);
+			if (tournament.id !== -1) {
+				const lol = getTournament(tournament.id);
+				const finished = (await lol).games[tournament.index].finished
+				if (!finished)
+					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+			}
+			else
+				await submitGameResultRanked(playerScore);
 			
 		}
 		const status = await wsclient?.updateStatus(false, pongGameState.gameId);
@@ -70,6 +71,7 @@ const EndModal =  React.memo(() => {
 		updatePongGameState({ gameId: "-1", pause: true, reset: true });
 		setPlayerState(initialPongPlayerState());
 		setStarted(false);
+		setChipDisappear(false);
 		if (status) {
 			if (tournament.id !== -1)
 				wsclient?.requestTournament(tournament.id, 'Pong');

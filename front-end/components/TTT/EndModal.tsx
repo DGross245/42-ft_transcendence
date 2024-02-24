@@ -33,6 +33,7 @@ const EndModal = React.memo(() => {
 		wsclient,
 		timerState,
 		setPlayerState,
+		setChipDisappear
 	} = useSocket();
 
 	// Normal hooks
@@ -84,6 +85,7 @@ const EndModal = React.memo(() => {
 		updateGameState({ gameId: "-1", pause: true, reset: true });
 		setPlayerState(initialTTTPlayerState());
 		setStarted(false);
+		setChipDisappear(false);
 		if (status) {
 			if (tournament.id !== -1) {
 				wsclient?.requestTournament(tournament.id, 'TTT');

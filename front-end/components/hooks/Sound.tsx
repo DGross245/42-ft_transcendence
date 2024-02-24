@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Sounds = {
 	[key: string]: string;
@@ -19,36 +19,28 @@ const sounds: Sounds = {
 	"leave": "sounds/open-and-closed-door.mp3"
 }
 
-class SoundEngine {
-	soundElement: HTMLAudioElement | undefined = undefined;
+export function useSound() {
+	const [soundElement, setSoundElement] = useState<HTMLAudioElement | undefined>(undefined);
 
-	constructor() {
-		this.soundElement = new Audio();
-		document.body.appendChild(this.soundElement);
-		this.soundElement.volume = 0.1;
-	}
+	const newSound = () => {
+		const audio = new Audio();
+		audio.volume = 0.1;
+		return ( audio );
+	};
 
-	playSound(sound: string) {
-		if (sound === 'losing') {
-			const randomNum = Math.floor(Math.random() * 2);
-			sound = randomNum === 0 ? "losing1" : "losing2";
-		}
-
-		if (!this.soundElement || !(sound in sounds)) {
+	const playSound = useCallback((sound: string) => {
+		if (!(sound in sounds) || !soundElement) {
 			return;
 		}
 
-		this.soundElement.src = (sounds as any)[sound];
-		this.soundElement.play();
-	}
-}
-
-export function useSound() {
-	const [soundEngine, setSoundEngine] = useState<SoundEngine | undefined>(undefined);
+		const audio = newSound();
+		audio.src = (sounds as any)[sound];
+		audio.play();
+	}, [soundElement]);
 
 	useEffect(() => {
-		setSoundEngine(new SoundEngine());
+		setSoundElement(newSound());
 	}, []);
 
-	return soundEngine;
+	return ( playSound );
 }

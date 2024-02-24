@@ -6,7 +6,7 @@ import { useSocket } from "./useSocket";
 
 export const useUI = () => {
 	const [showModal, setShowModal] = useState(false);
-	const soundEngine = useSound();
+	const playSound = useSound();
 	const { gameState, winner } = useGameState();
 	const { playerState } = useSocket();
 
@@ -25,18 +25,18 @@ export const useUI = () => {
 			const modalTimeout = setTimeout(() => {
 				openModal();
 				if (winner === playerState.players[playerState.client].symbol)
-					soundEngine?.playSound("win");
+					playSound("win");
 				else if (winner === "draw")
-					soundEngine?.playSound("door");
+					playSound("door");
 				else
-					soundEngine?.playSound("losing");
+					playSound("losing");
 			}, delay);
 
 			return (() => {
 				clearTimeout(modalTimeout)
 			});
 		}
-	}, [gameState.gameOver, openModal, playerState.client, playerState.players, soundEngine, winner]);
+	}, [gameState.gameOver, openModal, playerState.client, playerState.players, playSound, winner]);
 
 	return {
 		closeModal,

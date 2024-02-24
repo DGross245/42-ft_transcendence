@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 
 import useWSClient from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
@@ -40,7 +40,7 @@ export const usePrevious = (value, initialValue) => {
 };
 
 
-export const PongSocketEvents = () => {
+export const PongSocketEvents = memo(() => {
 	// Provider hooks
 	const { 
 		setWsclient,
@@ -74,7 +74,7 @@ export const PongSocketEvents = () => {
 
 	// Normal hooks
 	const newClient = useWSClient();
-	const soundEngine = useSound();
+	const playSound = useSound();
 	const {
 		getPlayer,
 		address
@@ -286,23 +286,25 @@ export const PongSocketEvents = () => {
 			setRequestRematch(false);
 			setSendRequest(false);
 			if (msg === "disconnect") {
-				soundEngine?.playSound("door");
+				playSound("door");
+			} else if (msg === "leave") {
+				playSound("leave")
 			}
 			setPlayerStatus(msg);
 			updatePongGameState({ gameOver: true });
 		};
 
-
 		if (wsclient && pongGameState.gameId !== '-1') {
 			if (skip._skip && pongGameState.gameId !== "-1" && timerState === 'cross')
-				endGame("SKIP");
+				endGame("disconnect");
 
 			wsclient?.addMessageListener(`player-left-${pongGameState.gameId}`, pongGameState.gameId, endGame)
+
 			return () => {
 				wsclient?.removeMessageListener(`player-left-${pongGameState.gameId}`, pongGameState.gameId);
 			}
 		}
-	}, [wsclient, pongGameState.gameId, timerState, setPlayerStatus, setRequestRematch, setSendRequest, skip._skip, soundEngine, updatePongGameState]);
+	}, [wsclient, pongGameState.gameId, timerState, setPlayerStatus, setRequestRematch, setSendRequest, skip._skip, playSound, updatePongGameState]);
 
 	// Handle rematch request
 	useEffect(() => {
@@ -381,4 +383,6 @@ export const PongSocketEvents = () => {
 	}, [wsclient, pongGameState.gameId, updatePongGameState]);
 
 	return (null);
-}
+});
+
+PongSocketEvents.displayName = "PongSocketEvents"
