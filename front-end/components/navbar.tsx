@@ -17,7 +17,7 @@ import { siteConfig } from "@/config/site";
 import NextLink from "next/link";
 import clsx from "clsx";
 
-import { ThemeSwitch } from "@/components/theme-switch";
+// import { ThemeSwitch } from "@/components/theme-switch";
 import {
 	SearchIcon,
 } from "@/components/icons";
@@ -43,6 +43,8 @@ export const Navbar = () => {
 				<SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />
 			}
 			type="search"
+			id="123"
+			name="nevbar"
 		/>
 	);
 
@@ -82,8 +84,8 @@ export const Navbar = () => {
 			</NavbarContent>
 
 			<NavbarContent className="sm:hidden basis-1 pl-4" justify="end">
-				<ThemeSwitch />
-				<NavbarMenuToggle />
+				{/* <ThemeSwitch /> */}
+				{/* <NavbarMenuToggle /> */}
 			</NavbarContent>
 
 			<NavbarMenu>

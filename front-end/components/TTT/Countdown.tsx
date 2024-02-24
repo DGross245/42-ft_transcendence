@@ -9,6 +9,7 @@ import { useSound } from '@/components/hooks/Sound';
 import { useGameState } from '../../app/tic-tac-toe/hooks/useGameState';
 import Silkscreen_Regular from '../../public/fonts/Silkscreen_Regular.json';
 import { useSocket } from '@/app/tic-tac-toe/hooks/useSocket';
+import { useEffectDebugger } from '../Pong/PongSocketEvents';
 
 extend({ TextGeometry })
 
@@ -80,7 +81,7 @@ const Countdown = memo(() => {
 			}
 			clearInterval(countdownInterval);
 		};
-	}, [countdownVisible, soundEngine, gameState.pause, gameState.gameId, camera, setCountdownVisible, setStarted]);
+	}, [countdownVisible, soundEngine, gameState.pause, camera, gameState.gameId, setCountdownVisible, setStarted]);
 
 	useFrame(() => {
 		if (meshMatRef.current && playerState.client !== -1) {

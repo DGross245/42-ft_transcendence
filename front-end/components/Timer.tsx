@@ -21,15 +21,13 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 	const [timer, setTimer] = useState(15);
 	const soundEngine = useSound();
 
-	
 	useEffect(() => {
-		setDisappear(false);
-		setTimer(15);
 		var intervalId: NodeJS.Timeout | undefined = undefined;
-
+		
 		if (playerClient !== -1 && !started && !isFull) {
+			setDisappear(false);
+			setTimer(15);
 
-			console.log("RUNS")
 			intervalId = setInterval(() => {
 				console.log("kkk")
 				setTimer((prevTimer) => {

@@ -2,7 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Environment, Stats } from "@react-three/drei";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useWindow } from "../../../components/hooks/useWindow";
 import { Grid } from "@/components/TTT/Grid";
@@ -88,6 +88,8 @@ const TTTScene = () => {
 						placeholder="Topic"
 						value={topic}
 						onChange={onTopicChange}
+						id="4182"
+						name="inputkek"
 					/>
 				{/* <button onClick={onCreate}> Create </button>
 				<button onClick={onJoin}> join </button> */}

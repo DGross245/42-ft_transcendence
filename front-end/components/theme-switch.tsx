@@ -49,7 +49,7 @@ export const ThemeSwitch: FC<ThemeSwitchProps> = ({
 			})}
 		>
 			<VisuallyHidden>
-				<input {...getInputProps()} />
+				<input {...getInputProps()} id=":Rbbakq:" name="hidden"/>
 			</VisuallyHidden>
 			<div
 				{...getWrapperProps()}

@@ -8,6 +8,7 @@ import clsx from "clsx";
 
 import "react-toastify/dist/ReactToastify.css";
 import "@/styles/globals.css";
+import { useEffect } from "react";
 
 export const metadata: Metadata = {
 	title: {

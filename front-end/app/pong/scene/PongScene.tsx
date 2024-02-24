@@ -74,10 +74,12 @@ export default function PongScene() {
 
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
-					<input
+				<input
 					placeholder="Topic"
 					value={topic}
 					onChange={onTopicChange}
+					id="KEK"
+					name="KEK"
 				/>
 			{/* <button onClick={onCreate}> Create </button>
 			<button onClick={onJoin}> join </button> */}
