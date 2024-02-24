@@ -89,7 +89,7 @@ const TTTScene = () => {
 						value={topic}
 						onChange={onTopicChange}
 						id="4182"
-						name="inputkek"
+						name="in"
 					/>
 				{/* <button onClick={onCreate}> Create </button>
 				<button onClick={onJoin}> join </button> */}

@@ -73,10 +73,10 @@ const EndModal = React.memo(() => {
 					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1,
 				})
 			}
-			// if (tournament.id !== -1)
-			// 	await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			// else
-			// 	await submitGameResultRanked(playerScore);
+			if (tournament.id !== -1)
+				await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+			else
+				await submitGameResultRanked(playerScore);
 		}
 		const status = await wsclient?.updateStatus(false, gameState.gameId);
 		wsclient?.leave();

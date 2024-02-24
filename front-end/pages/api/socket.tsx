@@ -99,10 +99,9 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 					io.to(gameId).emit(`message-${gameId}-${topic}`, "disconnect");
 				});
 
-				socket.on('leave', () => {
-					console.log(socket.rooms)
+				socket.on('leave', async () => {
 					const topic = `player-left-${gameId}`;
-					socket.leave(gameId);
+					await socket.leave(gameId);
 					socket.to(gameId).emit(`message-${gameId}-${topic}`, "leave");
 				});
 			});

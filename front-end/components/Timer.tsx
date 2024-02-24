@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { CheckIcon, CrossIcon } from "./icons";
 import { useWindow } from "./hooks/useWindow";
 import { useSound } from "./hooks/Sound";
-import { useEffectDebugger } from "./Pong/PongSocketEvents";
+
 
 interface TimerProps {
 	playerClient: number;
@@ -18,19 +18,20 @@ interface TimerProps {
 
 export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, showChip, timerState, setTimerState, disappear, setDisappear }) => {
 	const { dimensions } = useWindow();
-	const [timer, setTimer] = useState(15);
+	const [counter, setCounter] = useState(15);
 	const soundEngine = useSound();
-
+ 
 	useEffect(() => {
 		var intervalId: NodeJS.Timeout | undefined = undefined;
 		
 		if (playerClient !== -1 && !started && !isFull) {
 			setDisappear(false);
-			setTimer(15);
+			setCounter(15);
 
+			console.log("RUNS")
 			intervalId = setInterval(() => {
 				console.log("kkk")
-				setTimer((prevTimer) => {
+				setCounter((prevTimer) => {
 					if (prevTimer > 0 && !isFull) {
 						if (prevTimer <= 6) {
 							console.log("KDS", prevTimer)
@@ -88,7 +89,7 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 				<Chip variant="bordered" style={{ borderColor: '#f6f4ff' }}>
 					{ timerState === 'check' && <CheckIcon className="fade-in" /> }
 					{ timerState === 'cross' && <CrossIcon className="fade-in"/> }
-					{ timerState === '' && timer }
+					{ timerState === '' && counter }
 				</Chip>
 			</Tooltip>
 		</div>
