@@ -45,9 +45,10 @@ const EndModal =  React.memo(() => {
 	// State variables
 	const [showResult, setShowResult] = useState("");
 	const [wasOpen, setWasOpen] = useState(false);
+	const [isClicked, setIsClicked] = useState(false);
 
 	const sendScoreAndContinue = async () => {
-		if (playerState.client === 0 || playerStatus === "disconnect") {
+		if (playerState.client === 0 || playerStatus === "disconnect" || playerStatus === "leave" ) {
 			const maxClient = isGameMode ? 3 : 2;
 			const playerScore: PlayerScore[] = [];
 
@@ -67,6 +68,7 @@ const EndModal =  React.memo(() => {
 			
 		}
 		const status = await wsclient?.updateStatus(false, pongGameState.gameId);
+		wsclient?.leave();
 		closeModal();
 		updatePongGameState({ gameId: "-1", pause: true, reset: true });
 		setPlayerState(initialPongPlayerState());
@@ -77,6 +79,14 @@ const EndModal =  React.memo(() => {
 				wsclient?.requestTournament(tournament.id, 'Pong');
 		}
 	}
+
+	const handleNextClick = async () => {
+		if (!isClicked) {
+			setIsClicked(true);
+			await sendScoreAndContinue();
+			setIsClicked(false);
+		}
+	};
 
 	const closeDiscModal = () => {
 		closeModal();
@@ -94,8 +104,7 @@ const EndModal =  React.memo(() => {
 		if (showModal) {
 			if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect")) {
 				setShowResult("Wins");
-			}
-			else {
+			} else {
 				setShowResult("Loses");
 			}
 		}
@@ -166,8 +175,8 @@ const EndModal =  React.memo(() => {
 							Leave
 						</Button>
 						{tournament.id !== -1 ? (
-							<Button color="primary" variant={"shadow"} onClick={() => sendScoreAndContinue()} >
-								Next
+							<Button color="primary" variant={"shadow"} onClick={handleNextClick} isDisabled={isClicked} isLoading={isClicked} >
+								Next Match
 							</Button>
 						) : (
 							pongGameState.gameId.includes("Costome-Game-") ? (
@@ -175,14 +184,11 @@ const EndModal =  React.memo(() => {
 								Rematch
 							</Button>
 						) : (
-								<Button color="primary" variant={"ghost"} onClick={() => sendScoreAndContinue()} >
-									Queue
+								<Button color="primary" variant={"ghost"} onClick={sendScoreAndContinue} isDisabled={isClicked}>
+									{ isClicked ? "In Queue" : "Find Match" }
 								</Button>
 							)
 						)}
-						<Button color="success" variant="ghost" onClick={closeDiscModal}>
-							View
-						</Button>
 					</ModalFooter>
 				</ModalContent>
 			</Modal>

@@ -49,7 +49,7 @@ const Square : React.FC<SquareProps> = (props) => {
 					color={props.color}
 					transparent={props.transparent}
 					side={DoubleSide}
-					opacity={0.8}
+					opacity={0.4}
 				/>
 			</Extrude>
 		</mesh>

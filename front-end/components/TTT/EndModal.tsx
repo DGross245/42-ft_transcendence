@@ -45,11 +45,16 @@ const EndModal = React.memo(() => {
 
 	const escape = useKey(['Escape']);
 
-	const { submitGameResultRanked, submitGameResultTournament } = useContract();
+	const {
+		submitGameResultRanked,
+		submitGameResultTournament,
+		getTournament
+	} = useContract();
 
 	// State variables
 	const [showResult, setShowResult] = useState("");
 	const [wasOpen, setWasOpen] = useState(false);
+	const [isClicked, setIsClicked] = useState(false);
 
 	const getOwnImage = useCallback(() => {
 		if (playerState.players[playerState.client]?.symbol === 'O')
@@ -64,8 +69,16 @@ const EndModal = React.memo(() => {
 			return ('/images/draw.png');
 	}, [isGameMode, playerState.client, playerState.players]);
 
+	const handleNextClick = async () => {
+		if (!isClicked) {
+			setIsClicked(true);
+			await sendScoreAndContinue();
+			setIsClicked(false);
+		}
+	};
+
 	const sendScoreAndContinue = async () => {
-		if (playerState.client === 0 || playerStatus === "disconnect") {
+		if (playerState.client === 0 || playerStatus === "disconnect" || playerStatus === "leave" ) {
 			const maxClient = isGameMode ? 3 : 2;
 			const playerScore: PlayerScore[] = [];
 
@@ -74,10 +87,14 @@ const EndModal = React.memo(() => {
 					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1,
 				})
 			}
-			// if (tournament.id !== -1)
-			// 	await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			// else
-			// 	await submitGameResultRanked(playerScore);
+			if (tournament.id !== -1) {
+				const lol = getTournament(tournament.id);
+				const finished = (await lol).games[tournament.index].finished
+				if (!finished)
+					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+			}
+			else
+				await submitGameResultRanked(playerScore);
 		}
 		const status = await wsclient?.updateStatus(false, gameState.gameId);
 		wsclient?.leave();
@@ -189,11 +206,11 @@ const EndModal = React.memo(() => {
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
 						<Button color="danger" variant="ghost" onClick={normalClose}>
-							Leave
+							Quit
 						</Button>
 						{tournament.id !== -1 ? (
-							<Button color="primary" variant={"shadow"} onClick={() => sendScoreAndContinue()} >
-								Next
+							<Button color="primary" variant={"shadow"} onClick={handleNextClick} isDisabled={isClicked} isLoading={isClicked} >
+								Next Match
 							</Button>
 						) : (
 							gameState.gameId.includes("Costome-Game-") ? (
@@ -201,14 +218,11 @@ const EndModal = React.memo(() => {
 								Rematch
 							</Button>
 						) : (
-							<Button color="primary" variant={"ghost"} onClick={() => sendScoreAndContinue()} >
-								Queue
+							<Button color="primary" variant={"ghost"} onClick={sendScoreAndContinue} isDisabled={isClicked}>
+								{ isClicked ? "In Queue" : "Find Match" }
 							</Button>
 							)
 						)}
-						<Button color="success" variant="ghost" onClick={normalClose}>
-							View
-						</Button>
 					</ModalFooter>
 				</ModalContent>
 			</Modal>

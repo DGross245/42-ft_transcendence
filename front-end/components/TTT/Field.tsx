@@ -42,7 +42,6 @@ const Field : React.FC<FieldProps> = memo((props) => {
 		];
 	}, [playerState.players]);
 
-
 	return (
 		<>
 			<mesh
