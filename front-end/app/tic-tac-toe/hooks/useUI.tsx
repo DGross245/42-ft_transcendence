@@ -24,14 +24,16 @@ export const useUI = () => {
 			const delay = 2000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
-				if (playerStatus === "unavailable") {
-					playSound("silly");
-				} else if ((winner === playerState.players[playerState.client].symbol)) {
-					playSound("win");
-				} else if (winner === "draw") {
-					playSound("disconnect");
-				} else {
-					playSound("losing");
+				if (playerStatus !== 'leave') {
+					if (playerStatus === "unavailable") {
+						playSound("silly");
+					} else if ((winner === playerState.players[playerState.client].symbol)) {
+						playSound("win");
+					} else if (winner === "draw") {
+						playSound("disconnect");
+					} else {
+						playSound("losing");
+					}
 				}
 			}, delay);
 

@@ -51,7 +51,7 @@ const TTTScene = () => {
 	}
 
 	const onSetNameAndColor = async () => {
-		await setNameAndColor('KEK', '0x00ff00');
+		await setNameAndColor('KEK', '0x0');
 	}
 
 	const onJoinTournament = async () =>{

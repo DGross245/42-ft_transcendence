@@ -78,14 +78,6 @@ export const TTTSocketEvents = memo(() => {
 		}
 	}, [wsclient]);
 
-
-	// useEffect(() => {
-	// 	if (timerState === 'cross') {
-	// 		setPlayerSet(true);
-	// 		// updateGameState({ ...gameState, pause: false })
-	// 	}
-	// }, [timerState])
-
 	// Wait until a game is found
 	useEffect(() => {
 		const waiting = async () => {
@@ -94,6 +86,8 @@ export const TTTSocketEvents = memo(() => {
 				setIsFull('');
 				setTimerState('');
 				setPlayerSet(false);
+				setPlayerStatus("");
+				setSymbolSet(false);
 
 				const { gameID, tournamentId, gameIndex } = await wsclient.waitingRoom();
 				if (tournamentId === -1 && !gameID.includes("Costume-Game-") && !isGameMode) {
@@ -106,7 +100,7 @@ export const TTTSocketEvents = memo(() => {
 		}
 
 		waiting();
-	}, [wsclient, gameState.gameId, isGameMode, setIsFull, setTournament, updateGameState, setTimerState]);
+	}, [wsclient, gameState.gameId, isGameMode, setIsFull, setTournament, updateGameState, setTimerState, setPlayerStatus]);
 
 	// Initiate joining a game 
 	useEffect(() => {

@@ -23,7 +23,9 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
  
 
 	useEffect(() => {
-		if (playerClient !== -1 && !isFull && !disappear) {
+		if (playerClient !== -1 && !disappear) {
+			setDisappear(false);
+
 			const interval = setInterval(() => {
 				if (seconds > 0) {
 					if (seconds <= 6) {

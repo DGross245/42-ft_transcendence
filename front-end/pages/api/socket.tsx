@@ -93,16 +93,18 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 					}
 				}
 
-				socket.on('disconnect', () => {
+				const disconnectFunction = () => {
 					const topic = `player-left-${gameId}`;
-					socket.disconnect();
 					io.to(gameId).emit(`message-${gameId}-${topic}`, "disconnect");
-				});
+				}
 
-				socket.on('leave', async () => {
+				socket.on('disconnect', disconnectFunction);
+
+				socket.on('leave', () => {
 					const topic = `player-left-${gameId}`;
-					await socket.leave(gameId);
-					socket.to(gameId).emit(`message-${gameId}-${topic}`, "leave");
+					socket.leave(gameId);
+					io.to(gameId).emit(`message-${gameId}-${topic}`, "leave");
+					socket.removeListener('disconnect', disconnectFunction);
 				});
 			});
 
