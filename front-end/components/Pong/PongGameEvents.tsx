@@ -2,6 +2,7 @@ import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
 import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
 import { useEffect, useMemo } from "react";
 import { useKey } from "../hooks/useKey";
+import { useSound } from "../hooks/Sound";
 
 interface PositionInfo {
 	camPosition: [number, number, number],
@@ -37,6 +38,7 @@ export const PongGameEvents = () => {
 
 	// Normal hooks
 	const escape = useKey(['Escape']);
+	const playSound = useSound();
 
 	const positionInfo = useMemo<PositionInfo[]>(() => {
 		return [
@@ -118,6 +120,8 @@ export const PongGameEvents = () => {
 	useEffect(() => {
 		// Check if all players have requested a rematch
 		if (rematchIndex === (isGameMode ? 4 : 2)) {
+			playSound("rematchAccept")
+
 			// Reset rematch-related flags
 			setRequestRematch(false);
 			setSendRequest(false);
@@ -126,7 +130,7 @@ export const PongGameEvents = () => {
 			// Update game state to trigger a reset
 			updatePongGameState({ reset: true })
 		}
-	}, [rematchIndex, isGameMode, setRequestRematch, setSendRequest, setRematchIndex, updatePongGameState]);
+	}, [rematchIndex, playSound, isGameMode, setRequestRematch, setSendRequest, setRematchIndex, updatePongGameState]);
 
 	// Resumes the game when all players want to continue.
 	useEffect(() => {

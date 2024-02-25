@@ -8,7 +8,7 @@ export const useUI = () => {
 	const [showModal, setShowModal] = useState(false);
 	const playSound = useSound();
 	const { gameState, winner } = useGameState();
-	const { playerState } = useSocket();
+	const { playerState, playerStatus } = useSocket();
 
 	const closeModal = useCallback(() => {
 		setShowModal(false);
@@ -24,19 +24,22 @@ export const useUI = () => {
 			const delay = 2000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
-				if (winner === playerState.players[playerState.client].symbol)
+				if (playerStatus === "unavailable") {
+					playSound("silly");
+				} else if ((winner === playerState.players[playerState.client].symbol)) {
 					playSound("win");
-				else if (winner === "draw")
-					playSound("door");
-				else
+				} else if (winner === "draw") {
+					playSound("disconnect");
+				} else {
 					playSound("losing");
+				}
 			}, delay);
 
 			return (() => {
 				clearTimeout(modalTimeout)
 			});
 		}
-	}, [gameState.gameOver, openModal, playerState.client, playerState.players, playSound, winner]);
+	}, [gameState.gameOver, openModal, playerStatus, playerState.client, playerState.players, playSound, winner]);
 
 	return {
 		closeModal,

@@ -170,7 +170,7 @@ export const PongSocketEvents = memo(() => {
 					};
 
 					// Handle the tournament case where a player subscribed to a tournament is not present
-					if (skip._skip && clients === 1) {
+					if (skip._skip && clients === 0) {
 						newState.players[1] = {
 							name: "Unknown",
 							addr: skip.address,
@@ -285,18 +285,14 @@ export const PongSocketEvents = memo(() => {
 		const endGame = (msg: string) => {
 			setRequestRematch(false);
 			setSendRequest(false);
-			if (msg === "disconnect") {
-				playSound("door");
-			} else if (msg === "leave") {
-				playSound("leave")
-			}
+			playSound(msg)
 			setPlayerStatus(msg);
 			updatePongGameState({ gameOver: true });
 		};
 
 		if (wsclient && pongGameState.gameId !== '-1') {
 			if (skip._skip && pongGameState.gameId !== "-1" && timerState === 'cross')
-				endGame("disconnect");
+				endGame("unavailable");
 
 			wsclient?.addMessageListener(`player-left-${pongGameState.gameId}`, pongGameState.gameId, endGame)
 
@@ -312,6 +308,7 @@ export const PongSocketEvents = memo(() => {
 			if (msg === "true") {
 				setRematchIndex((prevState) => (prevState + 1));
 				setRequestRematch(true);
+				playSound("rematchSend")
 			}
 		};
 
@@ -322,16 +319,17 @@ export const PongSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`Request-Rematch-${pongGameState.gameId}`, pongGameState.gameId);
 			}
 		}
-	}, [wsclient, pongGameState.gameId, setRematchIndex, setRequestRematch]);
+	}, [wsclient, playSound, pongGameState.gameId, setRematchIndex, setRequestRematch]);
 
 	// Send rematch request
 	useEffect(() => {
 		if (sendRequest) {
+			playSound("rematchSend")
 			const bot = botState.isActive ? 1 : 0;
 			setRematchIndex((prevState) => (prevState + 1 + bot));
 			wsclient?.emitMessageToGame("true", `Request-Rematch-${pongGameState.gameId}`, pongGameState.gameId);
 		}
-	}, [sendRequest, botState.isActive, setRematchIndex, pongGameState.gameId, wsclient]);
+	}, [sendRequest,playSound, botState.isActive, setRematchIndex, pongGameState.gameId, wsclient]);
 
 	// Handle continue request
 	useEffect(() => {

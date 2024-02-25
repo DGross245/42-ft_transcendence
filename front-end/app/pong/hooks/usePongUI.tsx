@@ -23,10 +23,13 @@ export const usePongUI = () => {
 			const delay = 1000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
-				if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect"))
+				if (playerStatus === "unavailable") {
+					playSound("silly");
+				} else if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect")) {
 					playSound("win");
-				else
+				} else {
 					playSound("losing");
+				}
 			}, delay);
 
 			return (() => {

@@ -74,10 +74,10 @@ const EndModal = React.memo(() => {
 					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1,
 				})
 			}
-			if (tournament.id !== -1)
-				await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			else
-				await submitGameResultRanked(playerScore);
+			// if (tournament.id !== -1)
+			// 	await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+			// else
+			// 	await submitGameResultRanked(playerScore);
 		}
 		const status = await wsclient?.updateStatus(false, gameState.gameId);
 		wsclient?.leave();
@@ -184,7 +184,7 @@ const EndModal = React.memo(() => {
 					</div>
 					<ModalBody style={{ textAlign: 'center' }} >
 						{ playerStatus === "disconnect" && timerState !== 'cross' && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
-						{ playerStatus === "disconnect" && timerState === 'cross' && <p style={{ color: 'grey' }}> Your opponent didnt connect </p> }
+						{ playerStatus === "unavailable" && timerState === 'cross' && <p style={{ color: 'grey' }}> Your opponent didnt connect </p> }
 						{ playerStatus === "leave" && <p style={{ color: 'grey' }}> Your opponent left </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">

@@ -67,6 +67,7 @@ export const TTTSocketEvents = memo(() => {
 	useEffect(() => {
 		const skipGame = (msg: string) => {
 			setSkip({ _skip: true, address: msg });
+			console.log(msg);
 		};
 
 		if (wsclient) {
@@ -78,12 +79,12 @@ export const TTTSocketEvents = memo(() => {
 	}, [wsclient]);
 
 
-	useEffect(() => {
-		if (timerState === 'cross') {
-			setPlayerSet(true);
-			// updateGameState({ ...gameState, pause: false })
-		}
-	}, [timerState])
+	// useEffect(() => {
+	// 	if (timerState === 'cross') {
+	// 		setPlayerSet(true);
+	// 		// updateGameState({ ...gameState, pause: false })
+	// 	}
+	// }, [timerState])
 
 	// Wait until a game is found
 	useEffect(() => {
@@ -136,7 +137,7 @@ export const TTTSocketEvents = memo(() => {
 					};
 
 					// Handle the tournament case where a player subscribed to a tournament is not present
-					if (skip._skip && numClients === 1) {
+					if (skip._skip && numClients === 0) {
 						newState.players[1] = {
 							name: "Unknown",
 							addr: skip.address,
@@ -241,11 +242,7 @@ export const TTTSocketEvents = memo(() => {
 		const endGame = (msg: string) => {
 			setRequestRematch(false);
 			setSendRequest(false);
-			if (msg === "disconnect") {
-				playSound("door");
-			} else if (msg === "leave") {
-				playSound("leave")
-			}
+			playSound(msg);
 			setPlayerStatus(msg);
 			if (!gameState.gameOver && playerState.client !== -1) {
 				setWinner(playerState.players[playerState.client].symbol);
@@ -254,8 +251,10 @@ export const TTTSocketEvents = memo(() => {
 		};
 
 		if (wsclient && gameState.gameId !== "-1") {
-			if (skip._skip && gameState.gameId !== "-1" && timerState === 'cross' && symbolSet) {
-				endGame("disconnect");
+			if (skip._skip && gameState.gameId !== "-1" && timerState === 'cross') {
+				setPlayerSet(true);
+				setSymbolSet(true);
+				endGame("unavailable");
 			}
 
 			wsclient?.addMessageListener(`player-left-${gameState.gameId}`, gameState.gameId, endGame)
@@ -264,7 +263,7 @@ export const TTTSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`player-left-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [gameState.gameId, gameState.gameOver, setWinner, playerState.client, playerState.players, playSound, setPlayerStatus, setRequestRematch, setSendRequest, skip._skip, symbolSet, timerState, updateGameState, wsclient]);
+	}, [gameState.gameId, gameState.gameOver, playSound, playerState.client, playerState.players, setPlayerStatus, setRequestRematch, setSendRequest, setWinner, skip._skip, symbolSet, timerState, updateGameState, wsclient]);
 
 	// Handle rematch request
 	useEffect(() => {
@@ -272,6 +271,7 @@ export const TTTSocketEvents = memo(() => {
 			if (msg === "true") {
 				setRematchIndex((prevState) => prevState + 1);
 				setRequestRematch(true);
+				playSound("rematchSend")
 			}
 		};
 
@@ -282,16 +282,17 @@ export const TTTSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`Request-Rematch-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, gameState.gameId, setRematchIndex, setRequestRematch]);
+	}, [wsclient, gameState.gameId, setRematchIndex, setRequestRematch, playSound]);
 
 	// Send rematch request
 	useEffect(() => {
 		if (sendRequest) {
+			playSound("rematchSend")
 			const bot = botState.isActive ? 1 : 0;
 			setRematchIndex((prevState) => prevState + 1 + bot);
 			wsclient?.emitMessageToGame("true", `Request-Rematch-${gameState.gameId}`, gameState.gameId);
 		}
-	}, [sendRequest, botState.isActive, gameState.gameId, setRematchIndex, wsclient]);
+	}, [sendRequest, botState.isActive, gameState.gameId, setRematchIndex, wsclient, playSound]);
 
 	// Handle continue request
 	useEffect(() => {
@@ -358,7 +359,7 @@ export const TTTSocketEvents = memo(() => {
 		const sendRandomSymbol = () => {
 			const symbols = shuffleArray(isGameMode ? ['X', 'O', '🔳'] : ['X', 'O']);
 			const botClientNumber = isGameMode ? 2 : 1;
-
+			console.log("d")
 			setPlayerState((prevState) => {
 				const updatedPlayers = prevState.players.map((player, index) => {
 					return { ...player, symbol: symbols[index] };

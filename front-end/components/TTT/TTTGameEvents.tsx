@@ -4,6 +4,7 @@ import { initialBoard, winningCoords } from "@/app/tic-tac-toe/context/TTTGameSt
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
+import { useSound } from "../hooks/Sound";
 
 export const TTTGameEvents = memo(() => {
 	// Provider hooks 
@@ -33,6 +34,7 @@ export const TTTGameEvents = memo(() => {
 
 	// Normal hooks
 	const escape = useKey(['Escape']);
+	const playSound = useSound();
 
 	// Handling the reset of the scene, resetting important states.
 	useEffect(() => {
@@ -59,6 +61,8 @@ export const TTTGameEvents = memo(() => {
 	useEffect(() => {
 		// Check if all players have requested a rematch
 		if (rematchIndex === (isGameMode ? 3 : 2)) {
+			playSound("rematchAccept")
+
 			// Reset rematch-related flags
 			setRematchIndex(0);
 			setRequestRematch(false);
@@ -67,7 +71,7 @@ export const TTTGameEvents = memo(() => {
 			// Update game state to trigger a reset
 			updateGameState({ reset: true});
 		}
-	}, [rematchIndex, setRematchIndex, isGameMode, setRequestRematch, setSendRequest, updateGameState]);
+	}, [rematchIndex, setRematchIndex, playSound, isGameMode, setRequestRematch, setSendRequest, updateGameState]);
 
 	// Resumes the game when all players want to continue.
 	useEffect(() => {
