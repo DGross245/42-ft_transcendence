@@ -51,7 +51,8 @@ export const gameValidation = (
 						const symbol = board[i][j][k];
 						if (symbol !== '') {
 							let p = 0;
-							coords[p++] = SceneCoords[i][j][k] as [number, number, number];
+							const [posX, posY, posZ] = SceneCoords[i][j][k] as [number, number, number];
+							coords[p++] = [posX, posY + 0.7, posZ] 
 							let count = 1;
 							let x = i + start[0];
 							let y = j + start[1];
@@ -59,7 +60,8 @@ export const gameValidation = (
 							while (x >= 0 && x < board.length && y >= 0 && y < board[x].length && z >= 0 && z < board[x][y].length) {
 								if (board[x][y][z] === symbol) {
 									count++;
-									coords[p++] = [...SceneCoords[x][y][z]] as [number, number, number];
+									const [posX, posY, posZ] = [...SceneCoords[x][y][z]] as [number, number, number];
+									coords[p++] = [posX, posY + 0.7, posZ];
 									if (count === 4) {
 										setCoords(coords);
 										setLineVisibility(true);

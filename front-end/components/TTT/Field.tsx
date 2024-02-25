@@ -42,6 +42,7 @@ const Field : React.FC<FieldProps> = memo((props) => {
 		];
 	}, [playerState.players]);
 
+
 	return (
 		<>
 			<mesh
@@ -73,7 +74,7 @@ const Field : React.FC<FieldProps> = memo((props) => {
 			{symbol && (
 				<>
 					{symbol === 'X' ? (
-						<X {...props} color={colors[0]} transparent={false}/>
+						<X {...props} color={colors[0]} transparent={false} />
 					) : symbol === 'O' ? (
 						<Torus {...props} color={colors[1]} transparent={false} />
 					) : (
