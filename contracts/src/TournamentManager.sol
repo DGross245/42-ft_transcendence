@@ -301,6 +301,8 @@ contract TournamentManager {
 				}
 			}
 		}
+		if (played_games == 0)
+			return 0;
 		return total_score / played_games;
 	}
 }
