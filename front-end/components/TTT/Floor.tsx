@@ -22,7 +22,6 @@ const Floor : React.FC<FloorProps> = (props) => {
 				color={0x111111}
 				transparent={true}
 				metalness={0.8}
-				// side={THREE.BackSide}
 				opacity={0.7}
 				roughness={0.9}
 			/>

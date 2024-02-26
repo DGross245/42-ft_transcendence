@@ -23,6 +23,10 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
  
 
 	useEffect(() => {
+		if (!showChip) {
+			return ;
+		}
+
 		if (playerClient !== -1 && !disappear) {
 			setDisappear(false);
 
@@ -33,7 +37,12 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 					} 
 					if (isFull) {
 						setTimerState('check');
-						setSeconds(15);
+
+						setTimeout(() => {
+							setDisappear(true);
+							setSeconds(15);
+						}, 1500); 
+
 						clearInterval(interval);
 						return ;
 					}
@@ -53,10 +62,11 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 				clearInterval(interval);
 			};
 		}
-	}, [isFull, playerClient, seconds, playSound, disappear, setDisappear, setTimerState]);
+	}, [isFull, playerClient, seconds, showChip, disappear, setDisappear, setTimerState, playSound]);
 
-	if ((playerClient === -1 && !showChip) || started)
+	if (playerClient === -1 || !showChip || started) {
 		return (null);
+	}
 
 	return (
 		<div

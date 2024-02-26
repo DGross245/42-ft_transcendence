@@ -19,6 +19,7 @@ import { TTTBot } from "@/components/TTT/TTTBot";
 import { useSocket } from "../hooks/useSocket";
 import useContract from "@/components/hooks/useContract";
 import { TTTModals } from "@/components/TTT/TTTModals";
+import { useGameState } from "../hooks/useGameState";
 
 
 /**
@@ -38,7 +39,8 @@ const TTTScene = () => {
 		startTournament,
 		getTournaments,
 	} = useContract();
-	const [topic, setTopic] = useState(0);
+	const {gameState, updateGameState} = useGameState();
+	const [topic, setTopic] = useState(21);
 
 	const onTopicChange = (e: any) => {
 		setTopic(e.target.value);

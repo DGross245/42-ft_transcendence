@@ -42,7 +42,7 @@ export const TTTModals = memo(() => {
 				playerClient={playerState.client}
 				isFull={isFull}
 				started={started}
-				showChip={gameState.gameId !== "-1" && !gameState.gameId.includes("Costume-Game-")}
+				showChip={gameState.gameId !== "-1" && !gameState.gameId.includes("Custom-Game-")}
 				timerState={timerState}
 				setTimerState={setTimerState}
 				disappear={chipDisappear}

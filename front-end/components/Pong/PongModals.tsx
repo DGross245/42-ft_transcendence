@@ -42,7 +42,7 @@ export function PongModals() {
 				playerClient={playerState.client}
 				isFull={isFull}
 				started={started}
-				showChip={pongGameState.gameId !== "-1" && !pongGameState.gameId.includes("Costume-Game-")}
+				showChip={pongGameState.gameId !== "-1" && !pongGameState.gameId.includes("Custom-Game-")}
 				timerState={timerState}
 				setTimerState={setTimerState}
 				disappear={chipDisappear}

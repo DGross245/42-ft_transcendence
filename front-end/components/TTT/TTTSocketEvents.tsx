@@ -90,7 +90,7 @@ export const TTTSocketEvents = memo(() => {
 				setSymbolSet(false);
 
 				const { gameID, tournamentId, gameIndex } = await wsclient.waitingRoom();
-				if (tournamentId === -1 && !gameID.includes("Costume-Game-") && !isGameMode) {
+				if (tournamentId === -1 && !gameID.includes("Custom-Game-") && !isGameMode) {
 					wsclient.joinQueue("TTT");
 				} else {
 					setTournament({ id: tournamentId, index: gameIndex })
