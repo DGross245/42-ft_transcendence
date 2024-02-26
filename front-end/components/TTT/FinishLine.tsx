@@ -18,7 +18,7 @@ import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 const FinishLine = () => {
 	const playSound = useSound();
 	const [color, setColor] = useState(0x00ffff);
-	const { winner, lineCoords, isGameMode, isLineVisible } = useGameState();
+	const { winner, lineCoords, isGameMode, isLineVisible, started } = useGameState();
 	const { playerStatus, playerState } = useSocket();
 
 	const colors = useMemo(() => {
@@ -26,7 +26,7 @@ const FinishLine = () => {
 			const player = playerState.players.find(player => player.symbol === symbol);
 			return player?.color;
 		};
-	
+
 		return [
 			getColorBySymbol('X'),
 			getColorBySymbol('O'),
@@ -35,7 +35,7 @@ const FinishLine = () => {
 	}, [playerState.players]);
 
 	useEffect(() => {
-		if (winner) {
+		if (winner !== '' && started) {
 			if (winner === 'X') {
 				setColor(Number(colors[0]));
 			} else if (winner === 'O') {
@@ -43,10 +43,11 @@ const FinishLine = () => {
 			} else if (winner === '🔳') {
 				setColor(Number(colors[2]));
 			}
-			if (!playerStatus)
+			if (!playerStatus) {
 				playSound("finish");
+			}
 		} 
-	}, [winner, playerStatus, playSound, isGameMode, colors])
+	}, [winner, playerStatus, isGameMode, colors, started, playSound])
 
 
 	return (
