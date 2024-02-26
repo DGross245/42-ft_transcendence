@@ -65,7 +65,7 @@ function useContract() {
 			}
 		}
 		return null;
-	},[tmContract])
+	},[tmContract]);
 
 	// creates a new tournament and adds calling address as master
 	// the caller HAS to join separately as a player if he wants to participate

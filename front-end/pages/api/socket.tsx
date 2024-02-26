@@ -43,12 +43,10 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 		
 		io.on('connection', (socket) => {
 
-			socket.on('WalletAdress', (address: `0x${string}` | undefined) => {
+			socket.on('WalletAdress', async (address: `0x${string}` | undefined) => {
 				socket.data = {
 					walletAddress: address,
-					elo: async () => {
-						return await getElo(String(address));
-					},
+					elo: await getElo(String(address)),
 					isInGame: false
 				}
 			});
