@@ -38,7 +38,6 @@ contract TournamentManager {
 	Game[] public ranked_games;
 
 	// helper data to evade memory to storage assignment errors
-	Game[] _games;
 	PlayerScore[] _player_scores;
 	Game _game;
 	PlayerScore _player_score;
@@ -160,6 +159,7 @@ contract TournamentManager {
 	returns (uint256) {
 		require (duration_in_blocks > 0, "Duration must be greater than 0");
 
+		delete _tournament;
 		Tournament storage tournament = _tournament;
 		tournament.master = msg.sender;
 		tournament.duration_in_blocks = duration_in_blocks;
@@ -235,9 +235,12 @@ contract TournamentManager {
 
 	function submitGameResultRanked(PlayerScore[] calldata player_scores)
 	external {
+		delete _game;
 		Game storage game = _game;
+		delete _player_scores;
 		PlayerScore[] storage scores = _player_scores;
 		for (uint256 i = 0; i < player_scores.length; i++) {
+			delete _player_score;
 			PlayerScore storage score = _player_score;
 			score.addr = player_scores[i].addr;
 			score.score = player_scores[i].score;
