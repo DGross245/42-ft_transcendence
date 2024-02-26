@@ -20,6 +20,7 @@ const EndModal =  React.memo(() => {
 		tournament,
 		updatePongGameState,
 		setStarted,
+		scores
 	} = usePongGameState();
 	const {
 		playerStatus,
@@ -49,12 +50,12 @@ const EndModal =  React.memo(() => {
 
 	const sendScoreAndContinue = async () => {
 		if (playerState.client === 0 || playerStatus === "disconnect" || playerStatus === "leave" ) {
-			const maxClient = isGameMode ? 3 : 2;
+			const maxClient = isGameMode ? 4 : 2;
 			const playerScore: PlayerScore[] = [];
 
 			for (let i = 0; i < maxClient; i++) {
 				playerScore.push({
-					addr: playerState.players[i].addr, score: 1,
+					addr: playerState.players[i].addr, score: scores.p1Score * 100,
 				})
 			}
 			if (tournament.id !== -1) {
@@ -62,9 +63,9 @@ const EndModal =  React.memo(() => {
 				const finished = (await lol).games[tournament.index].finished
 				if (!finished)
 					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			}
-			else
+			} else if (playerState.client === 0) {
 				await submitGameResultRanked(playerScore);
+			}
 			
 		}
 		const status = await wsclient?.updateStatus(false, pongGameState.gameId);

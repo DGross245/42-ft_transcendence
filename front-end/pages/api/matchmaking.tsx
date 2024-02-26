@@ -10,25 +10,27 @@ interface Matchmaking {
 	gameType: string,
 }
 
-const searchForOpponent = (sockets :Matchmaking['sockets'], length: number) => {
-	const maxDiff = 0.3;
+const searchForOpponent = async (sockets :Matchmaking['sockets'], length: number) => {
+	const maxDiff = 0.4;
 
 	for (let i = 0; i < sockets.length; i++) {
 		let sequence = [sockets[i]];
-		let maxDifference = sockets[i].data.elo * maxDiff;
+		let maxDifference = (await sockets[i].data.elo) * maxDiff;
 
 		for (let j = i + 1; j < sockets.length; j++) {
-			if (Math.abs(sockets[j].data.elo - sequence[sequence.length - 1].data.elo) <= maxDifference)
+			if (Math.abs((await sockets[j].data.elo) - (await sequence[sequence.length - 1].data.elo)) <= maxDifference) {
 				sequence.push(sockets[j]);
-			if (sequence.length === length)
+			}
+			if (sequence.length === length) {
 				return (sequence);
+			}
 		}
 	}
 
 	return ([]);
 }
 
-export const matchmaking = ({sockets, gameType} : Matchmaking) => {
+export const matchmaking = async ({sockets, gameType} : Matchmaking) => {
 	var players : Matchmaking['sockets'] = [];
 	let maxClients = 2;
 
@@ -38,7 +40,7 @@ export const matchmaking = ({sockets, gameType} : Matchmaking) => {
 		maxClients = 3;
 
 	if (sockets.length >= maxClients) {
-		players = searchForOpponent(sockets, maxClients);
+		players = await searchForOpponent(sockets, maxClients);
 
 		if (players.length > 0) {
 			var id = crypto.randomBytes(20).toString('hex').substring(0, 7);

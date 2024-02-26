@@ -38,6 +38,7 @@ const TTTScene = () => {
 		joinTournament,
 		startTournament,
 		getTournaments,
+		getRankedGames
 	} = useContract();
 	const {gameState, updateGameState} = useGameState();
 	const [topic, setTopic] = useState(21);
@@ -53,7 +54,7 @@ const TTTScene = () => {
 	}
 
 	const onSetNameAndColor = async () => {
-		await setNameAndColor('KEK', '0x0');
+		await setNameAndColor('KEK', '0xffffff');
 	}
 
 	const onJoinTournament = async () =>{
@@ -88,6 +89,11 @@ const TTTScene = () => {
 		wsclient?.joinQueue("tictactoe")
 	}
 
+	const rank = async () => {
+		const t = await getRankedGames();
+		console.log(t);
+	}
+
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
 					<input
@@ -101,9 +107,10 @@ const TTTScene = () => {
 				<button onClick={onJoin}> join </button> */}
 				<button onClick={joinQueue}> Queue </button>
 				{/* <button onClick={onCreateTournament}> Create Tournament </button>
-				<button onClick={onJoin}>  JOIN  </button>
+				<button onClick={onJoin}>  JOIN  </button> */}
 				<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
-				<button onClick={onJoinTournament}> Join Tournament </button>
+				<button onClick={rank}> RANKED </button>
+				{/* <button onClick={onJoinTournament}> Join Tournament </button>
 				<button onClick={onStartTournament}> Start Tournament </button>
 				<button onClick={onGetTournaments}> lol Tournament </button>
 				<button onClick={onkek}> print </button> */}

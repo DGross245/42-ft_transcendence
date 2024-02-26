@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
 
-export const contract_address = '0x78eB50eE209a4DEE099Acc422c650825FD5D1771'
+export const contract_address = '0xD78F9fEc2c927d8722DD7D65e30552BC4380a118'
 
 /* -------------------------------------------------------------------------- */
 /*                               Data Structures                              */
@@ -140,8 +140,8 @@ function useContract() {
 	},[callContract]);
 
 	// returns number of games played divided by accumulated score across all games
-	const getPlayerRankedElo = useCallback(async () => {
-		return (await callContract('getPlayerRankedElo')) as number;
+	const getPlayerRankedElo = useCallback(async (address: string) => {
+		return (await callContract('getPlayerRankedElo', [address])) as number;
 	},[callContract]);
 
 	return {

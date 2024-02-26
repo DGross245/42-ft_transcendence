@@ -48,7 +48,8 @@ const EndModal = React.memo(() => {
 	const {
 		submitGameResultRanked,
 		submitGameResultTournament,
-		getTournament
+		getTournament,
+		getPlayerRankedElo
 	} = useContract();
 
 	// State variables
@@ -84,17 +85,17 @@ const EndModal = React.memo(() => {
 
 			for (let i = 0; i < maxClient; i++) {
 				playerScore.push({
-					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1,
+					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1000,
 				})
 			}
 			if (tournament.id !== -1) {
-				const lol = getTournament(tournament.id);
-				const finished = (await lol).games[tournament.index].finished
+				const data = getTournament(tournament.id);
+				const finished = (await data).games[tournament.index].finished
 				if (!finished)
 					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
-			}
-			else
+			} else if (playerState.client === 0) {
 				await submitGameResultRanked(playerScore);
+			}
 		}
 		const status = await wsclient?.updateStatus(false, gameState.gameId);
 		wsclient?.leave();
@@ -108,6 +109,8 @@ const EndModal = React.memo(() => {
 				wsclient?.requestTournament(tournament.id, 'TTT');
 			}
 		}
+		const number = Number(await getPlayerRankedElo(playerState.players[playerState.client].addr));
+		console.log(number)
 	}
 
 	const normalClose = useCallback(() => {

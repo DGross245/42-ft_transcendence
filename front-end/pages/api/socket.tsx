@@ -32,7 +32,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 
 	const getElo = async (address: string) => {
 		if (address) {
-			const eloScore = (await contract.getPlayerRankedElo(address)) as number;
+			const eloScore = Number(await contract.getPlayerRankedElo(address));
 			return (eloScore);
 		}
 	}
@@ -46,7 +46,9 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			socket.on('WalletAdress', async (address: `0x${string}` | undefined) => {
 				socket.data = {
 					walletAddress: address,
-					elo: await getElo(String(address)),
+					get elo() {
+						return getElo(String(address));
+					},
 					isInGame: false
 				}
 			});
