@@ -18,6 +18,7 @@ const SocketHandler = async (req: NextApiRequest, res: NextApiResponse): Promise
 		});
 	  });
 	}
+
 	res.end();
 };
 

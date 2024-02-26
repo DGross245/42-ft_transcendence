@@ -29,9 +29,12 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 		const io = new Server(res.socket.server as any);
 		res.socket.server!.io = io;
 
+		console.log('Socket is initializing')
+
 		io.on('connection', (socket) => {
 
 			socket.on('join-game', ( gameId: string, gameType: string, isBot: boolean ) => {
+				console.log('received join message', gameId, gameType, isBot)
 				const room = io.sockets.adapter.rooms.get(gameId);
 				const numClients = room ? room.size : 0;
 				let maxClients = isBot ? 1 : 2;
