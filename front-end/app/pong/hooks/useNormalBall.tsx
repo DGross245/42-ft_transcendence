@@ -1,21 +1,25 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFrame } from "@react-three/fiber";
+
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
+import { Vector3 } from "three";
 
-export const useBall = (onPositionChange) => {
+export const useBall = (onPositionChange: (position: Vector3) => void) => {
 	const {
 		ballRef,
 		scores,
 		setWinner,
 		setBallVisibility,
-		setPongGameState,
+		updatePongGameState,
 		pongGameState,
 		isScoreVisible,
 		leftPaddleRef,
 		rightPaddleRef,
 		setScores,
-		botState
+		botState,
+		setStarted,
+		started
 	} = usePongGameState();
 	const { wsclient, playerState } = usePongSocket();
 
@@ -51,7 +55,7 @@ export const useBall = (onPositionChange) => {
 			ballRef.current.position.x = 0;
 			ballRef.current.position.z = 0;
 		}
-	},[pongGameState.gameOver]);
+	},[pongGameState.gameOver, ballRef]);
 
 	/**
 	 * Updates the new position of the ball based on its velocity and the time passed since last frame (deltaTime).
@@ -61,7 +65,7 @@ export const useBall = (onPositionChange) => {
 	 * 					  Used to ensure independence from the frame rate.
 	*/
 	const updateBallPosition = (ball: { x: number; z: number; velocityX: number; velocityZ: number; }, deltaTime: number) => {
-		if (pongGameState.pause) return ;
+		if (pongGameState.pause || !isScoreVisible) return ;
 		if (!playerState.master) {
 			const { position, velocity, deltaTime } = PositionRef.current;
 			ball.x = -position.x + -velocity.x * deltaTime;
@@ -113,32 +117,36 @@ export const useBall = (onPositionChange) => {
 			const newPosition = JSON.parse(msg);
 			PositionRef.current = newPosition;
 		};
-		wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
 
-		return () => {
-			wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
-		};
-	}, [wsclient]);
+		if (wsclient && pongGameState.gameId !== '-1') {
+			wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
+	
+			return () => {
+				wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+			};
+		}
+	}, [wsclient, pongGameState.gameId]);
 
 	/**
 	 * Initiates the game by providing a random direction to the ball after the countdown 
 	 * sets the score visibility to true.
 	 */
 	useEffect(() => {
-		if (isScoreVisible)
+		if (started) {
 			randomBallDir();
-	}, [isScoreVisible]);
+		}
+	}, [started]);
 
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
-			if (playerScore === 7) {
+			if (playerScore === 1) {
 				let ball = temp.current;
 				ball.x = 0;
 				ball.z = 0;
 				ball.velocityX = 0;
 				ball.velocityZ = 0;
 				ball.speed = 0.1;
-				setPongGameState({ ...pongGameState, gameOver: true })
+				updatePongGameState({ gameOver: true })
 				setWinner(player);
 				setBallVisibility(false);
 			}
@@ -146,7 +154,7 @@ export const useBall = (onPositionChange) => {
 
 		checkWinner('1', scores.p1Score);
 		checkWinner('2', scores.p2Score);
-	}, [scores.p1Score, scores.p2Score]);
+	}, [scores.p1Score, scores.p2Score, setWinner, setBallVisibility, updatePongGameState]);
 
 	// Game/render loop for the ball.
 	useFrame((_, deltaTime) => {
@@ -192,7 +200,7 @@ export const useBall = (onPositionChange) => {
 		}
 		// Handling scoring when the ball is outside of the play area.
 		else if ((ball.x > 200 || ball.x < -200) && 
-			scores.p2Score !== 7 && scores.p1Score !== 7) {
+			scores.p2Score !== 1 && scores.p1Score !== 1) {
 			if (ball.x < -200)
 				setScores({ ...scores, p2Score: scores.p2Score + 1 })
 			else

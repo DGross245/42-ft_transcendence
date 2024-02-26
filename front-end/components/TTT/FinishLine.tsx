@@ -1,5 +1,5 @@
 import { Line } from "@react-three/drei";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { useSound } from "@/components/hooks/Sound";
 import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
@@ -16,22 +16,38 @@ import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
  * component is rendered with the specified `points`, `color`, and `lineWidth` props.
  */
 const FinishLine = () => {
-	const soundEngine = useSound();
+	const playSound = useSound();
 	const [color, setColor] = useState(0x00ffff);
-	const { winner, lineCoords, isGameMode } = useGameState();
-	const { isLineVisible } = useGameState();
-	const { disconnected } = useSocket();
+	const { winner, lineCoords, isGameMode, isLineVisible, started } = useGameState();
+	const { playerStatus, playerState } = useSocket();
+
+	const colors = useMemo(() => {
+		const getColorBySymbol = (symbol: string) => {
+			const player = playerState.players.find(player => player.symbol === symbol);
+			return player?.color;
+		};
+
+		return [
+			getColorBySymbol('X'),
+			getColorBySymbol('O'),
+			getColorBySymbol('🔳'),
+		];
+	}, [playerState.players]);
 
 	useEffect(() => {
-		if (winner) {
-			if (isGameMode)
-				setColor(winner === 'X' ? 0xff0000 : winner === 'O' ? 0x1aabff : 0x008000 );
-			else
-				setColor(winner === 'X' ? 0xff0000 : 0x1aabff);
-			if (!disconnected)
-				soundEngine?.playSound("finish");
+		if (winner !== '' && started) {
+			if (winner === 'X') {
+				setColor(Number(colors[0]));
+			} else if (winner === 'O') {
+				setColor(Number(colors[1]));
+			} else if (winner === '🔳') {
+				setColor(Number(colors[2]));
+			}
+			if (!playerStatus) {
+				playSound("finish");
+			}
 		} 
-	}, [winner])
+	}, [winner, playerStatus, isGameMode, colors, started, playSound])
 
 
 	return (
@@ -39,7 +55,7 @@ const FinishLine = () => {
 			<Line
 				points={[lineCoords[0], lineCoords[1], lineCoords[2], lineCoords[3]]}
 				color={color}
-				lineWidth={15}
+				lineWidth={10}
 			/>
 		</mesh>
 	);

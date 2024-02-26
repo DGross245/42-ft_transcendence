@@ -1,70 +1,90 @@
 import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
 import { usePongSocket } from "@/app/pong/hooks/usePongSocket";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useKey } from "../hooks/useKey";
+import { useSound } from "../hooks/Sound";
 
-export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
-	const { setScores, pongGameState, setPongGameState, setWinner, setBallVisibility, setScoreVisibility, setCamPos, setCountdownRot, setContdownPos, isGameMode } = usePongGameState();
-	const { playerState, rematchIndex, setRequestRematch, setSendRequest, setRematchIndex } = usePongSocket();
+interface PositionInfo {
+	camPosition: [number, number, number],
+	countdownRotation:[number, number, number],
+	countdownPosition: [[number, number, number], [number, number, number]]
+}
 
-	var positionInfo: { 
-		camPosition: [number, number, number],
-		countdownRotation:[number, number, number],
-		countdownPosition: [[number, number, number],
-							[number, number, number]]
-	}[] = Array.from({ length: 4 }, () => ({
-		camPosition: [-1, -1, -1],
-		countdownRotation:[-1, -1, -1],
-		countdownPosition: [
-			[-1, -1, -1],
-			[-1, -1, -1],
-		]
-	}));
+export const PongGameEvents = () => {
+	// Provider hooks 
+	const {
+		setScores,
+		pongGameState,
+		updatePongGameState,
+		setWinner,
+		setBallVisibility,
+		setScoreVisibility,
+		setCamPos,
+		setCountdownRot,
+		setCountdownPos,
+		isGameMode,
+		isScoreVisible
+	} = usePongGameState();
+	const {
+		playerState,
+		rematchIndex,
+		setRequestRematch,
+		setSendRequest,
+		setRematchIndex,
+		continueIndex,
+		setSendContinueRequest,
+		setContinueIndex
+	} = usePongSocket();
 
-	positionInfo[0] = {
-		camPosition: [ 0, 350, 400],
-		countdownRotation:[0, 0, 0],
-		countdownPosition: [
-			[-23, 50, 0],
-			[-35, 50, 0]
-		]
-	}
-	positionInfo[1] = {
-		camPosition: [ -400, 350, 0],
-		countdownRotation:[Math.PI / 2, -Math.PI / 2, Math.PI / 2],
-		countdownPosition: [
-			[0, 50, -23],
-			[0, 50, -35]
-		]
-	}
-	positionInfo[2] = {
-		camPosition: [ 0, 350, -400],
-		countdownRotation:[-Math.PI, 0, Math.PI],
-		countdownPosition: [
-			[23, 50, 0],
-			[35, 50, 0]
-		]
-	}
-	positionInfo[3] = {
-		camPosition: [ 400, 350, 0],
-		countdownRotation:[-Math.PI / 2, Math.PI / 2, Math.PI / 2],
-		countdownPosition: [
-			[0, 50, 23],
-			[0, 50, 35]
-		]
-	}
-
+	// Normal hooks
 	const escape = useKey(['Escape']);
+	const playSound = useSound();
+
+	const positionInfo = useMemo<PositionInfo[]>(() => {
+		return [
+			{
+				camPosition: [0, 350, 400],
+				countdownRotation: [0, 0, 0],
+				countdownPosition: [
+					[-23, 50, 0],
+					[-35, 50, 0]
+				]
+			},
+			{
+				camPosition: [-400, 350, 0],
+				countdownRotation: [Math.PI / 2, -Math.PI / 2, Math.PI / 2],
+				countdownPosition: [
+					[0, 50, -23],
+					[0, 50, -35]
+				]
+			},
+			{
+				camPosition: [0, 350, -400],
+				countdownRotation: [-Math.PI, 0, Math.PI],
+				countdownPosition: [
+					[23, 50, 0],
+					[35, 50, 0]
+				]
+			},
+			{
+				camPosition: [400, 350, 0],
+				countdownRotation: [-Math.PI / 2, Math.PI / 2, Math.PI / 2],
+				countdownPosition: [
+					[0, 50, 23],
+					[0, 50, 35]
+				]
+			}
+		];
+	}, []);
 
 	useEffect(() => {
 		if (playerState.client !== -1) {
 			if (!isGameMode) {
-				setCamPos([0, 400, 100]);
 				const newCountdownPos = [
 					[-23, 50, 0] as [number, number, number],
 					[-35, 50, 0] as [number, number, number]
 				]
-				setContdownPos(newCountdownPos);
+				setCountdownPos(newCountdownPos);
 				setCountdownRot([-Math.PI /2, 0, 0]);
 				return ;
 			}
@@ -73,10 +93,10 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 				positionInfo[playerState.client].countdownPosition[0],
 				positionInfo[playerState.client].countdownPosition[1]
 			]
-			setContdownPos(newCountdownPos);
+			setCountdownPos(newCountdownPos);
 			setCountdownRot(positionInfo[playerState.client].countdownRotation)
 		}
-	},[playerState.client]);
+	},[playerState.client, isGameMode, positionInfo, setCamPos, setCountdownPos, setCountdownRot]);
 
 	// Handles the reset of the scene when the 'reset' state changes.
 	useEffect(() => {
@@ -85,23 +105,48 @@ export const PongGameEvents = ({maxClients} : {maxClients: number} ) => {
 			setScores({ p1Score: 0, p2Score: 0, p3Score: 0, p4Score: 0 });
 			setWinner('');
 			setScoreVisibility(false);
-			setPongGameState({ ...pongGameState, reset: false, gameOver: false });
+			updatePongGameState({ reset: false, gameOver: false });
 		}
-	}, [pongGameState.reset]);
+	}, [pongGameState.reset, setBallVisibility, setScoreVisibility, setScores, setWinner, updatePongGameState]);
 
+	// Handle pause when esc is pressed
 	useEffect(() => {
-		if (escape.isKeyDown)
-			setPongGameState({ ...pongGameState, pause: true});
-	},[escape])
+		if (escape.isKeyDown && !pongGameState.gameOver && isScoreVisible) {
+			updatePongGameState({ pause: true});
+		}
+	},[escape.isKeyDown, pongGameState.gameOver, isScoreVisible, updatePongGameState])
 
+	// Execute reset when all players want a rematch
 	useEffect(() => {
-		if (rematchIndex === maxClients) {
-			setPongGameState({ ...pongGameState, reset: true })
+		// Check if all players have requested a rematch
+		if (rematchIndex === (isGameMode ? 4 : 2)) {
+			playSound("rematchAccept")
+
+			// Reset rematch-related flags
 			setRequestRematch(false);
 			setSendRequest(false);
 			setRematchIndex(0);
+
+			// Update game state to trigger a reset
+			updatePongGameState({ reset: true })
 		}
-	}, [rematchIndex]);
+	}, [rematchIndex, playSound, isGameMode, setRequestRematch, setSendRequest, setRematchIndex, updatePongGameState]);
+
+	// Resumes the game when all players want to continue.
+	useEffect(() => {
+		// Check if all players have requested to continue.
+		if (continueIndex === (isGameMode ? 4 : 2)) {
+			// Add delay so the game won't start right away
+			setTimeout(() => {
+				// Reset pause-related flags
+				setContinueIndex(0);
+				setSendContinueRequest(false);
+
+				// Update game state to trigger a resume of the game
+				updatePongGameState({ pause: false});
+			}, 1000);
+		}
+	}, [continueIndex, isGameMode, setContinueIndex, setSendContinueRequest, updatePongGameState]);
 
 	return (null);
 }

@@ -1,4 +1,4 @@
-import { useFrame } from "@react-three/fiber";
+import { Vector3, useFrame } from "@react-three/fiber";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
 import { Mesh, MeshBasicMaterial } from 'three'
 
@@ -9,13 +9,13 @@ type CollisionInfo = {
 	[key: string]: {player: any, score: any, isOwnGoal: boolean};
 };
 
-export const useBallLogic = (onPositionChange) => {
+export const useBallLogic = (onPositionChange:  (position: Vector3) => void) => {
 	const {
 		ballRef,
 		scores,
 		setWinner,
 		setBallVisibility,
-		setPongGameState,
+		updatePongGameState,
 		pongGameState,
 		isScoreVisible,
 		bottomPaddleRef,
@@ -160,12 +160,15 @@ export const useBallLogic = (onPositionChange) => {
 			const newPosition = JSON.parse(msg);
 			PositionRef.current = newPosition;
 		};
-		wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
 
-		return () => {
-			wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
-		};
-	}, [wsclient]);
+		if (wsclient && pongGameState.gameId !== "-1") {
+			wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
+	
+			return () => {
+				wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+			};
+		}
+	}, [wsclient, pongGameState.gameId]);
 
 	const handleBallMovement = (ball: { x: any; z: any; velocityX: any; velocityZ: any; speed: number; }, deltaTime: number) => {
 
@@ -253,7 +256,7 @@ export const useBallLogic = (onPositionChange) => {
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
 			if (playerScore === 7) {
-				setPongGameState({ ...pongGameState, gameOver: true })
+				updatePongGameState({ gameOver: true });
 				setWinner(player);
 				let ball = temp.current;
 				ball.x = 0;
@@ -269,7 +272,7 @@ export const useBallLogic = (onPositionChange) => {
 		checkWinner('P2', scores.p2Score);
 		checkWinner('P3', scores.p3Score);
 		checkWinner('P4', scores.p4Score);
-	}, [scores.p1Score, scores.p2Score, scores.p3Score, scores.p4Score]);
+	}, [scores.p1Score, scores.p2Score, scores.p3Score, scores.p4Score, setBallVisibility, setWinner, updatePongGameState]);
 
 	// Game/render loop for the ball.
 	useFrame((_, deltaTime) => {

@@ -48,6 +48,7 @@ export const usePongBot = () => {
 		}
 	}
 
+	// TODO: FIX LATER
 	useEffect(() => {
 		const joinTheGame = () => {
 			if (wsclient) {
@@ -56,6 +57,7 @@ export const usePongBot = () => {
 
 				newPlayerData.players[client] = {
 					name: "BOT",
+					addr: "0xBotBOB01245",
 					color: 0xff0000,
 					number: client,
 				}
@@ -67,7 +69,7 @@ export const usePongBot = () => {
 		if (botState.isActive && wsclient) {
 			joinTheGame();
 		}
-	},[botState.isActive, wsclient, playerState])
+	},[botState.isActive, wsclient, playerState, botState, isGameMode, setBot, setPlayerState])
 
 	return {
 		direction,

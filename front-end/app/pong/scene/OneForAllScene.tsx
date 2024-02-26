@@ -12,6 +12,7 @@ import { CornerBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
 import { GameControl } from "../../../components/Pong/Paddle";
+import { PongModals } from "@/components/Pong/PongModals";
 
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
@@ -24,7 +25,7 @@ export default function OneForAllScene() {
 	return (
 		<div >
 			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<PongGameEvents maxClients={4} />
+				<PongGameEvents />
 				<PongSocketEvents />
 				<Countdown />
 				<Camera/> 
@@ -37,10 +38,12 @@ export default function OneForAllScene() {
 					enableRotate={true}
 					minPolarAngle={0}
 					maxPolarAngle={Math.PI / 2}
+					minDistance={10}
+					maxDistance={800}
 				/>
 				<Scoreboard />
 			</Canvas>
-			<EndModal />
+			<PongModals />
 		</div>
 	);
 }

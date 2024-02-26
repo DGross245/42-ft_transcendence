@@ -1,9 +1,10 @@
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
-import Orbitron_Regular from '../../public/fonts/Orbitron_Regular.json';
 import { extend } from '@react-three/fiber';
 import { MutableRefObject, useEffect, useMemo, useState } from 'react';
 import { Mesh, MeshBasicMaterial } from 'three';
+
+import Orbitron_Regular from '../../public/fonts/Orbitron_Regular.json';
 import { usePongSocket } from '@/app/pong/hooks/usePongSocket';
 import { usePongGameState } from '@/app/pong/hooks/usePongGameState';
 
@@ -83,7 +84,7 @@ const Scoreboard = () => {
 					rotation: [0, 0, 0]
 				};
 		}
-	},[playerState.client]);
+	},[]);
 
 	useEffect(() => {
 		if (playerState.client !== -1) {
@@ -94,7 +95,7 @@ const Scoreboard = () => {
 			newPosAndRot[playerState.client].rotation = rotation
 			setPosAndRot(newPosAndRot);
 		}
-	}, [playerState.client]);
+	}, [playerState.client, posAndRot, replacePosAndRot]);
 
 	const getColor = ( ref:  MutableRefObject<Mesh>) => {
 		if (ref && ref.current) {

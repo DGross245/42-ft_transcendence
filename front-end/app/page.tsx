@@ -4,9 +4,9 @@ import { Code } from "@nextui-org/code"
 import { button as buttonStyles } from "@nextui-org/theme";
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 
-import Scores from "./tournamentManager";
+import Scores from "../components/hooks/useContract";
 
 export default function Home() {
 	return (

@@ -1,7 +1,8 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber";
-import { Environment } from "@react-three/drei";
+import { Environment, Stats } from "@react-three/drei";
+import { useEffect, useState } from "react";
 
 import { useWindow } from "../../../components/hooks/useWindow";
 import { Grid } from "@/components/TTT/Grid";
@@ -11,13 +12,14 @@ import Camera from "@/components/TTT/Camera";
 import Floor from "@/components/TTT/Floor";
 import TurnDisplay from "@/components/TTT/TurnDisplay";
 import FinishLine from "@/components/TTT/FinishLine";
-import EndModal from "@/components/TTT/EndModal";
 import { Table } from "@/components/TTT/Table";
 import { TTTGameEvents } from "@/components/TTT/TTTGameEvents";
 import { TTTSocketEvents } from "@/components/TTT/TTTSocketEvents";
 import { TTTBot } from "@/components/TTT/TTTBot";
+import { useSocket } from "../hooks/useSocket";
+import useContract from "@/components/hooks/useContract";
+import { TTTModals } from "@/components/TTT/TTTModals";
 
-// FIXME: Sometimes if host is player2, his symbol isnt set and the game crashes
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
@@ -28,27 +30,97 @@ import { TTTBot } from "@/components/TTT/TTTBot";
  */
 const TTTScene = () => {
 	const { dimensions } = useWindow();
+	const { wsclient } = useSocket();
+	const {
+		createTournament,
+		setNameAndColor,
+		joinTournament,
+		startTournament,
+		getTournaments,
+	} = useContract();
+	const [topic, setTopic] = useState(0);
+
+	const onTopicChange = (e: any) => {
+		setTopic(e.target.value);
+	}
+
+	const onCreateTournament = async () => {
+		if (!wsclient) return;
+		await createTournament(300000000);
+		setTopic((await getTournaments()).length - 1);
+	}
+
+	const onSetNameAndColor = async () => {
+		await setNameAndColor('KEK', '0x0');
+	}
+
+	const onJoinTournament = async () =>{
+		await joinTournament(topic);
+		wsclient?.joinTournament(topic);
+	}
+
+	const onStartTournament = async () => {
+		await startTournament(topic);
+		wsclient?.requestTournament(topic, 'TTT');
+	}
+
+	const onGetTournaments = async () => {
+		const t = await getTournaments();
+		console.log(t);
+	}
+
+	const onkek = () => {
+		wsclient?.requestTournament(topic, 'TTT');
+	}
+
+	const onJoin = () => {
+		// updateGameState({ ...gameState, gameId: topic })
+		wsclient?.joinTournament(topic);
+	}
+
+	const onCreate = async () => {
+		wsclient?.createGame();
+	}
 
 	return (
 		<div style={{ width: '100%', height: '100%' }}>
-			<Canvas  style={{ width: dimensions.width, height: dimensions.height }}>
-				<Camera />
-				<Countdown />
-				<Grid />
-				<TTTBot />
-				<TTTGameEvents />
-				<TTTSocketEvents />
-				<FieldLayers />
-				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
-				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
-				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
-				<Floor position={[ 3, 23.8, 3]} args={[0.25, 23.2, 23.2]} />
-				<TurnDisplay />
-				<FinishLine />
-				<Table />
-				<Environment preset="city" />
-			</Canvas>
-			<EndModal />
+					<input
+						placeholder="Topic"
+						value={topic}
+						onChange={onTopicChange}
+						id="4182"
+						name="in"
+					/>
+				{/* <button onClick={onCreate}> Create </button>
+				<button onClick={onJoin}> join </button> */}
+				<button onClick={onCreateTournament}> Create Tournament </button>
+				<button onClick={onJoin}>  JOIN  </button>
+				<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
+				<button onClick={onJoinTournament}> Join Tournament </button>
+				<button onClick={onStartTournament}> Start Tournament </button>
+				<button onClick={onGetTournaments}> lol Tournament </button>
+				<button onClick={onkek}> print </button>
+			<div className="scene-container">
+				<Canvas  style={{ width: dimensions.width, height: dimensions.height }}>
+					<Camera />
+					<Countdown />
+					<Grid />
+					<TTTBot />
+					<TTTGameEvents />
+					<TTTSocketEvents />
+					<FieldLayers />
+					<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
+					<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
+					<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
+					<Floor position={[ 3, 23.8, 3]} args={[0.25, 23.2, 23.2]} />
+					<TurnDisplay />
+					<FinishLine />
+					<Table />
+					<Stats />
+					<Environment preset="city" />
+				</Canvas>
+				<TTTModals />
+			</div>
 		</div> 
 	);
 }

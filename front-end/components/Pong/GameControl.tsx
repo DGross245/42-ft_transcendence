@@ -1,6 +1,6 @@
-import { LeftPaddle, RightPaddle } from "@/app/pong/NormalPaddle"
+import { LeftPaddle, RightPaddle } from "@/components/Pong/NormalPaddle"
 import { usePongBot } from "@/app/pong/hooks/usePongBot";
-import { Ball } from "./Ball";
+import { PongBall } from "./PongBall";
 
 export const GameControl = () => {
 	const { direction, ballAidsHook } = usePongBot();
@@ -9,7 +9,7 @@ export const GameControl = () => {
 		<>
 			<RightPaddle direction={direction} />
 			<LeftPaddle />
-			<Ball onPositionChange={ballAidsHook} />
+			<PongBall onPositionChange={ballAidsHook} />
 		</>
 	)
 }

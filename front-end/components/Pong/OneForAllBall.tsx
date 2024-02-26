@@ -2,7 +2,6 @@
 
 import { usePongGameState } from "@/app/pong/hooks/usePongGameState";
 import { useBallLogic } from "@/app/pong/hooks/useBallLogic";
-import { useBall } from "@/app/pong/hooks/useNormalBall";
 
 /**
  * Creates a ball Three.js mesh and handles its movement and collision behavior.
@@ -12,18 +11,10 @@ import { useBall } from "@/app/pong/hooks/useNormalBall";
  * 				  `setWinner`, `gameOver`, `setGameOver`, `scoreVisible`, `isBallVisible` and `setBallVisibility`
  * @returns A Three.js mesh representing a ball.
  */
-export const Ball = ({ onPositionChange }) => {
-	const { isBallVisible, ballRef, isGameMode } = usePongGameState();
-	let color;
-
-	if (isGameMode) {
-		const {color : ballColor } = useBallLogic(onPositionChange);
-		color = ballColor;
-	}
-	else {
-		useBall(onPositionChange);
-		color = 0xffffff;
-	}
+export const OneForAllBall = ({ onPositionChange }) => {
+	const { isBallVisible, ballRef } = usePongGameState();
+	const {color : ballColor } = useBallLogic(onPositionChange);
+	const color = ballColor;
 
 	return (
 		<mesh ref={ballRef} visible={isBallVisible}>

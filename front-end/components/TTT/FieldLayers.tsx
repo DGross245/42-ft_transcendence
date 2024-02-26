@@ -1,6 +1,7 @@
+import { memo } from "react";
 import Field from "./Field";
 
-export const FieldLayers = () => {
+export const FieldLayers = memo(() => {
 	const arrayPosition = [
 		{ i: 0, j: 0, k: 0 }, { i: 0, j: 1, k: 0 }, { i: 0, j: 2, k: 0 }, { i: 0, j: 3, k: 0 },
 		{ i: 0, j: 0, k: 1 }, { i: 0, j: 1, k: 1 }, { i: 0, j: 2, k: 1 }, { i: 0, j: 3, k: 1 },
@@ -47,4 +48,6 @@ export const FieldLayers = () => {
 	}
 
 	return ( fieldArray );
-}
+})
+
+FieldLayers.displayName = "FieldLayers"

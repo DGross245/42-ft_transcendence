@@ -1,10 +1,14 @@
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry'
-import { extend } from '@react-three/fiber';
-import { useEffect, useState } from 'react';
+import { extend, useFrame } from '@react-three/fiber';
+import { memo, useEffect, useRef, useState } from 'react';
+import { MeshStandardMaterial } from 'three';
+
 import Orbitron_Regular from '@/public/fonts/Orbitron_Regular.json';
 import { usePongGameState } from '@/app/pong/hooks/usePongGameState';
 import { useSound } from '../hooks/Sound';
+import { lerp } from '../TTT/Countdown';
+import { usePongSocket } from '@/app/pong/hooks/usePongSocket';
 
 extend({ TextGeometry })
 
@@ -17,27 +21,46 @@ extend({ TextGeometry })
  * The visibility of the mesh is determined by the props.scoreVisible value. If props.scoreVisible is
  * false, the mesh will be visible, otherwise it will be hidden.
  */
-const Countdown = () => {
+const Countdown = memo(() => {
 	const font = new FontLoader().parse(Orbitron_Regular);
 	const [count, setCount] = useState(4);
-	const { pongGameState, isScoreVisible, setScoreVisibility, countdownPos, countdownRot} = usePongGameState();
-	const soundEngine = useSound();
+	const {
+		pongGameState,
+		isScoreVisible,
+		setScoreVisibility,
+		countdownPos,
+		countdownRot,
+		setStarted,
+		started
+	} = usePongGameState();
+	const { playerState } = usePongSocket();
+	const playSound = useSound();
+	const meshMatRef = useRef<MeshStandardMaterial>(null);
 
 	useEffect(() => {
 		if (pongGameState.pause) {
-			setScoreVisibility(false);
+			if (pongGameState.gameId !== '-1') {
+				setScoreVisibility(false);
+			} else {
+				if (meshMatRef.current) {
+					meshMatRef.current.opacity = 0;
+				}
+				setScoreVisibility(false);
+			}
 			return ;
 		}
+
 		if (!isScoreVisible) {
 			const countdownInterval = setInterval(() => {
 				
 				setCount((prevCount) => {
 					if (prevCount > 0) {
-						soundEngine?.playSound("pongCountdown");
+						playSound("pongCountdown");
 						return (prevCount - 1);
 					} else {
 						clearInterval(countdownInterval);
 						setScoreVisibility(true);
+						setStarted(true);
 						setCount(4);
 						return (0);
 					}
@@ -48,14 +71,22 @@ const Countdown = () => {
 				clearInterval(countdownInterval);
 			};
 		}
-	}, [isScoreVisible, pongGameState.pause]);
+	}, [isScoreVisible, pongGameState.pause, started, pongGameState.gameId, setScoreVisibility, setStarted, playSound]);
+
+	useFrame((_, delta) => {
+		if (meshMatRef.current && playerState.client !== -1) {
+			meshMatRef.current.opacity = lerp(meshMatRef.current.opacity, !isScoreVisible ? 1 : 0, 1 * delta);
+		}
+	});
 
 	return (
-		<mesh visible={!isScoreVisible} position={ count === 1 ? countdownPos[0] : countdownPos[1]} rotation={countdownRot}>
+		<mesh visible={!isScoreVisible && pongGameState.gameId !== "-1"} position={ count === 1 ? countdownPos[0] : countdownPos[1]} rotation={countdownRot}>
 			<textGeometry args={[String(count), {font, size: 60, height: 6}]} />
 			<meshBasicMaterial color={ 0xffffff } />
 		</mesh>
 	);
-}
+})
+
+Countdown.displayName = "Countdown"
 
 export default Countdown;

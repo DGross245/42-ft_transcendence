@@ -20,18 +20,20 @@ const TurnDisplay = () => {
 	const ref = useRef<THREE.Group | null>(null);
 	const { camera } = useThree();
 	const { playerState } = useSocket();
-	const { isGameMode, currentTurn } = useGameState();
+	const { isGameMode, currentTurn, countdownVisible } = useGameState();
 
-	const getColorBySymbol = (symbol: string) => {
-		const player = playerState.players.find(player => player.symbol === symbol);
-		return player?.color;
-	};
-
-	const colors = useMemo (() => [
-		getColorBySymbol('X'),
-		getColorBySymbol('O'),
-		getColorBySymbol('🔳'),
-	],[playerState]);
+	const colors = useMemo(() => {
+		const getColorBySymbol = (symbol: string) => {
+			const player = playerState.players.find(player => player.symbol === symbol);
+			return ( player ? player.color : 0xffffff );
+		};
+	
+		return [
+			getColorBySymbol('X'),
+			getColorBySymbol('O'),
+			getColorBySymbol('🔳'),
+		];
+	}, [playerState.players]);
 
 	const extrudeSettings = {
 		steps: 2,
@@ -87,7 +89,7 @@ const TurnDisplay = () => {
 			if (meshRef)
 				camera.remove(meshRef);
 		};
-	}, [camera, ref.current]);
+	}, [camera]);
 
 	return (
 		<group ref={ref} scale={[0.4, 0.4, 0.4]}>

@@ -1,10 +1,10 @@
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useRef } from "react";
-import { Direction } from "./hooks/usePongBot";
+import { Direction } from "../../app/pong/hooks/usePongBot";
 
 import { useKey } from "@/components/hooks/useKey";
-import { usePongGameState } from "./hooks/usePongGameState";
-import { usePongSocket } from "./hooks/usePongSocket";
+import { usePongGameState } from "../../app/pong/hooks/usePongGameState";
+import { usePongSocket } from "../../app/pong/hooks/usePongSocket";
 
 /**
  * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
@@ -26,12 +26,14 @@ export const RightPaddle = ({direction}) => {
 			PositionRef.current = newPosition;
 		};
 
-		wsclient?.addMessageListener(`paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
+		if (wsclient && pongGameState.gameId !== '-1') {
+			wsclient?.addMessageListener(`paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
 
-		return () => {
-			wsclient?.removeMessageListener(`paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId);
-		};
-	}, [wsclient]);
+			return () => {
+				wsclient?.removeMessageListener(`paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+			};
+		}
+	}, [wsclient, pongGameState.gameId]);
 
 	useFrame((_, delta) => {
 		if (rightPaddleRef && rightPaddleRef.current) {

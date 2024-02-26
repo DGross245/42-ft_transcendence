@@ -28,3 +28,5 @@ export const Table = memo(() => {
 		</group>
 	);
 });
+
+Table.displayName = "Table"

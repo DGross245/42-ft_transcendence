@@ -19,9 +19,14 @@ const Torus : React.FC<TorusProps> = (props) => {
 	const [x, y, z] = props.position;
 
 	return (
-		<mesh {...props} position={[x, y - 0.05, z]} rotation={[Math.PI / 2, 0, 0]}>
+		<mesh position={[x, y + 0.33, z]} rotation={[Math.PI / 2, 0, 0]}>
 			<torusGeometry args={[2, 0.4, 8, 24]} />
-			<meshStandardMaterial color={props.color} transparent={props.transparent} side={DoubleSide} opacity={0.8}/>
+			<meshStandardMaterial
+				color={props.color}
+				transparent={props.transparent}
+				side={DoubleSide}
+				opacity={0.4}
+			/>
 		</mesh>
 	);
 }

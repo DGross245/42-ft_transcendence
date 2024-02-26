@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import * as THREE from 'three';
 
 import { useGameState } from '../../app/tic-tac-toe/hooks/useGameState';
@@ -24,21 +24,23 @@ export interface FieldProps {
  * 				  `setSceneCoords`, `i`, `j`, `k` and `gameOver`
  * @returns - A Three.js mesh representing the field with/without a symbol.
  */
-const Field : React.FC<FieldProps> = (props) => {
+const Field : React.FC<FieldProps> = memo((props) => {
 	const { playerState} = useSocket();
-	const { currentTurn, gameState } = useGameState();
+	const { currentTurn, gameState, countdownVisible } = useGameState();
 	const { hovered, handleClick, handleHover, symbol } = useField(props);
 
-	const getColorBySymbol = (symbol: string) => {
-		const player = playerState.players.find(player => player.symbol === symbol);
-		return player?.color;
-	};
-
-	const colors = useMemo (() => [
-		getColorBySymbol('X'),
-		getColorBySymbol('O'),
-		getColorBySymbol('🔳'),
-	],[playerState]);
+	const colors = useMemo(() => {
+		const getColorBySymbol = (symbol: string) => {
+			const player = playerState.players.find(player => player.symbol === symbol);
+			return player?.color;
+		};
+	
+		return [
+			getColorBySymbol('X'),
+			getColorBySymbol('O'),
+			getColorBySymbol('🔳'),
+		];
+	}, [playerState.players]);
 
 	return (
 		<>
@@ -55,15 +57,15 @@ const Field : React.FC<FieldProps> = (props) => {
 
 			{/* Projects a transparent verison of the symbol on the field the user hovers over based on the current turn */}
 
-			{hovered && !symbol && currentTurn == 'X' && !gameState.gameOver && !gameState.pause && (
+			{hovered && !symbol && currentTurn == 'X' && !gameState.gameOver && !gameState.pause && !countdownVisible && (
 				<X {...props} color={colors[0]} transparent={true} />
 			)}
 
-			{hovered && !symbol && currentTurn == 'O' && !gameState.gameOver && !gameState.pause && (
+			{hovered && !symbol && currentTurn == 'O' && !gameState.gameOver && !gameState.pause && !countdownVisible && (
 				<Torus {...props} color={colors[1]} transparent={true} />
 			)}
 
-			{hovered && !symbol && currentTurn == '🔳' && !gameState.gameOver && !gameState.pause && (
+			{hovered && !symbol && currentTurn == '🔳' && !gameState.gameOver && !gameState.pause && !countdownVisible && (
 				<Square {...props} color={colors[2]} transparent={true} />
 			)}
 
@@ -71,7 +73,7 @@ const Field : React.FC<FieldProps> = (props) => {
 			{symbol && (
 				<>
 					{symbol === 'X' ? (
-						<X {...props} color={colors[0]} transparent={false}/>
+						<X {...props} color={colors[0]} transparent={false} />
 					) : symbol === 'O' ? (
 						<Torus {...props} color={colors[1]} transparent={false} />
 					) : (
@@ -81,6 +83,8 @@ const Field : React.FC<FieldProps> = (props) => {
 			)}
 		</>
 	);
-}
+});
+
+Field.displayName = "Field"
 
 export default Field
