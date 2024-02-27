@@ -1,3 +1,5 @@
+"use client"
+
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Button, Selection } from "@nextui-org/react";
 import { ChevronDownIcon } from "@heroicons/react/24/solid";
 import { useCurrentLocale } from 'next-i18n-router/client';
@@ -23,8 +25,8 @@ const LanguageSelectionButton: React.FC = () => {
 	}
 	const capitalizeFirstLetter = (string: string) =>
 		string.charAt(0).toUpperCase() + string.slice(1);
-	const getCountryName = (langCode: string) => 
-		capitalizeFirstLetter(new Intl.DisplayNames([currentCountry], {type: 'language'}).of(langCode) ?? "Unknown");
+	const getCountryName = (langCode: string) =>
+		capitalizeFirstLetter(new Intl.DisplayNames([currentLocale], {type: 'language'}).of(langCode) ?? "Unknown");
 
 	const changeLanguage = (keys: Selection) => {
 		const newLocale = (keys as any).currentKey;

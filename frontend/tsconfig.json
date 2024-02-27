@@ -23,7 +23,7 @@
 		"@/*": ["./*"]
 	  }
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/[lang]/pong/test.js", "i18nConfig.js"],
+	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "app/[lang]/pong/test.js", "i18nConfig.js", "i18n.config.js"],
 	"exclude": ["node_modules"]
   }
   

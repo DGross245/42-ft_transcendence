@@ -22,13 +22,13 @@ i18next
 export function useTranslation(ns: string) {
 	const currentLocale = useCurrentLocale(i18nConfig);
 	const ret = useTranslationOrg(ns);
-	const { i18n } = ret
+	const { i18n, t } = ret
 
 	useEffect(() => {
 		if (currentLocale && i18n.resolvedLanguage !== currentLocale) {
 			i18n.changeLanguage(currentLocale);
 		}
-	}, [currentLocale, i18n]);
+	}, [currentLocale, i18n, t]);
 
 	return ( ret );
 }

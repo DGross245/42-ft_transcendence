@@ -16,28 +16,42 @@ interface CustomW3ButtonProps {
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
 const CustomW3Button: React.FC<CustomW3ButtonProps> = ({ size = "md" }) => {
-	const [connected, setConnected] = useState(false);
 	const { open: modalOpen } = useWeb3ModalState();
 	const { isConnected } = useWeb3ModalAccount();
 	const { open: openModal } = useWeb3Modal();
 	const { t } = useTranslation("w3button");
+	const [update, setUpdate] = useState(false);
+	const [connected, setConnected] = useState(false);
 
 	useEffect(() => {
 		setConnected(isConnected);
 	}, [isConnected]);
 
+	useEffect(() => {
+		setUpdate(true);
+	}, [t])
+
 	const connecting = !connected && modalOpen;
 
-	return (<>
-		<div hidden={!connected}>
-			<w3m-account-button/>
-		</div>
-		<div hidden={connected}>
-			<Button size={size} color="primary" variant="shadow" className="ghost-button gradient !border-0" onClick={() => openModal()} isLoading={connecting}>
-				{connecting ? t("connecting") : t("connectwallet")}
-			</Button>
-		</div>
-	</>);
+	return (
+		<>
+			<div hidden={!connected}>
+				<w3m-account-button/>
+			</div>
+			<div hidden={connected}>
+				<Button
+					size={size}
+					color="primary"
+					variant="shadow"
+					className="ghost-button gradient !border-0"
+					onClick={() => openModal()}
+					isLoading={connecting}
+				>
+					{connecting ? t("connecting") : t("connectwallet")}
+				</Button>
+			</div>
+		</>
+	);
 }
 
 export default CustomW3Button;
