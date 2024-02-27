@@ -20,12 +20,11 @@ export interface FieldProps {
  * The `Field` component represents a individual fields in a three-dimensional tic-tac-toe board.
  * It manages the rendering of the field and the placement of symbols (X or O).
  * @param props - The `props` parameter is an object that contains the following properties:
- * 				  `key`, `position`,`clicked`,`click`,`turn`,`board`, `setCurrentBoardState`, `sceneCoords`,
- * 				  `setSceneCoords`, `i`, `j`, `k` and `gameOver`
+ * 				  `key`, `position`, `i`, `j` and `k`.
  * @returns - A Three.js mesh representing the field with/without a symbol.
  */
 const Field : React.FC<FieldProps> = memo((props) => {
-	const { playerState} = useSocket();
+	const { playerState } = useSocket();
 	const { currentTurn, gameState, countdownVisible } = useGameState();
 	const { hovered, handleClick, handleHover, symbol } = useField(props);
 

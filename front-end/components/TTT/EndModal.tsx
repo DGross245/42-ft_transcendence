@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useCallback, useEffect, useState } from "react";
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Chip } from "@nextui-org/react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
 
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import { useUI } from "@/app/tic-tac-toe/hooks/useUI";
@@ -48,8 +48,7 @@ const EndModal = React.memo(() => {
 	const {
 		submitGameResultRanked,
 		submitGameResultTournament,
-		getTournament,
-		getPlayerRankedElo
+		getTournament
 	} = useContract();
 
 	// State variables
@@ -57,6 +56,7 @@ const EndModal = React.memo(() => {
 	const [wasOpen, setWasOpen] = useState(false);
 	const [isClicked, setIsClicked] = useState(false);
 
+	// Image getter for client
 	const getOwnImage = useCallback(() => {
 		if (playerState.players[playerState.client]?.symbol === 'O')
 			return ('/images/o.png');
@@ -70,6 +70,7 @@ const EndModal = React.memo(() => {
 			return ('/images/draw.png');
 	}, [isGameMode, playerState.client, playerState.players]);
 
+	// Click handler for preventing clicking a button multiple times
 	const handleNextClick = async () => {
 		if (!isClicked) {
 			setIsClicked(true);
@@ -78,6 +79,7 @@ const EndModal = React.memo(() => {
 		}
 	};
 
+	// Function to handle sending player scores and continuing the game
 	const sendScoreAndContinue = async () => {
 		if (playerState.client === 0 || playerStatus === "disconnect" || playerStatus === "leave" ) {
 			const maxClient = isGameMode ? 3 : 2;
@@ -107,15 +109,19 @@ const EndModal = React.memo(() => {
 		if (status) {
 			if (tournament.id !== -1) {
 				wsclient?.requestTournament(tournament.id, 'TTT');
+			} else {
+				wsclient?.joinQueue('TTT');
 			}
 		}
 	}
 
-	const normalClose = useCallback(() => {
+	// Handles the closing of the modal, triggering the appearance of the modal button
+	const enableButton = useCallback(() => {
 		closeModal();
 		setWasOpen(true)
 	}, [closeModal]);
-	
+
+	// Closing the modal on reset event
 	useEffect(() => {
 		if (gameState.reset) {
 			closeModal();
@@ -123,6 +129,7 @@ const EndModal = React.memo(() => {
 		}
 	}, [gameState.reset, closeModal])
 
+	// Changes text based on winner
 	useEffect (() => {
 		if (showModal) {
 			if ((winner === playerState.players[playerState.client].symbol) || (winner === '' && playerStatus === "disconnect")) {
@@ -135,6 +142,7 @@ const EndModal = React.memo(() => {
 		}
 	}, [showModal, playerState, winner, playerStatus])
 
+	// Key handler for opening the modal using the Esc key
 	useEffect(() => {
 		if (escape.isKeyDown && gameState.gameOver) {
 			openModal();
@@ -153,7 +161,7 @@ const EndModal = React.memo(() => {
 			<Modal
 				backdrop="opaque"
 				isOpen={showModal}
-				onClose={normalClose}
+				onClose={enableButton}
 				classNames={{
 					backdrop: 'bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20'
 				}}
@@ -201,12 +209,12 @@ const EndModal = React.memo(() => {
 						</ModalHeader>
 					</div>
 					<ModalBody style={{ textAlign: 'center' }} >
-						{ playerStatus === "disconnect" && timerState !== 'cross' && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
-						{ playerStatus === "unavailable" && timerState === 'cross' && <p style={{ color: 'grey' }}> Your opponent didnt connect </p> }
+						{ playerStatus === "disconnect" && timerState !== 'cross' && (<p style={{ color: 'grey' }}> Your opponent disconnected </p>) }
+						{ playerStatus === "unavailable" && timerState === 'cross' && (<p style={{ color: 'grey' }}> Your opponent didn&apos;t connect </p>) }
 						{ playerStatus === "leave" && <p style={{ color: 'grey' }}> Your opponent left </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
-						<Button color="danger" variant="ghost" onClick={normalClose}>
+						<Button color="danger" variant="ghost" onClick={enableButton}>
 							Quit
 						</Button>
 						{tournament.id !== -1 ? (

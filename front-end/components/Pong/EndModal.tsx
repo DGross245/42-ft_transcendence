@@ -44,8 +44,7 @@ const EndModal =  React.memo(() => {
 	const {
 		submitGameResultRanked,
 		submitGameResultTournament,
-		getTournament,
-		getPlayerRankedElo
+		getTournament
 	} = useContract();
 
 	// State variables
@@ -53,6 +52,7 @@ const EndModal =  React.memo(() => {
 	const [wasOpen, setWasOpen] = useState(false);
 	const [isClicked, setIsClicked] = useState(false);
 
+	// Function to handle sending player scores and continuing the game
 	const sendScoreAndContinue = async () => {
 		if (playerState.client === 0 || playerStatus === "disconnect" || playerStatus === "leave" ) {
 			const maxClient = isGameMode ? 4 : 2;
@@ -81,11 +81,15 @@ const EndModal =  React.memo(() => {
 		setStarted(false);
 		setChipDisappear(false);
 		if (status) {
-			if (tournament.id !== -1)
+			if (tournament.id !== -1) {
 				wsclient?.requestTournament(tournament.id, 'Pong');
+			} else {
+				wsclient?.joinQueue('Pong');
+			}
 		}
 	}
 
+	// Click handler for preventing clicking a button multiple times
 	const handleNextClick = async () => {
 		if (!isClicked) {
 			setIsClicked(true);
@@ -94,11 +98,13 @@ const EndModal =  React.memo(() => {
 		}
 	};
 
-	const closeDiscModal = () => {
+	// Handles the closing of the modal, triggering the appearance of the modal button
+	const enableButton = useCallback(() => {
 		closeModal();
 		setWasOpen(true);
-	}
+	}, [closeModal])
 
+	// Closing the modal on reset event
 	useEffect(() => {
 		if (pongGameState.reset) {
 			closeModal();
@@ -106,6 +112,7 @@ const EndModal =  React.memo(() => {
 		}
 	}, [closeModal, pongGameState.reset]);
 
+	// Changes text based on winner
 	useEffect (() => {
 		if (showModal) {
 			if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect")) {
@@ -116,6 +123,7 @@ const EndModal =  React.memo(() => {
 		}
 	}, [showModal, winner, playerStatus, playerState.players]);
 
+	// Key handler for opening the modal using the Esc key
 	useEffect(() => {
 		if (escape.isKeyDown && pongGameState.gameOver) {
 			openModal();
@@ -134,7 +142,7 @@ const EndModal =  React.memo(() => {
 			<Modal
 				backdrop="opaque"
 				isOpen={showModal}
-				onClose={closeDiscModal}
+				onClose={enableButton}
 				classNames={{
 					backdrop: 'bg-gradient-to-t from-zinc-900 to-zinc-900/10 backdrop-opacity-20'
 				}}
@@ -150,16 +158,16 @@ const EndModal =  React.memo(() => {
 						y: -20,
 						opacity: 1,
 						transition: {
-						  duration: 0.2,
-						  ease: "easeIn",
+							duration: 0.2,
+							ease: "easeIn",
 						},
 					  },
 					  exit: {
 						y: 0,
 						opacity: 0,
 						transition: {
-						  duration: 0.3,
-						  ease: "easeOut",
+							duration: 0.3,
+							ease: "easeOut",
 						},
 					  },
 					}
@@ -172,12 +180,12 @@ const EndModal =  React.memo(() => {
 						</ModalHeader>
 					</div>
 					<ModalBody style={{ textAlign: 'center' }} >
-						{ playerStatus === "disconnect" && timerState !== 'cross' && <p style={{ color: 'grey' }}> Your opponent disconnected </p> }
-						{ playerStatus === "disconnect" && timerState === 'cross' && <p style={{ color: 'grey' }}> Your opponent didnt connect </p> }
+						{ playerStatus === "disconnect" && timerState !== 'cross' && (<p style={{ color: 'grey' }}> Your opponent disconnected </p>) }
+						{ playerStatus === "disconnect" && timerState === 'cross' && (<p style={{ color: 'grey' }}> Your opponent didn&apos;t connect </p>) }
 						{ playerStatus === "leave" && <p style={{ color: 'grey' }}> Your opponent left </p> }
 					</ModalBody>
 					<ModalFooter className="flex justify-center">
-						<Button color="danger" variant="ghost" onClick={closeDiscModal}>
+						<Button color="danger" variant="ghost" onClick={enableButton}>
 							Leave
 						</Button>
 						{tournament.id !== -1 ? (

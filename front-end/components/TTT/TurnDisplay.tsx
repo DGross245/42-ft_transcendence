@@ -9,19 +9,19 @@ import { useGameState } from "../../app/tic-tac-toe/hooks/useGameState";
 /**
  * The TurnDisplay component renders a 3D display of the current currentTurn in a game, with different shapes
  * and colors representing different players.
- * @param currentTurn - `currentTurn`: The current currentTurn in the game, represented as a string ('X', 'O', or '🔳'). This
- * determines the appearance of the currentTurn display.
  * @returns The `TurnDisplay` component is returning a group of mesh objects representing the current
  * currentTurn in a game. The returned JSX structure includes multiple mesh objects, each representing a
- * different shape (X, O, or a square) and positioned accordingly. The position, scale, and material
- * properties of each mesh object are determined based on the `currentTurn` prop passed to the component.
+ * different shape (X, O, or a square) and positioned accordingly. The position, scale
+ * properties of each mesh object are determined based on the `currentTurn`.
  */
 const TurnDisplay = () => {
 	const ref = useRef<THREE.Group | null>(null);
 	const { camera } = useThree();
 	const { playerState } = useSocket();
-	const { isGameMode, currentTurn, countdownVisible } = useGameState();
+	const { isGameMode, currentTurn } = useGameState();
 
+	/* The `colors` constant memoizes the calculation of colors based on the
+	player symbols ('X', 'O', '🔳') in the game */
 	const colors = useMemo(() => {
 		const getColorBySymbol = (symbol: string) => {
 			const player = playerState.players.find(player => player.symbol === symbol);
@@ -41,6 +41,8 @@ const TurnDisplay = () => {
 		bevelEnabled: false,
 	};
 
+	/* The `boxShape` constant memoizes the creation of a custom shape for a
+	3D box with a hole in it */
 	const boxShape = useMemo(() => {
 		const boxShape = new Shape();
 
@@ -59,6 +61,9 @@ const TurnDisplay = () => {
 		return boxShape;
 	}, []);
 
+
+	/* The `xShape` constant memoizes the creation of a custom shape
+	representing the 'X' symbol in the game */
 	const xShape = useMemo(() => {
 		const shape = new Shape();
 		
@@ -79,22 +84,28 @@ const TurnDisplay = () => {
 		return shape;
 	}, []);
 
-	// binding display to the camera.
+	/* This `useEffect` hook  is responsible for binding the 3D mesh objects
+	represented by the `TurnDisplay` component to the camera in the scene */
 	useEffect(() => {
 		const meshRef = ref.current;
-		if (meshRef)
+		if (meshRef) {
 			camera.add(meshRef);
+		}
 	
 		return () => {
-			if (meshRef)
+			if (meshRef) {
 				camera.remove(meshRef);
+			}
 		};
 	}, [camera]);
 
 	return (
 		<group ref={ref} scale={[0.4, 0.4, 0.4]}>
 			{ isGameMode ? (
+
+				// 'TurnDisplay' for the GameMode 'Qubic' with 3 Smybols 'X', 'O', '🔳'.
 				<>
+					{/* 'X' symbol */}
 					<mesh 
 						position={currentTurn === 'X' ? [-5.5, 15.5, -30] : [-5.5, 15, -30]}
 						scale={currentTurn === 'X' ? [0.6, 0.6, 0.6] : [0.5, 0.5, 0.5]}
@@ -109,6 +120,7 @@ const TurnDisplay = () => {
 						</Extrude>
 					</mesh>
 
+					{/* Dots symbols ':' to the right of 'X' */}
 					<mesh position={[-3, 14, -30]} scale={[0.1, 0.1, 0.1]}>
 						<boxGeometry args={[4, 4, 4]} />
 						<meshBasicMaterial color={ 0xffffff } />
@@ -118,6 +130,7 @@ const TurnDisplay = () => {
 						<meshBasicMaterial color={ 0xffffff } />
 					</mesh>
 
+					{/* 'O' symbol */}
 					<mesh
 						position={currentTurn === 'O' ? [-0.5, 13.6, -30] : [-0.5, 13.6, -30]}
 						scale={currentTurn === 'O' ? [0.65, 0.65, 0.65] : [0.6, 0.6, 0.6]}>
@@ -129,6 +142,7 @@ const TurnDisplay = () => {
 						/>
 					</mesh>
 
+					{/* Dots symbols ':' to the right of 'O' */}
 					<mesh position={[2, 14, -30]} scale={[0.1, 0.1, 0.1]}>
 						<boxGeometry args={[4, 4, 4]} />
 						<meshBasicMaterial color={ 0xffffff } />
@@ -138,6 +152,7 @@ const TurnDisplay = () => {
 						<meshBasicMaterial color={ 0xffffff } />
 					</mesh>
 
+					{/* '🔳' symbol */}
 					<mesh
 						position={[4.5, 13.5, -30]}
 						scale={currentTurn === '🔳' ? [0.6, 0.6, 0.6] : [0.5, 0.5, 0.5]}
@@ -153,7 +168,10 @@ const TurnDisplay = () => {
 					</mesh>
 				</>
 			) : (
+
+				// 'TurnDisplay' for the normal mode 'TTT'
 				<>
+					{/* 'X' symbol */}
 					<mesh 
 						position={currentTurn === 'X' ? [-2.5, 15.5, -30] : [-2.5, 15, -30]}
 						scale={currentTurn === 'X' ? [0.7, 0.7, 0.7] : [0.5, 0.5, 0.5]}
@@ -167,6 +185,8 @@ const TurnDisplay = () => {
 							/>
 						</Extrude>
 					</mesh>
+
+					{/* Dots symbols ':' to the right of 'X' */}
 					<mesh position={[0, 14, -30]} scale={[0.1, 0.1, 0.1]}>
 						<boxGeometry args={[4, 4, 4]} />
 						<meshBasicMaterial color={ 0xffffff } />
@@ -175,6 +195,8 @@ const TurnDisplay = () => {
 						<boxGeometry args={[4, 4, 4]} />
 						<meshBasicMaterial color={ 0xffffff } />
 					</mesh>
+
+					{/* 'O' symbol */}
 					<mesh
 						position={currentTurn === 'O' ? [2.7, 13.6, -30] : [2.7, 13.6, -30]}
 						scale={currentTurn === 'O' ? [0.8, 0.8, 0.8] : [0.6, 0.6, 0.6]}

@@ -9,41 +9,77 @@ import {
 import { WSClientType } from "@/helpers/wsclient";
 
 export interface Player {
+	/** Name of the player */
 	name: string;
+	/** Wallet adress of the player */
 	addr: string;
+	/** Color representation of the player */
 	color: number;
+	/** Player's number (client number) */
 	number: number;
-	symbol: string,
+	/** Symbol used by the player */
+	symbol: string;
 }
 
+/**
+ * Context value interface for managing socket state and player information.
+ */
 interface SocketContextValue {
 	playerState: {
-		players: Player[],
-		client: number
-	},
-	setPlayerState: Dispatch<SetStateAction<SocketContextValue['playerState']>>,
-	wsclient: WSClientType | null,
-	setWsclient: Dispatch<SetStateAction<WSClientType | null>>,
-	sendRequest: boolean,
-	setSendRequest: Dispatch<SetStateAction<boolean>>,
-	requestRematch: boolean,
-	setRequestRematch: Dispatch<SetStateAction<boolean>>,
-	playerStatus: string,
-	setPlayerStatus: Dispatch<SetStateAction<string>>,
-	rematchIndex: number,
-	setRematchIndex: Dispatch<SetStateAction<number>>,
-	continueIndex: number,
-	setContinueIndex: Dispatch<SetStateAction<number>>,
-	sendContinueRequest: boolean,
-	setSendContinueRequest: Dispatch<SetStateAction<boolean>>
-	isFull: string,
-	setIsFull: Dispatch<SetStateAction<string>>,
-	timerState: string,
-	setTimerState: Dispatch<SetStateAction<string>>
-	chipDisappear: boolean,
-	setChipDisappear: Dispatch<SetStateAction<boolean>>
-};
+		/** Array of players  */
+		players: Player[];
+		 /** Client number */
+		client: number;
+	};
+	/** Setter for '{@link playerState}' */
+	setPlayerState: Dispatch<SetStateAction<SocketContextValue['playerState']>>;
+	/** WebSocket client */
+	wsclient: WSClientType | null;
+	/** Setter for WebSocket client */
+	setWsclient: Dispatch<SetStateAction<WSClientType | null>>;
+	/** Indicates if a request is being sent */
+	sendRequest: boolean;
+	/** Setter for sendRequest */
+	setSendRequest: Dispatch<SetStateAction<boolean>>;
+	/** Indicates if a rematch is requested */
+	requestRematch: boolean;
+	/** Setter for requestRematch */
+	setRequestRematch: Dispatch<SetStateAction<boolean>>;
+	/** Status of the player (opponent) */
+	playerStatus: string;
+	/** Setter for playerStatus */
+	setPlayerStatus: Dispatch<SetStateAction<string>>;
+	/** Index for rematch */
+	rematchIndex: number;
+	/** Setter for rematchIndex */
+	setRematchIndex: Dispatch<SetStateAction<number>>;
+	/** Index for continue */
+	continueIndex: number;
+	/** Setter for continueIndex */
+	setContinueIndex: Dispatch<SetStateAction<number>>;
+	/** Indicates if a continue request is being sent */
+	sendContinueRequest: boolean;
+	/** Setter for sendContinueRequest */
+	setSendContinueRequest: Dispatch<SetStateAction<boolean>>;
+	/** Indicates if the game is full */
+	isFull: string;
+	/** Setter for isFull */
+	setIsFull: Dispatch<SetStateAction<string>>;
+	/** State of the timer */
+	timerState: string;
+	/** Setter for timerState */
+	setTimerState: Dispatch<SetStateAction<string>>;
+	/** Indicates if chips should disappear */
+	chipDisappear: boolean;
+	/** Setter for chipDisappear, indicates if the timer */
+	setChipDisappear: Dispatch<SetStateAction<boolean>>;
+}
 
+
+/**
+ * The function `initialTTTPlayerState` initializes a state object for a Tic Tac Toe game with three
+ * players.
+ */
 export const initialTTTPlayerState = () => ({
 	players: Array.from({ length: 3 }, () => ({
 		name: "None",

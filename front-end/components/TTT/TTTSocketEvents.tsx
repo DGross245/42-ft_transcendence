@@ -5,7 +5,6 @@ import { useSound } from "@/components/hooks/Sound";
 import { useSocket } from "@/app/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/tic-tac-toe/hooks/useGameState";
 import useContract from "@/components/hooks/useContract";
-import { useEffectDebugger } from "../Pong/PongSocketEvents";
 
 export const TTTSocketEvents = memo(() => {
 	// Provider hooks
@@ -67,7 +66,6 @@ export const TTTSocketEvents = memo(() => {
 	useEffect(() => {
 		const skipGame = (msg: string) => {
 			setSkip({ _skip: true, address: msg });
-			console.log(msg);
 		};
 
 		if (wsclient) {

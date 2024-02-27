@@ -117,7 +117,8 @@ export const PongSocketEvents = memo(() => {
 				setSkip({ _skip: false, address: ""});
 				setIsFull('');
 				setTimerState('');
-				// setPlayerSet(false);
+				setPlayerStatus("");
+
 				const { gameID, tournamentId, gameIndex } = await wsclient.waitingRoom();
 				if (tournamentId === -1 && !gameID.includes("Costome-Game-") && !isGameMode) {
 					wsclient.joinQueue("Pong");
@@ -129,7 +130,7 @@ export const PongSocketEvents = memo(() => {
 		}
 
 		waiting();
-	}, [wsclient, pongGameState.gameId, isGameMode, setIsFull, setTournament, updatePongGameState, setTimerState]);
+	}, [wsclient, pongGameState.gameId, isGameMode, setPlayerStatus, setIsFull, setTournament, updatePongGameState, setTimerState]);
 
 	useEffect(() => {
 		const chooseRef = (clients: number) => {
