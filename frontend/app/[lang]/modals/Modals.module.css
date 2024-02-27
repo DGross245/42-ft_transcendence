@@ -1,0 +1,35 @@
+.emojiIcon {
+    width: 100%;
+    line-height: 1;
+    font-size: 125px; 
+    text-align: center; 
+    -webkit-animation: wiggle 2s infinite;
+    -moz-animation: wiggle 2s infinite;
+    animation: wiggle 2s infinite;
+}
+@keyframes wiggle {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(10deg); }
+    50% { transform: rotate(-5deg); }
+    75% { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
+}
+
+
+.textWiggle {
+    width: 100%;
+    cursor: default;
+    animation: none;
+    text-align: center;
+    display: inline-block;
+}
+.textWiggle:hover {
+    animation: textWiggle 1s infinite;
+}
+@keyframes textWiggle {
+    0% { transform: rotate(0deg); }
+   25% { transform: rotate(5deg); }
+   50% { transform: rotate(-5deg); }
+   75% { transform: rotate(5deg); }
+  100% { transform: rotate(0deg); }
+}
