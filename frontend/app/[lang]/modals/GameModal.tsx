@@ -32,8 +32,9 @@ const GameModal: React.FC<GameWinningModalProps> = ({isOpen, gameResult, loading
 			backdrop="blur"
 			placement="center"
 			closeButton={<></>}
-			isDismissable={false}
-			isKeyboardDismissDisabled={true}
+			onClose={gameResult == GameResult.Paused && resume ? resume : () => {}}
+			isDismissable={gameResult == GameResult.Paused ? true : false}
+			isKeyboardDismissDisabled={gameResult == GameResult.Paused ? false : true}
 			>
 			<ModalContent>
 				{loading && <div className=" absolute flex justify-center items-center h-full w-full">
