@@ -52,18 +52,6 @@ const EndModal =  React.memo(() => {
 	const [showResult, setShowResult] = useState("");
 	const [wasOpen, setWasOpen] = useState(false);
 	const [isClicked, setIsClicked] = useState(false);
-	const [elo, setElo] = useState(0);
-
-	const fetchElo = useCallback(async () => {
-		const elo = await getPlayerRankedElo(playerState.players[playerState.client].addr);
-		setElo(Number(elo));
-	}, [getPlayerRankedElo, playerState.client, playerState.players]);
-
-	useEffect(() => {
-		if (showModal) {
-			fetchElo();
-		}
-	}, [showModal, fetchElo])
 
 	const sendScoreAndContinue = async () => {
 		if (playerState.client === 0 || playerStatus === "disconnect" || playerStatus === "leave" ) {
@@ -181,7 +169,6 @@ const EndModal =  React.memo(() => {
 					<div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
 						<ModalHeader className="flex flex-col gap-1 items-center justify-center">
 							{ showResult }
-							{ tournament.id === -1 && !pongGameState.gameId.includes("Costome-Game-") && <p> { `Elo: ${elo}` } </p>}
 						</ModalHeader>
 					</div>
 					<ModalBody style={{ textAlign: 'center' }} >

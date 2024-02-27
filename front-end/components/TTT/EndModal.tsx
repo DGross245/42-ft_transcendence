@@ -56,12 +56,6 @@ const EndModal = React.memo(() => {
 	const [showResult, setShowResult] = useState("");
 	const [wasOpen, setWasOpen] = useState(false);
 	const [isClicked, setIsClicked] = useState(false);
-	const [elo, setElo] = useState(0);
-
-	const fetchElo = useCallback(async () => {
-		const elo = await getPlayerRankedElo(playerState.players[playerState.client].addr);
-		setElo(Number(elo));
-	}, [getPlayerRankedElo, playerState.client, playerState.players]);
 
 	const getOwnImage = useCallback(() => {
 		if (playerState.players[playerState.client]?.symbol === 'O')
@@ -128,12 +122,6 @@ const EndModal = React.memo(() => {
 			setWasOpen(false);
 		}
 	}, [gameState.reset, closeModal])
-
-	useEffect(() => {
-		if (showModal) {
-			fetchElo();
-		}
-	}, [showModal, fetchElo])
 
 	useEffect (() => {
 		if (showModal) {
@@ -210,7 +198,6 @@ const EndModal = React.memo(() => {
 						)}
 						<ModalHeader className="flex flex-col gap-1 items-center justify-center">
 							{ showResult }
-							{ tournament.id === -1 && !gameState.gameId.includes("Costome-Game-") && <p> { `Elo: ${elo}` } </p>}
 						</ModalHeader>
 					</div>
 					<ModalBody style={{ textAlign: 'center' }} >
