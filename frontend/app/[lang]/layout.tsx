@@ -34,7 +34,7 @@ interface LangLayoutProps {
 const LangLayout: React.FC<LangLayoutProps> = ({children, params: {locale}}) => {
 	// dir={dir(locale)}
 	return (
-		<html lang={locale} suppressHydrationWarning>
+		<html lang={locale}>
 			<body
 				className={clsx(
 					"font-sans antialiased dark text-foreground bg-background",

@@ -9,7 +9,7 @@ import { useTranslation } from "../i18n";
 import { useWindow } from "@/components/hooks/useWindow";
 
 const Wallet = () => {
-	const walletGLTF = useLoader(GLTFLoader, '/wallet/scene.gltf');
+	const walletGLTF = useLoader(GLTFLoader, '/Models/wallet/scene.gltf');
 	const walletRef = useRef<any>();
 
 	useFrame(() =>{

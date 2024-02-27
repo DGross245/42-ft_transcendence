@@ -5,6 +5,7 @@ import resourcesToBackend from 'i18next-resources-to-backend'
 import { useCurrentLocale } from 'next-i18n-router/client'
 import i18nConfig from '@/i18n.config'
 import i18next from 'i18next'
+import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 
 const runsOnServerSide = typeof window === 'undefined';
@@ -20,11 +21,14 @@ i18next
 
 export function useTranslation(ns: string) {
 	const currentLocale = useCurrentLocale(i18nConfig);
-  	const ret = useTranslationOrg(ns);
-  	const { i18n } = ret
+	const ret = useTranslationOrg(ns);
+	const { i18n } = ret
 
-	if (currentLocale && i18n.resolvedLanguage !== currentLocale) {
-		i18n.changeLanguage(currentLocale);
-	}
-  	return ret
+	useEffect(() => {
+		if (currentLocale && i18n.resolvedLanguage !== currentLocale) {
+			i18n.changeLanguage(currentLocale);
+		}
+	}, [currentLocale, i18n]);
+
+	return ( ret );
 }
