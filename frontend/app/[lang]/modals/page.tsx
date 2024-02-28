@@ -1,39 +1,43 @@
 "use client";
 
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, useDisclosure } from "@nextui-org/react";
+import { Button, useDisclosure } from "@nextui-org/react";
 import GameModal, { GameResult } from "./GameModal";
+import SelectionModal from "./SelectionModal";
 import CustomizeModal from "./CutomizeModal";
-// import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-// import { useFrame, useLoader } from "@react-three/fiber";
-// import { useRef } from "react";
-
-// const WinnerModel = () => {
-// 	const winnerGLTF = useLoader(GLTFLoader, '/gltfs/winner.gltf');
-// 	const winnerRef = useRef<any>();
-
-// 	useFrame(() =>{
-// 		if (winnerRef && winnerRef.current){
-// 			winnerRef.current.rotation.y += 0.005;
-// 			winnerRef.current.position.y = -1
-// 		}
-// 	})
-
-// 	return (
-// 		<group ref={winnerRef}>
-// 			{winnerGLTF.scene && <primitive object={winnerGLTF.scene} />}
-// 		</group>
-// 	)
-// }
+import { useState } from "react";
 
 export default function Home() {
-	const {isOpen, onOpen, onOpenChange} = useDisclosure();
+	const {isOpen: gameOpen, onOpen: gameOnOpen, onClose: gameOnClose} = useDisclosure();
+	const {isOpen: selectionOpen, onOpen: selectionOnOpen} = useDisclosure();
+	const {isOpen: customOpen, onOpen: customOnOpen} = useDisclosure();
+
+	const [currClients, setCurrClients] = useState(0);
+	const onContinue = () => {
+		setCurrClients((curr) => curr + 1);
+		setTimeout(() => {
+			setCurrClients((curr) => curr + 1);
+
+			setTimeout(() => {
+				gameOnClose();
+			}, 2500);
+		}, 2500);
+	}
 
 	return (
 		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">
-			<GameModal isOpen={isOpen} gameResult={GameResult.Paused} resume={() => {}}/>
-			<Button onPress={onOpen}>Open Modal</Button>
-			{/* <CustomizeModal isOpen={isOpen} loading={false}/>
-			<Button onPress={onOpen}>Open Modal</Button> */}
+			{/* Game Modal */}
+			<GameModal isOpen={gameOpen} gameResult={GameResult.Paused} pauseInfo={{
+				onClick: onContinue,
+				currentClients: currClients,
+				maxClients: 2
+			}}/>
+			<Button onPress={gameOnOpen}>Open Game Modal</Button>
+			{/* Selection Modal */}
+			<SelectionModal isOpen={selectionOpen}/>
+			<Button onPress={selectionOnOpen}>Open Selection Modal</Button>
+			{/* Customize Modal */}
+			<CustomizeModal isOpen={customOpen} startGame={() => {}}/>
+			<Button onPress={customOnOpen}>Open Customize Modal</Button>
 		</section>
 	)
 }
