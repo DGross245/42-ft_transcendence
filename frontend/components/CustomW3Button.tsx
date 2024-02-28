@@ -1,6 +1,6 @@
 "use client";
 
-import { useWeb3Modal, useWeb3ModalState, useWeb3ModalAccount } from "@web3modal/ethers5/react";
+import { useWeb3Modal, useWeb3ModalState, useWeb3ModalAccount, useWeb3ModalError } from "@web3modal/ethers5/react";
 import { Button, ButtonProps } from "@nextui-org/button";
 import { useTranslation } from "@/app/i18n";
 import { useEffect, useState } from "react";
@@ -18,10 +18,11 @@ interface CustomW3ButtonProps {
 const CustomW3Button: React.FC<CustomW3ButtonProps> = ({ size = "md" }) => {
 	const { open: modalOpen } = useWeb3ModalState();
 	const { isConnected } = useWeb3ModalAccount();
-	const { open: openModal } = useWeb3Modal();
+	const { open } = useWeb3Modal();
 	const { t } = useTranslation("w3button");
 	const [update, setUpdate] = useState(false);
 	const [connected, setConnected] = useState(false);
+	const [connecting, setConnecting] = useState(false);
 
 	useEffect(() => {
 		setConnected(isConnected);
@@ -31,7 +32,14 @@ const CustomW3Button: React.FC<CustomW3ButtonProps> = ({ size = "md" }) => {
 		setUpdate(true);
 	}, [t])
 
-	const connecting = !connected && modalOpen;
+	const test = () => {
+		console.log("opening");
+		open();
+	}
+
+	useEffect(() => {
+		setConnecting(!connected && modalOpen);
+	}, [connected, modalOpen])
 
 	return (
 		<>
@@ -44,7 +52,7 @@ const CustomW3Button: React.FC<CustomW3ButtonProps> = ({ size = "md" }) => {
 					color="primary"
 					variant="shadow"
 					className="ghost-button gradient !border-0"
-					onClick={() => openModal()}
+					onClick={test}
 					isLoading={connecting}
 				>
 					{connecting ? t("connecting") : t("connectwallet")}

@@ -130,7 +130,7 @@ const TTTScene = () => {
 					<TurnDisplay />
 					<FinishLine />
 					<Table />
-					<Stats />
+					{/* <Stats /> */}
 					<Environment preset="city" />
 				</Canvas>
 				<TTTModals />

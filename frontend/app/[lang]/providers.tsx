@@ -19,7 +19,7 @@ export interface ProvidersProps {
 const projectId = 'e724641375a102581d38c8ee62fc81dd'; // @note put this in a .env?
 
 /* -------------------------------- Chain(s) -------------------------------- */
-const goerli = {
+const SepoliaBase = {
 	chainId: 84532,
 	name: 'SepoliaBase',
 	currency: 'SepoliaETH',
@@ -37,7 +37,7 @@ createWeb3Modal({
 			icons: ['/favicon.ico']
 		}
 	}),
-	chains: [goerli],
+	chains: [SepoliaBase],
 	projectId,
 });
 
