@@ -51,18 +51,37 @@
     40% { transform: scale(1); }
 }
 
-/* -------------------------------- arrowIcon ------------------------------- */
-.arrowIcon {
-    width: 24px;
-    height: 24px;
-    margin-left: -6px;
-    animation: echoRight 1.5s ease-out infinite;
+/* -------------------------------- buttonWithArrow ------------------------------- */
+.buttonWithArrow .arrowIcon  {
+	transition: opacity 0.3s;
 }
+
+.buttonWithArrow:hover .arrowIcon {
+	animation: echoRight 0.1s ease-out forwards;
+}
+
+.buttonWithArrow:not(:hover) .arrowIcon {
+	animation: reverseEchoRight 0.1s ease-out forwards;
+}
+
+.gradientButton {
+	background-image: linear-gradient(to right top, #444446, #828282);
+	color: rgb(255, 255, 255);
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 @keyframes echoRight {
-    0% { opacity: 0; transform: translateX(0); }
-    5% { opacity: 1; transform: translateX(4px); }
-   25% { opacity: 1; transform: translateX(8px); }
-   50% { opacity: 0; transform: translateX(16px); }
-   75% { opacity: 0; transform: translateX(24px); }
-  100% { opacity: 0; transform: translateX(32px); }
+	   0% { opacity: 1; transform: translateX(0); }
+	  25% { opacity: 1; transform: translateX(2px); }
+	  50% { opacity: 1; transform: translateX(5px); }
+	  75% { opacity: 1; transform: translateX(8px); }
+	 100% { opacity: 1; transform: translateX(9px); }
+}
+
+@keyframes reverseEchoRight {
+	  0% { opacity: 1; transform: translateX(9px); }
+	 25% { opacity: 1; transform: translateX(8px); }
+	 50% { opacity: 1; transform: translateX(5px); }
+	 75% { opacity: 1; transform: translateX(2px); }
+	100% { opacity: 1; transform: translateX(0); }
 }

@@ -2,6 +2,7 @@ import { Button, Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader,
 import { ArrowRightIcon, PauseIcon } from "@heroicons/react/24/solid";
 import styles from "./Modals.module.css";
 import clsx from "clsx";
+import { RightArrowIcon } from "@/components/icons";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Interfaces                                 */
@@ -10,7 +11,8 @@ interface GameModalButtonProps {
 	onClick?: () => void,
 	children?: React.ReactNode | string,
 	isDisabled?: boolean,
-	isLoading?: boolean
+	isLoading?: boolean,
+	className?: string
 }
 
 enum GameResult {
@@ -30,14 +32,15 @@ interface GameWinningModalProps {
 	loading?: boolean,
 	rematch?: () => void,
 	nextGame?: () => void,
-	finish?: () => void,
+	quit?: () => void,
+	queue?: () => void,
 	pauseInfo?: PauseButtonProps
 }
 
 /* -------------------------------------------------------------------------- */
 /*                                 Components                                 */
 /* -------------------------------------------------------------------------- */
-const GameModalButton: React.FC<GameModalButtonProps> = ({ onClick, children, isDisabled, isLoading }) => {
+const GameModalButton: React.FC<GameModalButtonProps> = ({ onClick, children, isDisabled, isLoading, className }) => {
 	return (
 		<Button
 			size="md"
@@ -45,7 +48,7 @@ const GameModalButton: React.FC<GameModalButtonProps> = ({ onClick, children, is
 			color="primary"
 			variant="shadow"
 			onClick={onClick}
-			className="text-lg"
+			className={`text-lg ${className ? className : ""}`}
 			isDisabled={isDisabled}
 			isLoading={isLoading}
 		>
@@ -62,7 +65,7 @@ const InfoText: React.FC<{children: React.ReactNode, className?: string}> = ({ c
 	)
 }
 
-const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loading, rematch, nextGame, finish, pauseInfo }) => {
+const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loading, rematch, nextGame, queue, quit, pauseInfo }) => {
 	return (
 		<Modal
 			size="xl"
@@ -81,7 +84,7 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 					{gameResult == GameResult.Winner	&& <h1 className={styles.emojiIcon}>🏆</h1>}
 					{gameResult == GameResult.Looser	&& <h1 className={styles.emojiIcon}>😕</h1>}
 					{gameResult == GameResult.Draw		&& <h1 className={styles.emojiIcon}>➖</h1>}
-					{gameResult == GameResult.Paused	&& <h1 className={styles.emojiIcon}>🚀</h1>}
+					{gameResult == GameResult.Paused	&& <h1 className={styles.emojiIcon}>⏱️</h1>}
 				</ModalHeader>
 				<ModalBody className={clsx({"opacity-0": loading})}>
 					<div className="flex justify-center">
@@ -98,17 +101,19 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 				</ModalBody>
 				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
 					{rematch	&& <GameModalButton onClick={rematch}>Rematch</GameModalButton>}
-					{nextGame	&& <GameModalButton onClick={nextGame}>Next Game</GameModalButton>}
-					{finish		&& <GameModalButton onClick={finish}>Finish</GameModalButton>}
+					{nextGame	&& <GameModalButton onClick={nextGame}>Next Match</GameModalButton>}
+					{queue		&& <GameModalButton onClick={queue}>Queue</GameModalButton>}
+					{quit		&& <GameModalButton onClick={quit}>Quit</GameModalButton>}
 					{pauseInfo	&& (
 						<GameModalButton
 							onClick={pauseInfo.onClick}
 							isDisabled={pauseInfo.currentClients === pauseInfo.maxClients}
 							isLoading={pauseInfo.currentClients === pauseInfo.maxClients}
+							className={`${styles.buttonWithArrow} ${styles.gradientButton}`}
 						>
 							{pauseInfo.currentClients === 0 && (<>
 								<span>Continue</span>
-								<ArrowRightIcon className={styles.arrowIcon}/>
+								<RightArrowIcon /> 
 							</>)}
 							{pauseInfo.currentClients !== 0 && (<>
 								<span>

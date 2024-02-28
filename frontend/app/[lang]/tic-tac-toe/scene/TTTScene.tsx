@@ -89,13 +89,8 @@ const TTTScene = () => {
 		wsclient?.joinQueue("tictactoe")
 	}
 
-	const rank = async () => {
-		const t = await getRankedGames();
-		console.log(t);
-	}
-
 	return (
-		<div style={{ width: '100%', height: '100%' }}>
+		<div>
 					<input
 						placeholder="Topic"
 						value={topic}
@@ -106,16 +101,15 @@ const TTTScene = () => {
 				{/* <button onClick={onCreate}> Create </button>
 				<button onClick={onJoin}> join </button> */}
 				<button onClick={joinQueue}> Queue </button>
-				{/* <button onClick={onCreateTournament}> Create Tournament </button>
-				<button onClick={onJoin}>  JOIN  </button> */}
+				<button onClick={onCreateTournament}> Create Tournament </button>
+				<button onClick={onJoin}>  JOIN  </button>
 				<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
-				<button onClick={rank}> RANKED </button>
-				{/* <button onClick={onJoinTournament}> Join Tournament </button>
+				<button onClick={onJoinTournament}> Join Tournament </button>
 				<button onClick={onStartTournament}> Start Tournament </button>
 				<button onClick={onGetTournaments}> lol Tournament </button>
-				<button onClick={onkek}> print </button> */}
-			<div className="scene-container">
-				<Canvas  style={{ width: dimensions.width, height: dimensions.height }}>
+				<button onClick={onkek}> print </button>
+			<div>
+				<Canvas>
 					<Camera />
 					<Countdown />
 					<Grid />
@@ -130,7 +124,6 @@ const TTTScene = () => {
 					<TurnDisplay />
 					<FinishLine />
 					<Table />
-					{/* <Stats /> */}
 					<Environment preset="city" />
 				</Canvas>
 				<TTTModals />

@@ -44,7 +44,6 @@ export const TTTSocketEvents = memo(() => {
 	} = useContract();
 
 	// State variables
-	// const [isFull, setIsFull] = useState("");
 	const [playerSet, setPlayerSet] = useState(false);
 	const [skip, setSkip] = useState({ _skip: false, address: "" })
 	const [symbolSet, setSymbolSet] = useState(false);

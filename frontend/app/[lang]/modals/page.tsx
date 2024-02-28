@@ -2,8 +2,8 @@
 
 import { Button, useDisclosure } from "@nextui-org/react";
 import GameModal, { GameResult } from "./GameModal";
-import SelectionModal from "./SelectionModal";
-import CustomizeModal from "./CutomizeModal";
+// import SelectionModal from "./SelectionModal";
+// import CustomizeModal from "./CutomizeModal";
 import { useState } from "react";
 
 export default function Home() {
@@ -33,11 +33,11 @@ export default function Home() {
 			}}/>
 			<Button onPress={gameOnOpen}>Open Game Modal</Button>
 			{/* Selection Modal */}
-			<SelectionModal isOpen={selectionOpen}/>
-			<Button onPress={selectionOnOpen}>Open Selection Modal</Button>
+			{/* <SelectionModal isOpen={selectionOpen}/>
+			<Button onPress={selectionOnOpen}>Open Selection Modal</Button> */}
 			{/* Customize Modal */}
-			<CustomizeModal isOpen={customOpen} startGame={() => {}}/>
-			<Button onPress={customOnOpen}>Open Customize Modal</Button>
+			{/* <CustomizeModal isOpen={customOpen} startGame={() => {}}/>
+			<Button onPress={customOnOpen}>Open Customize Modal</Button> */}
 		</section>
 	)
 }

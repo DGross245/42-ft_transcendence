@@ -6,7 +6,7 @@ import { ethers } from 'ethers';
 import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
 
-const contract_address = '0xBC0657E28Ccac38597f6c417CA2996378935Db28'
+const contract_address = '0xD78F9fEc2c927d8722DD7D65e30552BC4380a118'
 
 /* -------------------------------------------------------------------------- */
 /*                                Interface(s)                                */

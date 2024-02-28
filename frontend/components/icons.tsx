@@ -1,4 +1,5 @@
 import * as React from "react";
+import styles from "../app/[lang]/modals/Modals.module.css";
 
 export const RightArrowIcon = ({ width = 24, height = 24, color = 'currentColor', ...props }) => (
 	<svg
@@ -11,7 +12,7 @@ export const RightArrowIcon = ({ width = 24, height = 24, color = 'currentColor'
 		strokeWidth="2"
 		strokeLinecap="round"
 		strokeLinejoin="round"
-		className="arrow-icon echo-right"
+		className={styles.arrowIcon} 
 		{...props}
 	>
 		<path d="M5 12L19 12M12 5l7 7-7 7" />
