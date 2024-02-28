@@ -50,3 +50,19 @@
     0%, 80%, 100% { transform: scale(0); }
     40% { transform: scale(1); }
 }
+
+/* -------------------------------- arrowIcon ------------------------------- */
+.arrowIcon {
+    width: 24px;
+    height: 24px;
+    margin-left: -6px;
+    animation: echoRight 1.5s ease-out infinite;
+}
+@keyframes echoRight {
+    0% { opacity: 0; transform: translateX(0); }
+    5% { opacity: 1; transform: translateX(4px); }
+   25% { opacity: 1; transform: translateX(8px); }
+   50% { opacity: 0; transform: translateX(16px); }
+   75% { opacity: 0; transform: translateX(24px); }
+  100% { opacity: 0; transform: translateX(32px); }
+}

@@ -54,7 +54,7 @@ const GameModalButton: React.FC<GameModalButtonProps> = ({ onClick, children, is
 	)
 }
 
-const InfoText: React.FC<{children: React.ReactNode, className?: string}> = ({children, className}) => {
+const InfoText: React.FC<{children: React.ReactNode, className?: string}> = ({ children, className }) => {
 	return (
 		<h1 className={clsx("font-bold text-3xl uppercase", className)}>
 			{children}
@@ -62,7 +62,7 @@ const InfoText: React.FC<{children: React.ReactNode, className?: string}> = ({ch
 	)
 }
 
-const GameModal: React.FC<GameWinningModalProps> = ({isOpen, gameResult, loading, rematch, nextGame, finish, pauseInfo}) => {
+const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loading, rematch, nextGame, finish, pauseInfo }) => {
 	return (
 		<Modal
 			size="xl"
@@ -108,20 +108,20 @@ const GameModal: React.FC<GameWinningModalProps> = ({isOpen, gameResult, loading
 						>
 							{pauseInfo.currentClients === 0 && (<>
 								<span>Continue</span>
-								<ArrowRightIcon className="w-6 h-6"/>
+								<ArrowRightIcon className={styles.arrowIcon}/>
 							</>)}
 							{pauseInfo.currentClients !== 0 && (<>
-								<span className="-mr-[6px]">
-									{pauseInfo.currentClients === pauseInfo.maxClients ? "Starting" : "Waiting"}
+								<span>
+								 	{pauseInfo.currentClients === pauseInfo.maxClients ? "Starting" : "Waiting"}
 								</span>
-								<div>
+								<div className="-ml-[6px]">
 									<span className={styles.loadingDot}/>
 									<span className={styles.loadingDot}/>
 									<span className={styles.loadingDot}/>
 								</div>
 							</>)}
 							{ pauseInfo.currentClients !== 0 && pauseInfo.currentClients !== pauseInfo.maxClients && (
-								<Chip>
+								<Chip variant="shadow">
 									{pauseInfo.currentClients} / {pauseInfo.maxClients}
 								</Chip>
 							)}
