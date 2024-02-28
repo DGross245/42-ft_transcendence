@@ -1,15 +1,28 @@
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
+import { Button, Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
+import { ArrowRightIcon, PauseIcon } from "@heroicons/react/24/solid";
 import styles from "./Modals.module.css";
 import clsx from "clsx";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Interfaces                                 */
 /* -------------------------------------------------------------------------- */
+interface GameModalButtonProps {
+	onClick?: () => void,
+	children?: React.ReactNode | string,
+	isDisabled?: boolean,
+	isLoading?: boolean
+}
+
 enum GameResult {
 	Winner,
 	Looser,
 	Draw,
 	Paused
+}
+interface PauseButtonProps {
+	onClick: () => void,
+	currentClients: number,
+	maxClients: number
 }
 interface GameWinningModalProps {
 	isOpen: boolean,
@@ -18,13 +31,38 @@ interface GameWinningModalProps {
 	rematch?: () => void,
 	nextGame?: () => void,
 	finish?: () => void,
-	resume?: () => void
+	pauseInfo?: PauseButtonProps
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                  Component                                 */
+/*                                 Components                                 */
 /* -------------------------------------------------------------------------- */
-const GameModal: React.FC<GameWinningModalProps> = ({isOpen, gameResult, loading, rematch, nextGame, finish, resume}) => {
+const GameModalButton: React.FC<GameModalButtonProps> = ({ onClick, children, isDisabled, isLoading }) => {
+	return (
+		<Button
+			size="md"
+			radius="lg"
+			color="primary"
+			variant="shadow"
+			onClick={onClick}
+			className="text-lg"
+			isDisabled={isDisabled}
+			isLoading={isLoading}
+		>
+			{children}
+		</Button>
+	)
+}
+
+const InfoText: React.FC<{children: React.ReactNode, className?: string}> = ({children, className}) => {
+	return (
+		<h1 className={clsx("font-bold text-3xl uppercase", className)}>
+			{children}
+		</h1>
+	)
+}
+
+const GameModal: React.FC<GameWinningModalProps> = ({isOpen, gameResult, loading, rematch, nextGame, finish, pauseInfo}) => {
 	return (
 		<Modal
 			size="xl"
@@ -32,9 +70,8 @@ const GameModal: React.FC<GameWinningModalProps> = ({isOpen, gameResult, loading
 			backdrop="blur"
 			placement="center"
 			closeButton={<></>}
-			onClose={gameResult == GameResult.Paused && resume ? resume : () => {}}
-			isDismissable={gameResult == GameResult.Paused ? true : false}
-			isKeyboardDismissDisabled={gameResult == GameResult.Paused ? false : true}
+			isDismissable={false}
+			isKeyboardDismissDisabled={true}
 			>
 			<ModalContent>
 				{loading && <div className=" absolute flex justify-center items-center h-full w-full">
@@ -48,17 +85,38 @@ const GameModal: React.FC<GameWinningModalProps> = ({isOpen, gameResult, loading
 				</ModalHeader>
 				<ModalBody className={clsx({"opacity-0": loading})}>
 					<div className="flex justify-center">
-						{gameResult == GameResult.Winner	&& <h1 className="text-green-500 font-bold text-4xl">Winner</h1>}
-						{gameResult == GameResult.Looser	&& <h1 className="text-red-500 font-bold text-4xl">Looser</h1>}
-						{gameResult == GameResult.Draw		&& <h1 className="text-yellow-500 font-bold text-4xl">Draw</h1>}
-						{gameResult == GameResult.Paused	&& <h1 className="font-bold text-4xl">Paused...</h1>}
+						{gameResult == GameResult.Winner	&& <InfoText className="text-green-500">Winner</InfoText>}
+						{gameResult == GameResult.Looser	&& <InfoText className="text-red-500">Looser</InfoText>}
+						{gameResult == GameResult.Draw		&& <InfoText className="text-yellow-500">Draw</InfoText>}
+						{gameResult == GameResult.Paused	&& (
+							<div className="flex items-center">
+								<PauseIcon className="inline-block w-12 h-12"/>
+								<InfoText>Pause</InfoText>
+							</div>
+						)}
 					</div>
 				</ModalBody>
 				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
-					{rematch	&& <Button color="primary" onClick={rematch}>Rematch</Button>}
-					{nextGame	&& <Button color="primary" onClick={nextGame}>Next Game</Button>}
-					{finish		&& <Button color="primary" onClick={finish}>Finish</Button>}
-					{resume		&& <Button color="primary" onClick={resume}>Resume Game</Button>}
+					{rematch	&& <GameModalButton onClick={rematch}>Rematch</GameModalButton>}
+					{nextGame	&& <GameModalButton onClick={nextGame}>Next Game</GameModalButton>}
+					{finish		&& <GameModalButton onClick={finish}>Finish</GameModalButton>}
+					{pauseInfo	&& (
+						<GameModalButton
+							onClick={pauseInfo.onClick}
+							isDisabled={pauseInfo.currentClients === pauseInfo.maxClients}
+							isLoading={pauseInfo.currentClients === pauseInfo.maxClients}
+						>
+							<span>
+								{ pauseInfo.currentClients === 0 ? "Continue" : pauseInfo.currentClients === pauseInfo.maxClients ? "Starting ..." : "Waiting ..."}
+							</span>
+							{ pauseInfo.currentClients === 0 && <ArrowRightIcon className="w-6 h-6"/> }
+							{ pauseInfo.currentClients !== 0 && pauseInfo.currentClients !== pauseInfo.maxClients && (
+								<Chip>
+									{pauseInfo.currentClients} / {pauseInfo.maxClients}
+								</Chip>
+							)}
+						</GameModalButton>
+					)}
 				</ModalFooter>
 			</ModalContent>
 		</Modal>
