@@ -106,10 +106,20 @@ const GameModal: React.FC<GameWinningModalProps> = ({isOpen, gameResult, loading
 							isDisabled={pauseInfo.currentClients === pauseInfo.maxClients}
 							isLoading={pauseInfo.currentClients === pauseInfo.maxClients}
 						>
-							<span>
-								{ pauseInfo.currentClients === 0 ? "Continue" : pauseInfo.currentClients === pauseInfo.maxClients ? "Starting ..." : "Waiting ..."}
-							</span>
-							{ pauseInfo.currentClients === 0 && <ArrowRightIcon className="w-6 h-6"/> }
+							{pauseInfo.currentClients === 0 && (<>
+								<span>Continue</span>
+								<ArrowRightIcon className="w-6 h-6"/>
+							</>)}
+							{pauseInfo.currentClients !== 0 && (<>
+								<span className="-mr-[6px]">
+									{pauseInfo.currentClients === pauseInfo.maxClients ? "Starting" : "Waiting"}
+								</span>
+								<div>
+									<span className={styles.loadingDot}/>
+									<span className={styles.loadingDot}/>
+									<span className={styles.loadingDot}/>
+								</div>
+							</>)}
 							{ pauseInfo.currentClients !== 0 && pauseInfo.currentClients !== pauseInfo.maxClients && (
 								<Chip>
 									{pauseInfo.currentClients} / {pauseInfo.maxClients}
