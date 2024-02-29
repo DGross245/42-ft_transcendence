@@ -21,6 +21,12 @@ enum GameResult {
 	Draw,
 	Paused
 }
+enum Status {
+	Disconnected,
+	Left,
+	Unavailable
+}
+
 interface PauseButtonProps {
 	onClick: () => void,
 	currentClients: number,
@@ -34,7 +40,8 @@ interface GameWinningModalProps {
 	nextGame?: () => void,
 	quit?: () => void,
 	queue?: () => void,
-	pauseInfo?: PauseButtonProps
+	pauseInfo?: PauseButtonProps,
+	status?: Status
 }
 
 /* -------------------------------------------------------------------------- */
@@ -65,7 +72,7 @@ const InfoText: React.FC<{children: React.ReactNode, className?: string}> = ({ c
 	)
 }
 
-const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loading, rematch, nextGame, queue, quit, pauseInfo }) => {
+const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loading, rematch, nextGame, queue, quit, pauseInfo, status }) => {
 	return (
 		<Modal
 			size="xl"
@@ -88,22 +95,27 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 				</ModalHeader>
 				<ModalBody className={clsx({"opacity-0": loading})}>
 					<div className="flex justify-center">
-						{gameResult == GameResult.Winner	&& <InfoText className="text-green-500">Winner</InfoText>}
-						{gameResult == GameResult.Looser	&& <InfoText className="text-red-500">Looser</InfoText>}
-						{gameResult == GameResult.Draw		&& <InfoText className="text-yellow-500">Draw</InfoText>}
-						{gameResult == GameResult.Paused	&& (
-							<div className="flex items-center">
-								<PauseIcon className="inline-block w-12 h-12"/>
-								<InfoText>Pause</InfoText>
-							</div>
-						)}
+						<div className="mb-2 text-center">
+							{gameResult == GameResult.Winner	&& <InfoText className="text-green-500">Winner</InfoText>}
+							{gameResult == GameResult.Looser	&& <InfoText className="text-red-500">Looser</InfoText>}
+							{gameResult == GameResult.Draw		&& <InfoText className="text-yellow-500">Draw</InfoText>}
+							{gameResult == GameResult.Paused	&& (
+								<div className="flex items-center">
+									<PauseIcon className="inline-block w-12 h-12"/>
+									<InfoText>Pause</InfoText>
+								</div>
+							)}
+							{ status === Status.Disconnected	&& ( <p style={{ color: 'grey' }}> Your opponent disconnected </p> ) }
+							{ status === Status.Unavailable		&& ( <p style={{ color: 'grey' }}> Your opponent didn&apos;t connect </p> ) }
+							{ status === Status.Left			&& ( <p style={{ color: 'grey' }}> Your opponent left </p> ) }
+						</div>
 					</div>
 				</ModalBody>
 				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
+					{quit		&& <GameModalButton onClick={quit}>Quit</GameModalButton>}
 					{rematch	&& <GameModalButton onClick={rematch}>Rematch</GameModalButton>}
 					{nextGame	&& <GameModalButton onClick={nextGame}>Next Match</GameModalButton>}
 					{queue		&& <GameModalButton onClick={queue}>Queue</GameModalButton>}
-					{quit		&& <GameModalButton onClick={quit}>Quit</GameModalButton>}
 					{pauseInfo	&& (
 						<GameModalButton
 							onClick={pauseInfo.onClick}
@@ -139,4 +151,4 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 }
 
 export default GameModal;
-export { GameResult };
+export { GameResult, Status };
