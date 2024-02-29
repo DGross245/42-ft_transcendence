@@ -66,3 +66,26 @@
    75% { opacity: 0; transform: translateX(24px); }
   100% { opacity: 0; transform: translateX(32px); }
 }
+
+/* ------------------------------ colorSelector ----------------------------- */
+.colorSelector {
+    width: 56px;
+    height: 40px;
+    border: grey 1px solid;
+    display: block;
+    cursor: pointer;
+    appearance: none;
+    border-radius: 10px;
+    -webkit-appearance: none;
+}
+.colorSelector:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+.colorSelector::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+.colorSelector::-webkit-color-swatch {
+    border: none;
+    border-radius: 10px;
+}
