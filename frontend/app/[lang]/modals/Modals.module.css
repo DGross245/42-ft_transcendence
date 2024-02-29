@@ -54,14 +54,11 @@
 /* -------------------------------- buttonWithArrow ------------------------------- */
 .buttonWithArrow .arrowIcon  {
 	transition: opacity 0.3s;
+	animation: reverseEchoRight 0.2s ease-in-out forwards;
 }
 
 .buttonWithArrow:hover .arrowIcon {
-	animation: echoRight 0.1s ease-out forwards;
-}
-
-.buttonWithArrow:not(:hover) .arrowIcon {
-	animation: reverseEchoRight 0.1s ease-out forwards;
+	animation: echoRight 0.1s ease-in-out forwards;
 }
 
 .gradientButton {
@@ -73,15 +70,15 @@
 @keyframes echoRight {
 	   0% { opacity: 1; transform: translateX(0); }
 	  25% { opacity: 1; transform: translateX(2px); }
-	  50% { opacity: 1; transform: translateX(5px); }
-	  75% { opacity: 1; transform: translateX(8px); }
-	 100% { opacity: 1; transform: translateX(9px); }
+	  50% { opacity: 1; transform: translateX(4px); }
+	  75% { opacity: 1; transform: translateX(7px); }
+	 100% { opacity: 1; transform: translateX(8px); }
 }
 
 @keyframes reverseEchoRight {
-	  0% { opacity: 1; transform: translateX(9px); }
-	 25% { opacity: 1; transform: translateX(8px); }
-	 50% { opacity: 1; transform: translateX(5px); }
+	  0% { opacity: 1; transform: translateX(8px); }
+	 25% { opacity: 1; transform: translateX(7px); }
+	 50% { opacity: 1; transform: translateX(4px); }
 	 75% { opacity: 1; transform: translateX(2px); }
 	100% { opacity: 1; transform: translateX(0); }
 }

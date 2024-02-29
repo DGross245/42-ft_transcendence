@@ -47,6 +47,7 @@ export const TTTModals = memo(() => {
 		openModal
 	} = useUI();
 	const [isClicked, setIsClicked] = useState(false);
+
 	const handleButtonClick = useCallback(() => {
 		if (!sendContinueRequest)
 			setSendContinueRequest(true);

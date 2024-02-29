@@ -41,7 +41,7 @@ const TTTScene = () => {
 		getRankedGames
 	} = useContract();
 	const {gameState, updateGameState} = useGameState();
-	const [topic, setTopic] = useState(21);
+	const [topic, setTopic] = useState(0);
 
 	const onTopicChange = (e: any) => {
 		setTopic(e.target.value);
