@@ -1,5 +1,6 @@
-import { Button, Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
-import { ArrowRightIcon, PauseIcon } from "@heroicons/react/24/solid";
+import { Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
+import { PauseIcon } from "@heroicons/react/24/solid";
+import ModalButton from "./ModalButton";
 import styles from "./Modals.module.css";
 import clsx from "clsx";
 import { RightArrowIcon } from "@/components/icons";
@@ -7,14 +8,6 @@ import { RightArrowIcon } from "@/components/icons";
 /* -------------------------------------------------------------------------- */
 /*                                 Interfaces                                 */
 /* -------------------------------------------------------------------------- */
-interface GameModalButtonProps {
-	onClick?: () => void,
-	children?: React.ReactNode | string,
-	isDisabled?: boolean,
-	isLoading?: boolean,
-	className?: string
-}
-
 enum GameResult {
 	Winner,
 	Looser,
@@ -47,23 +40,6 @@ interface GameWinningModalProps {
 /* -------------------------------------------------------------------------- */
 /*                                 Components                                 */
 /* -------------------------------------------------------------------------- */
-const GameModalButton: React.FC<GameModalButtonProps> = ({ onClick, children, isDisabled, isLoading, className }) => {
-	return (
-		<Button
-			size="md"
-			radius="lg"
-			color="primary"
-			variant="shadow"
-			onClick={onClick}
-			className={`text-lg ${className ? className : ""}`}
-			isDisabled={isDisabled}
-			isLoading={isLoading}
-		>
-			{children}
-		</Button>
-	)
-}
-
 const InfoText: React.FC<{children: React.ReactNode, className?: string}> = ({ children, className }) => {
 	return (
 		<h1 className={clsx("font-bold text-3xl uppercase", className)}>
@@ -79,8 +55,8 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 			isOpen={isOpen}
 			backdrop="blur"
 			placement="center"
-			closeButton={<></>}
 			isDismissable={false}
+			hideCloseButton={true}
 			isKeyboardDismissDisabled={true}
 			>
 			<ModalContent>
@@ -112,12 +88,12 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 					</div>
 				</ModalBody>
 				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
-					{quit		&& <GameModalButton onClick={quit}>Quit</GameModalButton>}
-					{rematch	&& <GameModalButton onClick={rematch}>Rematch</GameModalButton>}
-					{nextGame	&& <GameModalButton onClick={nextGame}>Next Match</GameModalButton>}
-					{queue		&& <GameModalButton onClick={queue}>Queue</GameModalButton>}
+					{quit		&& <ModalButton onClick={quit}>Quit</ModalButton>}
+					{rematch	&& <ModalButton onClick={rematch}>Rematch</ModalButton>}
+					{nextGame	&& <ModalButton onClick={nextGame}>Next Match</ModalButton>}
+					{queue		&& <ModalButton onClick={queue}>Queue</ModalButton>}
 					{pauseInfo	&& (
-						<GameModalButton
+						<ModalButton
 							onClick={pauseInfo.onClick}
 							isDisabled={pauseInfo.currentClients === pauseInfo.maxClients}
 							isLoading={pauseInfo.currentClients === pauseInfo.maxClients}
@@ -142,7 +118,7 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 									{pauseInfo.currentClients} / {pauseInfo.maxClients}
 								</Chip>
 							)}
-						</GameModalButton>
+						</ModalButton>
 					)}
 				</ModalFooter>
 			</ModalContent>

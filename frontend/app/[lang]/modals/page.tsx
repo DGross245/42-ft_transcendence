@@ -8,7 +8,7 @@ import { useState } from "react";
 
 export default function Home() {
 	const {isOpen: gameOpen, onOpen: gameOnOpen, onClose: gameOnClose} = useDisclosure();
-	const {isOpen: selectionOpen, onOpen: selectionOnOpen} = useDisclosure();
+	const {isOpen: selectionOpen, onOpen: selectionOnOpen, onClose: selectionOnClose} = useDisclosure();
 	const {isOpen: customOpen, onOpen: customOnOpen} = useDisclosure();
 
 	const [currClients, setCurrClients] = useState(0);

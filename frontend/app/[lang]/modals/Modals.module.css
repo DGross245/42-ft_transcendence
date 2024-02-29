@@ -54,7 +54,7 @@
 /* -------------------------------- buttonWithArrow ------------------------------- */
 .buttonWithArrow .arrowIcon  {
 	transition: opacity 0.3s;
-	animation: reverseEchoRight 0.2s ease-in-out forwards;
+	animation: reverseEchoRight 0.1s ease-in-out forwards;
 }
 
 .buttonWithArrow:hover .arrowIcon {
@@ -81,4 +81,27 @@
 	 50% { opacity: 1; transform: translateX(4px); }
 	 75% { opacity: 1; transform: translateX(2px); }
 	100% { opacity: 1; transform: translateX(0); }
+}
+
+/* ------------------------------ colorSelector ----------------------------- */
+.colorSelector {
+    width: 56px;
+    height: 40px;
+    border: grey 1px solid;
+    display: block;
+    cursor: pointer;
+    appearance: none;
+    border-radius: 10px;
+    -webkit-appearance: none;
+}
+.colorSelector:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+.colorSelector::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+.colorSelector::-webkit-color-swatch {
+    border: none;
+    border-radius: 10px;
 }
