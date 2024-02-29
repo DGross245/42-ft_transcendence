@@ -8,7 +8,7 @@ import { useState } from "react";
 
 export default function Home() {
 	const {isOpen: gameOpen, onOpen: gameOnOpen, onClose: gameOnClose} = useDisclosure();
-	const {isOpen: selectionOpen, onOpen: selectionOnOpen} = useDisclosure();
+	const {isOpen: selectionOpen, onOpen: selectionOnOpen, onClose: selectionOnClose} = useDisclosure();
 	const {isOpen: customOpen, onOpen: customOnOpen} = useDisclosure();
 
 	const [currClients, setCurrClients] = useState(0);
@@ -33,7 +33,7 @@ export default function Home() {
 			}}/>
 			<Button onPress={gameOnOpen}>Open Game Modal</Button>
 			{/* Selection Modal */}
-			<SelectionModal isOpen={selectionOpen}/>
+			<SelectionModal isOpen={selectionOpen} onClose={selectionOnClose}/>
 			<Button onPress={selectionOnOpen}>Open Selection Modal</Button>
 			{/* Customize Modal */}
 			<CustomizeModal isOpen={customOpen} startGame={() => {}}/>

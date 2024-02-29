@@ -18,7 +18,7 @@ interface CustomizeModalProps {
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
-const CustomizeModal: React.FC<CustomizeModalProps> = ({color: inputColor, isOpen, loading, username: inputUsername, startGame}) => {
+const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOpen, loading, username: inputUsername, startGame }) => {
 	const [username, setUsername] = useState(inputUsername || "");
 	const [color, setColor] = useState(inputColor || "#2563eb");
 
@@ -32,7 +32,7 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({color: inputColor, isOpe
 			isOpen={isOpen}
 			backdrop="blur"
 			placement="center"
-			closeButton={<></>}
+			hideCloseButton={true}
 			isDismissable={false}
 			isKeyboardDismissDisabled={true}
 		>
@@ -82,4 +82,5 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({color: inputColor, isOpe
 		</Modal>
 	)
 }
+
 export default CustomizeModal;

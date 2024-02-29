@@ -46,8 +46,8 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 			isOpen={isOpen}
 			backdrop="blur"
 			placement="center"
-			closeButton={<></>}
 			isDismissable={false}
+			hideCloseButton={true}
 			isKeyboardDismissDisabled={true}
 			>
 			<ModalContent>
