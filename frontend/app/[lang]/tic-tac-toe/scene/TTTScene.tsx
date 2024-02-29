@@ -90,44 +90,42 @@ const TTTScene = () => {
 	}
 
 	return (
-		<div>
-					<input
-						placeholder="Topic"
-						value={topic}
-						onChange={onTopicChange}
-						id="4182"
-						name="in"
-					/>
-				{/* <button onClick={onCreate}> Create </button>
-				<button onClick={onJoin}> join </button> */}
-				<button onClick={joinQueue}> Queue </button>
-				<button onClick={onCreateTournament}> Create Tournament </button>
-				<button onClick={onJoin}>  JOIN  </button>
-				<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
-				<button onClick={onJoinTournament}> Join Tournament </button>
-				<button onClick={onStartTournament}> Start Tournament </button>
-				<button onClick={onGetTournaments}> lol Tournament </button>
-				<button onClick={onkek}> print </button>
-			<div>
-				<Canvas>
-					<Camera />
-					<Countdown />
-					<Grid />
-					<TTTBot />
-					<TTTGameEvents />
-					<TTTSocketEvents />
-					<FieldLayers />
-					<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
-					<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
-					<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
-					<Floor position={[ 3, 23.8, 3]} args={[0.25, 23.2, 23.2]} />
-					<TurnDisplay />
-					<FinishLine />
-					<Table />
-					<Environment preset="city" />
-				</Canvas>
-				<TTTModals />
-			</div>
+		<div style={{ width: "100%", height: "100%" }}>
+			<input
+					placeholder="Topic"
+					value={topic}
+					onChange={onTopicChange}
+					id="4182"
+					name="in"
+			/>
+			{/* <button onClick={onCreate}> Create </button>
+			<button onClick={onJoin}> join </button> */}
+			<button onClick={joinQueue}> Queue </button>
+			<button onClick={onCreateTournament}> Create Tournament </button>
+			<button onClick={onJoin}>  JOIN  </button>
+			<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
+			<button onClick={onJoinTournament}> Join Tournament </button>
+			<button onClick={onStartTournament}> Start Tournament </button>
+			<button onClick={onGetTournaments}> lol Tournament </button>
+			<button onClick={onkek}> print </button>
+			<Canvas style={{ width: dimensions.width, height: dimensions.height - 128 }}>
+				<Camera />
+				<Countdown />
+				<Grid />
+				<TTTBot />
+				<TTTGameEvents />
+				<TTTSocketEvents />
+				<FieldLayers />
+				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
+				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
+				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
+				<Floor position={[ 3, 23.8, 3]} args={[0.25, 23.2, 23.2]} />
+				<TurnDisplay />
+				<FinishLine />
+				<Table />
+				<Environment preset="city" />
+			</Canvas>
+			<TTTModals />
 		</div> 
 	);
 }

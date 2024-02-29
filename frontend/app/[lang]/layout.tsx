@@ -47,7 +47,7 @@ const LangLayout: React.FC<LangLayoutProps> = ({children, params: {locale}}) => 
 					/>
 					<div className="flex flex-col h-full">
 						<Navbar />
-						<main className="flex-grow">
+						<main className="flex-grow" style={{ marginTop: '4rem' }}>
 							{children}
 						</main>
 					</div>

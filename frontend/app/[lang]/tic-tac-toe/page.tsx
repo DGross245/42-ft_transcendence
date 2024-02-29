@@ -6,14 +6,12 @@ import TTTScene from './scene/TTTScene';
 
 export default function TicTacToePage() {
 	return (
-		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80svh' }}>
-			<div>
-				<GameState gameMode={false} isBotActive={false}>
-					<Socket>
-						<TTTScene />
-					</Socket>
-				</GameState>
-			</div>
+		<div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+			<GameState gameMode={false} isBotActive={false}>
+				<Socket>
+					<TTTScene />
+				</Socket>
+			</GameState>
 		</div>
 	);
 }
