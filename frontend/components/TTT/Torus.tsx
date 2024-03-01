@@ -1,11 +1,19 @@
 import { DoubleSide} from 'three';
 
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+
 interface TorusProps {
 	position: [number, number, number],
 	transparent: boolean;
 	blending?: THREE.Blending,
 	color: number | undefined,
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 /**
  * Create a torusGeometry with specific position and rotation.

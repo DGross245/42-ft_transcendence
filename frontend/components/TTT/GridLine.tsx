@@ -1,8 +1,16 @@
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+
 interface GridLineProps {
 	position: [number, number, number],
 	rotation: [number, number, number],
 	args: [number, number, number],
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 /**
  * The GridLine component is a functional component in TypeScript React that renders a mesh with a box

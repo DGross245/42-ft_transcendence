@@ -2,6 +2,10 @@ import { useGLTF } from "@react-three/drei";
 import { memo } from "react";
 import { Mesh } from "three";
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
+
 export const Table = memo(() => {
 	const { nodes, materials } = useGLTF("/Models/Table.gltf");
 

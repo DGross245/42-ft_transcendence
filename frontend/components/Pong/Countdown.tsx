@@ -12,18 +12,19 @@ import { usePongSocket } from '@/app/[lang]/pong/hooks/usePongSocket';
 
 extend({ TextGeometry })
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
+
 /**
  * The Countdown component is a timer that counts down from 4 to 0 and displays the count as a 3D text
  * in a React Three Fiber scene.
- * @param props - The `props` parameter is an object that contains the following properties:
- * 				  `setScoreVisible`, `scoreVisible` and `rotation`.
  * @returns A mesh element that displays the current count value.
  * The visibility of the mesh is determined by the props.scoreVisible value. If props.scoreVisible is
  * false, the mesh will be visible, otherwise it will be hidden.
  */
 const Countdown = memo(() => {
-	const font = new FontLoader().parse(Orbitron_Regular);
-	const [count, setCount] = useState(4);
+	//* ------------------------------- ref & hooks ------------------------------ */
 	const {
 		pongGameState,
 		isScoreVisible,
@@ -36,7 +37,13 @@ const Countdown = memo(() => {
 	const { playerState } = usePongSocket();
 	const playSound = useSound();
 	const meshMatRef = useRef<MeshStandardMaterial>(null);
+	
+	//* ------------------------------- state variables ------------------------------ */
+	const [count, setCount] = useState(4);
 
+	const font = new FontLoader().parse(Orbitron_Regular);
+
+	//* ------------------------------- useEffects ------------------------------ */
 	useEffect(() => {
 		if (pongGameState.pause) {
 			if (pongGameState.gameId !== '-1') {
@@ -73,6 +80,7 @@ const Countdown = memo(() => {
 		}
 	}, [isScoreVisible, pongGameState.pause, started, pongGameState.gameId, setScoreVisibility, setStarted, playSound]);
 
+	//* ------------------------------- render loop ------------------------------ */
 	useFrame((_, delta) => {
 		if (meshMatRef.current && playerState.client !== -1) {
 			meshMatRef.current.opacity = lerp(meshMatRef.current.opacity, !isScoreVisible ? 1 : 0, 1 * delta);

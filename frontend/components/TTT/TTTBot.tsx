@@ -4,16 +4,34 @@ import { TicTacToeBot } from "@/components/TTT/TicTacToeBot";
 import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
 
-export const TTTBot = () => {
-	const { currentTurn, board, setBoard ,isGameMode, botState, setBot } = useGameState();
-	const { playerState, wsclient, setPlayerState } = useSocket();
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
+export const TTTBot = () => {
+	//* ------------------------------- hooks ------------------------------ */
+	const {
+		currentTurn,
+		board,
+		setBoard,
+		isGameMode,
+		botState,
+		setBot
+	} = useGameState();
+	const {
+		playerState,
+		wsclient,
+		setPlayerState
+	} = useSocket();
+
+	//* ------------------------------- functions ------------------------------ */
 	const SymbolArray = useMemo(() => [
 		playerState.players[0].symbol,
 		playerState.players[1].symbol,
 		...(playerState.players[2].symbol !== "UNDEFINED" ? [playerState.players[2].symbol] : [])
 	],[playerState.players]);
-	
+
+	//* ------------------------------- useEffects ------------------------------ */
 	useEffect(( ) => {
 		if (currentTurn === botState.symbol && botState.isActive) {
 			TicTacToeBot(board, SymbolArray, botState.symbol, botState.strength, setBoard );

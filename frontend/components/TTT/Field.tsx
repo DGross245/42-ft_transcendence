@@ -8,6 +8,10 @@ import X from './X';
 import Torus from './Torus';
 import Square from './Square';
 
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+
 export interface FieldProps {
 	key: string,
 	position: [number, number, number],
@@ -15,6 +19,10 @@ export interface FieldProps {
 	j: number,
 	k: number,
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 /**
  * The `Field` component represents a individual fields in a three-dimensional tic-tac-toe board.
@@ -24,10 +32,21 @@ export interface FieldProps {
  * @returns - A Three.js mesh representing the field with/without a symbol.
  */
 const Field : React.FC<FieldProps> = memo((props) => {
+	//* ------------------------------- hooks ------------------------------ */
 	const { playerState } = useSocket();
-	const { currentTurn, gameState, countdownVisible } = useGameState();
-	const { hovered, handleClick, handleHover, symbol } = useField(props);
+	const {
+		currentTurn,
+		gameState,
+		countdownVisible
+	} = useGameState();
+	const {
+		hovered,
+		handleClick,
+		handleHover,
+		symbol
+	} = useField(props);
 
+	//* ------------------------------- functions ------------------------------ */
 	const colors = useMemo(() => {
 		const getColorBySymbol = (symbol: string) => {
 			const player = playerState.players.find(player => player.symbol === symbol);

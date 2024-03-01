@@ -1,7 +1,15 @@
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+
 interface FloorProps {
 	position: [number, number, number],
 	args: [number, number, number],
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 /**
  * The Floor component is a React functional component that renders a box mesh with a transparent

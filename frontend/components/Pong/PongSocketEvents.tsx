@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 
 import useWSClient from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
@@ -6,6 +6,7 @@ import { usePongSocket } from "@/app/[lang]/pong/hooks/usePongSocket";
 import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
 import useContract from "@/components/hooks/useContract";
 
+// TODO: REMOVE THIS LATTER
 export const usePrevious = (value, initialValue) => {
 	const ref = useRef(initialValue);
 	useEffect(() => {
@@ -39,9 +40,12 @@ export const usePrevious = (value, initialValue) => {
 	useEffect(effectHook, dependencies);
 };
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 export const PongSocketEvents = memo(() => {
-	// Provider hooks
+	//* ------------------------------- hooks ------------------------------ */
 	const { 
 		setWsclient,
 		wsclient,
@@ -71,17 +75,17 @@ export const PongSocketEvents = memo(() => {
 		botState,
 		setTournament
 	} = usePongGameState();
-
-	// Normal hooks
-	const newClient = useWSClient();
-	const playSound = useSound();
 	const {
 		getPlayer,
 		address
 	} = useContract();
+	const newClient = useWSClient();
+	const playSound = useSound();
 
-	// State variables
+	//* ------------------------------- state variables ------------------------------ */
 	const [skip, setSkip] = useState({ _skip: false, address: "" })
+
+	//* ------------------------------- useEffects ------------------------------ */
 
 	// Wait until socket is initialized
 	useEffect(() => {
@@ -120,6 +124,7 @@ export const PongSocketEvents = memo(() => {
 				setPlayerStatus("");
 
 				const { gameID, tournamentId, gameIndex } = await wsclient.waitingRoom();
+
 				if (tournamentId === -1 && !gameID.includes("Costome-Game-") && !isGameMode) {
 					wsclient.joinQueue("Pong");
 				} else {
@@ -134,14 +139,15 @@ export const PongSocketEvents = memo(() => {
 
 	useEffect(() => {
 		const chooseRef = (clients: number) => {
-			if (clients === 0)
+			if (clients === 0) {
 				setPlayerPaddle({ ref: bottomPaddleRef, pos: bottomPaddleRef.current.position.x, maxPos: 111 - 15, minPos: -111 + 15});
-			else if (clients === 1)
+			} else if (clients === 1) {
 				setPlayerPaddle({ ref: leftPaddleRef, pos: leftPaddleRef.current.position.z, maxPos: 111 - 15, minPos: -111 + 15});
-			else if (clients === 2)
+			} else if (clients === 2) {
 				setPlayerPaddle({ ref: topPaddleRef, pos: topPaddleRef.current.position.x, maxPos: 111 - 15, minPos: -111 + 15});
-			else if (clients === 3)
+			} else if (clients === 3) {
 				setPlayerPaddle({ ref: rightPaddleRef, pos: rightPaddleRef.current.position.z, maxPos: 111 - 15, minPos: -111 + 15});
+			}
 		}
 
 		const joinTheGame = async () => {
@@ -191,7 +197,7 @@ export const PongSocketEvents = memo(() => {
 		};
 
 		joinTheGame();
-	}, [wsclient, pongGameState.gameId, address, botState.isActive, getPlayer, setPlayerState, isGameMode, skip, setPlayerPaddle, bottomPaddleRef, leftPaddleRef, rightPaddleRef, topPaddleRef]);
+	}, [wsclient, pongGameState.gameId, address, botState.isActive, isGameMode, skip, , bottomPaddleRef, leftPaddleRef, rightPaddleRef, topPaddleRef, getPlayer, setPlayerState, setPlayerPaddle]);
 
 	useEffect(() => {
 		const sendPlayerData = () => {
@@ -208,23 +214,24 @@ export const PongSocketEvents = memo(() => {
 			sendPlayerData();
 			updatePongGameState({ pause: false });
 		}
-	}, [playerState.client, isFull, playerState.players, pongGameState.gameId, updatePongGameState, wsclient]);
+	}, [playerState.client, isFull, playerState.players, pongGameState.gameId, wsclient, updatePongGameState]);
 
 	useEffect(() => {
 		const setPaddlePos = (msg: string) => {
 			const paddleData = JSON.parse(msg);
 
-			if (paddleData.client === 0)
+			if (paddleData.client === 0) {
 				bottomPaddleRef.current.position.x = paddleData.pos;
-			else if (paddleData.client === 1)
+			} else if (paddleData.client === 1) {
 				leftPaddleRef.current.position.z = paddleData.pos;
-			else if (paddleData.client === 2)
+			} else if (paddleData.client === 2) {
 				topPaddleRef.current.position.x = paddleData.pos;
-			else if (paddleData.client === 3)
+			} else if (paddleData.client === 3) {
 				rightPaddleRef.current.position.z = paddleData.pos;
+			}
 		};
 
-		if (wsclient && isGameMode) {
+		if (wsclient && pongGameState.gameId !== "-1" && isGameMode) {
 			wsclient?.addMessageListener(`Paddle-${pongGameState.gameId}`, pongGameState.gameId, setPaddlePos);
 
 			return () => {
@@ -286,14 +293,15 @@ export const PongSocketEvents = memo(() => {
 		const endGame = (msg: string) => {
 			setRequestRematch(false);
 			setSendRequest(false);
-			playSound(msg)
+			playSound(msg);
 			setPlayerStatus(msg);
 			updatePongGameState({ gameOver: true });
 		};
 
 		if (wsclient && pongGameState.gameId !== '-1') {
-			if (skip._skip && pongGameState.gameId !== "-1" && timerState === 'cross')
+			if (skip._skip && pongGameState.gameId !== "-1" && timerState === 'cross') {
 				endGame("unavailable");
+			}
 
 			wsclient?.addMessageListener(`player-left-${pongGameState.gameId}`, pongGameState.gameId, endGame)
 
@@ -301,7 +309,7 @@ export const PongSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`player-left-${pongGameState.gameId}`, pongGameState.gameId);
 			}
 		}
-	}, [wsclient, pongGameState.gameId, timerState, setPlayerStatus, setRequestRematch, setSendRequest, skip._skip, playSound, updatePongGameState]);
+	}, [wsclient, pongGameState.gameId, timerState, skip._skip, setPlayerStatus, setRequestRematch, setSendRequest, playSound, updatePongGameState]);
 
 	// Handle rematch request
 	useEffect(() => {
@@ -320,17 +328,17 @@ export const PongSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`Request-Rematch-${pongGameState.gameId}`, pongGameState.gameId);
 			}
 		}
-	}, [wsclient, playSound, pongGameState.gameId, setRematchIndex, setRequestRematch]);
+	}, [wsclient, pongGameState.gameId, setRematchIndex, setRequestRematch, playSound]);
 
 	// Send rematch request
 	useEffect(() => {
 		if (sendRequest) {
-			playSound("rematchSend")
+			playSound("rematchSend");
 			const bot = botState.isActive ? 1 : 0;
 			setRematchIndex((prevState) => (prevState + 1 + bot));
 			wsclient?.emitMessageToGame("true", `Request-Rematch-${pongGameState.gameId}`, pongGameState.gameId);
 		}
-	}, [sendRequest,playSound, botState.isActive, setRematchIndex, pongGameState.gameId, wsclient]);
+	}, [sendRequest, botState.isActive, pongGameState.gameId, wsclient, setRematchIndex, playSound]);
 
 	// Handle continue request
 	useEffect(() => {
@@ -353,7 +361,7 @@ export const PongSocketEvents = memo(() => {
 	useEffect(() => {
 		if (sendContinueRequest) {
 			const bot = botState.isActive ? 1 : 0;
-			setContinueIndex((prevState) => (prevState + 1 + bot))
+			setContinueIndex((prevState) => (prevState + 1 + bot));
 			wsclient?.emitMessageToGame("true", `Continue-${pongGameState.gameId}`, pongGameState.gameId);
 		}
 	}, [sendContinueRequest,  wsclient, pongGameState.gameId, botState.isActive, setContinueIndex]);

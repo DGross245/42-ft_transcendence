@@ -4,8 +4,8 @@ import { Object3DNode, Vector3, extend } from '@react-three/fiber';
 import { MutableRefObject } from 'react';
 import { Mesh, MeshBasicMaterial } from 'three';
 
-import Orbitron_Regular from '../../public/fonts/Orbitron_Regular.json';
-import { usePongGameState } from '../../app/[lang]/pong/hooks/usePongGameState';
+import Orbitron_Regular from '@/public/fonts/Orbitron_Regular.json';
+import { usePongGameState } from '@/app/[lang]/pong/hooks/usePongGameState';
 
 extend({ TextGeometry })
 
@@ -22,6 +22,10 @@ declare module "@react-three/fiber" {
 	}
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
+
 /**
  * The Scoreboard component displays the scores of two players on a 3D scoreboard.
  * @param player1 - The score of player 1.
@@ -31,8 +35,10 @@ declare module "@react-three/fiber" {
  * mesh element represents a player's score.
  */
 export const Scoreboard = () => {
-	const font = new FontLoader().parse(Orbitron_Regular);
+	//* ------------------------------- hooks ------------------------------ */
 	const { scores, isScoreVisible, rightPaddleRef, leftPaddleRef } = usePongGameState();
+
+	const font = new FontLoader().parse(Orbitron_Regular);
 
 	// Reposition textGeometry based on score.
 	const Score1 : ScoreType = {
@@ -59,14 +65,15 @@ export const Scoreboard = () => {
 	const position1 : Vector3 = Score1[scores.p1Score]?.position;
 	const position2 : Vector3 = Score2[scores.p2Score]?.position;
 
+	//* ------------------------------- functions ------------------------------ */
 	const getColor = ( ref:  MutableRefObject<Mesh>) => {
 		if (ref && ref.current) {
 			const material = ref.current.material as MeshBasicMaterial;
 			const currentColor = material.color.getHex();
 			return (currentColor);
-		}
-		else
+		} else {
 			return ( 0xffffff );
+		}
 	}
 
 	return (

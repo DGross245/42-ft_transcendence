@@ -1,8 +1,8 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber";
-import { Environment, Stats } from "@react-three/drei";
-import { useEffect, useState } from "react";
+import { Environment } from "@react-three/drei";
+import { useState } from "react";
 
 import { useWindow } from "../../../../components/hooks/useWindow";
 import { Grid } from "@/components/TTT/Grid";
@@ -22,6 +22,9 @@ import { TTTModals } from "@/components/TTT/TTTModals";
 import { useGameState } from "../hooks/useGameState";
 import { Button } from "@nextui-org/react";
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 /**
  * The TTTScene component is a Three.js scene that represents the main scene of the Tic Tac Toe game.
@@ -82,7 +85,7 @@ const TTTScene = () => {
 	}
 
 	const onJoinCustom = () => {
-		updateGameState({ ...gameState, gameId: String(topic) })
+		updateGameState({ gameId: String(topic) })
 	}
 	const onCreate = async () => {
 		wsclient?.createGame();

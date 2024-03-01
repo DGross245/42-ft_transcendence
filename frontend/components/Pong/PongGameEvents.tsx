@@ -4,14 +4,21 @@ import { useEffect, useMemo } from "react";
 import { useKey } from "../hooks/useKey";
 import { useSound } from "../hooks/Sound";
 
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
 interface PositionInfo {
 	camPosition: [number, number, number],
 	countdownRotation:[number, number, number],
 	countdownPosition: [[number, number, number], [number, number, number]]
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
+
 export const PongGameEvents = () => {
-	// Provider hooks 
+	//* ------------------------------- hooks ------------------------------ */
 	const {
 		setScores,
 		pongGameState,
@@ -35,11 +42,10 @@ export const PongGameEvents = () => {
 		setSendContinueRequest,
 		setContinueIndex
 	} = usePongSocket();
-
-	// Normal hooks
 	const escape = useKey(['Escape']);
 	const playSound = useSound();
 
+	//* ------------------------------- functions ------------------------------ */
 	const positionInfo = useMemo<PositionInfo[]>(() => {
 		return [
 			{
@@ -77,6 +83,7 @@ export const PongGameEvents = () => {
 		];
 	}, []);
 
+	//* ------------------------------- useEffects ------------------------------ */
 	useEffect(() => {
 		if (playerState.client !== -1) {
 			if (!isGameMode) {
@@ -130,7 +137,7 @@ export const PongGameEvents = () => {
 			// Update game state to trigger a reset
 			updatePongGameState({ reset: true })
 		}
-	}, [rematchIndex, playSound, isGameMode, setRequestRematch, setSendRequest, setRematchIndex, updatePongGameState]);
+	}, [rematchIndex, isGameMode, playSound, setRequestRematch, setSendRequest, setRematchIndex, updatePongGameState]);
 
 	// Resumes the game when all players want to continue.
 	useEffect(() => {

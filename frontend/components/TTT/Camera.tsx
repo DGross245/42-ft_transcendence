@@ -7,17 +7,23 @@ import { useGameState } from "../../app/[lang]/tic-tac-toe/hooks/useGameState";
 import { useKey } from "@/components/hooks/useKey";
 import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
+
 /**
  * Ceates a perspective camera for a 3D scene and updates its position and orientation based on a key map.
  * @param props -
  * @returns The PerspectiveCamera component from the Three.js library.
  */
 const Camera = () => {
+	//* ------------------------------- ref & hooks ------------------------------ */
 	const ref = useRef<THREE.PerspectiveCamera>(null);
 	const { gameState, started } = useGameState();
 	const { playerState } = useSocket();
-
 	const keyOne = useKey('1');
+
+	//* ------------------------------- useEffects ------------------------------ */
 
 	// On reset changes back the original position.
 	useEffect(() => {
@@ -41,6 +47,7 @@ const Camera = () => {
 		}
 	},[keyOne, started, gameState.pause])
 
+	//* ------------------------------- render loop ------------------------------ */
 	useFrame((_, delta) => {
 		if (ref.current && playerState.client !== -1 && !started) {
 			const targetPos = new THREE.Vector3(44, 35, 47);

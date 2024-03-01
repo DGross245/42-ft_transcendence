@@ -3,11 +3,19 @@ import { useMemo } from 'react';
 import { DoubleSide} from 'three';
 import * as THREE from 'three'
 
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+
 interface SquareProps {
 	position: [number, number, number],
 	transparent: boolean;
 	color: number | undefined,
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 /**
  * Creates a 3D geometry similar to an 3D square frame using the Extrude component.
@@ -39,7 +47,7 @@ const Square : React.FC<SquareProps> = (props) => {
 		holeShape.lineTo(1.5, -1.5);
 
 		boxShape.holes.push(holeShape);
-		return boxShape;
+		return (boxShape);
 	}, []);
 
 	return (

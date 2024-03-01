@@ -1,5 +1,10 @@
 import { memo } from "react";
+
 import Field from "./Field";
+
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 export const FieldLayers = memo(() => {
 	const arrayPosition = [

@@ -7,14 +7,12 @@ export default function PongPage() {
 	const gameMode = false;
 
 	return (
-		<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
-			<div>
+		<div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
 				<PongGameState gameMode={gameMode} isBotActive={false}>
 					<PongSocket>
 						{ gameMode ? (<OneForAllScene />) : (<PongScene />) }
 					</PongSocket>
 				</PongGameState>
-			</div>
 		 </div>
 	);
 }

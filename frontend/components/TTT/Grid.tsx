@@ -2,10 +2,18 @@ import { useMemo } from "react";
 
 import GridLine from "./GridLine";
 
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+
 interface PosAndRotTypes {
 	position: [number, number, number];
 	rotation: [number, number, number];
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 /**
  * Generating mulitple grid lines in a 3D scene. Defines coordinates and rotations for grid lines at specific positions.

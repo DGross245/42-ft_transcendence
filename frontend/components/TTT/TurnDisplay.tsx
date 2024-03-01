@@ -3,8 +3,12 @@ import { DoubleSide, Shape } from 'three';
 import { Extrude } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 
-import { useSocket } from "../../app/[lang]/tic-tac-toe/hooks/useSocket";
-import { useGameState } from "../../app/[lang]/tic-tac-toe/hooks/useGameState";
+import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
+import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
+
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 /**
  * The TurnDisplay component renders a 3D display of the current currentTurn in a game, with different shapes
@@ -15,10 +19,13 @@ import { useGameState } from "../../app/[lang]/tic-tac-toe/hooks/useGameState";
  * properties of each mesh object are determined based on the `currentTurn`.
  */
 const TurnDisplay = () => {
+	//* ------------------------------- ref & hooks ------------------------------ */
 	const ref = useRef<THREE.Group | null>(null);
 	const { camera } = useThree();
 	const { playerState } = useSocket();
 	const { isGameMode, currentTurn } = useGameState();
+
+	//* ------------------------------- functions ------------------------------ */
 
 	/* The `colors` constant memoizes the calculation of colors based on the
 	player symbols ('X', 'O', '🔳') in the game */
@@ -83,6 +90,8 @@ const TurnDisplay = () => {
 		
 		return shape;
 	}, []);
+
+	//* ------------------------------- useEffects ------------------------------ */
 
 	/* This `useEffect` hook  is responsible for binding the 3D mesh objects
 	represented by the `TurnDisplay` component to the camera in the scene */

@@ -2,6 +2,10 @@
 
 import { Dispatch, SetStateAction } from "react";
 
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+
 interface TicTacToeBot {
 	board: string[][][];
 	symbol: string;
@@ -40,6 +44,10 @@ interface Coordinate {
 	z: number;
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
+
 // strength: number between 0 and 1, indicating how well the bot plays
 export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol: string, strength: number, setBoard: Dispatch<SetStateAction<string[][][]>>) => {
 
@@ -74,8 +82,9 @@ export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol
 			for (let i = 0; i < board.length; i++) {
 				for (let j = 0; j < board[i].length; j++) {
 					for (let k = 0; k < board[i][j].length; k++) {
-						if (i != 0 && j != 0 && k != 0)
+						if (i != 0 && j != 0 && k != 0) {
 							continue;
+						}
 						let x = i;
 						let y = j;
 						let z = k;
@@ -84,9 +93,9 @@ export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol
 						while (x >= 0 && x < board.length
 							&& y >= 0 && y < board[x].length
 							&& z >= 0 && z < board[x][y].length) {
-							if (board[x][y][z] === symbol_to_check)
+							if (board[x][y][z] === symbol_to_check) {
 								temp++;
-							else if (board[x][y][z] !== '') {
+							} else if (board[x][y][z] !== '') {
 								temp = 0;
 								break;
 							}
@@ -121,8 +130,9 @@ export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol
 		let self_index = 0;
 		SymbolArray.forEach((val, index) => {
 			longest_lines.push(getLongestLine(val));
-			if (val === symbol)
+			if (val === symbol) {
 				self_index = index;
+			}
 		});
 		let longest_total = longest_lines[0];
 		longest_lines.forEach((val) => {
@@ -134,8 +144,9 @@ export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol
 			placeAtRandom();
 			return ;
 		}
-		if (longest_lines[self_index].count == longest_total.count)
+		if (longest_lines[self_index].count == longest_total.count) {
 			longest_total = longest_lines[self_index];	
+		}
 		placeAtLine(longest_total.coords, longest_total.vector);
 	}
 

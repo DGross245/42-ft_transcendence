@@ -1,6 +1,6 @@
-import { Vector3, useFrame } from "@react-three/fiber";
+import { useFrame } from "@react-three/fiber";
 import { MutableRefObject, useEffect, useRef, useState } from "react";
-import { Mesh, MeshBasicMaterial } from 'three'
+import { Mesh, MeshBasicMaterial, Vector3 } from 'three'
 
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
@@ -9,7 +9,7 @@ type CollisionInfo = {
 	[key: string]: {player: any, score: any, isOwnGoal: boolean};
 };
 
-export const useBallLogic = (onPositionChange:  (position: Vector3) => void) => {
+export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 	const {
 		ballRef,
 		scores,

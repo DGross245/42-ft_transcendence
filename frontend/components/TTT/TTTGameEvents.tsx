@@ -6,8 +6,12 @@ import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
 import { useSound } from "../hooks/Sound";
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
+
 export const TTTGameEvents = memo(() => {
-	// Provider hooks 
+	//* ------------------------------- hooks ------------------------------ */
 	const {
 		gameState,
 		setBoard,
@@ -31,14 +35,13 @@ export const TTTGameEvents = memo(() => {
 		setSendContinueRequest,
 		setContinueIndex
 	} = useSocket();
-
-	// Normal hooks
 	const escape = useKey(['Escape']);
 	const playSound = useSound();
 
+	//* ------------------------------- useEffects ------------------------------ */
+
 	// Handling the reset of the scene, resetting important states.
 	useEffect(() => {
-
 		if (gameState.reset) {
 			setBoard(initialBoard());
 			setTurn('');
@@ -71,7 +74,7 @@ export const TTTGameEvents = memo(() => {
 			// Update game state to trigger a reset
 			updateGameState({ reset: true});
 		}
-	}, [rematchIndex, setRematchIndex, playSound, isGameMode, setRequestRematch, setSendRequest, updateGameState]);
+	}, [rematchIndex, isGameMode, setRequestRematch, setSendRequest, updateGameState, setRematchIndex, playSound]);
 
 	// Resumes the game when all players want to continue.
 	useEffect(() => {
@@ -87,7 +90,7 @@ export const TTTGameEvents = memo(() => {
 				updateGameState({ pause: false});
 			}, 1000);
 		}
-	}, [continueIndex, setSendContinueRequest, setContinueIndex, updateGameState, isGameMode]);
+	}, [continueIndex, isGameMode, setSendContinueRequest, setContinueIndex, updateGameState]);
 
 	// Initializes the turn after countdown
 	useEffect(() => {

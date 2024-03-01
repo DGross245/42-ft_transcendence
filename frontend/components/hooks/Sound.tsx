@@ -27,8 +27,10 @@ const sounds: Sounds = {
 }
 
 export function useSound() {
+	//* ------------------------------- state variavles ------------------------------ */
 	const [soundElement, setSoundElement] = useState<HTMLAudioElement | undefined>(undefined);
 
+	//* ------------------------------- functions ------------------------------ */
 	const newSound = () => {
 		const audio = new Audio();
 		audio.volume = 0.1;
@@ -51,6 +53,7 @@ export function useSound() {
 		audio.play();
 	}, [soundElement]);
 
+	//* ------------------------------- useEffects ------------------------------ */
 	useEffect(() => {
 		setSoundElement(newSound());
 	}, []);

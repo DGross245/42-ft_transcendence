@@ -10,10 +10,18 @@ import { usePongGameState } from '@/app/[lang]/pong/hooks/usePongGameState';
 
 extend({ TextGeometry })
 
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+
 interface PosAndRotInfo {
 	position: [number, number, number][],
 	rotation: [number, number, number],
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 /**
  * The Scoreboard component displays the scores of four players on a 3D scoreboard.
@@ -26,7 +34,7 @@ interface PosAndRotInfo {
  * mesh element represents a player's score.
  */
 const Scoreboard = () => {
-	const font = new FontLoader().parse(Orbitron_Regular);
+	//* ------------------------------- hooks ------------------------------ */
 	const {
 		scores,
 		isScoreVisible,
@@ -37,6 +45,9 @@ const Scoreboard = () => {
 	} = usePongGameState();
 	const { playerState } = usePongSocket();
 
+	const font = new FontLoader().parse(Orbitron_Regular);
+
+	//* ------------------------------- state variables ------------------------------ */
 	const [posAndRot, setPosAndRot] = useState<PosAndRotInfo[]>([
 		{
 			position: [[ 13, 50, 170], [ 21, 50, 170]],
@@ -56,6 +67,7 @@ const Scoreboard = () => {
 		},
 	])
 
+	//* ------------------------------- functions ------------------------------ */
 	const replacePosAndRot = useMemo(() => (player : number): PosAndRotInfo => {
 		switch (player) {
 			case 1:
@@ -86,6 +98,22 @@ const Scoreboard = () => {
 		}
 	},[]);
 
+	const getColor = ( ref:  MutableRefObject<Mesh>) => {
+		if (ref && ref.current) {
+			const material = ref.current.material as MeshBasicMaterial;
+			const currentColor = material.color.getHex();
+			return (currentColor);
+		} else {
+			return ( 0xffffff );
+		}
+	}
+
+	const getPosition = (position: [number, number, number][], score: number) => {
+		const pos = score === 1 || score === 7 ? position[0] : position[1];
+		return (pos);
+	};
+
+	//* ------------------------------- useEffects ------------------------------ */
 	useEffect(() => {
 		if (playerState.client !== -1) {
 
@@ -96,21 +124,6 @@ const Scoreboard = () => {
 			setPosAndRot(newPosAndRot);
 		}
 	}, [playerState.client, posAndRot, replacePosAndRot]);
-
-	const getColor = ( ref:  MutableRefObject<Mesh>) => {
-		if (ref && ref.current) {
-			const material = ref.current.material as MeshBasicMaterial;
-			const currentColor = material.color.getHex();
-			return (currentColor);
-		}
-		else
-			return ( 0xffffff );
-	}
-
-	const getPosition = (position: [number, number, number][], score: number) => {
-		const pos = score === 1 || score === 7 ? position[0] : position[1];
-		return (pos);
-	};
 
 	return (
 		<>

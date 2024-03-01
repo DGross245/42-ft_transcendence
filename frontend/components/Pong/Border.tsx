@@ -1,4 +1,8 @@
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
+
 /**
  * Creates multiple Three.js meshes representing 3D borders that cover the corners of the playing area within a 3D space.
  * @returns An array of Three.js border meshes.

@@ -3,12 +3,19 @@ import { DoubleSide} from 'three';
 import { Extrude } from '@react-three/drei';
 import * as THREE from 'three'
 
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+
 interface XProps {
 	position: [number, number, number],
 	color: number | undefined,
 	transparent: boolean,
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 /**
  * Creates a custom X shape using the Extrude component with specific position and rotation.
  * @param props

@@ -85,9 +85,7 @@ export const winningCoords : [number, number, number][] = [
 	[-1, -1, -1],[-1, -1, -1],[-1, -1, -1],[-1, -1, -1]
 ];
 
-/**
- * Context value interface for managing game states.
- */
+
 interface GameStateContextValue {
 	/** Represents the current game state */
 	gameState: {

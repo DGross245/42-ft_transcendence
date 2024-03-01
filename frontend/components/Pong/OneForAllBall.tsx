@@ -1,19 +1,23 @@
 'use client'
 
+import { Vector3 } from "three";
+
 import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
 import { useBallLogic } from "@/app/[lang]/pong/hooks/useBallLogic";
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
+
 /**
  * Creates a ball Three.js mesh and handles its movement and collision behavior.
- * @param props - The `props` parameter is an object that contains the following properties:
- * 				  `rightPaddleRef`, `leftPaddleRef`,`p1Score`,`setP1Score`,`p2Score`,`setP2Score`,
- * 				  `topPaddleRef`, `bottomPaddleRef`, `p3Score`,`setP3Score`,`p4Score`,`setP4Score`,
- * 				  `setWinner`, `gameOver`, `setGameOver`, `scoreVisible`, `isBallVisible` and `setBallVisibility`
  * @returns A Three.js mesh representing a ball.
  */
-export const OneForAllBall = ({ onPositionChange }) => {
+export const OneForAllBall : React.FC<{ onPositionChange: (position: Vector3) => void }> = ({ onPositionChange }) => {
+	//* ------------------------------- hooks  ------------------------------ */
 	const { isBallVisible, ballRef } = usePongGameState();
 	const {color : ballColor } = useBallLogic(onPositionChange);
+
 	const color = ballColor;
 
 	return (

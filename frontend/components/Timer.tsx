@@ -4,7 +4,9 @@ import { CheckIcon, CrossIcon } from "./icons";
 import { useWindow } from "./hooks/useWindow";
 import { useSound } from "./hooks/Sound";
 
-
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
 interface TimerProps {
 	playerClient: number;
 	isFull: string;
@@ -16,6 +18,9 @@ interface TimerProps {
 	setDisappear: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, showChip, timerState, setTimerState, disappear, setDisappear }) => {
 	const { dimensions } = useWindow();
 	const [seconds, setSeconds] = useState(15);

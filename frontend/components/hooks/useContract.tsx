@@ -9,7 +9,7 @@ import { ethers } from 'ethers';
 export const contract_address = '0xD78F9fEc2c927d8722DD7D65e30552BC4380a118'
 
 /* -------------------------------------------------------------------------- */
-/*                               Data Structures                              */
+/*                                  Interface                                 */
 /* -------------------------------------------------------------------------- */
 interface Player {
 	addr: string

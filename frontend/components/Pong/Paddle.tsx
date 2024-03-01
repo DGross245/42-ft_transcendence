@@ -8,11 +8,19 @@ import { useKey } from "@/components/hooks/useKey";
 import { usePongBot, Direction } from "@/app/[lang]/pong/hooks/usePongBot";
 import { OneForAllBall } from "./OneForAllBall";
 
+/* -------------------------------------------------------------------------- */
+/*                                  Interface                                 */
+/* -------------------------------------------------------------------------- */
+
 interface Paddle {
 	position: [number, number, number];
 	color: number;
 	rotation: [number, number, number];
 }
+
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
 
 const Paddle = forwardRef<Mesh, Paddle>(({ position, color, rotation }, ref) => {
 	return (
@@ -26,14 +34,23 @@ const Paddle = forwardRef<Mesh, Paddle>(({ position, color, rotation }, ref) => 
 Paddle.displayName = "Paddle"
 
 export const GameControl = () => {
+	//* ------------------------------- hooks ------------------------------ */
 	const { playerState, wsclient } = usePongSocket();
-	const { bottomPaddleRef, leftPaddleRef, topPaddleRef, rightPaddleRef, playerPaddle, pongGameState, botState } = usePongGameState();
-	const paddleSpeed = 300;
-
 	const { direction, ballAidsHook } = usePongBot();
-
+	const {
+		bottomPaddleRef,
+		leftPaddleRef,
+		topPaddleRef,
+		rightPaddleRef,
+		playerPaddle,
+		pongGameState,
+		botState
+	} = usePongGameState();
 	const right = useKey(['d', 'D']);
 	const left = useKey(['a', 'A']);
+
+	//* ------------------------------- render loop ------------------------------ */
+	const paddleSpeed = 300;
 
 	useFrame((_, delta) => {
 		if (rightPaddleRef && rightPaddleRef.current) {
@@ -51,20 +68,23 @@ export const GameControl = () => {
 	useFrame((_, delta) => {
 		if (playerPaddle.ref && playerPaddle.ref.current) {
 			if (right.isKeyDown) {
-				if (playerState.client === 2 || playerState.client === 3)
+				if (playerState.client === 2 || playerState.client === 3) {
 					playerPaddle.pos = Math.max(playerPaddle.pos - paddleSpeed * delta, playerPaddle.minPos);
-				else
+				} else {
 					playerPaddle.pos = Math.min(playerPaddle.pos + paddleSpeed * delta, playerPaddle.maxPos);
+				}
 			} else if (left.isKeyDown) {
-				if (playerState.client === 0 || playerState.client === 1)
+				if (playerState.client === 0 || playerState.client === 1) {
 					playerPaddle.pos = Math.max(playerPaddle.pos - paddleSpeed * delta, playerPaddle.minPos);
-				else
+				} else {
 					playerPaddle.pos = Math.min(playerPaddle.pos + paddleSpeed * delta, playerPaddle.maxPos);
+				}
 			}
-			if (playerState.client === 0 || playerState.client === 2)
+			if (playerState.client === 0 || playerState.client === 2) {
 				playerPaddle.ref.current.position.x = playerPaddle.pos;
-			else
+			} else {
 				playerPaddle.ref.current.position.z = playerPaddle.pos;
+			}
 			const newPaddleData = {
 				client: playerState.client,
 				pos: playerPaddle.pos

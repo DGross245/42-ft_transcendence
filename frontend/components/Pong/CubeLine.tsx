@@ -1,4 +1,8 @@
 
+/* -------------------------------------------------------------------------- */
+/*                                  Component                                 */
+/* -------------------------------------------------------------------------- */
+
 /**
  * Creates a line of Three.js cube components arranged vertically to represent
  * the middle line, splitting the game field in two.
