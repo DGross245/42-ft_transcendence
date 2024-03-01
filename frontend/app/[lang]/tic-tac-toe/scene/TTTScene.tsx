@@ -20,6 +20,7 @@ import { useSocket } from "../hooks/useSocket";
 import useContract from "@/components/hooks/useContract";
 import { TTTModals } from "@/components/TTT/TTTModals";
 import { useGameState } from "../hooks/useGameState";
+import { Button } from "@nextui-org/react";
 
 
 /**
@@ -77,10 +78,12 @@ const TTTScene = () => {
 	}
 
 	const onJoin = () => {
-		// updateGameState({ ...gameState, gameId: topic })
 		wsclient?.joinTournament(topic);
 	}
 
+	const onJoinCustom = () => {
+		updateGameState({ ...gameState, gameId: String(topic) })
+	}
 	const onCreate = async () => {
 		wsclient?.createGame();
 	}
@@ -92,22 +95,22 @@ const TTTScene = () => {
 	return (
 		<div style={{ width: "100%", height: "100%" }}>
 			<input
-					placeholder="Topic"
+					placeholder="GAME/TOURNAMENT ID"
 					value={topic}
 					onChange={onTopicChange}
 					id="4182"
 					name="in"
 			/>
-			{/* <button onClick={onCreate}> Create </button>
-			<button onClick={onJoin}> join </button> */}
-			<button onClick={joinQueue}> Queue </button>
-			<button onClick={onCreateTournament}> Create Tournament </button>
-			<button onClick={onJoin}>  JOIN  </button>
-			<button onClick={onSetNameAndColor}> NAMEANDCOLOR </button>
-			<button onClick={onJoinTournament}> Join Tournament </button>
-			<button onClick={onStartTournament}> Start Tournament </button>
-			<button onClick={onGetTournaments}> lol Tournament </button>
-			<button onClick={onkek}> print </button>
+			{/* <Button onClick={onCreate}> Create Costum </Button>
+			<Button onClick={onJoinCustom}> join Costum </Button> */}
+			<Button onClick={joinQueue}> Queue </Button>
+			<Button onClick={onCreateTournament}> Create Tournament </Button>
+			<Button onClick={onJoin}>  Join tournament manually  </Button>
+			<Button onClick={onSetNameAndColor}> setName&Color </Button>
+			<Button onClick={onJoinTournament}> Join Tournament </Button>
+			<Button onClick={onStartTournament}> Start Tournament </Button>
+			<Button onClick={onGetTournaments}> print all Tournament </Button>
+			<Button onClick={onkek}> start tournament manually </Button>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height - 128 }}>
 				<Camera />
 				<Countdown />
