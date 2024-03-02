@@ -8,7 +8,8 @@ import {
 	SetStateAction,
 	MutableRefObject,
 	useRef,
-	useCallback
+	useCallback,
+	useEffect
 } from "react";
 import { Mesh } from 'three'
 
@@ -77,7 +78,7 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 	const [botState, setBot] = useState({ isActive: isBotActive, strength: 100, client: -1 });
 	const [isScoreVisible, setScoreVisibility] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true);
-	const [isGameMode] = useState(gameMode);
+	const [isGameMode, setGameMode] = useState(gameMode);
 	const [camPos, setCamPos] = useState<[number, number, number]>([0, 350, 400]);
 	const [countdownRot, setCountdownRot] = useState<[number, number, number]>([0, 0, 0]);
 	const [countdownPos, setCountdownPos] = useState<[number, number, number][]>([ [-23, 50, 0], [-35, 50, 0] ]);
@@ -95,6 +96,11 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 			...newState,
 		}));
 	}, []);
+
+	useEffect(() => {
+		setGameMode(gameMode);
+		setBot(prevState => ({ ...prevState, isActive: isBotActive }));
+	}, [gameMode, isBotActive]);
 
 	const value: PongGameStateContextValue = {
 		scores,

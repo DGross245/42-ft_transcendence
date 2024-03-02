@@ -4,7 +4,8 @@ import {
 	useState,
 	Dispatch,
 	SetStateAction,
-	useCallback
+	useCallback,
+	useEffect
 } from "react";
 
 /**
@@ -176,6 +177,11 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 			...newState,
 		}));
 	}, []);
+
+	useEffect(() => {
+		setGameMode(gameMode);
+		setBot(prevState => ({ ...prevState, isActive: isBotActive }));
+	}, [gameMode, isBotActive]);
 
 	const value: GameStateContextValue = {
 		currentTurn,

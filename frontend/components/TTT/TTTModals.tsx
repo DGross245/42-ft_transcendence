@@ -140,7 +140,7 @@ export const TTTModals = memo(() => {
 	const quitGame = useCallback(() => {
 		router.push('/');
 		wsclient?.leave();
-	}, [wsclient]);
+	}, [wsclient, router]);
 
 	return (
 		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">

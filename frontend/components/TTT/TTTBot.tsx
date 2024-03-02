@@ -52,24 +52,24 @@ export const TTTBot = () => {
 								addr: "0xBotBOB01245",
 								color: 0xff0000,
 								number: client,
-								symbol: 'UNDEFINED'
+								symbol: client === 1 ? 'O' : '🔳',
 							};
 						} else {
 							return ( prevPlayer );
 						}
 					});
 
-					setBot({ ...botState, symbol: updatedPlayers[client].symbol, client: client })
-
 					return { ...prevState, players: updatedPlayers };
 				});
+
+				setBot({ ...botState, symbol: client === 1 ? 'O' : '🔳', client: client })
 			}
 		}
 
 		if (botState.isActive && wsclient) {
 			joinTheGame();
 		}
-	},[botState.isActive, wsclient, playerState, botState, isGameMode, setBot, setPlayerState])
+	},[botState, wsclient, playerState, botState, isGameMode, setBot, setPlayerState])
 
 	return (null);
 }

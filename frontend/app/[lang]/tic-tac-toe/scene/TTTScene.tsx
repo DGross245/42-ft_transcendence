@@ -2,7 +2,7 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useWindow } from "../../../../components/hooks/useWindow";
 import { Grid } from "@/components/TTT/Grid";
@@ -21,6 +21,7 @@ import useContract from "@/components/hooks/useContract";
 import { TTTModals } from "@/components/TTT/TTTModals";
 import { useGameState } from "../hooks/useGameState";
 import { Button } from "@nextui-org/react";
+import { JoinGame } from "@/components/JoinGame";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -33,79 +34,20 @@ import { Button } from "@nextui-org/react";
  * resizing, modal display, and game completion.
  * @returns The entire Three.js scene, including the modal.
  */
-const TTTScene = () => {
+const TTTScene : React.FC<{ selected: string }> = ({ selected }) => {
 	const { dimensions } = useWindow();
-	const { wsclient } = useSocket();
-	const {
-		createTournament,
-		setNameAndColor,
-		joinTournament,
-		startTournament,
-		getTournaments,
-		getRankedGames
-	} = useContract();
-	const {gameState, updateGameState} = useGameState();
-	const [topic, setTopic] = useState(0);
-
-	const onTopicChange = (e: any) => {
-		setTopic(e.target.value);
-	}
-
-	const onCreateTournament = async () => {
-		if (!wsclient) return;
-		await createTournament(300000000);
-		setTopic((await getTournaments()).length - 1);
-	}
-
-	const onSetNameAndColor = async () => {
-		await setNameAndColor('KEK', '0xffffff');
-	}
-
-	const onJoinTournament = async () =>{
-		await joinTournament(topic);
-		wsclient?.joinTournament(topic);
-	}
-
-	const onStartTournament = async () => {
-		await startTournament(topic);
-		wsclient?.requestTournament(topic, 'TTT');
-	}
-
-	const onGetTournaments = async () => {
-		const t = await getTournaments();
-		console.log(t);
-	}
-
-	const onkek = () => {
-		wsclient?.requestTournament(topic, 'TTT');
-	}
-
-	const onJoin = () => {
-		wsclient?.joinTournament(topic);
-	}
-
-	const onJoinCustom = () => {
-		updateGameState({ gameId: String(topic) })
-	}
-	const onCreate = async () => {
-		wsclient?.createGame();
-	}
-
-	const joinQueue = () => {
-		wsclient?.joinQueue("tictactoe")
-	}
 
 	return (
 		<div style={{ width: "100%", height: "100%" }}>
-			<input
+			{/* <input
 					placeholder="GAME/TOURNAMENT ID"
 					value={topic}
 					onChange={onTopicChange}
 					id="4182"
 					name="in"
 			/>
-			{/* <Button onClick={onCreate}> Create Costum </Button>
-			<Button onClick={onJoinCustom}> join Costum </Button> */}
+			<Button onClick={onCreate}> Create Costum </Button>
+			<Button onClick={onJoinCustom}> join Costum </Button>
 			<Button onClick={joinQueue}> Queue </Button>
 			<Button onClick={onCreateTournament}> Create Tournament </Button>
 			<Button onClick={onJoin}>  Join tournament manually  </Button>
@@ -113,8 +55,9 @@ const TTTScene = () => {
 			<Button onClick={onJoinTournament}> Join Tournament </Button>
 			<Button onClick={onStartTournament}> Start Tournament </Button>
 			<Button onClick={onGetTournaments}> print all Tournament </Button>
-			<Button onClick={onkek}> start tournament manually </Button>
+			<Button onClick={onkek}> start tournament manually </Button> */}
 			<Canvas style={{ width: dimensions.width, height: dimensions.height - 128 }}>
+				<JoinGame selected={selected} />
 				<Camera />
 				<Countdown />
 				<Grid />

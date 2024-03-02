@@ -1,8 +1,9 @@
-import { Game } from '@/components/hooks/useContract';
-import { DefaultEventsMap } from '@socket.io/component-emitter';
-import { RemoteSocket } from 'Socket.IO';
-import { DecorateAcknowledgementsWithMultipleResponses } from 'Socket.IO/dist/typed-events';
 import crypto from 'crypto';
+import { RemoteSocket } from 'Socket.IO';
+import { DefaultEventsMap } from '@socket.io/component-emitter';
+import { DecorateAcknowledgementsWithMultipleResponses } from 'Socket.IO/dist/typed-events';
+
+import { Game } from '@/components/hooks/useContract';
 import { contract } from './socket';
 
 interface Matchmaking {
@@ -11,15 +12,19 @@ interface Matchmaking {
 }
 
 const searchForOpponent = async (sockets :Matchmaking['sockets'], length: number) => {
-	const maxDiff = 0.4;
+	const maxDiff = 0.42;
 
 	for (let i = 0; i < sockets.length; i++) {
 		let sequence = [sockets[i]];
-		let maxDifference = (await sockets[i].data.elo) * maxDiff;
+		let playerOneDiffRange = (await sockets[i].data.elo) * maxDiff;
 
 		for (let j = i + 1; j < sockets.length; j++) {
-			if (Math.abs((await sockets[j].data.elo) - (await sequence[sequence.length - 1].data.elo)) <= maxDifference) {
-				sequence.push(sockets[j]);
+			let elodiff = Math.abs((await sockets[j].data.elo) - (await sequence[sequence.length - 1].data.elo));
+			if (elodiff <= Math.abs(playerOneDiffRange)) {
+				let playerTwoDiffRange = (await sockets[j].data.elo) * maxDiff;
+				if (elodiff <= Math.abs(playerTwoDiffRange)) {
+					sequence.push(sockets[j]);
+				}
 			}
 			if (sequence.length === length) {
 				return (sequence);
@@ -80,7 +85,6 @@ const shufflePlayers = (array: any) => {
 export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number, gameType: string ) => {
 	const games = (await contract.getTournamentTree(tournamentID)) as Game[];
 
-	// vllt ne function schreiben für sowas wie findGameTypePlayerSize oder so
 	let maxClients = 2;
 
 	if (gameType === 'OneForAll')

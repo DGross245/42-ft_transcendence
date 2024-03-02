@@ -119,7 +119,7 @@ export const TTTSocketEvents = memo(() => {
 								addr: String(address),
 								color: Number(player.color),
 								number: numClients,
-								symbol: numClients === 0 ? 'X' : numClients === 1 ? '0' : '🔳',
+								symbol: numClients === 0 ? 'X' : numClients === 1 ? 'O' : '🔳',
 							};
 						} else {
 							return ( prevPlayer );
@@ -356,7 +356,7 @@ export const TTTSocketEvents = memo(() => {
 		const sendRandomSymbol = () => {
 			const symbols = shuffleArray(isGameMode ? ['X', 'O', '🔳'] : ['X', 'O']);
 			const botClientNumber = isGameMode ? 2 : 1;
-			console.log("d")
+
 			setPlayerState((prevState) => {
 				const updatedPlayers = prevState.players.map((player, index) => {
 					return { ...player, symbol: symbols[index] };

@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, Chip, Input, Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner, Switch, Tab, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tabs } from "@nextui-org/react";
+import { Button, Card, CardBody, Chip, Input, Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Slider, Spinner, Switch, Tab, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tabs } from "@nextui-org/react";
 import styles from "./Modals.module.css";
 import ModalButton from "./ModalButton";
 import { useEffect, useState } from "react";
@@ -7,14 +7,22 @@ import clsx from "clsx";
 
 import pongGameImage from "@/assets/pongGame.png";
 import { ArrowLeftIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { useRouter } from "next/navigation";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
 /* -------------------------------------------------------------------------- */
+export interface GameOptions {
+	gameMode: boolean;
+	isBotActive: boolean;
+	botStrength: number;
+}
+
 interface SelectionModalProps {
 	isOpen: boolean,
-	onClose: () => void,
+	onClose: (selected: string) => void,
 	loading?: boolean
+	setGameOptions: (options: GameOptions) => void;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -30,9 +38,12 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 	)
 }
 
-const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading }) => {
+const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, setGameOptions }) => {
 	const [tournamentMode, setTournamentMode] = useState(false);
 	const [selected, setSelected] = useState("singleplayer");
+	const [botSelected, setBotSelected] = useState(false);
+	const [strength, setStrength] = useState(0.5);
+	const router = useRouter();
 
 	useEffect(() => {
 		if (!isOpen) {
@@ -41,10 +52,30 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 		}
 	}, [isOpen]);
 
-	const onButtonClick = () => {
-		if (selected == "tournament-modes") {
-			setTournamentMode(true);
+	useEffect(() => {
+		if (selected !== "singleplayer" && selected !== "multiplayer") {
+			setBotSelected(false);
 		}
+	}, [selected, setBotSelected]);
+
+	const onButtonClick = () => {
+		if (selected === "tournament-modes") {
+			setTournamentMode(true);
+		} else if (selected === "singleplayer") {
+			setGameOptions({ gameMode: false, isBotActive: botSelected, botStrength: strength });
+		} else if (selected === "multiplayer") {
+			setGameOptions({ gameMode: true, isBotActive: botSelected, botStrength: strength });
+		} else if (selected === "matchmaking"){
+			setGameOptions({ gameMode: false, isBotActive: botSelected, botStrength: strength });
+		}
+
+		if (selected !== "tournament-modes") {
+			onClose(selected);
+		}
+	}
+
+	const returnToHome = () => {
+		router.push('/');
 	}
 
 	return (
@@ -52,8 +83,9 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 			size="xl"
 			isOpen={isOpen}
 			backdrop="blur"
-			onClose={onClose}
+			onClose={returnToHome}
 			placement="center"
+			isDismissable={false}
 			closeButton={
 				<button>
 					<XMarkIcon className="w-6 h-6"/>
@@ -106,9 +138,25 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 								</Tab>
 							</Tabs>
 						</div>
-						<Switch size="md" className="p-3" isDisabled={selected !== "singleplayer"}>
-							Enable Bot Mode
-						</Switch>
+						<div className="flex items-center gap-4">
+							<Switch isSelected={botSelected} onValueChange={setBotSelected} size="md" className="p-3" isDisabled={selected !== "singleplayer" && selected !== "multiplayer"}>
+								Enable Bot Mode
+							</Switch>
+							<Slider
+								label="Strength"
+								showTooltip={true}
+								formatOptions={{style: 'percent'}}
+								tooltipValueFormatOptions={{style: 'percent' }}
+								defaultValue={0.5}
+								step={0.1}
+								maxValue={1}
+								minValue={0}
+								value={strength}
+								onChange={setStrength}
+								style={{ width: '300px' }}
+								isDisabled={!botSelected}
+							/>
+						</div>
 					</>)}
 					{tournamentMode && (<>
 						<Input
