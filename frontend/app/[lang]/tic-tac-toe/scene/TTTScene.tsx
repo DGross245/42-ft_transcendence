@@ -36,6 +36,65 @@ import { JoinGame } from "@/components/JoinGame";
  */
 const TTTScene : React.FC<{ selected: string }> = ({ selected }) => {
 	const { dimensions } = useWindow();
+	// const { wsclient } = useSocket();
+	// const {
+	// 	createTournament,
+	// 	setNameAndColor,
+	// 	joinTournament,
+	// 	startTournament,
+	// 	getTournaments,
+	// 	getRankedGames
+	// } = useContract();
+	// const {gameState, updateGameState} = useGameState();
+	// const [topic, setTopic] = useState(0);
+
+	// const onTopicChange = (e: any) => {
+	// 	setTopic(e.target.value);
+	// }
+
+	// const onCreateTournament = async () => {
+	// 	if (!wsclient) return;
+	// 	await createTournament(300000000);
+	// 	setTopic((await getTournaments()).length - 1);
+	// }
+
+	// const onSetNameAndColor = async () => {
+	// 	await setNameAndColor('KEK', '0xffffff');
+	// }
+
+	// const onJoinTournament = async () =>{
+	// 	await joinTournament(topic);
+	// 	wsclient?.joinTournament(topic);
+	// }
+
+	// const onStartTournament = async () => {
+	// 	await startTournament(topic);
+	// 	wsclient?.requestTournament(topic, 'TTT');
+	// }
+
+	// const onGetTournaments = async () => {
+	// 	const t = await getTournaments();
+	// 	console.log(t);
+	// }
+
+	// const onkek = () => {
+	// 	wsclient?.requestTournament(topic, 'TTT');
+	// }
+
+	// const onJoin = () => {
+	// 	wsclient?.joinTournament(topic);
+	// }
+
+	// const onJoinCustom = () => {
+	// 	updateGameState({ gameId: String(topic) })
+	// }
+	// const onCreate = async () => {
+	// 	wsclient?.createGame();
+	// }
+
+	// const joinQueue = () => {
+	// 	wsclient?.joinQueue("tictactoe")
+	// }
 
 	return (
 		<div style={{ width: "100%", height: "100%" }}>
@@ -57,7 +116,7 @@ const TTTScene : React.FC<{ selected: string }> = ({ selected }) => {
 			<Button onClick={onGetTournaments}> print all Tournament </Button>
 			<Button onClick={onkek}> start tournament manually </Button> */}
 			<Canvas style={{ width: dimensions.width, height: dimensions.height - 128 }}>
-				<JoinGame selected={selected} />
+				{/* <JoinGame selected={selected} /> */}
 				<Camera />
 				<Countdown />
 				<Grid />

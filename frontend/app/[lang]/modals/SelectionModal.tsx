@@ -8,6 +8,8 @@ import clsx from "clsx";
 import pongGameImage from "@/assets/pongGame.png";
 import { ArrowLeftIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
+import useContract from "@/components/hooks/useContract";
+import { useJoinEvents } from "@/components/JoinGame";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -25,6 +27,12 @@ interface SelectionModalProps {
 	setGameOptions: (options: GameOptions) => void;
 }
 
+interface TournamentData {
+	tournamentID: number,
+	numberOfPlayers: number,
+	isStarted: boolean,
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
@@ -38,19 +46,44 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 	)
 }
 
+// TODO: Maybe fetch current players inside the Tournament socket room like SocketRoom / row.numberOfPlayers
+// TODO: Extract tournament input and display only tournaments by that input
+// TODO: Add a refresh button (with a refrech delay)
 const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, setGameOptions }) => {
 	const [tournamentMode, setTournamentMode] = useState(false);
 	const [selected, setSelected] = useState("singleplayer");
 	const [botSelected, setBotSelected] = useState(false);
 	const [strength, setStrength] = useState(0.5);
 	const router = useRouter();
+	const [data, setData] = useState<TournamentData[]>([]);
+	const { getTournaments } = useContract();
+	const {
+		onJoinTournament,
+		onCreateTournament
+	} = useJoinEvents();
 
 	useEffect(() => {
-		if (!isOpen) {
+		const fetchData = async () => {
+			const tournaments = await getTournaments();
+			if (!tournaments) {
+				return ;
+			}
+			const formattedData = tournaments.map((tournament, index) => ({
+				tournamentID: index,
+				numberOfPlayers: tournament.players.length,
+				isStarted: tournament.start_block != 0
+			}));
+			setData(formattedData);
+		};
+	
+		if (isOpen) {
+			fetchData();
+		} else {
+			setData([]);
 			setTournamentMode(false);
 			setSelected("singleplayer");
 		}
-	}, [isOpen]);
+	  }, [isOpen, getTournaments, setData, setTournamentMode, setSelected]);
 
 	useEffect(() => {
 		if (selected !== "singleplayer" && selected !== "multiplayer") {
@@ -152,7 +185,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 								maxValue={1}
 								minValue={0}
 								value={strength}
-								onChange={setStrength}
+								onChangeEnd={setStrength}
 								style={{ width: '300px' }}
 								isDisabled={!botSelected}
 							/>
@@ -166,7 +199,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 							className="w-full"
 							placeholder="Enter Tournament ID"
 						/>
-						<Button>Create New Tournament</Button>
+						<Button onClick={() => onCreateTournament()}>Create New Tournament</Button>
 						<Table aria-label="Tournaments Table">
 							<TableHeader>
 								<TableColumn>Tournament ID</TableColumn>
@@ -175,54 +208,20 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 								<TableColumn>Actions</TableColumn>
 							</TableHeader>
 							<TableBody>
-								<TableRow key="1">
-									<TableCell>1</TableCell>
-									<TableCell>1 / 10</TableCell>
-									<TableCell>
-										<Chip className="capitalize" color="success" size="sm" variant="flat">
-											Running
-										</Chip>
-									</TableCell>
-									<TableCell>
-										<Link>Join Tournament</Link>
-									</TableCell>
-								</TableRow>
-								<TableRow key="2">
-									<TableCell>2</TableCell>
-									<TableCell>1 / 10</TableCell>
-									<TableCell>
-										<Chip className="capitalize" color="success" size="sm" variant="flat">
-											Running
-										</Chip>
-									</TableCell>
-									<TableCell>
-										<Link>Join Tournament</Link>
-									</TableCell>
-								</TableRow>
-								<TableRow key="3">
-									<TableCell>3</TableCell>
-									<TableCell>1 / 10</TableCell>
-									<TableCell>
-										<Chip className="capitalize" color="warning" size="sm" variant="flat">
-											Waiting...
-										</Chip>
-									</TableCell>
-									<TableCell>
-										<Link>Join Tournament</Link>
-									</TableCell>
-								</TableRow>
-								<TableRow key="4">
-									<TableCell>4</TableCell>
-									<TableCell>1 / 10</TableCell>
-									<TableCell>
-										<Chip className="capitalize" color="success" size="sm" variant="flat">
-											Running
-										</Chip>
-									</TableCell>
-									<TableCell>
-										<Link>Join Tournament</Link>
-									</TableCell>
-								</TableRow>
+								{data.map((row) => (
+									<TableRow key={row.tournamentID}>
+										<TableCell>{row.tournamentID}</TableCell>
+										<TableCell> {row.numberOfPlayers} </TableCell>
+										<TableCell>
+											<Chip className="capitalize" color={row.isStarted ? "success" : "warning"} size="sm" variant="flat">
+												{row.isStarted ? "Running" : "Waiting..."}
+											</Chip>
+										</TableCell>
+										<TableCell>
+											<Link isDisabled={row.isStarted} onClick={() => onJoinTournament(row.tournamentID)}>Join Tournament</Link>
+										</TableCell>
+									</TableRow>
+								))}
 							</TableBody>
 						</Table>
 					</>)}

@@ -21,7 +21,7 @@ export enum Direction {
 export const usePongBot = () => {
 	const [direction, setDirection] = useState(Direction.Stop);
 	const { botState, rightPaddleRef, isGameMode, setBot } = usePongGameState();
-	const { wsclient, playerState, setPlayerState } = usePongSocket();
+	const { wsclient, setPlayerState } = usePongSocket();
 
 	// Calculates the bot's paddle movement direction based on the ball's position.
 	const calculateBotMove = (ballPosition: number, botPaddlePosition: number) => {
