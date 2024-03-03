@@ -49,6 +49,9 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 // TODO: Maybe fetch current players inside the Tournament socket room like SocketRoom / row.numberOfPlayers
 // TODO: Extract tournament input and display only tournaments by that input
 // TODO: Add a refresh button (with a refrech delay)
+// TODO: Add a snippet for sharing GameID (Custom game only) should disapear on match start
+// TODO: Maybe waitingRoom modal for all games modes (simple maybe not needed)
+// TODO: similar modal from tournament also for Custome Games
 const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, setGameOptions }) => {
 	const [tournamentMode, setTournamentMode] = useState(false);
 	const [selected, setSelected] = useState("singleplayer");
