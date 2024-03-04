@@ -10,7 +10,7 @@ import { initialTTTPlayerState } from "@/app/[lang]/tic-tac-toe/context/TTTSocke
 import useContract, { PlayerScore } from "../hooks/useContract";
 import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
 import { useJoinEvents } from "../JoinGame";
-import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
+import { useWeb3ModalAccount, useWeb3ModalProvider } from "@web3modal/ethers5/react";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -70,6 +70,7 @@ export const TTTModals = memo(() => {
 	const [playerInfos, setPlayerInfos] = useState({ color: "#ffffff", name: "KEK" });
 	const [showSetModal, setShowSetModal] = useState(false);
 	const {isConnected, address} = useWeb3ModalAccount();
+	const { tmContract } = useContract();
 
 	/* ------------------------------- functions ------------------------------ */
 	const handleButtonClick = useCallback(() => {
@@ -191,17 +192,16 @@ export const TTTModals = memo(() => {
 
 	useEffect(() => {
 		const checkPlayerInfo = async () => {
-			console.log("KEK", String(address))
 			const playerInfo = await getPlayer(String(address));
 			if (!playerInfo) {
 				setShowSetModal(true);
 			}
 		}
 
-		if (isConnected) {
+		if (isConnected && tmContract) {
 			checkPlayerInfo();
 		}
-	}, [isConnected, getPlayer, address]);
+	}, [isConnected, getPlayer, address, tmContract]);
 
 	return (
 		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">
@@ -231,9 +231,9 @@ export const TTTModals = memo(() => {
 			{!customized && (
 				<CustomizeModal isOpen={gameState.gameId !== '-1' && !customized} color={playerInfos.color} username={playerInfos.name} startGame={initiateGame}/>
 			)}
-			{/* {unregistered && (
+			{unregistered && (
 				<CustomizeModal isOpen={showSetModal} startGame={() => setShowSetModal(false)}/>
-			)} */}
+			)}
 
 			<Timer
 				playerClient={playerState.client}

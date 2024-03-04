@@ -13,9 +13,7 @@ export const useJoinEvents = () => {
 	const { updateGameState } = useGameState();
 	
 	const onCreateTournament = async () => {
-		console.log("KEK")
 		const number = await createTournament(300000000);
-		console.log("KEK", number)
 	}
 	
 	const onStartTournament = async (id: number, gameType: string) => {

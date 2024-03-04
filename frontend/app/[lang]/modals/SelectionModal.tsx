@@ -51,18 +51,15 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 // TODO: Extract tournament input and display only tournaments by that input
 // TODO: Add a refresh button (with a refrech delay)
 // TODO: Add a snippet for sharing GameID (Custom game only) should disapear on match start
-// TODO: Maybe waitingRoom modal for all games modes (simple maybe not needed)
 // TODO: similar modal from tournament also for Custome Games
 // TODO: Add a function that pulls an image based on selected modus for the gameType
 // FIXME: Fix switch, maybe due to the setter, its movement or interaction with it seems laggy unsmooth
-// FIXME: Find a solution for initial wallet login and player registration (playername and color set)
 // TODO: Tournament end sequence missing, a mechnaic that displays maybe a winner of the tournament, and away to exit the game after tournament is finished.
 //		 also reset tournament state
 // FIXME: Fix Timer positioning in Scene
 // FIXME: Add a handler for each contract call when an  error happens (when null is returned)
 // TODO: setColorAndName still has a delay and isnt set after the modal disappears
 // TODO: Add a block for not connected users to access pages other then home
-// FIXME: Toast has some issues, doesnt show
 const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, setGameOptions }) => {
 	const [tournamentMode, setTournamentMode] = useState(false);
 	const [selected, setSelected] = useState("singleplayer");
@@ -70,22 +67,23 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 	const [strength, setStrength] = useState(0.5);
 	const router = useRouter();
 	const [data, setData] = useState<TournamentData[]>([]);
-	const { getTournaments } = useContract();
+	const { getTournaments, tmContract } = useContract();
 	const { onJoinTournament, onCreateTournament } = useJoinEvents();
 
 	useEffect(() => {
-		// FIXME: Error when getTournament is called to early?
 		const fetchData = async () => {
-			const tournaments = await getTournaments();
-			if (!tournaments) {
-				return ;
+			if (tmContract) {
+				const tournaments = await getTournaments();
+				if (!tournaments) {
+					return ;
+				}
+				const formattedData = tournaments.map((tournament, index) => ({
+					tournamentID: index,
+					numberOfPlayers: tournament.players.length,
+					isStarted: tournament.start_block != 0
+				}));
+				setData(formattedData);
 			}
-			const formattedData = tournaments.map((tournament, index) => ({
-				tournamentID: index,
-				numberOfPlayers: tournament.players.length,
-				isStarted: tournament.start_block != 0
-			}));
-			setData(formattedData);
 		};
 
 		if (isOpen) {

@@ -19,7 +19,7 @@ export default function TicTacToePage() {
 
 	return (
 		<div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
-			{/* <SelectionModal isOpen={open} onClose={joinTheGame} setGameOptions={setGameOptions} /> */}
+			<SelectionModal isOpen={open} onClose={joinTheGame} setGameOptions={setGameOptions} />
 			<GameState gameMode={gameOptions.gameMode} isBotActive={gameOptions.isBotActive}>
 				<Socket>
 					<TTTScene selected={selected} />

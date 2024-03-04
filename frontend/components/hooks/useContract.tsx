@@ -145,6 +145,7 @@ function useContract() {
 	},[callContract]);
 
 	return {
+		tmContract,
 		address,
 		createTournament,
 		startTournament,
