@@ -53,7 +53,7 @@ function useContract() {
 	const callContract = useCallback(async (functionName: string, args: any[] = []) => {
 		try {
 			const result = await tmContract?.[functionName](...args);
-			if (typeof result.wait !== "undefined") {
+			if (result && typeof result.wait !== "undefined") {
 				result.wait();
 			}
 			return result;

@@ -191,6 +191,7 @@ export const TTTModals = memo(() => {
 
 	useEffect(() => {
 		const checkPlayerInfo = async () => {
+			console.log("KEK", String(address))
 			const playerInfo = await getPlayer(String(address));
 			if (!playerInfo) {
 				setShowSetModal(true);
