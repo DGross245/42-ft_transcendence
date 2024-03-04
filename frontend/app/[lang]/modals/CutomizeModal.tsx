@@ -3,6 +3,7 @@ import styles from "./Modals.module.css";
 import ModalButton from "./ModalButton";
 import { useState } from "react";
 import clsx from "clsx";
+import useContract from "@/components/hooks/useContract";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -76,7 +77,7 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 					</div>
 				</ModalBody>
 				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
-					<ModalButton onClick={onButtonClick}>Start Game</ModalButton>
+					<ModalButton onClick={onButtonClick}>Join Game</ModalButton>
 				</ModalFooter>
 			</ModalContent>
 		</Modal>

@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
 
 import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
@@ -8,6 +8,8 @@ import GameModal, { GameResult, Status } from "@/app/[lang]/modals/GameModal";
 import { useUI } from "@/app/[lang]/tic-tac-toe/hooks/useUI";
 import { initialTTTPlayerState } from "@/app/[lang]/tic-tac-toe/context/TTTSockets";
 import useContract, { PlayerScore } from "../hooks/useContract";
+import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
+import { useJoinEvents } from "../JoinGame";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -22,7 +24,8 @@ export const TTTModals = memo(() => {
 		winner,
 		updateGameState,
 		setStarted,
-		tournament
+		tournament,
+		setTournament
 	} = useGameState();
 	const {
 		continueIndex,
@@ -38,21 +41,27 @@ export const TTTModals = memo(() => {
 		setSendRequest,
 		wsclient,
 		setPlayerState,
-		sendRequest
+		sendRequest,
+		playerAddress
 	} = useSocket();
 	const {
 		submitGameResultRanked,
 		submitGameResultTournament,
-		getTournament
+		getTournament,
+		getPlayer
 	} = useContract();
 	const {
 		showModal,
 		closeModal,
 	} = useUI();
 
+	const {
+		onSetNameAndColor
+	} = useJoinEvents();
 	//* ------------------------------- state variables ------------------------------ */
 	const [isClicked, setIsClicked] = useState(false);
 	const router = useRouter();
+	const [playerInfo, setPlayerInfo] = useState({ color: "0xffffff", name: "KEK" });
 
 	/* ------------------------------- functions ------------------------------ */
 	const handleButtonClick = useCallback(() => {
@@ -142,6 +151,29 @@ export const TTTModals = memo(() => {
 		wsclient?.leave();
 	}, [wsclient, router]);
 
+	const getPlayerInfo = async () => {
+		if (playerAddress !== "") {
+			const playerInfo = await getPlayer(String(playerAddress));
+
+			console.log(playerInfo)
+			return { color: "0xffffff", name: "KEK"}
+		}
+	}
+
+	// TODO: Add useEffect for handling playerInfo fetching
+	// useEffect(() => {
+
+	// }, [])
+
+	// TODO: Add some kind of setter to initiat joining
+	const initiateGame = async (username: string, color: string) => {
+		if (username !== playerInfo.name || color !== playerInfo.color) {
+			await onSetNameAndColor(username, color);
+		}
+
+		// setTournament()
+	}
+
 	return (
 		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">
 			{/* Pause Modal */}
@@ -156,16 +188,26 @@ export const TTTModals = memo(() => {
 			/>
 			{tournament.id !== -1 ? (
 				// Tournament Modal
-				<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} loading={sendRequest} status={getStatus()} quit={quitGame}/>
-			) : (
-				gameState.gameId.includes("Costome-Game-") ? (
-					// Custom-Game Modal
-					<GameModal isOpen={showModal} gameResult={getGameResult()} nextGame={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
+				<GameModal isOpen={showModal} gameResult={getGameResult()} nextGame={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
+				) : (
+					gameState.gameId.includes("Costome-Game-") ? (
+						// Custom-Game Modal
+						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} loading={sendRequest} status={getStatus()} quit={quitGame}/>
 				) : (
 					// Ranked Modal
 					<GameModal isOpen={showModal} gameResult={getGameResult()} queue={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
 				)
 			)}
+
+			{/* {tournament.id !== -1 ? (
+				(tournament.isRunning === false && (
+					<CustomizeModal isOpen={tournament.id !== -1 && !tournament.isRunning} color={playerInfo.color} startGame={initiateGame}/>
+				))
+			) : (
+				//Implement CustomizeModal for every other match
+				<>
+				</>
+			)} */}
 
 			<Timer
 				playerClient={playerState.client}

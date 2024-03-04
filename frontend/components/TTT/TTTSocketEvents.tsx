@@ -37,6 +37,7 @@ export const TTTSocketEvents = memo(() => {
 		botState,
 		setTournament,
 		setBot,
+		tournament
 	} = useGameState();
 	const {
 		getPlayer,
@@ -95,7 +96,7 @@ export const TTTSocketEvents = memo(() => {
 				if (tournamentId === -1 && !gameID.includes("Custom-Game-") && !isGameMode) {
 					wsclient.joinQueue("TTT");
 				} else {
-					setTournament({ id: tournamentId, index: gameIndex })
+					setTournament({ id: tournamentId, index: gameIndex, isRunning: false});
 				}
 				updateGameState({ gameId: gameID });
 			}
@@ -148,8 +149,11 @@ export const TTTSocketEvents = memo(() => {
 			}
 		};
 
-		joinTheGame();
-	}, [wsclient, gameState.gameId, address, botState.isActive, isGameMode, skip, setPlayerState, getPlayer]);
+		// TODO: Add some kind of setter to stop joining until user exits custimize modal
+		// if (tournament.isRunning) {
+			joinTheGame();
+		// }
+	}, [wsclient, gameState.gameId, address, botState.isActive, tournament.isRunning, isGameMode, skip, setPlayerState, getPlayer]);
 
 	// Initial communication between both players (SEND message)
 	useEffect(() => {

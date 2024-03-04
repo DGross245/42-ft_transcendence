@@ -13,6 +13,10 @@ import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
 import { GameControl } from "../../../../components/Pong/Paddle";
 import { PongModals } from "@/components/Pong/PongModals";
+import { useState } from "react";
+import { Button } from "@nextui-org/react";
+import { usePongGameState } from "../hooks/usePongGameState";
+import { usePongSocket } from "../hooks/usePongSocket";
 
 /**
  * The OneForAllScene component is a Three.js scene representing a 4 player Pong game that includes various elements such as paddles,
@@ -21,10 +25,32 @@ import { PongModals } from "@/components/Pong/PongModals";
  */
 export default function OneForAllScene() {
 	const {dimensions} = useWindow();
+	const [topic, setTopic] = useState(0);
+	const { updatePongGameState } = usePongGameState();
+	const { wsclient } = usePongSocket();
+
+	const onTopicChange = (e: any) => {
+		setTopic(e.target.value);
+	}
+	const onJoinCustom = () => {
+		updatePongGameState({ gameId: String(topic) })
+	}
+	const onCreate = async () => {
+		wsclient?.createGame();
+	}
 
 	return (
-		<div >
-			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
+		<div style={{ width: '100%', height: '100%' }}>
+				<input
+					placeholder="GAME/TOURNAMENT ID"
+					value={topic}
+					onChange={onTopicChange}
+					id="KEK"
+					name="KEK"
+				/>
+			<Button onClick={onCreate}> Create Costum </Button>
+			<Button onClick={onJoinCustom}> join Costum </Button>
+			<Canvas style={{ width: dimensions.width, height: dimensions.height - 128 }}>
 				<PongGameEvents />
 				<PongSocketEvents />
 				<Countdown />

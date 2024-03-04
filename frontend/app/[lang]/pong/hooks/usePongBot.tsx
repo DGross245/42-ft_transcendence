@@ -77,7 +77,7 @@ export const usePongBot = () => {
 		if (botState.isActive && wsclient) {
 			joinTheGame();
 		}
-	},[botState, wsclient, botState, isGameMode, setBot, setPlayerState])
+	},[botState, wsclient, isGameMode, setBot, setPlayerState])
 
 	return {
 		direction,

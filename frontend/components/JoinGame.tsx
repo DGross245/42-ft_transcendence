@@ -27,8 +27,8 @@ export const useJoinEvents = () => {
 		wsclient?.requestTournament(id, gameType);
 	}
 
-	const onSetNameAndColor = async () => {
-		await setNameAndColor('KEK', '0xffffff');
+	const onSetNameAndColor = async (username: string, color: string) => {
+		await setNameAndColor(username, color);
 	}
 	
 	const onCreateCustom = () => {

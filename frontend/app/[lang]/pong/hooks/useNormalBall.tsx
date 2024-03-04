@@ -139,7 +139,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
-			if (playerScore === 1) {
+			if (playerScore === 7) {
 				let ball = temp.current;
 				ball.x = 0;
 				ball.z = 0;
@@ -200,7 +200,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		}
 		// Handling scoring when the ball is outside of the play area.
 		else if ((ball.x > 200 || ball.x < -200) && 
-			scores.p2Score !== 1 && scores.p1Score !== 1) {
+			scores.p2Score !== 7 && scores.p1Score !== 7) {
 			if (ball.x < -200)
 				setScores({ ...scores, p2Score: scores.p2Score + 1 })
 			else

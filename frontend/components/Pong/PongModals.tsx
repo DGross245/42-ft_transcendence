@@ -157,11 +157,11 @@ export const PongModals = memo(() => {
 			/>
 			{tournament.id !== -1 ? (
 				// Tournament Modal
-				<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} loading={sendRequest} status={getStatus()} quit={quitGame}/>
-			) : (
-				pongGameState.gameId.includes("Costome-Game-") ? (
-					// Custom-Game Modal
-					<GameModal isOpen={showModal} gameResult={getGameResult()} nextGame={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
+				<GameModal isOpen={showModal} gameResult={getGameResult()} nextGame={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
+				) : (
+					pongGameState.gameId.includes("Custom-Game-") ? (
+						// Custom-Game Modal
+						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} loading={sendRequest} status={getStatus()} quit={quitGame}/>
 				) : (
 					// Ranked Modal
 					<GameModal isOpen={showModal} gameResult={getGameResult()} queue={() => handleNextClick()} status={getStatus()} quit={quitGame}/>

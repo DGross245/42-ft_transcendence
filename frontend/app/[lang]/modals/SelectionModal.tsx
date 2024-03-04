@@ -10,6 +10,7 @@ import { ArrowLeftIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import useContract from "@/components/hooks/useContract";
 import { useJoinEvents } from "@/components/JoinGame";
+import { TournamentSubModal } from "./tournamentSubModal";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -27,7 +28,7 @@ interface SelectionModalProps {
 	setGameOptions: (options: GameOptions) => void;
 }
 
-interface TournamentData {
+export interface TournamentData {
 	tournamentID: number,
 	numberOfPlayers: number,
 	isStarted: boolean,
@@ -52,6 +53,13 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 // TODO: Add a snippet for sharing GameID (Custom game only) should disapear on match start
 // TODO: Maybe waitingRoom modal for all games modes (simple maybe not needed)
 // TODO: similar modal from tournament also for Custome Games
+// TODO: Add a function that pulls an image based on selected modus for the gameType
+// FIXME: Fix switch, maybe due to the setter, its movement or interaction with it seems laggy unsmooth
+// FIXME: Find a solution for initial wallet login and player registration (playername and color set)
+// TODO: Tournament end sequence missing, a mechnaic that displays maybe a winner of the tournament, and away to exit the game after tournament is finished.
+//		 also reset tournament state
+// FIXME: Fix rematch button in GameModal (Modal doesnt disappear after both player requested a rematch)
+// FIXME: Fix Timer positioning in Scene
 const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, setGameOptions }) => {
 	const [tournamentMode, setTournamentMode] = useState(false);
 	const [selected, setSelected] = useState("singleplayer");
@@ -194,40 +202,9 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 							/>
 						</div>
 					</>)}
-					{tournamentMode && (<>
-						<Input
-							type="text"
-							label="Tournament ID"
-							variant="bordered"
-							className="w-full"
-							placeholder="Enter Tournament ID"
-						/>
-						<Button onClick={() => onCreateTournament()}>Create New Tournament</Button>
-						<Table aria-label="Tournaments Table">
-							<TableHeader>
-								<TableColumn>Tournament ID</TableColumn>
-								<TableColumn>Number of Players</TableColumn>
-								<TableColumn>Status</TableColumn>
-								<TableColumn>Actions</TableColumn>
-							</TableHeader>
-							<TableBody>
-								{data.map((row) => (
-									<TableRow key={row.tournamentID}>
-										<TableCell>{row.tournamentID}</TableCell>
-										<TableCell> {row.numberOfPlayers} </TableCell>
-										<TableCell>
-											<Chip className="capitalize" color={row.isStarted ? "success" : "warning"} size="sm" variant="flat">
-												{row.isStarted ? "Running" : "Waiting..."}
-											</Chip>
-										</TableCell>
-										<TableCell>
-											<Link isDisabled={row.isStarted} onClick={() => onJoinTournament(row.tournamentID)}>Join Tournament</Link>
-										</TableCell>
-									</TableRow>
-								))}
-							</TableBody>
-						</Table>
-					</>)}
+					{tournamentMode && (
+						<TournamentSubModal data={data} onCreateTournament={onCreateTournament} onJoinTournament={onJoinTournament} />
+					)}
 				</ModalBody>
 				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
 					{!tournamentMode && (<ModalButton onClick={onButtonClick}>{selected != "tournament-modes" ? "Create/Join Game 🎮" : "Play Tournament 🚀"}</ModalButton>)}

@@ -95,8 +95,8 @@ export default function PongScene() {
 					id="KEK"
 					name="KEK"
 				/>
-			{/* <Button onClick={onCreate}> Create Costum </Button>
-			<Button onClick={onJoinCustom}> join Costum </Button> */}
+			<Button onClick={onCreate}> Create Costum </Button>
+			<Button onClick={onJoinCustom}> join Costum </Button>
 			<Button onClick={joinQueue}> Queue </Button>
 			<Button onClick={onCreateTournament}> Create Tournament </Button>
 			<Button onClick={onJoin}>  Join tournament manually  </Button>

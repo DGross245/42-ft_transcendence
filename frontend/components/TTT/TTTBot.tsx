@@ -69,7 +69,7 @@ export const TTTBot = () => {
 		if (botState.isActive && wsclient) {
 			joinTheGame();
 		}
-	},[botState, wsclient, playerState, botState, isGameMode, setBot, setPlayerState])
+	},[botState, wsclient, playerState, isGameMode, setBot, setPlayerState])
 
 	return (null);
 }

@@ -73,6 +73,14 @@ interface SocketContextValue {
 	chipDisappear: boolean;
 	/** Setter for chipDisappear, indicates if the timer */
 	setChipDisappear: Dispatch<SetStateAction<boolean>>;
+	/** Holds the wallet address of the client */
+	playerAddress: string;
+	/** Setter for playerAddress */
+	setPlayerAddress: Dispatch<SetStateAction<string>>;
+	/** Indicates if customization is set */
+	customized: boolean;
+	/** Setter for customized */
+	setCustomized: Dispatch<SetStateAction<boolean>>;
 }
 
 
@@ -105,6 +113,8 @@ export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children:
 	const [isFull, setIsFull] = useState("");
 	const [timerState, setTimerState] = useState("");
 	const [playerState, setPlayerState] = useState(initialTTTPlayerState());
+	const [playerAddress, setPlayerAddress] = useState("");
+	const [customized, setCustomized] = useState(false);
 
 	const value : SocketContextValue = {
 		wsclient,
@@ -128,7 +138,11 @@ export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children:
 		timerState,
 		setTimerState,
 		chipDisappear,
-		setChipDisappear
+		setChipDisappear,
+		playerAddress,
+		setPlayerAddress,
+		customized,
+		setCustomized
 	}
 
 	return (

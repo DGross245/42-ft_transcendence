@@ -159,7 +159,7 @@ export const PongSocketEvents = memo(() => {
 					const updatedPlayers = prevState.players.map((prevPlayer, index) => {
 						if (index === clients) {
 							return {
-								name: player.name,
+								name: "K",
 								addr: String(address),
 								color: Number(player.color),
 								number: clients
