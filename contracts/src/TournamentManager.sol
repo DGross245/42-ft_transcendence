@@ -46,6 +46,7 @@ contract TournamentManager {
 	event TournamentCreated(uint256 tournament_id);
 	event TournamentStarted(uint256 tournament_id);
 	event GameResultSubmitted(bool success);
+	event PlayerDataChanged(address addr);
 
 	/* -------------------------------------------------------------------------- */
 	/*                                  Modifiers                                 */
@@ -135,6 +136,8 @@ contract TournamentManager {
 			players[msg.sender].name = name;
 			players[msg.sender].color = color;
 		}
+
+		emit PlayerDataChanged(msg.sender);
 	}
 
 	function joinTournament(uint256 tournament_id)
