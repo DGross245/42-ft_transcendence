@@ -23,7 +23,7 @@ interface TimerProps {
 /* -------------------------------------------------------------------------- */
 export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, showChip, timerState, setTimerState, disappear, setDisappear }) => {
 	const { dimensions } = useWindow();
-	const [seconds, setSeconds] = useState(15);
+	const [seconds, setSeconds] = useState(30);
 	const playSound = useSound();
  
 

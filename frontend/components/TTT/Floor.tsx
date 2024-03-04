@@ -28,7 +28,7 @@ const Floor : React.FC<FloorProps> = (props) => {
 				color={0x111111}
 				transparent={true}
 				metalness={0.8}
-				opacity={0.7}
+				opacity={0.4}
 				roughness={0.9}
 			/>
 		</mesh>

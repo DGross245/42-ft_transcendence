@@ -146,9 +146,9 @@ interface GameStateContextValue {
 	/** Sets the visibility of winning lines. */
 	setLineVisible: Dispatch<SetStateAction<boolean>>,
 	/** Stores information about the current tournament. */
-	tournament: {id: number, index: number, isRunning: boolean},
+	tournament: {id: number, index: number},
 	/** Sets information about the current tournament. */
-	setTournament: Dispatch<SetStateAction<{id: number, index: number, isRunning: boolean}>>,
+	setTournament: Dispatch<SetStateAction<{id: number, index: number}>>,
 	/** Indicates whether the game has started. */
 	started: boolean,
 	/** Sets whether the game has started. */
@@ -159,7 +159,7 @@ export const GameStateContext = createContext<GameStateContextValue>({} as GameS
 
 export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, children: ReactNode }> = ({ gameMode = false, isBotActive = false, children }) => {
 	const [isGameMode, setGameMode] = useState(gameMode);
-	const [tournament, setTournament] = useState({ id: -1, index: -1, isRunning: false });
+	const [tournament, setTournament] = useState({ id: -1, index: -1 });
 	const [countdownVisible, setCountdownVisible] = useState(true);
 	const [currentTurn, setTurn] = useState('');
 	const [board, setBoard] = useState(initialBoard());

@@ -5,6 +5,7 @@ import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
 import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
 import { useSound } from "../hooks/Sound";
+import { useUI } from "@/app/[lang]/tic-tac-toe/hooks/useUI";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -33,7 +34,8 @@ export const TTTGameEvents = memo(() => {
 		setSendRequest,
 		continueIndex,
 		setSendContinueRequest,
-		setContinueIndex
+		setContinueIndex,
+		setCustomized
 	} = useSocket();
 	const escape = useKey(['Escape']);
 	const playSound = useSound();
@@ -49,9 +51,10 @@ export const TTTGameEvents = memo(() => {
 			setWinner('');
 			setCountdownVisible(true);
 			setLineVisible(false)
+			setCustomized(false);
 			updateGameState({ reset: false, gameOver: false})
 		}
-	}, [gameState.reset, updateGameState, setBoard, setCountdownVisible, setLineCoords, setLineVisible, setTurn, setWinner]);
+	}, [gameState.reset, setCustomized, updateGameState, setBoard, setCountdownVisible, setLineCoords, setLineVisible, setTurn, setWinner]);
 
 	// Handle pause when esc is pressed
 	useEffect(() => {

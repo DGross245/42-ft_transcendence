@@ -1,7 +1,7 @@
 import { Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
 import styles from "./Modals.module.css";
 import ModalButton from "./ModalButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import useContract from "@/components/hooks/useContract";
 
@@ -22,6 +22,12 @@ interface CustomizeModalProps {
 const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOpen, loading, username: inputUsername, startGame }) => {
 	const [username, setUsername] = useState(inputUsername || "");
 	const [color, setColor] = useState(inputColor || "#2563eb");
+
+	useEffect(() => {
+		if (inputColor) {
+			setColor(inputColor);
+		}
+	}, [inputColor, setColor]);
 
 	const onButtonClick = () => {
 		startGame(username, color);
@@ -77,7 +83,9 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 					</div>
 				</ModalBody>
 				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
-					<ModalButton onClick={onButtonClick}>Join Game</ModalButton>
+					<ModalButton onClick={onButtonClick}>
+						{"Join Game"}
+					</ModalButton>
 				</ModalFooter>
 			</ModalContent>
 		</Modal>

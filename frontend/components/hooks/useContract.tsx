@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
 
-export const contract_address = '0xD78F9fEc2c927d8722DD7D65e30552BC4380a118'
+export const contract_address = '0x8e627ECD303Ff1735948C62D3754D364D82583ED'
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -83,7 +83,7 @@ function useContract() {
 	// color is a hex string, e.g. '0xFF0000'
 	// this "player profile" will be stored permanently accross all games and tournaments
 	const setNameAndColor = useCallback(async (name: string, color: string) => {
-		await callContract('setNameAndColor', [name, color]);
+		return (await callContract('setNameAndColor', [name, color]));
 	},[callContract]);
 
 	// calling address/player joins the specified tournament

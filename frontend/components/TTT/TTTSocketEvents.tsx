@@ -27,7 +27,9 @@ export const TTTSocketEvents = memo(() => {
 		isFull,
 		setIsFull,
 		timerState,
-		setTimerState
+		setTimerState,
+		customized,
+		setPlayerAddress
 	} = useSocket();
 	const {
 		gameState,
@@ -60,11 +62,12 @@ export const TTTSocketEvents = memo(() => {
 				await newClient.waitingForSocket();
 				newClient.sendAddress(address);
 				setWsclient(newClient);
+				setPlayerAddress(String(address));
 			}
 		};
 
 		waitForSocket();
-	}, [newClient, address, setWsclient]);
+	}, [newClient, address, setWsclient, setPlayerAddress]);
 
 	// Catches skip msg when player subscribed to a tournament is not present
 	useEffect(() => {
@@ -96,7 +99,7 @@ export const TTTSocketEvents = memo(() => {
 				if (tournamentId === -1 && !gameID.includes("Custom-Game-") && !isGameMode) {
 					wsclient.joinQueue("TTT");
 				} else {
-					setTournament({ id: tournamentId, index: gameIndex, isRunning: false});
+					setTournament({ id: tournamentId, index: gameIndex });
 				}
 				updateGameState({ gameId: gameID });
 			}
@@ -149,11 +152,10 @@ export const TTTSocketEvents = memo(() => {
 			}
 		};
 
-		// TODO: Add some kind of setter to stop joining until user exits custimize modal
-		// if (tournament.isRunning) {
+		if (customized) {
 			joinTheGame();
-		// }
-	}, [wsclient, gameState.gameId, address, botState.isActive, tournament.isRunning, isGameMode, skip, setPlayerState, getPlayer]);
+		}
+	}, [wsclient, customized, gameState.gameId, address, botState.isActive, isGameMode, skip, setPlayerState, getPlayer]);
 
 	// Initial communication between both players (SEND message)
 	useEffect(() => {

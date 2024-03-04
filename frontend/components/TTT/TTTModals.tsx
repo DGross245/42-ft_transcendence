@@ -10,10 +10,15 @@ import { initialTTTPlayerState } from "@/app/[lang]/tic-tac-toe/context/TTTSocke
 import useContract, { PlayerScore } from "../hooks/useContract";
 import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
 import { useJoinEvents } from "../JoinGame";
+import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
+
+function intToHexColor(intValue: number) {
+	return ('#' + intValue.toString(16).padStart(6, '0').toUpperCase());
+}
 
 export const TTTModals = memo(() => {
 	//* ------------------------------- hooks ------------------------------ */
@@ -24,8 +29,7 @@ export const TTTModals = memo(() => {
 		winner,
 		updateGameState,
 		setStarted,
-		tournament,
-		setTournament
+		tournament
 	} = useGameState();
 	const {
 		continueIndex,
@@ -41,8 +45,10 @@ export const TTTModals = memo(() => {
 		setSendRequest,
 		wsclient,
 		setPlayerState,
-		sendRequest,
-		playerAddress
+		playerAddress,
+		customized,
+		setCustomized,
+		unregistered
 	} = useSocket();
 	const {
 		submitGameResultRanked,
@@ -61,7 +67,9 @@ export const TTTModals = memo(() => {
 	//* ------------------------------- state variables ------------------------------ */
 	const [isClicked, setIsClicked] = useState(false);
 	const router = useRouter();
-	const [playerInfo, setPlayerInfo] = useState({ color: "0xffffff", name: "KEK" });
+	const [playerInfos, setPlayerInfos] = useState({ color: "#ffffff", name: "KEK" });
+	const [showSetModal, setShowSetModal] = useState(false);
+	const {isConnected, address} = useWeb3ModalAccount();
 
 	/* ------------------------------- functions ------------------------------ */
 	const handleButtonClick = useCallback(() => {
@@ -104,8 +112,8 @@ export const TTTModals = memo(() => {
 				})
 			}
 			if (tournament.id !== -1) {
-				const data = getTournament(tournament.id);
-				const finished = (await data).games[tournament.index].finished;
+				const data = await getTournament(tournament.id);
+				const finished = data.games[tournament.index].finished;
 				if (!finished) {
 					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
 				}
@@ -151,28 +159,48 @@ export const TTTModals = memo(() => {
 		wsclient?.leave();
 	}, [wsclient, router]);
 
-	const getPlayerInfo = async () => {
-		if (playerAddress !== "") {
-			const playerInfo = await getPlayer(String(playerAddress));
+	useEffect(() => {
+		const getPlayerInfo = async () => {
+			if (playerAddress !== "") {
+				const playerInfo = await getPlayer(String(playerAddress));
 
-			console.log(playerInfo)
-			return { color: "0xffffff", name: "KEK"}
+				const color = intToHexColor(Number(playerInfo.color));
+				setPlayerInfos({ color: color, name: String(playerInfo.name)});
+			}
 		}
-	}
 
-	// TODO: Add useEffect for handling playerInfo fetching
-	// useEffect(() => {
+		if (gameState.gameId !== '-1' && !customized) {
+			getPlayerInfo();
+		}
+	}, [customized, gameState.gameId, playerAddress, getPlayer, setPlayerInfos]);
 
-	// }, [])
-
-	// TODO: Add some kind of setter to initiat joining
 	const initiateGame = async (username: string, color: string) => {
-		if (username !== playerInfo.name || color !== playerInfo.color) {
-			await onSetNameAndColor(username, color);
+		if (username !== playerInfos.name || color !== playerInfos.color) {
+			const colorCopy = color.replace('#', '0x');
+			const number = await onSetNameAndColor(username, colorCopy);
 		}
 
-		// setTournament()
+		setCustomized(true);
 	}
+
+	useEffect(() => {
+		if (gameState.reset) {
+			closeModal();
+		}
+	}, [gameState.reset, closeModal])
+
+	useEffect(() => {
+		const checkPlayerInfo = async () => {
+			const playerInfo = await getPlayer(String(address));
+			if (!playerInfo) {
+				setShowSetModal(true);
+			}
+		}
+
+		if (isConnected) {
+			checkPlayerInfo();
+		}
+	}, [isConnected, getPlayer, address]);
 
 	return (
 		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">
@@ -190,23 +218,20 @@ export const TTTModals = memo(() => {
 				// Tournament Modal
 				<GameModal isOpen={showModal} gameResult={getGameResult()} nextGame={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
 				) : (
-					gameState.gameId.includes("Costome-Game-") ? (
+					gameState.gameId.includes("Custom-Game-") ? (
 						// Custom-Game Modal
-						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} loading={sendRequest} status={getStatus()} quit={quitGame}/>
+						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} status={getStatus()} quit={quitGame}/>
 				) : (
 					// Ranked Modal
 					<GameModal isOpen={showModal} gameResult={getGameResult()} queue={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
 				)
 			)}
 
-			{/* {tournament.id !== -1 ? (
-				(tournament.isRunning === false && (
-					<CustomizeModal isOpen={tournament.id !== -1 && !tournament.isRunning} color={playerInfo.color} startGame={initiateGame}/>
-				))
-			) : (
-				//Implement CustomizeModal for every other match
-				<>
-				</>
+			{!customized && (
+				<CustomizeModal isOpen={gameState.gameId !== '-1' && !customized} color={playerInfos.color} username={playerInfos.name} startGame={initiateGame}/>
+			)}
+			{/* {unregistered && (
+				<CustomizeModal isOpen={showSetModal} startGame={() => setShowSetModal(false)}/>
 			)} */}
 
 			<Timer

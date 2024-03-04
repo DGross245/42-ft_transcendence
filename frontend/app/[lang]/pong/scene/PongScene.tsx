@@ -32,8 +32,7 @@ export default function PongScene() {
 		setNameAndColor,
 		joinTournament,
 		startTournament,
-		getTournaments,
-		submitGameResultTournament
+		getTournaments
 	} = useContract();
 	const {pongGameState, updatePongGameState} = usePongGameState();
 	const [topic, setTopic] = useState(0);

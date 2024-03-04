@@ -82,23 +82,28 @@ const shufflePlayers = (array: any) => {
 	return array;
 }
 
+// TODO: Add a mechanic that sends a msg to all inside the tournament, that all games are played
+// sending them back to the home screen or something like that
 export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number, gameType: string ) => {
 	const games = (await contract.getTournamentTree(tournamentID)) as Game[];
 
 	let maxClients = 2;
 
-	if (gameType === 'OneForAll')
+	if (gameType === 'OneForAll') {
 		maxClients = 4;
-	if (gameType === 'Qubic')
+	}
+	if (gameType === 'Qubic') {
 		maxClients = 3;
+	}
 
 	for (let i = 0; i < games.length; i++) {
 		var players = [];
 		let allPlayersAvailable = true;
 		let skipGame = false;
 
-		if (games[i].finished)
+		if (games[i].finished) {
 			continue ;
+		}
 		for (let j = 0; j < maxClients; j++) {
 			const player = findPlayer(sockets, games[i].player_scores[j].addr);
 			players.push(player);
@@ -114,8 +119,9 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 			}
 		}
 
-		if (allPlayersAvailable === false)
+		if (allPlayersAvailable === false) {
 			continue ;
+		}
 
 		var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 

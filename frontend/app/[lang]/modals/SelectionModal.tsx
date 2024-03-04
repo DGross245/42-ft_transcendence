@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, Chip, Input, Link, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Slider, Spinner, Switch, Tab, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tabs } from "@nextui-org/react";
+import { Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Slider, Spinner, Switch, Tab, Tabs } from "@nextui-org/react";
 import styles from "./Modals.module.css";
 import ModalButton from "./ModalButton";
 import { useEffect, useState } from "react";
@@ -58,8 +58,11 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 // FIXME: Find a solution for initial wallet login and player registration (playername and color set)
 // TODO: Tournament end sequence missing, a mechnaic that displays maybe a winner of the tournament, and away to exit the game after tournament is finished.
 //		 also reset tournament state
-// FIXME: Fix rematch button in GameModal (Modal doesnt disappear after both player requested a rematch)
 // FIXME: Fix Timer positioning in Scene
+// FIXME: Add a handler for each contract call when an  error happens (when null is returned)
+// TODO: setColorAndName still has a delay and isnt set after the modal disappears
+// TODO: Add a block for not connected users to access pages other then home
+// FIXME: Toast has some issues, doesnt show
 const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, setGameOptions }) => {
 	const [tournamentMode, setTournamentMode] = useState(false);
 	const [selected, setSelected] = useState("singleplayer");
@@ -68,12 +71,10 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 	const router = useRouter();
 	const [data, setData] = useState<TournamentData[]>([]);
 	const { getTournaments } = useContract();
-	const {
-		onJoinTournament,
-		onCreateTournament
-	} = useJoinEvents();
+	const { onJoinTournament, onCreateTournament } = useJoinEvents();
 
 	useEffect(() => {
+		// FIXME: Error when getTournament is called to early?
 		const fetchData = async () => {
 			const tournaments = await getTournaments();
 			if (!tournaments) {
@@ -86,7 +87,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 			}));
 			setData(formattedData);
 		};
-	
+
 		if (isOpen) {
 			fetchData();
 		} else {
