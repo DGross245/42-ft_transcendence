@@ -35,9 +35,10 @@ player_data = {
 
 game_id = "0"
 paddle_length = 5
+paddle_speed = 2
 
-g_game_width = 500
-g_game_height = 500
+g_game_width = 300
+g_game_height = 200
 g_scaling_factor_width = 1
 g_scaling_factor_height = 1
 
@@ -48,18 +49,22 @@ g_game_state = {}
 # -------------------------------------------------------------------------- #
 
 def server_y_to_cli_y(server_y):
-	return (int(server_y * g_scaling_factor_height))
+	return (int(server_y * g_scaling_factor_height + curses.LINES // 2))
 
 def server_x_to_cli_x(server_x):
-	return (int(server_x * g_scaling_factor_width))
+	return (int(server_x * g_scaling_factor_width + curses.COLS // 2))
 
 def server_paddle_y_to_cli_paddle_y(server_paddle_y, cli_paddle_length):
 	cli_paddle_y = []
 	i = cli_paddle_length // 2 * -1
 	while i <= cli_paddle_length // 2:
-		cli_paddle_y.append(server_y_to_cli_y(server_paddle_y) + curses.LINES // 2 + i)
+		cli_paddle_y.append(server_y_to_cli_y(server_paddle_y) + i)
 		i += 1
 	return cli_paddle_y
+
+def cli_y_to_server_y(cli_y):
+	server_y = (cli_y - curses.LINES // 2) / g_scaling_factor_height
+	return server_y
 
 def init_game_state():
 	game_state = {
@@ -68,7 +73,7 @@ def init_game_state():
 			'y': 0
 		},
 		'left_paddle': {
-			'x': 10,
+			'x': server_x_to_cli_x(-g_game_width // 2 + 1),
 			'y': [
 				curses.LINES // 2 - 2,
 				curses.LINES // 2 - 1,
@@ -78,7 +83,7 @@ def init_game_state():
 			]
 		},
 		'right_paddle': {
-			'x': curses.COLS - 10,
+			'x': server_x_to_cli_x(g_game_width // 2 - 1),
 			'y': [
 				curses.LINES // 2 - 2,
 				curses.LINES // 2 - 1,
@@ -90,11 +95,28 @@ def init_game_state():
 	}
 	return game_state
 
+def init_game_state_empty():
+	game_state = {
+		'ball': {
+			'x': 0,
+			'y': 0
+		},
+		'left_paddle': {
+			'x': server_x_to_cli_x(-g_game_width / 2 + 1),
+			'y': [0, 0, 0, 0, 0]
+		},
+		'right_paddle': {
+			'x': server_x_to_cli_x(g_game_width / 2 - 1),
+			'y': [0, 0, 0, 0, 0]
+		}
+	}
+	return game_state
+
 def init_scaling_factors():
 	global g_scaling_factor_height
 	global g_scaling_factor_width
-	g_scaling_factor_height = curses.LINES / g_game_height
-	g_scaling_factor_width = curses.COLS / g_game_width
+	g_scaling_factor_height = curses.LINES / g_game_height / 2
+	g_scaling_factor_width = curses.COLS / g_game_width / 2
 
 # -------------------------------------------------------------------------- #
 #                                Socket Setup                                #
@@ -150,8 +172,8 @@ async def receive_ball_data(msg: str):
 	ball_pos = ball['position']
 	logging.info(RED + f'Received Ball Data: {ball_pos}' + RESET)
 	new_ball = {
-		'x': server_x_to_cli_x(ball_pos['x']) + curses.COLS // 2,
-		'y': server_y_to_cli_y(ball_pos['z']) + curses.LINES // 2
+		'x': server_x_to_cli_x(ball_pos['x']),
+		'y': server_y_to_cli_y(ball_pos['z'])
 	}
 	global g_game_state
 	g_game_state['ball']['x'] = int(new_ball['x'])
@@ -172,8 +194,8 @@ async def join_game(game_id: str, game_type: str, is_bot: bool):
 async def send_message(msg: str, topic: str, game_id: str):
 	await sio.emit('send-message-to-game', (msg, topic, game_id))
 
-async def send_paddle_data(paddle_data: str, game_id: str):
-	msg = paddle_data
+async def send_paddle_data(paddle_y: str, game_id: str):
+	msg = cli_y_to_server_y(paddle_y)
 	topic = f'paddleUpdate-{game_id}'
 	await send_message(msg, topic, game_id)
 
@@ -184,7 +206,7 @@ async def send_paddle_data(paddle_data: str, game_id: str):
 def draw_paddle(stdscr, paddle, global_paddle):
 	if global_paddle['y'][0] != paddle['y'][0]:
 		for i in range(len(paddle['y'])):
-			stdscr.addstr(paddle['y'][i], paddle['x'], '')
+			stdscr.addstr(paddle['y'][i], paddle['x'], ' ')
 		for i in range(len(global_paddle['y'])):
 			paddle['y'][i] = global_paddle['y'][0] + i
 		for i in range(len(paddle['y'])):
@@ -193,10 +215,11 @@ def draw_paddle(stdscr, paddle, global_paddle):
 
 def draw_ball(stdscr, ball, global_ball):
 	if global_ball['x'] != ball['x'] or global_ball['y'] != ball['y']:
-		stdscr.addstr(ball['y'], ball['x'], ' ')
-		ball['x'] = global_ball['x']
-		ball['y'] = global_ball['y']
-		stdscr.addstr(global_ball['y'], global_ball['x'], 'O')
+		if global_ball['x'] >= server_x_to_cli_x(g_game_width // 2 * -1) and global_ball['x'] <= server_x_to_cli_x(g_game_width // 2 - 1) and global_ball['y'] >= server_y_to_cli_y(g_game_height // 2 * -1) and global_ball['y'] <= server_y_to_cli_y(g_game_height // 2 - 1):
+			stdscr.addstr(ball['y'], ball['x'], ' ')
+			ball['x'] = global_ball['x']
+			ball['y'] = global_ball['y']
+			stdscr.addstr(global_ball['y'], global_ball['x'], 'O')
 	return ball
 
 def draw_scene(stdscr, game_state, global_game_state):
@@ -207,15 +230,21 @@ def draw_scene(stdscr, game_state, global_game_state):
 	return game_state
 
 def move_paddle(paddle, key):
+	offset = 0
 	if key == curses.KEY_UP:
-		for i in range(len(paddle['y'])):
-			paddle['y'][i] -= 5
-		asyncio.run(send_paddle_data(paddle['y'][0], game_id))
+		offset = paddle_speed * -1
 	elif key == curses.KEY_DOWN:
-		for i in range(len(paddle['y'])):
-			paddle['y'][i] += 5
-		asyncio.run(send_paddle_data(paddle['y'][0], game_id))
+		offset = paddle_speed
+	if offset != 0 and paddle['y'][0] + offset >= server_y_to_cli_y(-g_game_height // 2) and paddle['y'][-1] + offset <= server_y_to_cli_y(g_game_height // 2):
+		i = paddle_length // 2 * -1
+		while i <= paddle_length // 2:
+			paddle['y'][i] += offset
+			i += 1
+		asyncio.run(send_paddle_data(paddle['y'][paddle_length // 2], game_id))
 	return paddle
+
+def draw_score(stdscr, score):
+	
 
 def curses_thread(stdscr):
 	curses.curs_set(False)
@@ -226,15 +255,13 @@ def curses_thread(stdscr):
 
 	global g_game_state
 	g_game_state = init_game_state()
-	game_state = init_game_state()
+	game_state = init_game_state_empty()
 
 	while True:
-		# print(RED + f"g_game_state: {g_game_state}" + RESET)
-		# print(RED + f"game_state: {game_state}" + RESET)
 		key = stdscr.getch()
 		if key == curses.KEY_EXIT or key == ord('q'):
 			break
-		game_state['right_paddle'] = move_paddle(game_state['right_paddle'], key)
+		g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
 		game_state = draw_scene(stdscr, game_state, g_game_state)
 
 def start_curses():
