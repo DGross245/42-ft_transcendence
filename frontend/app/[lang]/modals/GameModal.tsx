@@ -34,7 +34,8 @@ interface GameWinningModalProps {
 	quit?: () => void,
 	queue?: () => void,
 	pauseInfo?: PauseButtonProps,
-	status?: Status
+	status?: Status,
+	buttonLoading?: boolean
 }
 
 /* -------------------------------------------------------------------------- */
@@ -48,7 +49,7 @@ const InfoText: React.FC<{children: React.ReactNode, className?: string}> = ({ c
 	)
 }
 
-const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loading, rematch, nextGame, queue, quit, pauseInfo, status }) => {
+const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loading, rematch, nextGame, queue, quit, pauseInfo, status, buttonLoading }) => {
 	return (
 		<Modal
 			size="xl"
@@ -88,8 +89,8 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 					</div>
 				</ModalBody>
 				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
-					{quit		&& <ModalButton onClick={quit}>Quit</ModalButton>}
-					{rematch	&& <ModalButton onClick={rematch}>Rematch</ModalButton>}
+					{quit		&& <ModalButton onClick={quit} color={"danger"}>Quit</ModalButton>}
+					{rematch	&& <ModalButton onClick={rematch} isDisabled={status !== undefined} isLoading={buttonLoading} >Rematch</ModalButton>}
 					{nextGame	&& <ModalButton onClick={nextGame}>Next Match</ModalButton>}
 					{queue		&& <ModalButton onClick={queue}>Queue</ModalButton>}
 					{pauseInfo	&& (

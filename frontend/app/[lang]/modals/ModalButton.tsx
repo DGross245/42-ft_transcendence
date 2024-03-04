@@ -8,18 +8,19 @@ interface ModalButtonProps {
 	children?: React.ReactNode | string,
 	isDisabled?: boolean,
 	isLoading?: boolean,
-	className?: string
+	className?: string,
+	color?: any
 }
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
-const ModalButton: React.FC<ModalButtonProps> = ({ onClick, children, isDisabled, isLoading, className }) => {
+const ModalButton: React.FC<ModalButtonProps> = ({ onClick, children, isDisabled, isLoading, color, className }) => {
 	return (
 		<Button
 			size="md"
 			radius="lg"
-			color="primary"
+			color={color ? color : "primary"}
 			variant="shadow"
 			onClick={onClick}
 			className={`text-md ${className ? className : ""}`}

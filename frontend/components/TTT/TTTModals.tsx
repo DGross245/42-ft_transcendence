@@ -48,7 +48,8 @@ export const TTTModals = memo(() => {
 		playerAddress,
 		customized,
 		setCustomized,
-		unregistered
+		unregistered,
+		sendRequest
 	} = useSocket();
 	const {
 		submitGameResultRanked,
@@ -192,6 +193,7 @@ export const TTTModals = memo(() => {
 
 	useEffect(() => {
 		const checkPlayerInfo = async () => {
+			// FIXME: Emits an error if player doesnt exist
 			const playerInfo = await getPlayer(String(address));
 			if (!playerInfo) {
 				setShowSetModal(true);
@@ -221,7 +223,7 @@ export const TTTModals = memo(() => {
 				) : (
 					gameState.gameId.includes("Custom-Game-") ? (
 						// Custom-Game Modal
-						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} status={getStatus()} quit={quitGame}/>
+						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} status={getStatus()} buttonLoading={sendRequest} quit={quitGame}/>
 				) : (
 					// Ranked Modal
 					<GameModal isOpen={showModal} gameResult={getGameResult()} queue={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
