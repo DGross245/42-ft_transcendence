@@ -21,7 +21,6 @@ import useContract from "@/components/hooks/useContract";
 import { TTTModals } from "@/components/TTT/TTTModals";
 import { useGameState } from "../hooks/useGameState";
 import { Button } from "@nextui-org/react";
-import { JoinGame } from "@/components/JoinGame";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -43,9 +42,8 @@ const TTTScene : React.FC<{ selected: string }> = ({ selected }) => {
 		joinTournament,
 		startTournament,
 		getTournaments,
-		getRankedGames
 	} = useContract();
-	const {gameState, updateGameState} = useGameState();
+	const { updateGameState} = useGameState();
 	const [topic, setTopic] = useState(0);
 
 	const onTopicChange = (e: any) => {
@@ -105,8 +103,8 @@ const TTTScene : React.FC<{ selected: string }> = ({ selected }) => {
 					id="4182"
 					name="in"
 			/>
-			<Button onClick={onCreate}> Create Costum </Button>
-			<Button onClick={onJoinCustom}> join Costum </Button>
+			<Button onClick={onCreate}> Create Custom </Button>
+			<Button onClick={onJoinCustom}> join Custom </Button>
 			<Button onClick={joinQueue}> Queue </Button>
 			<Button onClick={onCreateTournament}> Create Tournament </Button>
 			<Button onClick={onJoin}>  Join tournament manually  </Button>

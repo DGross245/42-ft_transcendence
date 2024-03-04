@@ -48,8 +48,8 @@ export default function OneForAllScene() {
 					id="KEK"
 					name="KEK"
 				/>
-			<Button onClick={onCreate}> Create Costum </Button>
-			<Button onClick={onJoinCustom}> join Costum </Button>
+			<Button onClick={onCreate}> Create Custom </Button>
+			<Button onClick={onJoinCustom}> join Custom </Button>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height - 128 }}>
 				<PongGameEvents />
 				<PongSocketEvents />
