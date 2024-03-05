@@ -124,7 +124,7 @@ contract TournamentManager {
 	function setNameAndColor(string memory name, uint256 color)
 	external {
 		require (bytes(name).length > 0, "Name must not be empty");
-		require (color > 0, "Color must not be empty");
+		require (color >= 0, "Color must be a valid hex color");
 		require (color <= 0xFFFFFF, "Color must be a valid hex color");
 
 		if (players[msg.sender].addr == address(0)) {
