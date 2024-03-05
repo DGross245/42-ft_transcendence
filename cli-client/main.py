@@ -263,6 +263,26 @@ def draw_field(stdscr):
 		stdscr.addstr(i, server_x_to_cli_x(0) - 1, '|')
 		i += 2
 
+def draw_box(stdscr, y, x, height, width):
+	for i in range(height):
+		for j in range(width):
+			stdscr.addstr(y + i, x + j, ' ')
+	for i in range(height):
+		stdscr.addstr(y + i, x, '|')
+		stdscr.addstr(y + i, x + width - 1, '|')
+	for i in range(width):
+		stdscr.addstr(y, x + i, '-')
+		stdscr.addstr(y + height, x + i, '-')
+
+def draw_end_screen(stdscr, game_state):
+	draw_box(stdscr, curses.LINES // 2 - 7, curses.COLS // 2 - 20, 15, 40)
+	if game_state['score']['left'] == 7:
+		stdscr.addstr(curses.LINES // 2 - 2, curses.COLS // 2 - 5, "YOU LOSE!")
+	else:
+		stdscr.addstr(curses.LINES // 2 - 2, curses.COLS // 2 - 4, "YOU WIN!")
+	stdscr.addstr(curses.LINES // 2 + 2, curses.COLS // 2 - 14, "press 'space' to play again")
+	stdscr.addstr(curses.LINES // 2 + 4, curses.COLS // 2 - 8, "press 'q' to quit")
+
 def curses_thread(stdscr):
 	curses.curs_set(False)
 	stdscr.nodelay(True)
@@ -274,17 +294,21 @@ def curses_thread(stdscr):
 	g_game_state = init_game_state()
 	game_state = init_game_state_empty()
 
-
 	while True:
 		key = stdscr.getch()
 		if key == curses.KEY_EXIT or key == ord('q'):
 			break
-		g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
-		game_state['left_paddle'] = draw_paddle(stdscr, game_state['left_paddle'], g_game_state['left_paddle'])
-		game_state['right_paddle'] = draw_paddle(stdscr, game_state['right_paddle'], g_game_state['right_paddle'])
-		game_state['ball'] = draw_ball(stdscr, game_state['ball'], g_game_state['ball'], g_game_state['score'])
-		draw_score(stdscr, g_game_state)
-		draw_field(stdscr)
+		if g_game_state['score']['left'] < 7 and g_game_state['score']['right'] < 7:
+			g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
+			game_state['left_paddle'] = draw_paddle(stdscr, game_state['left_paddle'], g_game_state['left_paddle'])
+			game_state['right_paddle'] = draw_paddle(stdscr, game_state['right_paddle'], g_game_state['right_paddle'])
+			game_state['ball'] = draw_ball(stdscr, game_state['ball'], g_game_state['ball'], g_game_state['score'])
+			draw_score(stdscr, g_game_state)
+			draw_field(stdscr)
+		else:
+			draw_end_screen(stdscr, g_game_state)
+			# if key == ord(' '):
+				# kill process, join new room, start new game
 		stdscr.refresh()
 
 def start_curses():
@@ -316,9 +340,10 @@ if __name__ == '__main__':
 	# react to opponent disconnecting
 	# login in with wallet
 	# separate into socket file and cli file
-	# restrict paddle movement to boundaries
 	# pass url and port as arguments
 	# how to start cli-client? makefile?
+	# win and lose screen
+	# quit correctly
 # approach
 	# create communication interface
 	# make it controllable via terminal
