@@ -36,7 +36,7 @@ player_data = {
 game_id = "0"
 paddle_length = 3
 paddle_speed = 1
-score_offset = 48
+score_offset = 46
 
 g_game_width = 300
 g_game_height = 200
