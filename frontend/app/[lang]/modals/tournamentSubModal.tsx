@@ -1,4 +1,4 @@
-import { Button, Chip, Input, Link, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react"
+import { Button, Chip, Input, Link, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react"
 import { TournamentData } from "./SelectionModal";
 import { useState } from "react";
 
@@ -27,28 +27,32 @@ export const TournamentSubModal : React.FC<TournamentSubModalProps> = ({ data, o
 				onChange={(e) => setInput(e.target.value !== '' ? Number(e.target.value) : '')}
 			/>
 			<Button onClick={() => onCreateTournament()}>Create New Tournament</Button>
-			<Table aria-label="Tournaments Table">
+			<Table
+				aria-label="Tournaments Table"
+				classNames={{ base: "max-h-[380px] overflow-scroll" }}
+				isHeaderSticky
+			>
 				<TableHeader>
 					<TableColumn>Tournament ID</TableColumn>
 					<TableColumn>Number of Players</TableColumn>
 					<TableColumn>Status</TableColumn>
 					<TableColumn>Actions</TableColumn>
 				</TableHeader>
-				<TableBody>
-					{filteredData.map((row) => (
-						<TableRow key={row.tournamentID}>
-							<TableCell>{row.tournamentID}</TableCell>
-							<TableCell> {row.connected} / {row.numberOfPlayers} </TableCell>
+				<TableBody isLoading={!data} loadingContent={<Spinner color="white" />} items={filteredData}>
+					{(items) => (
+						<TableRow key={items.tournamentID}>
+							<TableCell>{items.tournamentID}</TableCell>
+							<TableCell> {items.connected} / {items.numberOfPlayers} </TableCell>
 							<TableCell>
-								<Chip className="capitalize" color={row.isStarted ? "success" : "warning"} size="sm" variant="flat">
-									{row.isStarted ? "Running" : "Waiting..."}
+								<Chip className="capitalize" color={items.isStarted ? "success" : "warning"} size="sm" variant="flat">
+									{items.isStarted ? "Running" : "Waiting..."}
 								</Chip>
 							</TableCell>
 							<TableCell>
-								<Link isDisabled={row.isStarted} onClick={() => onJoinTournament(row.tournamentID)}>Join Tournament</Link>
+								<Link isDisabled={items.isStarted} onClick={() => onJoinTournament(items.tournamentID)}>Join Tournament</Link>
 							</TableCell>
 						</TableRow>
-					))}
+					)}
 				</TableBody>
 			</Table>
 		</>

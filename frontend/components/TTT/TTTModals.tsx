@@ -206,11 +206,12 @@ export const TTTModals = memo(() => {
 		}
 	}, [isConnected, getPlayer, address, tmContract]);
 
-	// TODO: Check what happens if user declines
 	const registerNewPlayer = async (username: string, color: string) => {
 		const colorCopy = color.replace('#', '0x');
 		const number = await onSetNameAndColor(username, colorCopy);
-		setShowSetModal(false);
+		if (number) {
+			setShowSetModal(false);
+		}
 	}
 
 	return (

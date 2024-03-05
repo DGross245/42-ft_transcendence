@@ -26,7 +26,7 @@ export const useJoinEvents = () => {
 	}
 
 	const onSetNameAndColor = async (username: string, color: string) => {
-		await setNameAndColor(username, color);
+		return (await setNameAndColor(username, color));
 	}
 	
 	const onCreateCustom = () => {

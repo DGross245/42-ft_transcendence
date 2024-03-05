@@ -49,7 +49,6 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 	)
 }
 
-// TODO: Extract tournament input and display only tournaments by that input
 // TODO: Add a refresh button (with a refrech delay)
 // TODO: Add a snippet for sharing GameID (Custom game only) should disapear on match start
 // TODO: similar modal from tournament also for Custome Games
@@ -57,16 +56,14 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 // FIXME: Fix switch, maybe due to the setter, its movement or interaction with it seems laggy unsmooth
 // TODO: Tournament end sequence missing, a mechnaic that displays maybe a winner of the tournament, and away to exit the game after tournament is finished.
 //		 also reset tournament state
+// TODO: Add a block for not connected users to access pages other then home
+
+// TODO: setColorAndName still has a delay and isnt set after the modal disappears
+
 // FIXME: Fix Timer positioning in Scene
 // FIXME: Add a handler for each contract call when an  error happens (when null is returned)
-// TODO: setColorAndName still has a delay and isnt set after the modal disappears
-// TODO: Add a block for not connected users to access pages other then home
 // TODO: check if JSON is needed in socket events
-//// BAD
-// socket.emit("hello", JSON.stringify({ name: "John" }));
 
-// GOOD
-// socket.emit("hello", { name: "John" });
 const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, setGameOptions }) => {
 	const [tournamentMode, setTournamentMode] = useState(false);
 	const [selected, setSelected] = useState("singleplayer");
