@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { RemoteSocket } from 'Socket.IO';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { DecorateAcknowledgementsWithMultipleResponses } from 'Socket.IO/dist/typed-events';
+import { Server } from "Socket.IO";
 
 import { Game } from '@/components/hooks/useContract';
 import { contract } from './socket';
@@ -82,11 +83,13 @@ const shufflePlayers = (array: any) => {
 	return array;
 }
 
+// FIXME: Error where players how just played against each other play again due to contract delay (seems like the event emitter is send before it actually changed)
 // TODO: Add a mechanic that sends a msg to all inside the tournament, that all games are played
 // sending them back to the home screen or something like that
-export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number, gameType: string ) => {
+export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number, gameType: string, io: Server ) => {
 	const games = (await contract.getTournamentTree(tournamentID)) as Game[];
 
+	let finished = 0;
 	let maxClients = 2;
 
 	if (gameType === 'OneForAll') {
@@ -102,6 +105,7 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 		let skipGame = false;
 
 		if (games[i].finished) {
+			finished++;
 			continue ;
 		}
 		for (let j = 0; j < maxClients; j++) {
@@ -143,5 +147,9 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 			}
 			l++
 		}
+	}
+	if (finished === games.length) {
+		const topic = 'tournament-finished';
+		io.to(`tournament-${tournamentID}`).emit(`message-${tournamentID}-${topic}`, "");
 	}
 }

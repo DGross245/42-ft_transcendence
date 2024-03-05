@@ -45,7 +45,7 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 
 						setTimeout(() => {
 							setDisappear(true);
-							setSeconds(15);
+							setSeconds(30);
 						}, 1500); 
 
 						clearInterval(interval);
@@ -58,7 +58,7 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 
 					setTimeout(() => {
 						setDisappear(true);
-						setSeconds(15);
+						setSeconds(30);
 					}, 1500); 
 				}
 			}, 1000);

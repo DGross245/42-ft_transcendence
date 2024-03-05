@@ -5,6 +5,7 @@ import { useSound } from "@/components/hooks/Sound";
 import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
 import useContract from "@/components/hooks/useContract";
+import { useRouter } from "next/navigation";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -47,6 +48,7 @@ export const TTTSocketEvents = memo(() => {
 	} = useContract();
 	const newClient = useWSClient();
 	const playSound = useSound();
+	const router = useRouter();
 
 	//* ------------------------------- state variables ------------------------------ */
 	const [playerSet, setPlayerSet] = useState(false);
@@ -114,7 +116,7 @@ export const TTTSocketEvents = memo(() => {
 			if (wsclient && gameState.gameId !== "-1") {
 				const player = await getPlayer(String(address))
 				const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
-	
+
 				setPlayerState((prevState) => {
 					const updatedPlayers = prevState.players.map((prevPlayer, index) => {
 						if (index === numClients) {
@@ -286,6 +288,25 @@ export const TTTSocketEvents = memo(() => {
 			}
 		}
 	}, [wsclient, gameState.gameId, setRematchIndex, setRequestRematch, playSound]);
+
+	// Handle tournament finish
+	useEffect(() => {
+		const finish = (msg: string) => {
+			console.log("KEK")
+			setTournament({ id: -1, index: -1});
+			wsclient?.leave();
+			router.push('/');
+		};
+
+		if (wsclient && tournament.id !== -1) {
+			console.log("listin")
+			wsclient?.addMessageListener('tournament-finished', String(tournament.id), finish)
+
+			return () => {
+				wsclient?.removeMessageListener('tournament-finished', String(tournament.id));
+			}
+		}
+	}, [router, tournament.id, wsclient, setTournament]);
 
 	// Send rematch request
 	useEffect(() => {

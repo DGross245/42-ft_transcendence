@@ -46,7 +46,7 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 		</Card>
 	)
 }
-
+// TODO: Remove tournament if finished
 // TODO: Maybe fetch current players inside the Tournament socket room like SocketRoom / row.numberOfPlayers
 // TODO: Extract tournament input and display only tournaments by that input
 // TODO: Add a refresh button (with a refrech delay)
@@ -60,6 +60,12 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 // FIXME: Add a handler for each contract call when an  error happens (when null is returned)
 // TODO: setColorAndName still has a delay and isnt set after the modal disappears
 // TODO: Add a block for not connected users to access pages other then home
+// TODO: check if JSON is needed in socket events
+//// BAD
+// socket.emit("hello", JSON.stringify({ name: "John" }));
+
+// GOOD
+// socket.emit("hello", { name: "John" });
 const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, setGameOptions }) => {
 	const [tournamentMode, setTournamentMode] = useState(false);
 	const [selected, setSelected] = useState("singleplayer");
@@ -93,7 +99,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 			setTournamentMode(false);
 			setSelected("singleplayer");
 		}
-	  }, [isOpen, getTournaments, setData, setTournamentMode, setSelected]);
+	  }, [isOpen, tmContract, getTournaments, setData, setTournamentMode, setSelected]);
 
 	useEffect(() => {
 		if (selected !== "singleplayer" && selected !== "multiplayer") {

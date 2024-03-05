@@ -33,6 +33,7 @@ export interface Tournament {
 	games: Game[]
 }
 
+//FIXME: For some reason I can start the tournament, the matchmaking works, but its says player not in the game
 /* -------------------------------------------------------------------------- */
 /*                                Contract Hook                               */
 /* -------------------------------------------------------------------------- */

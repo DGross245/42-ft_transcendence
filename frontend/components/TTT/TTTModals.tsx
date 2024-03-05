@@ -65,13 +65,14 @@ export const TTTModals = memo(() => {
 	const {
 		onSetNameAndColor
 	} = useJoinEvents();
+	const router = useRouter();
+	const { tmContract } = useContract();
+	const {isConnected, address} = useWeb3ModalAccount();
+
 	//* ------------------------------- state variables ------------------------------ */
 	const [isClicked, setIsClicked] = useState(false);
-	const router = useRouter();
 	const [playerInfos, setPlayerInfos] = useState({ color: "#ffffff", name: "KEK" });
 	const [showSetModal, setShowSetModal] = useState(false);
-	const {isConnected, address} = useWeb3ModalAccount();
-	const { tmContract } = useContract();
 
 	/* ------------------------------- functions ------------------------------ */
 	const handleButtonClick = useCallback(() => {
@@ -102,6 +103,7 @@ export const TTTModals = memo(() => {
 		}
 	};
 
+	// TODO: Implement that player 2 cant leave before player 1 left
 	// Function to handle sending player scores and continuing the game
 	const sendScoreAndContinue = async () => {
 		if (playerState.client === 0 || playerStatus === "disconnect" || playerStatus === "leave" ) {
@@ -109,12 +111,15 @@ export const TTTModals = memo(() => {
 			const playerScore: PlayerScore[] = [];
 
 			for (let i = 0; i < maxClient; i++) {
+				console.log(playerState.players[i].addr);
 				playerScore.push({
 					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1000,
 				})
 			}
 			if (tournament.id !== -1) {
+				console.log("ID", tournament.id, tournament.index)
 				const data = await getTournament(tournament.id);
+				console.log(data);
 				const finished = data.games[tournament.index].finished;
 				if (!finished) {
 					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
@@ -157,8 +162,8 @@ export const TTTModals = memo(() => {
 
 	// Quit handler
 	const quitGame = useCallback(() => {
-		router.push('/');
 		wsclient?.leave();
+		router.push('/');
 	}, [wsclient, router]);
 
 	useEffect(() => {
@@ -205,6 +210,13 @@ export const TTTModals = memo(() => {
 		}
 	}, [isConnected, getPlayer, address, tmContract]);
 
+	// TODO: Check what happens if user declines
+	const registerNewPlayer = async (username: string, color: string) => {
+		const colorCopy = color.replace('#', '0x');
+		const number = await onSetNameAndColor(username, colorCopy);
+		setShowSetModal(false);
+	}
+
 	return (
 		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">
 			{/* Pause Modal */}
@@ -234,7 +246,7 @@ export const TTTModals = memo(() => {
 				<CustomizeModal isOpen={gameState.gameId !== '-1' && !customized} color={playerInfos.color} username={playerInfos.name} startGame={initiateGame}/>
 			)}
 			{unregistered && (
-				<CustomizeModal isOpen={showSetModal} startGame={() => setShowSetModal(false)}/>
+				<CustomizeModal isOpen={showSetModal} startGame={registerNewPlayer}/>
 			)}
 
 			<Timer

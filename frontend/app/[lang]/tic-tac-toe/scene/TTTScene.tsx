@@ -113,6 +113,7 @@ const TTTScene : React.FC<{ selected: string }> = ({ selected }) => {
 			<Button onClick={onStartTournament}> Start Tournament </Button>
 			<Button onClick={onGetTournaments}> print all Tournament </Button>
 			<Button onClick={onkek}> start tournament manually </Button>
+			<Button onClick={onGetTournaments}> getTournaments </Button>
 			<Canvas style={{ width: dimensions.width, height: dimensions.height - 128 }}>
 				{/* <JoinGame selected={selected} /> */}
 				<Camera />

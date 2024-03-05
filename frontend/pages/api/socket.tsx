@@ -5,8 +5,7 @@ import crypto from 'crypto';
 import { ethers } from 'ethers';
 import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
-
-const contract_address = '0xD78F9fEc2c927d8722DD7D65e30552BC4380a118'
+import { contract_address } from "@/components/hooks/useContract";
 
 /* -------------------------------------------------------------------------- */
 /*                                Interface(s)                                */
@@ -52,7 +51,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 
 			socket.on('tournament', async (tournamentID: number, gameType: string) => {
 				const sockets = await io.in(`tournament-${tournamentID}`).fetchSockets();
-				tournamentHandler(sockets, tournamentID, gameType);
+				tournamentHandler(sockets, tournamentID, gameType, io);
 			});
 
 			socket.on('join-tournament', (tournamentID: number) => {
