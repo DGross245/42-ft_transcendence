@@ -34,8 +34,8 @@ player_data = {
 # -------------------------------------------------------------------------- #
 
 game_id = "0"
-paddle_length = 5
-paddle_speed = 2
+paddle_length = 3
+paddle_speed = 1
 score_offset = 48
 
 g_game_width = 300
@@ -76,21 +76,21 @@ def init_game_state():
 		'left_paddle': {
 			'x': server_x_to_cli_x(-g_game_width // 2 + 1),
 			'y': [
-				curses.LINES // 2 - 2,
+				# curses.LINES // 2 - 2,
 				curses.LINES // 2 - 1,
 				curses.LINES // 2,
 				curses.LINES // 2 + 1,
-				curses.LINES // 2 + 2
+				# curses.LINES // 2 + 2
 			]
 		},
 		'right_paddle': {
 			'x': server_x_to_cli_x(g_game_width // 2 - 1),
 			'y': [
-				curses.LINES // 2 - 2,
+				# curses.LINES // 2 - 2,
 				curses.LINES // 2 - 1,
 				curses.LINES // 2,
 				curses.LINES // 2 + 1,
-				curses.LINES // 2 + 2
+				# curses.LINES // 2 + 2
 			]
 		},
 		'score': {
@@ -250,7 +250,18 @@ def move_paddle(paddle, key):
 	return paddle
 
 def draw_score(stdscr, game_state):
-	stdscr.addstr(2, curses.COLS // 2 - 5, f"{game_state['score']['left']} : {game_state['score']['right']}")
+	stdscr.addstr(2, curses.COLS // 2 - 3, f"{game_state['score']['left']} : {game_state['score']['right']}")
+
+def draw_field(stdscr):
+	i = server_x_to_cli_x(-g_game_width / 2 + 1)
+	while i <= server_x_to_cli_x(g_game_width / 2 - 1):
+		stdscr.addstr(server_y_to_cli_y(-g_game_height // 2) - 1, i, '-')
+		stdscr.addstr(server_y_to_cli_y(g_game_height // 2) + 1, i, '-')
+		i += 1
+	i = server_y_to_cli_y(-g_game_height // 2)
+	while i <= server_y_to_cli_y(g_game_height // 2):
+		stdscr.addstr(i, server_x_to_cli_x(0) - 1, '|')
+		i += 2
 
 def curses_thread(stdscr):
 	curses.curs_set(False)
@@ -273,6 +284,7 @@ def curses_thread(stdscr):
 		game_state['right_paddle'] = draw_paddle(stdscr, game_state['right_paddle'], g_game_state['right_paddle'])
 		game_state['ball'] = draw_ball(stdscr, game_state['ball'], g_game_state['ball'], g_game_state['score'])
 		draw_score(stdscr, g_game_state)
+		draw_field(stdscr)
 		stdscr.refresh()
 
 def start_curses():
