@@ -46,7 +46,6 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 		</Card>
 	)
 }
-// TODO: Remove tournament if finished
 // TODO: Maybe fetch current players inside the Tournament socket room like SocketRoom / row.numberOfPlayers
 // TODO: Extract tournament input and display only tournaments by that input
 // TODO: Add a refresh button (with a refrech delay)
@@ -83,11 +82,25 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 				if (!tournaments) {
 					return ;
 				}
-				const formattedData = tournaments.map((tournament, index) => ({
-					tournamentID: index,
-					numberOfPlayers: tournament.players.length,
-					isStarted: tournament.start_block != 0
-				}));
+				const formattedData = tournaments.map((tournament, index) => {
+					let finished = 0;
+					for (let i = 0; i < tournament.games.length; i++) {
+						if (tournament.games[i].finished) {
+							finished++;
+						}
+					}
+
+					if (finished === tournament.games.length) {
+						return (null);
+					} else {
+						return {
+							tournamentID: index,
+							numberOfPlayers: tournament.players.length,
+							isStarted: tournament.start_block != 0
+						}
+					}
+				}).filter(data => data !== null) as TournamentData[];
+
 				setData(formattedData);
 			}
 		};
