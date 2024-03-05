@@ -103,7 +103,6 @@ export const TTTModals = memo(() => {
 		}
 	};
 
-	// TODO: Implement that player 2 cant leave before player 1 left
 	// Function to handle sending player scores and continuing the game
 	const sendScoreAndContinue = async () => {
 		if (playerState.client === 0 || playerStatus === "disconnect" || playerStatus === "leave" ) {
@@ -117,9 +116,7 @@ export const TTTModals = memo(() => {
 				})
 			}
 			if (tournament.id !== -1) {
-				console.log("ID", tournament.id, tournament.index)
 				const data = await getTournament(tournament.id);
-				console.log(data);
 				const finished = data.games[tournament.index].finished;
 				if (!finished) {
 					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
@@ -127,24 +124,23 @@ export const TTTModals = memo(() => {
 			} else if (playerState.client === 0) {
 				await submitGameResultRanked(playerScore);
 			}
-		}
+			const status = await wsclient?.updateStatus(false, gameState.gameId);
+			wsclient?.leave();
+	
+			// reset loop important states
+			closeModal();
+			updateGameState({ gameId: "-1", pause: true, reset: true });
+			setPlayerState(initialTTTPlayerState());
+			setStarted(false);
+			setChipDisappear(false);
 
-		const status = await wsclient?.updateStatus(false, gameState.gameId);
-		wsclient?.leave();
-
-		// reset loop important states
-		closeModal();
-		updateGameState({ gameId: "-1", pause: true, reset: true });
-		setPlayerState(initialTTTPlayerState());
-		setStarted(false);
-		setChipDisappear(false);
-
-		if (status) {
-			if (tournament.id !== -1) {
-				wsclient?.requestTournament(tournament.id, 'TTT');
-			} else {
-				console.log("test")
-				wsclient?.joinQueue('TTT');
+			if (status) {
+				if (tournament.id !== -1) {
+					wsclient?.requestTournament(tournament.id, 'TTT');
+				} else {
+					console.log("test")
+					wsclient?.joinQueue('TTT');
+				}
 			}
 		}
 	}
