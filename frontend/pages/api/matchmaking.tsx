@@ -83,9 +83,6 @@ const shufflePlayers = (array: any) => {
 	return array;
 }
 
-// FIXME: Error where players how just played against each other play again due to contract delay (seems like the event emitter is send before it actually changed)
-// TODO: Add a mechanic that sends a msg to all inside the tournament, that all games are played
-// sending them back to the home screen or something like that
 export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number, gameType: string, io: Server ) => {
 	const games = (await contract.getTournamentTree(tournamentID)) as Game[];
 
@@ -149,7 +146,15 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 		}
 	}
 	if (finished === games.length) {
-		const topic = 'tournament-finished';
-		io.to(`tournament-${tournamentID}`).emit(`message-${tournamentID}-${topic}`, "");
+		let playerReady = 0;
+		for (let i = 0; i < sockets.length; i++) {
+			if (!sockets[i].data.isInGame) {
+				playerReady++;
+			}
+		}
+		if (playerReady === sockets.length) {
+			const topic = 'tournament-finished';
+			io.to(`tournament-${tournamentID}`).emit(`message-${tournamentID}-${topic}`, "");
+		}
 	}
 }

@@ -75,7 +75,7 @@ const TTTScene : React.FC<{ selected: string }> = ({ selected }) => {
 		console.log(t);
 	}
 
-	const onkek = () => {
+	const onkek = () => {
 		wsclient?.requestTournament(topic, 'TTT');
 	}
 

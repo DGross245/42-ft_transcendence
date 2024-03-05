@@ -10,7 +10,7 @@ import { initialTTTPlayerState } from "@/app/[lang]/tic-tac-toe/context/TTTSocke
 import useContract, { PlayerScore } from "../hooks/useContract";
 import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
 import { useJoinEvents } from "../JoinGame";
-import { useWeb3ModalAccount, useWeb3ModalProvider } from "@web3modal/ethers5/react";
+import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -110,7 +110,6 @@ export const TTTModals = memo(() => {
 			const playerScore: PlayerScore[] = [];
 
 			for (let i = 0; i < maxClient; i++) {
-				console.log(playerState.players[i].addr);
 				playerScore.push({
 					addr: playerState.players[i].addr, score: winner !== playerState.players[i].symbol ? 0 : 1000,
 				})
@@ -178,9 +177,11 @@ export const TTTModals = memo(() => {
 	}, [customized, gameState.gameId, playerAddress, getPlayer, setPlayerInfos]);
 
 	const initiateGame = async (username: string, color: string) => {
+		console.log(username, playerInfos.name, color, playerInfos.color)
 		if (username !== playerInfos.name || color !== playerInfos.color) {
 			const colorCopy = color.replace('#', '0x');
 			const number = await onSetNameAndColor(username, colorCopy);
+			console.log(number);
 		}
 
 		setCustomized(true);
@@ -194,14 +195,13 @@ export const TTTModals = memo(() => {
 
 	useEffect(() => {
 		const checkPlayerInfo = async () => {
-			// FIXME: Emits an error if player doesnt exist
 			const playerInfo = await getPlayer(String(address));
-			if (!playerInfo) {
+			if (Number(playerInfo.addr) === 0) {
 				setShowSetModal(true);
 			}
 		}
 
-		if (isConnected && tmContract) {
+		if (isConnected && tmContract && address) {
 			checkPlayerInfo();
 		}
 	}, [isConnected, getPlayer, address, tmContract]);
@@ -243,7 +243,7 @@ export const TTTModals = memo(() => {
 				<CustomizeModal isOpen={gameState.gameId !== '-1' && !customized} color={playerInfos.color} username={playerInfos.name} startGame={initiateGame}/>
 			)}
 			{unregistered && (
-				<CustomizeModal isOpen={showSetModal} startGame={registerNewPlayer}/>
+				<CustomizeModal isOpen={showSetModal} startGame={registerNewPlayer} />
 			)}
 
 			<Timer

@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
 
-export const contract_address = '0x8e627ECD303Ff1735948C62D3754D364D82583ED'
+export const contract_address = '0x10b5bE3344b9D3Dc9313A38dB2235C6dc2D0D2e6'
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -53,8 +53,12 @@ function useContract() {
 	const callContract = useCallback(async (functionName: string, args: any[] = []) => {
 		try {
 			const result = await tmContract?.[functionName](...args);
+			console.log("result: ", result);
 			if (result && typeof result.wait !== "undefined") {
-				result.wait();
+				toast.info("Transaction is being minted...")
+				const receipt = await result.wait();
+				console.log("receipt: ", receipt);
+				return receipt;
 			}
 			return result;
 		} catch (error) {

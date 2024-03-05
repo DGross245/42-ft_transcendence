@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 
 import { usePongGameState } from "./usePongGameState";
@@ -42,8 +42,9 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		const deltaZ = ball.z - paddlePos.z;
 		const normalizedY = deltaZ / halfPaddleHeight;
 
-		if (ball.speed <= 2)
+		if (ball.speed <= 2) {
 			ball.speed += 0.2;
+		}
 		ball.velocityX = direction * ball.speed;
 		ball.velocityZ = normalizedY * ball.speed;
 	}
