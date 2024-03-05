@@ -91,6 +91,10 @@ def init_game_state():
 				curses.LINES // 2 + 1,
 				curses.LINES // 2 + 2
 			]
+		},
+		'score': {
+			'left': 0,
+			'right': 0
 		}
 	}
 	return game_state
@@ -108,6 +112,10 @@ def init_game_state_empty():
 		'right_paddle': {
 			'x': server_x_to_cli_x(g_game_width / 2 - 1),
 			'y': [0, 0, 0, 0, 0]
+		},
+		'score': {
+			'left': 0,
+			'right': 0
 		}
 	}
 	return game_state
@@ -213,19 +221,23 @@ def draw_paddle(stdscr, paddle, global_paddle):
 			stdscr.addstr(paddle['y'][i], paddle['x'], '|')
 	return paddle
 
-def draw_ball(stdscr, ball, global_ball):
+def draw_ball(stdscr, ball, global_ball, score):
 	if global_ball['x'] != ball['x'] or global_ball['y'] != ball['y']:
-		if global_ball['x'] >= server_x_to_cli_x(g_game_width // 2 * -1) and global_ball['x'] <= server_x_to_cli_x(g_game_width // 2 - 1) and global_ball['y'] >= server_y_to_cli_y(g_game_height // 2 * -1) and global_ball['y'] <= server_y_to_cli_y(g_game_height // 2 - 1):
-			stdscr.addstr(ball['y'], ball['x'], ' ')
-			ball['x'] = global_ball['x']
-			ball['y'] = global_ball['y']
-			stdscr.addstr(global_ball['y'], global_ball['x'], 'O')
+		stdscr.addstr(ball['y'], ball['x'], ' ')
+		stdscr.addstr(global_ball['y'], global_ball['x'], 'O')
+		global g_game_state
+		if global_ball['x'] < server_x_to_cli_x(g_game_width // 2 * -1 - 48):
+			score['right'] += 1
+		elif global_ball['x'] > server_x_to_cli_x(g_game_width // 2 + 48):
+			score['left'] += 1
+		ball['x'] = global_ball['x']
+		ball['y'] = global_ball['y']
 	return ball
 
 def draw_scene(stdscr, game_state, global_game_state):
 	game_state['left_paddle'] = draw_paddle(stdscr, game_state['left_paddle'], global_game_state['left_paddle'])
 	game_state['right_paddle'] = draw_paddle(stdscr, game_state['right_paddle'], global_game_state['right_paddle'])
-	game_state['ball'] = draw_ball(stdscr, game_state['ball'], global_game_state['ball'])
+	game_state['ball'] = draw_ball(stdscr, game_state['ball'], global_game_state['ball'], global_game_state['score'])
 	stdscr.refresh()
 	return game_state
 
@@ -243,8 +255,8 @@ def move_paddle(paddle, key):
 		asyncio.run(send_paddle_data(paddle['y'][paddle_length // 2], game_id))
 	return paddle
 
-def draw_score(stdscr, score):
-	
+def draw_score(stdscr, game_state):
+	stdscr.addstr(2, curses.COLS // 2 - 5, f"{game_state['score']['left']} : {game_state['score']['right']}")
 
 def curses_thread(stdscr):
 	curses.curs_set(False)
@@ -257,12 +269,14 @@ def curses_thread(stdscr):
 	g_game_state = init_game_state()
 	game_state = init_game_state_empty()
 
+
 	while True:
 		key = stdscr.getch()
 		if key == curses.KEY_EXIT or key == ord('q'):
 			break
 		g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
 		game_state = draw_scene(stdscr, game_state, g_game_state)
+		draw_score(stdscr, g_game_state)
 
 def start_curses():
 	curses.wrapper(curses_thread)
