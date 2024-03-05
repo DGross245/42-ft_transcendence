@@ -281,8 +281,7 @@ contract TournamentManager {
 	function getPlayer(address addr)
 	external view
 	returns (Player memory) {
-		require (players[addr].addr != address(0), "Player does not exist");
-
+		// require (players[addr].addr != address(0), "Player does not exist");
 		return players[addr];
 	}
 
