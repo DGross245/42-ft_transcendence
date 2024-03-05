@@ -213,6 +213,9 @@ async def send_paddle_data(paddle_y: str, game_id: str):
 # -------------------------------------------------------------------------- #
 
 def draw_paddle(stdscr, paddle, global_paddle):
+	for i in range(len(paddle['y'])):
+		if paddle['y'][i] != '|':
+			stdscr.addstr(paddle['y'][i], paddle['x'], '|')
 	if global_paddle['y'][0] != paddle['y'][0]:
 		for i in range(len(paddle['y'])):
 			stdscr.addstr(paddle['y'][i], paddle['x'], ' ')
@@ -331,7 +334,6 @@ if __name__ == '__main__':
 	main()
 
 # goals
-	# play pong with webclient
 	# create game
 	# join game
 	# leave game
@@ -342,8 +344,9 @@ if __name__ == '__main__':
 	# separate into socket file and cli file
 	# pass url and port as arguments
 	# how to start cli-client? makefile?
-	# win and lose screen
 	# quit correctly
+	# add colors
+	# fix scaling issues at very wide widths and small heights
 # approach
 	# create communication interface
 	# make it controllable via terminal
