@@ -9,8 +9,6 @@ import useContract, { PlayerScore } from "../hooks/useContract";
 import { usePongUI } from "@/app/[lang]/pong/hooks/usePongUI";
 import { initialPongPlayerState } from "@/app/[lang]/pong/context/PongSockets";
 
-// TODO: Check if PongUI or UI in TTT is needed or can be simplified
-
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */

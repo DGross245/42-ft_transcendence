@@ -1,5 +1,5 @@
 import * as React from "react";
-import styles from "../app/[lang]/modals/Modals.module.css";
+import styles from "@/app/[lang]/modals/Modals.module.css";
 
 export const RightArrowIcon = ({ width = 24, height = 24, color = 'currentColor', ...props }) => (
 	<svg

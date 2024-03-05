@@ -2,9 +2,9 @@
 
 import { Canvas } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { useWindow } from "../../../../components/hooks/useWindow";
+import { useWindow } from "@/components/hooks/useWindow";
 import { Grid } from "@/components/TTT/Grid";
 import { FieldLayers } from "@/components/TTT/FieldLayers";
 import Countdown from "@/components/TTT/Countdown";

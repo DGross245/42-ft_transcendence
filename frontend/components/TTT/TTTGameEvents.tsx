@@ -5,7 +5,6 @@ import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
 import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 import { useKey } from "../hooks/useKey";
 import { useSound } from "../hooks/Sound";
-import { useUI } from "@/app/[lang]/tic-tac-toe/hooks/useUI";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */

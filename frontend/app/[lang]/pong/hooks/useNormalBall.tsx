@@ -17,8 +17,6 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		leftPaddleRef,
 		rightPaddleRef,
 		setScores,
-		botState,
-		setStarted,
 		started
 	} = usePongGameState();
 	const { wsclient, playerState } = usePongSocket();

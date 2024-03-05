@@ -2,11 +2,8 @@
 
 import io, { Socket } from 'socket.io-client';
 import { useEffect, useState } from 'react';
-import crypto from 'crypto';
-import { contract } from '@/pages/api/socket';
 
 export type WSClientType = {
-	// createGame: () => Promise<string>;
 	createGame: () => void;
 	waitingRoom: () => Promise<{gameID: string, tournamentId: number, gameIndex: number}>;
 	joinGame: (gameId: string, gameType: string, isBot: boolean) => Promise<number>;
@@ -162,8 +159,9 @@ const useWSClient = () => {
 	const [wsclient, setWsclient] = useState<WSClient | null>(null);
 
 	useEffect(() => {
-		if (window !== undefined)
+		if (window !== undefined) {
 			setWsclient(new WSClient());
+		}
 	},[]);
 
 	return wsclient;
@@ -172,4 +170,3 @@ const useWSClient = () => {
 export default useWSClient;
 
 // @todo add timeouts to all promises
-// @todo add join any game method

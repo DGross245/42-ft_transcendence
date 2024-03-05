@@ -1,6 +1,6 @@
 "use client";
 
-import { useWeb3Modal, useWeb3ModalState, useWeb3ModalAccount, useWeb3ModalError } from "@web3modal/ethers5/react";
+import { useWeb3Modal, useWeb3ModalState, useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import { Button, ButtonProps } from "@nextui-org/button";
 import { useTranslation } from "@/app/i18n";
 import { useEffect, useState } from "react";

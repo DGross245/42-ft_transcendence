@@ -6,7 +6,6 @@ import { useCurrentLocale } from 'next-i18n-router/client'
 import i18nConfig from '@/i18n.config'
 import i18next from 'i18next'
 import { useEffect } from 'react';
-import { usePathname } from 'next/navigation';
 
 const runsOnServerSide = typeof window === 'undefined';
 i18next

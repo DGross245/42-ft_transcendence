@@ -10,7 +10,7 @@ import Scoreboard from "@/components/Pong/Scoreboard";
 import { CornerBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";
-import { GameControl } from "../../../../components/Pong/Paddle";
+import { GameControl } from "@/components/Pong/Paddle";
 import { PongModals } from "@/components/Pong/PongModals";
 import { useState } from "react";
 import { Button } from "@nextui-org/react";

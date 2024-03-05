@@ -30,6 +30,7 @@ interface TextProps {
 	leftTitle: string;
 	rightTitle: string;
 }
+
 const Text = ({leftTitle, rightTitle}: TextProps) => {
 	return (<>
 		<Html position={[-3, 0, 0]} style={{ width: '1000px' }} className="text-white text-start text-6xl font-sans font-bold" zIndexRange={[-20]}>

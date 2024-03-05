@@ -1,9 +1,9 @@
 import { memo, useMemo } from 'react';
 import * as THREE from 'three';
 
-import { useGameState } from '../../app/[lang]/tic-tac-toe/hooks/useGameState';
-import { useSocket } from '../../app/[lang]/tic-tac-toe/hooks/useSocket';
-import { useField } from '../../app/[lang]/tic-tac-toe/hooks/useField';
+import { useGameState } from '@/app/[lang]/tic-tac-toe/hooks/useGameState';
+import { useSocket } from '@/app/[lang]/tic-tac-toe/hooks/useSocket';
+import { useField } from '@/app/[lang]/tic-tac-toe/hooks/useField';
 import X from './X';
 import Torus from './Torus';
 import Square from './Square';

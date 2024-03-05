@@ -3,7 +3,6 @@ import styles from "./Modals.module.css";
 import ModalButton from "./ModalButton";
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-import useContract from "@/components/hooks/useContract";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */

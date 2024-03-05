@@ -2,7 +2,7 @@ import { Line } from "@react-three/drei";
 import { useEffect, useMemo, useState } from "react";
 
 import { useSound } from "@/components/hooks/Sound";
-import { useGameState } from "../../app/[lang]/tic-tac-toe/hooks/useGameState";
+import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
 import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 
 /* -------------------------------------------------------------------------- */
