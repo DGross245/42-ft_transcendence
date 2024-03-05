@@ -36,6 +36,7 @@ player_data = {
 game_id = "0"
 paddle_length = 5
 paddle_speed = 2
+score_offset = 48
 
 g_game_width = 300
 g_game_height = 200
@@ -226,20 +227,13 @@ def draw_ball(stdscr, ball, global_ball, score):
 		stdscr.addstr(ball['y'], ball['x'], ' ')
 		stdscr.addstr(global_ball['y'], global_ball['x'], 'O')
 		global g_game_state
-		if global_ball['x'] < server_x_to_cli_x(g_game_width // 2 * -1 - 48):
+		if global_ball['x'] < server_x_to_cli_x(g_game_width // 2 * -1 - score_offset):
 			score['right'] += 1
-		elif global_ball['x'] > server_x_to_cli_x(g_game_width // 2 + 48):
+		elif global_ball['x'] > server_x_to_cli_x(g_game_width // 2 + score_offset):
 			score['left'] += 1
 		ball['x'] = global_ball['x']
 		ball['y'] = global_ball['y']
 	return ball
-
-def draw_scene(stdscr, game_state, global_game_state):
-	game_state['left_paddle'] = draw_paddle(stdscr, game_state['left_paddle'], global_game_state['left_paddle'])
-	game_state['right_paddle'] = draw_paddle(stdscr, game_state['right_paddle'], global_game_state['right_paddle'])
-	game_state['ball'] = draw_ball(stdscr, game_state['ball'], global_game_state['ball'], global_game_state['score'])
-	stdscr.refresh()
-	return game_state
 
 def move_paddle(paddle, key):
 	offset = 0
@@ -275,8 +269,11 @@ def curses_thread(stdscr):
 		if key == curses.KEY_EXIT or key == ord('q'):
 			break
 		g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
-		game_state = draw_scene(stdscr, game_state, g_game_state)
+		game_state['left_paddle'] = draw_paddle(stdscr, game_state['left_paddle'], g_game_state['left_paddle'])
+		game_state['right_paddle'] = draw_paddle(stdscr, game_state['right_paddle'], g_game_state['right_paddle'])
+		game_state['ball'] = draw_ball(stdscr, game_state['ball'], g_game_state['ball'], g_game_state['score'])
 		draw_score(stdscr, g_game_state)
+		stdscr.refresh()
 
 def start_curses():
 	curses.wrapper(curses_thread)
