@@ -10,6 +10,7 @@ export type WSClientType = {
 	createGame: () => void;
 	waitingRoom: () => Promise<{gameID: string, tournamentId: number, gameIndex: number}>;
 	joinGame: (gameId: string, gameType: string, isBot: boolean) => Promise<number>;
+	getNumberOfSocketsInTournament: (tournamentID: number) => Promise<number>;
 	waitingForSocket: () => Promise<void>;
 	emitMessageToGame: (msg: string, topic: string, gameId: string) => void;
 	addMessageListener: (topic: string, gameId: string, callback: (msg: string) => void) => void;
@@ -98,6 +99,19 @@ class WSClient {
 	async waitingForSocket(): Promise<void> {
 		await this.waitForSocket();
 		return ;
+	}
+
+	async getNumberOfSocketsInTournament (tournamentID: number) {
+		if (!this.socket) {
+			await this.waitingForSocket();
+		}
+		return new Promise((resolve, reject) => {
+			this.socket!.emit('get-number-of-player-in-tournament', tournamentID);
+			this.socket!.on('number-of-players', (numberOfPlayer: number) => {
+				this.socket!.removeListener('number-of-players');
+				resolve(numberOfPlayer);
+			})
+		});
 	}
 
 	async joinGame(gameId: string, gameType: string, isBot: boolean): Promise<number> {

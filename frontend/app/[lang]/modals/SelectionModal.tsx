@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import useContract from "@/components/hooks/useContract";
 import { useJoinEvents } from "@/components/JoinGame";
 import { TournamentSubModal } from "./tournamentSubModal";
+import useWSClient from "@/helpers/wsclient";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -31,6 +32,7 @@ interface SelectionModalProps {
 export interface TournamentData {
 	tournamentID: number,
 	numberOfPlayers: number,
+	connected?: number,
 	isStarted: boolean,
 }
 
@@ -46,7 +48,7 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 		</Card>
 	)
 }
-// TODO: Maybe fetch current players inside the Tournament socket room like SocketRoom / row.numberOfPlayers
+
 // TODO: Extract tournament input and display only tournaments by that input
 // TODO: Add a refresh button (with a refrech delay)
 // TODO: Add a snippet for sharing GameID (Custom game only) should disapear on match start
@@ -74,15 +76,24 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 	const [data, setData] = useState<TournamentData[]>([]);
 	const { getTournaments, tmContract } = useContract();
 	const { onJoinTournament, onCreateTournament } = useJoinEvents();
+	const wsclient = useWSClient();
 
 	useEffect(() => {
+		const getSocketNumber = async (index: number) => {
+			if (wsclient) {
+				const number = await wsclient.getNumberOfSocketsInTournament(index);
+				return (number);
+			}
+			return (0);
+		}
+
 		const fetchData = async () => {
 			if (tmContract) {
 				const tournaments = await getTournaments();
 				if (!tournaments) {
 					return ;
 				}
-				const formattedData = tournaments.map((tournament, index) => {
+				const formattedData = tournaments.map(async (tournament, index) => {
 					let finished = 0;
 					for (let i = 0; i < tournament.games.length; i++) {
 						if (tournament.games[i].finished) {
@@ -95,24 +106,28 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 					} else {
 						return {
 							tournamentID: index,
+							connected: (await getSocketNumber(index)),
 							numberOfPlayers: tournament.players.length,
 							isStarted: tournament.start_block != 0
 						}
 					}
-				}).filter(data => data !== null) as TournamentData[];
+				})
 
-				setData(formattedData);
+				const resolvedData = await Promise.all(formattedData);
+				const filteredData = resolvedData.filter(data => data !== null) as TournamentData[];
+
+				setData(filteredData);
 			}
 		};
 
-		if (isOpen) {
+		if (isOpen && wsclient) {
 			fetchData();
 		} else {
 			setData([]);
 			setTournamentMode(false);
 			setSelected("singleplayer");
 		}
-	  }, [isOpen, tmContract, getTournaments, setData, setTournamentMode, setSelected]);
+	  }, [isOpen, tmContract, wsclient, tournamentMode, getTournaments, setData, setTournamentMode, setSelected]);
 
 	useEffect(() => {
 		if (selected !== "singleplayer" && selected !== "multiplayer") {

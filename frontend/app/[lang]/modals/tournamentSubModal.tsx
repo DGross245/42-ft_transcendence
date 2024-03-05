@@ -29,7 +29,7 @@ export const TournamentSubModal : React.FC<TournamentSubModalProps> = ({ data, o
 					{data.map((row) => (
 						<TableRow key={row.tournamentID}>
 							<TableCell>{row.tournamentID}</TableCell>
-							<TableCell> {row.numberOfPlayers} </TableCell>
+							<TableCell> {row.connected} / {row.numberOfPlayers} </TableCell>
 							<TableCell>
 								<Chip className="capitalize" color={row.isStarted ? "success" : "warning"} size="sm" variant="flat">
 									{row.isStarted ? "Running" : "Waiting..."}

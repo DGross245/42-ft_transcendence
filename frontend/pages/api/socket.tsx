@@ -70,6 +70,12 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				socket.emit('Status-Changed', true);
 			});
 
+			socket.on('get-number-of-player-in-tournament', (tournamentID: number) => {
+				const room = io.sockets.adapter.rooms.get(`tournament-${tournamentID}`);
+				const numberOfPlayer = room ? room.size : 0;
+				socket.emit('number-of-players', numberOfPlayer);
+			});
+
 			socket.on('join-game', ( gameId: string, gameType: string, offset: number ) => {
 				const room = io.sockets.adapter.rooms.get(gameId);
 				const numClients = room ? room.size : 0;
