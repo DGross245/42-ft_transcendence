@@ -12,9 +12,9 @@ const Wallet = () => {
 	const walletGLTF = useLoader(GLTFLoader, '/Models/wallet/scene.gltf');
 	const walletRef = useRef<any>();
 
-	useFrame(() =>{
+	useFrame((_, delta) =>{
 		if (walletRef && walletRef.current){
-			walletRef.current.rotation.y += 0.005;
+			walletRef.current.rotation.y += 0.5 * delta;
 			walletRef.current.position.y = 1.5
 		}
 	})

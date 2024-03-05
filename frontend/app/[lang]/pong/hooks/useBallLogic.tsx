@@ -22,7 +22,8 @@ export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 		leftPaddleRef,
 		rightPaddleRef,
 		topPaddleRef,
-		setScores
+		setScores,
+		botState
 	} = usePongGameState();
 	const { wsclient, playerState } = usePongSocket();
 
@@ -102,21 +103,23 @@ export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 
 		if (lastPaddleHit !== '') {
 			const { player, score, isOwnGoal } = paddleCollision[lastPaddleHit];
-			if (isOwnGoal && score !== 0)
+			if (isOwnGoal && score !== 0) {
 				setScores({ ...scores, [player]: score - 1})
+			}
 			else if (!isOwnGoal) {
 				setScores({ ...scores, [player]: score + 1})
 			}
 
 		} else {
-			if (ball.z >= 170 && scores.p1Score !== 0) 
+			if (ball.z >= 170 && scores.p1Score !== 0) {
 				setScores({ ...scores, p1Score: scores.p1Score - 1 })
-			else if (ball.x <= -170 && scores.p2Score !== 0 )
+			} else if (ball.x <= -170 && scores.p2Score !== 0 ) {
 				setScores({ ...scores, p2Score: scores.p2Score - 1 })
-			else if (ball.z <= -170 && scores.p3Score !== 0)
+			} else if (ball.z <= -170 && scores.p3Score !== 0) {
 				setScores({ ...scores, p3Score: scores.p3Score - 1 })
-			else if (ball.x >= 170 && scores.p4Score !== 0)
+			} else if (ball.x >= 170 && scores.p4Score !== 0) {
 				setScores({ ...scores, p4Score: scores.p4Score - 1 })
+			}
 		}
 		setLastPaddleHit('');
 	}
@@ -129,8 +132,10 @@ export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 	 * 					  Used to ensure independence from the frame rate.
 	 */
 	const updateBallPosition = (ball: { x: number; z: number; velocityX: number; velocityZ: number; }, deltaTime: number) => {
-		if (pongGameState.pause)
+		if (pongGameState.pause) {
 			return ;
+		}
+
 		if (playerState.master) {
 			ball.x += ball.velocityX * 100 * deltaTime;
 			ball.z += ball.velocityZ * 100 * deltaTime;
@@ -145,12 +150,13 @@ export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 			ball.x = position.x + velocity.x * deltaTime;
 			ball.z = position.z + velocity.z * deltaTime;
 		}
+
 		if (ballRef.current) {
 			ballRef.current.position.x = ball.x;
 			ballRef.current.position.z = ball.z;
 		}
-	
-		if (onPositionChange && ballRef.current) {
+
+		if (botState.isActive && onPositionChange && ballRef.current) {
 			onPositionChange(ballRef.current.position);
 		}
 	}
@@ -163,7 +169,7 @@ export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 
 		if (wsclient && pongGameState.gameId !== "-1") {
 			wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
-	
+
 			return () => {
 				wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 			};
@@ -198,41 +204,40 @@ export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 		if (isColliding(-151, -131, 2, 20) || isColliding(151, -131, 2, 20) ||
 			isColliding(-151, 131, 2, 20) || isColliding(151, 131, 2, 20)) {
 			// Handling top or bottom side collision trajectory.
-			if (ball.x + halfBall >= 151 || ball.x - halfBall <= -151)
+			if (ball.x + halfBall >= 151 || ball.x - halfBall <= -151) {
 				ball.velocityZ *= -1;
-			// Normal collition trajectory.
-			else
+			} else {
+				// Normal collition trajectory.
 				ball.velocityX *= -1;
-			updateBallPosition(ball, deltaTime);
+				updateBallPosition(ball, deltaTime);
+			}
 		}
 		// Handle collision with the horizontal walls.
 		if (isColliding(-131, -151, 20, 2) || isColliding(131, -151, 20, 2)||
 			isColliding(-131, 151, 20, 2) || isColliding(131, 151, 20, 2)) {
 			// Handling left and right side collision.
-			if (ball.z + halfBall >= 151 || ball.z - halfBall <= -151)
+			if (ball.z + halfBall >= 151 || ball.z - halfBall <= -151) {
 				ball.velocityX *= -1;
-			// Normal collition trajectory.
-			else
+			} else {
+				// Normal collition trajectory.
 				ball.velocityZ *= -1;
-			updateBallPosition(ball, deltaTime);
+				updateBallPosition(ball, deltaTime);
+			}
 		}
 		// Handling ball collision with paddles.
 		else if (isColliding(leftPaddlePos.x, leftPaddlePos.z, 2, 15)) {
 			setLastPaddleHit('left');
 			changeBallDir(leftPaddlePos, 1, false);
 			changeColor(leftPaddleRef);
-		}
-		else if (isColliding(rightPaddlePos.x, rightPaddlePos.z, 2, 15)) {
+		} else if (isColliding(rightPaddlePos.x, rightPaddlePos.z, 2, 15)) {
 			setLastPaddleHit('right');
 			changeBallDir(rightPaddlePos, -1, false);
 			changeColor(rightPaddleRef);
-		}
-		else if (isColliding(TopPaddlePos.x, TopPaddlePos.z, 15, 2)) {
+		} else if (isColliding(TopPaddlePos.x, TopPaddlePos.z, 15, 2)) {
 			setLastPaddleHit('top');
 			changeBallDir(TopPaddlePos, 1, true);
 			changeColor(topPaddleRef);
-		}
-		else if (isColliding(BottomPaddlePos.x, BottomPaddlePos.z, 15, 2)) {
+		} else if (isColliding(BottomPaddlePos.x, BottomPaddlePos.z, 15, 2)) {
 			setLastPaddleHit('bottom');
 			changeBallDir(BottomPaddlePos, -1, true);
 			changeColor(bottomPaddleRef);
@@ -249,8 +254,9 @@ export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 	// Initiates the game by providing a random direction to the ball after the countdown
 	// sets the score visibility to true.
 	useEffect(() => {
-		if (isScoreVisible)
+		if (isScoreVisible) {
 			randomBallDir();
+		}
 	}, [isScoreVisible]);
 
 	useEffect(() => {

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Vector3 } from 'three';
 
 import { usePongGameState } from './usePongGameState';
@@ -24,7 +24,7 @@ export const usePongBot = () => {
 	const { wsclient, setPlayerState } = usePongSocket();
 
 	// Calculates the bot's paddle movement direction based on the ball's position.
-	const calculateBotMove = (ballPosition: number, botPaddlePosition: number) => {
+	const calculateBotMove = useCallback((ballPosition: number, botPaddlePosition: number) => {
 		if (ballPosition) {
 			setTimeout(() => {
 				if (ballPosition >= botPaddlePosition - 15 && ballPosition <= botPaddlePosition + 15) {
@@ -38,15 +38,15 @@ export const usePongBot = () => {
 				}
 			}, botState.strength);
 		}
-	}
+	}, [botState.strength]);
 
-	const ballAidsHook = (position: Vector3) => {
+	const ballAidsHook = useCallback((position: Vector3) => {
 		if (position.z) {
 			const ballPositionZ = position.z as number;
 			const botPaddlePositionZ = rightPaddleRef.current.position.z as number;
 			calculateBotMove(ballPositionZ, botPaddlePositionZ);
 		}
-	}
+	}, [rightPaddleRef, calculateBotMove])
 
 	useEffect(() => {
 		const joinTheGame = () => {

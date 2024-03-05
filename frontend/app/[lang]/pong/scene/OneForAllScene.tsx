@@ -7,7 +7,6 @@ import Camera from "@/components/Pong/Camera";
 import { CubeLineX, CubeLineY } from "@/components/Pong/CubeLine";
 import { OrbitControls } from "@react-three/drei";
 import Scoreboard from "@/components/Pong/Scoreboard";
-import EndModal from "@/components/Pong/EndModal";
 import { CornerBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";
 import { PongSocketEvents } from "@/components/Pong/PongSocketEvents";

@@ -116,14 +116,14 @@ const Scoreboard = () => {
 	//* ------------------------------- useEffects ------------------------------ */
 	useEffect(() => {
 		if (playerState.client !== -1) {
-
 			const { position, rotation } = replacePosAndRot(playerState.client + 1);
-			let newPosAndRot = [...posAndRot];
-			newPosAndRot[playerState.client].position = position
-			newPosAndRot[playerState.client].rotation = rotation
-			setPosAndRot(newPosAndRot);
+			setPosAndRot((prevState) => {
+				prevState[playerState.client].position = position;
+				prevState[playerState.client].rotation = rotation;
+				return (prevState);
+			});
 		}
-	}, [playerState.client, posAndRot, replacePosAndRot]);
+	}, [playerState.client, replacePosAndRot]);
 
 	return (
 		<>

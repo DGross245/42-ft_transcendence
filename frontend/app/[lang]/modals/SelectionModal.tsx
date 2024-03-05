@@ -58,8 +58,6 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 //		  also reset tournament state
 // TODO:  Add a block for not connected users to access pages other then home
 
-// TODO:  setColorAndName still has a delay and isnt set after the modal disappears
-
 // FIXME:  Fix Timer positioning in Scene
 // FIXME:  Add a handler for each contract call when an  error happens (when null is returned)
 // TODO:   check if JSON is needed in socket events
