@@ -262,7 +262,7 @@ export const TTTSocketEvents = memo(() => {
 				endGame("unavailable");
 			}
 
-			wsclient?.addMessageListener(`player-left-${gameState.gameId}`, gameState.gameId, endGame)
+			wsclient?.addMessageListener(`player-left-${gameState.gameId}`, gameState.gameId, endGame);
 
 			return () => {
 				wsclient?.removeMessageListener(`player-left-${gameState.gameId}`, gameState.gameId);

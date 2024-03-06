@@ -20,6 +20,7 @@ export type WSClientType = {
 	requestTournament: (tournamentID: number, gameType: string) => void;
 	updateStatus: (isInGame: boolean, gameID: string) => Promise<boolean>;
 	leave: () => void;
+	disconnect: () => void;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -57,6 +58,9 @@ class WSClient {
 	// 	});
 	// }
 
+	disconnect() {
+		this.socket?.emit('leave');
+	}
 	leave() {
 		this.socket?.emit('leave');
 	}
