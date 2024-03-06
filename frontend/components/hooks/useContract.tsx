@@ -53,11 +53,9 @@ function useContract() {
 	const callContract = useCallback(async (functionName: string, args: any[] = []) => {
 		try {
 			const result = await tmContract?.[functionName](...args);
-			console.log("result: ", result);
 			if (result && typeof result.wait !== "undefined") {
 				toast.info("Transaction is being minted...")
 				const receipt = await result.wait();
-				console.log("receipt: ", receipt);
 				return receipt;
 			}
 			return result;
