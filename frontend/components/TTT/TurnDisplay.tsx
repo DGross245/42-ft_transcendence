@@ -116,7 +116,7 @@ const TurnDisplay = () => {
 				<>
 					{/* 'X' symbol */}
 					<mesh 
-						position={currentTurn === 'X' ? [-5.5, 15.5, -30] : [-5.5, 15, -30]}
+						position={currentTurn === 'X' ? [-5, 15.5, -30] : [-5, 15, -30]}
 						scale={currentTurn === 'X' ? [0.6, 0.6, 0.6] : [0.5, 0.5, 0.5]}
 					>
 						<Extrude args={[xShape, extrudeSettings]}>
@@ -130,18 +130,18 @@ const TurnDisplay = () => {
 					</mesh>
 
 					{/* Dots symbols ':' to the right of 'X' */}
-					<mesh position={[-3, 14, -30]} scale={[0.1, 0.1, 0.1]}>
+					<mesh position={[-2.5, 14, -30]} scale={[0.1, 0.1, 0.1]}>
 						<boxGeometry args={[4, 4, 4]} />
 						<meshBasicMaterial color={ 0xffffff } />
 					</mesh>
-					<mesh position={[-3, 13, -30]} scale={[0.1, 0.1, 0.1]}>
+					<mesh position={[-2.5, 13, -30]} scale={[0.1, 0.1, 0.1]}>
 						<boxGeometry args={[4, 4, 4]} />
 						<meshBasicMaterial color={ 0xffffff } />
 					</mesh>
 
 					{/* 'O' symbol */}
 					<mesh
-						position={currentTurn === 'O' ? [-0.5, 13.6, -30] : [-0.5, 13.6, -30]}
+						position={currentTurn ? [0, 13.6, -30] : [0, 13.6, -30]}
 						scale={currentTurn === 'O' ? [0.65, 0.65, 0.65] : [0.6, 0.6, 0.6]}>
 						<torusGeometry args={[2, 0.4, 8, 24]} />
 						<meshBasicMaterial
@@ -152,18 +152,18 @@ const TurnDisplay = () => {
 					</mesh>
 
 					{/* Dots symbols ':' to the right of 'O' */}
-					<mesh position={[2, 14, -30]} scale={[0.1, 0.1, 0.1]}>
+					<mesh position={[2.5, 14, -30]} scale={[0.1, 0.1, 0.1]}>
 						<boxGeometry args={[4, 4, 4]} />
 						<meshBasicMaterial color={ 0xffffff } />
 					</mesh>
-					<mesh position={[2, 13, -30]} scale={[0.1, 0.1, 0.1]}>
+					<mesh position={[2.5, 13, -30]} scale={[0.1, 0.1, 0.1]}>
 						<boxGeometry args={[4, 4, 4]} />
 						<meshBasicMaterial color={ 0xffffff } />
 					</mesh>
 
 					{/* '🔳' symbol */}
 					<mesh
-						position={[4.5, 13.5, -30]}
+						position={[5, 13.5, -30]}
 						scale={currentTurn === '🔳' ? [0.6, 0.6, 0.6] : [0.5, 0.5, 0.5]}
 					>
 						<Extrude args={[boxShape, extrudeSettings]}>

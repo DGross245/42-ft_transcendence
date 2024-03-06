@@ -8,7 +8,7 @@ import { Socket } from './context/TTTSockets';
 import TTTScene from './scene/TTTScene';
 
 export default function TicTacToePage() {
-	const [gameOptions, setGameOptions] = useState<GameOptions>({ gameMode: false, isBotActive: false, botStrength: 0.5 });
+	const [gameOptions, setGameOptions] = useState<GameOptions>({ gameMode: true, isBotActive: false, botStrength: 0.5 });
 	const [open, setOpen] = useState(true);
 	const [selected, setSelected] = useState("");
 
