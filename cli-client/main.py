@@ -6,9 +6,6 @@ import threading
 import json
 import curses
 import signal
-from pynput.keyboard import Key, Listener
-
-import os, sys
 
 # -------------------------------------------------------------------------- #
 #                               Data Structure                               #
@@ -365,9 +362,9 @@ if __name__ == '__main__':
 	# separate into socket file and cli file
 	# pass url and port as arguments
 	# how to start cli-client? makefile?
-	# quit correctly
 	# add colors
 	# fix scaling issues at very wide widths and small heights
+	# add countdown
 # approach
 	# create communication interface
 	# make it controllable via terminal
