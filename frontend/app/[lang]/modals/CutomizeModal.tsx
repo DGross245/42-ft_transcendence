@@ -1,6 +1,6 @@
 import { Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
+import ModalButton from "./components/ModalButton";
 import styles from "./Modals.module.css";
-import ModalButton from "./ModalButton";
 import { useState } from "react";
 import clsx from "clsx";
 
@@ -32,8 +32,8 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 			isOpen={isOpen}
 			backdrop="blur"
 			placement="center"
-			hideCloseButton={true}
 			isDismissable={false}
+			hideCloseButton={true}
 			isKeyboardDismissDisabled={true}
 		>
 			<ModalContent>
