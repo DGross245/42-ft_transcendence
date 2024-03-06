@@ -5,7 +5,7 @@ import asyncio
 import threading
 import json
 import curses
-import time
+import signal
 from pynput.keyboard import Key, Listener
 
 import os, sys
@@ -44,6 +44,8 @@ g_scaling_factor_width = 1
 g_scaling_factor_height = 1
 
 g_game_state = {}
+
+exit_flag = threading.Event()
 
 # -------------------------------------------------------------------------- #
 #                                   Utils                                    #
@@ -128,6 +130,14 @@ def init_scaling_factors():
 	g_scaling_factor_width = curses.COLS / g_game_width / 2
 
 # -------------------------------------------------------------------------- #
+#                               Signal Handler                               #
+# -------------------------------------------------------------------------- #
+
+def signal_handler(sig, frame):
+	exit_flag.set()
+	logging.info(YELLOW + "Signal handler called" + RESET)
+
+# -------------------------------------------------------------------------- #
 #                                Socket Setup                                #
 # -------------------------------------------------------------------------- #
 
@@ -143,7 +153,8 @@ async def start_socketio():
 	try:
 		await socket_initialize()
 		await join_game(game_id, 'Pong', False)
-		await sio.wait()
+		while not exit_flag.is_set():
+			await asyncio.sleep(1)
 	except asyncio.CancelledError:
 		logging.info(YELLOW + "Asyncio task was cancelled" + RESET)
 	finally:
@@ -297,9 +308,10 @@ def curses_thread(stdscr):
 	g_game_state = init_game_state()
 	game_state = init_game_state_empty()
 
-	while True:
+	while not exit_flag.is_set():
 		key = stdscr.getch()
 		if key == curses.KEY_EXIT or key == ord('q'):
+			exit_flag.set()
 			break
 		if g_game_state['score']['left'] < 7 and g_game_state['score']['right'] < 7:
 			g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
@@ -310,9 +322,12 @@ def curses_thread(stdscr):
 			draw_field(stdscr)
 		else:
 			draw_end_screen(stdscr, g_game_state)
-			# if key == ord(' '):
-				# kill process, join new room, start new game
+			if key == ord(' '):
+				exit_flag.set()
+				break
 		stdscr.refresh()
+	curses.endwin()
+	logging.info(YELLOW + "Curses thread ended" + RESET)
 
 def start_curses():
 	curses.wrapper(curses_thread)
@@ -322,13 +337,19 @@ def start_curses():
 # -------------------------------------------------------------------------- #
 
 def main():
-	threading.Thread(target=start_curses, daemon=True).start()
+	signal.signal(signal.SIGINT, signal_handler)
+	curses_thread = threading.Thread(target=start_curses, daemon=True)
+	curses_thread.start()
 	try:
 		asyncio.run(start_socketio())
 	except KeyboardInterrupt:
 		logging.info(YELLOW + "KeyboardInterrupt caught, cleaning up" + RESET)
 	except asyncio.CancelledError:
 		logging.info(YELLOW + "Asyncio task was cancelled" + RESET)
+	finally:
+		logging.info(YELLOW + "Exiting" + RESET)
+		exit_flag.set()
+		curses_thread.join()
 
 if __name__ == '__main__':
 	main()
@@ -352,12 +373,13 @@ if __name__ == '__main__':
 	# make it controllable via terminal
 	# visualize pong in terminal
 # bottlenecks
-	# how to make interactive terminal
-	# creating and debugging all the little server<>client interactions
-		# game logic has to run on webclient always
+	# error handling
+	# login
+	# additional server interactions (create game, join game, etc.)
+	# refactoring
 	# merge with latest branch
 # one thing
-	# 
+	# error handling
 
 # @note messages
 		# server-receive
