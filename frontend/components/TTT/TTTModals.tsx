@@ -215,7 +215,7 @@ export const TTTModals = memo(() => {
 	}
 
 	return (
-		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">
+		<>
 			{/* Pause Modal */}
 			<GameModal
 				isOpen={started && gameState.pause && !gameState.gameOver && gameState.gameId !== '-1'}
@@ -245,7 +245,6 @@ export const TTTModals = memo(() => {
 			{unregistered && (
 				<CustomizeModal isOpen={showSetModal} startGame={registerNewPlayer} />
 			)}
-
 			<Timer
 				playerClient={playerState.client}
 				isFull={isFull}
@@ -256,7 +255,7 @@ export const TTTModals = memo(() => {
 				disappear={chipDisappear}
 				setDisappear={setChipDisappear}
 			/>
-		</section>
+		</>
 	)
 })
 

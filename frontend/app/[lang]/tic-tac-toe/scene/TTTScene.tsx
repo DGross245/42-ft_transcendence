@@ -114,26 +114,28 @@ const TTTScene : React.FC<{ selected: string }> = ({ selected }) => {
 			<Button onClick={onGetTournaments}> print all Tournament </Button>
 			<Button onClick={onkek}> start tournament manually </Button>
 			<Button onClick={onGetTournaments}> getTournaments </Button>
-			<Canvas style={{ width: dimensions.width, height: dimensions.height - 128 }}>
-				{/* <JoinGame selected={selected} /> */}
-				<Camera />
-				<Countdown />
-				<Grid />
-				<TTTBot />
-				<TTTGameEvents />
-				<TTTSocketEvents />
-				<FieldLayers />
-				<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
-				<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
-				<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
-				<Floor position={[ 3, 23.8, 3]} args={[0.25, 23.2, 23.2]} />
-				<TurnDisplay />
-				<FinishLine />
-				<Table />
-				<Environment preset="city" />
-			</Canvas>
-			<TTTModals />
-		</div> 
+			<div className="scene-container">
+				<Canvas style={{ width: dimensions.width, height: dimensions.height - 128 }}>
+					{/* <JoinGame selected={selected} /> */}
+					<Camera />
+					<Countdown />
+					<Grid />
+					<TTTBot />
+					<TTTGameEvents />
+					<TTTSocketEvents />
+					<FieldLayers />
+					<Floor position={[ 3, -0.2, 3]} args={[0.25, 23.2, 23.2]} /> 
+					<Floor position={[ 3,  7.8, 3]} args={[0.25, 23.2, 23.2]} />
+					<Floor position={[ 3, 15.8, 3]} args={[0.25, 23.2, 23.2]} />
+					<Floor position={[ 3, 23.8, 3]} args={[0.25, 23.2, 23.2]} />
+					<TurnDisplay />
+					<FinishLine />
+					<Table />
+					<Environment preset="city" />
+				</Canvas>
+				<TTTModals />
+			</div>
+		</div>
 	);
 }
 

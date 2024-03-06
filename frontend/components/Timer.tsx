@@ -78,7 +78,7 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 			className={`${disappear ? 'fade-out' : 'fade-in'}`}
 			style={{
 				position: 'absolute',
-				top: dimensions.height / 4.5,
+				top: dimensions.height / 4,
 				left: dimensions.width / 2,
 				transform: 'translate(-50%, -50%)',
 			}}

@@ -57,10 +57,9 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 //		  also reset tournament state
 // TODO:  Add a block for not connected users to access pages other then home
 
-// FIXME: Fix Timer positioning in Scene
+// FIXME: If player swtiches pages, he doesnt leave the room
 // FIXME: Add a handler for each contract call when an  error happens (when null is returned)
 // TODO:  check if JSON is needed in socket events
-// FIXME: If player swtiches pages, he doesnt leave the room
 const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, setGameOptions }) => {
 	const [tournamentMode, setTournamentMode] = useState(false);
 	const [selected, setSelected] = useState("singleplayer");
