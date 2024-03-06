@@ -5,6 +5,7 @@ import scoresAbi from '../../public/tournamentManager_abi.json';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
+import { useSound } from './Sound';
 
 export const contract_address = '0x10b5bE3344b9D3Dc9313A38dB2235C6dc2D0D2e6'
 
@@ -40,6 +41,7 @@ function useContract() {
 	const [tmContract, setTmContract] = useState<ethers.Contract | null>(null);
 	const { address, chainId, isConnected } = useWeb3ModalAccount();
 	const { walletProvider } = useWeb3ModalProvider();
+	const playSound =  useSound();
 
 	useEffect(() => {
 		if (isConnected && walletProvider) {
@@ -54,6 +56,7 @@ function useContract() {
 		try {
 			const result = await tmContract?.[functionName](...args);
 			if (result && typeof result.wait !== "undefined") {
+				playSound("pay");
 				toast.info("Transaction is being minted...")
 				const receipt = await result.wait();
 				return receipt;
@@ -67,7 +70,7 @@ function useContract() {
 			}
 		}
 		return null;
-	},[tmContract]);
+	},[tmContract, playSound]);
 
 	// creates a new tournament and adds calling address as master
 	// the caller HAS to join separately as a player if he wants to participate
