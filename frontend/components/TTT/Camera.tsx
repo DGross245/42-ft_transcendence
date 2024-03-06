@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from 'three'
 import { useFrame } from "@react-three/fiber";
 
-import { useGameState } from "../../app/[lang]/tic-tac-toe/hooks/useGameState";
+import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
 import { useKey } from "@/components/hooks/useKey";
 import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 
@@ -13,7 +13,6 @@ import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 
 /**
  * Ceates a perspective camera for a 3D scene and updates its position and orientation based on a key map.
- * @param props -
  * @returns The PerspectiveCamera component from the Three.js library.
  */
 const Camera = () => {
@@ -70,7 +69,7 @@ const Camera = () => {
 				makeDefault
 				enableZoom={false}
 				target={[3, 11.8, 3]}
-				enableRotate={started ? true : false}
+				enableRotate={gameState.pause ? false : true}
 				enablePan={false}
 				minPolarAngle={0}
 				maxPolarAngle={Math.PI / 2}

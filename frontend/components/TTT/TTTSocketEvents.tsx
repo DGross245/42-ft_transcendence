@@ -154,7 +154,7 @@ export const TTTSocketEvents = memo(() => {
 			}
 		};
 
-		if (customized) {
+		if (customized && address) {
 			joinTheGame();
 		}
 	}, [wsclient, customized, gameState.gameId, address, botState.isActive, isGameMode, skip, setPlayerState, getPlayer]);
@@ -177,9 +177,9 @@ export const TTTSocketEvents = memo(() => {
 			if (botState.isActive && !isGameMode) {
 				setPlayerSet(true);
 			}
-			updateGameState({ pause: false });
+			// updateGameState({ pause: false });
 		}
-	}, [playerState.client, isFull, botState.isActive, gameState.gameId, playerState.players, isGameMode, wsclient, updateGameState]);
+	}, [playerState.client, isFull, botState.isActive, gameState.gameId, playerState.players, isGameMode, wsclient]);
 
 	// Initial communication between both players (RECEIVE message)
 	useEffect(() => {
@@ -268,7 +268,7 @@ export const TTTSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`player-left-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [gameState.gameId, gameState.gameOver, playerState.client, playerState.players, skip._skip, symbolSet, timerState, wsclient, setPlayerStatus, setRequestRematch, setSendRequest, setWinner, playSound, updateGameState]);
+	}, [gameState.gameId, gameState.gameOver, playerState.client, playerState.players, skip._skip, timerState, wsclient, setPlayerStatus, setRequestRematch, setSendRequest, setWinner, playSound, updateGameState]);
 
 	// Handle rematch request
 	useEffect(() => {
@@ -400,12 +400,13 @@ export const TTTSocketEvents = memo(() => {
 				setBot((prevState) => ({ ...prevState, symbol: playerState.players[botClientNumber].symbol }));
 			}
 			setSymbolSet(true);
+			updateGameState({ pause: false });
 		};
 
 		if (playerSet && playerState.client === 0 && !symbolSet) {
 			sendRandomSymbol();
 		}
-	}, [playerSet, symbolSet, playerState, botState.isActive, gameState.gameId, isGameMode, wsclient, setBot, setPlayerState]);
+	}, [playerSet, symbolSet, playerState, botState.isActive, gameState.gameId, isGameMode, wsclient, setBot, setPlayerState, updateGameState]);
 
 	// Opponents receive newly shuffled symbols
 	useEffect(() => {
@@ -419,6 +420,7 @@ export const TTTSocketEvents = memo(() => {
 
 				return { ...prevState, players: updatedPlayers };
 			});
+			updateGameState({ pause: false });
 		};
 
 		if (wsclient && gameState.gameId !== "-1") {
@@ -428,7 +430,7 @@ export const TTTSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`ShuffeledPlayer-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, gameState.gameId, setPlayerState]);
+	}, [wsclient, gameState.gameId, setPlayerState, updateGameState]);
 
 	return (null);
 });

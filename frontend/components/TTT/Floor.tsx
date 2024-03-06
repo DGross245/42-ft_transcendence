@@ -30,7 +30,7 @@ const Floor : React.FC<FloorProps> = (props) => {
 				metalness={0.8}
 				opacity={0.4}
 				roughness={0.9}
-			/>
+			/> 
 		</mesh>
 	);
 }

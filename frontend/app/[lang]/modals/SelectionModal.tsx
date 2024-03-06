@@ -53,15 +53,14 @@ const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
 // TODO:  Add a snippet for sharing GameID (Custom game only) should disapear on match start
 // TODO:  similar modal from tournament also for Custome Games
 // TODO:  Add a function that pulls an image based on selected modus for the gameType
-// FIXME: Fix switch, maybe due to the setter, its movement or interaction with it seems laggy unsmooth
 // TODO:  Tournament end sequence missing, a mechnaic that displays maybe a winner of the tournament, and away to exit the game after tournament is finished.
 //		  also reset tournament state
 // TODO:  Add a block for not connected users to access pages other then home
 
-// FIXME:  Fix Timer positioning in Scene
-// FIXME:  Add a handler for each contract call when an  error happens (when null is returned)
-// TODO:   check if JSON is needed in socket events
-// FIXME: Error in TTT, sometimes the opponent doesnt send the correct color or isnt set correctly (master)
+// FIXME: Fix Timer positioning in Scene
+// FIXME: Add a handler for each contract call when an  error happens (when null is returned)
+// TODO:  check if JSON is needed in socket events
+// FIXME: If player swtiches pages, he doesnt leave the room
 const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, setGameOptions }) => {
 	const [tournamentMode, setTournamentMode] = useState(false);
 	const [selected, setSelected] = useState("singleplayer");

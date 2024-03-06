@@ -75,7 +75,7 @@ export const PongGameState: React.FC<{ gameMode:boolean, isBotActive: boolean, c
 	});
 	const [pongGameState, setPongGameState] = useState({ gameId: "-1", pause: true, reset: false, gameOver: false });
 	const [winner, setWinner] = useState("");
-	const [botState, setBot] = useState({ isActive: isBotActive, strength: 100, client: -1 });
+	const [botState, setBot] = useState({ isActive: isBotActive, strength: 0.001, client: -1 });
 	const [isScoreVisible, setScoreVisibility] = useState(false);
 	const [isBallVisible, setBallVisibility] = useState(true);
 	const [isGameMode, setGameMode] = useState(gameMode);
