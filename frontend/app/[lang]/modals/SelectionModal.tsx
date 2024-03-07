@@ -67,107 +67,125 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose }) => {
 	const { getTournaments, tmContract } = useContract();
 	const wsclient = useWSClient();
 
-	// const rows = [
-	// 	{
-	// 	  	id: "1",
-	// 	  	players: "1 / 10",
-	// 	  	state: GameState.Running
-	// 	},
-	// 	{
-	// 		id: "2",
-	// 		players: "5 / 10",
-	// 		state: GameState.Waiting
-	// 	},
-	// 	{
-	// 		id: "3",
-	// 		players: "3 / 10",
-	// 		state: GameState.Running
-	// 	},
-	// 	{
-	// 		id: "4",
-	// 		players: "3 / 10",
-	// 		state: GameState.Running
-	// 	},
-	// 	{
-	// 		id: "5",
-	// 		players: "3 / 10",
-	// 		state: GameState.Running
-	// 	},
-	// 	{
-	// 		id: "6",
-	// 		players: "3 / 10",
-	// 		state: GameState.Running
-	// 	},
-	// 	{
-	// 		id: "7",
-	// 		players: "3 / 10",
-	// 		state: GameState.Running
-	// 	}
-	// ];
-
-	// const rows2 = [
-	// 	{
-	// 	  	id: "0x0123",
-	// 	  	score: "2"
-	// 	},
-	// 	{
-	// 		id: "0x0133",
-	// 		score: "2"
-	// 	},
-	// 	{
-	// 		id: "0x0423",
-	// 		score: "2"
-	// 	}
-	// ];
-
-	useEffect(() => {
-		const getSocketNumber = async (index: number) => {
-			if (wsclient) {
-				const number = await wsclient.getNumberOfSocketsInTournament(index);
-				return (number);
-			}
-			return (0);
+	const rows = [
+		{
+		  	id: "1",
+		  	players: "1 / 10",
+		  	state: GameState.Running
+		},
+		{
+			id: "2",
+			players: "5 / 10",
+			state: GameState.Waiting
+		},
+		{
+			id: "3",
+			players: "3 / 10",
+			state: GameState.Running
+		},
+		{
+			id: "4",
+			players: "3 / 10",
+			state: GameState.Running
+		},
+		{
+			id: "5",
+			players: "3 / 10",
+			state: GameState.Running
+		},
+		{
+			id: "6",
+			players: "3 / 10",
+			state: GameState.Running
+		},
+		{
+			id: "7",
+			players: "3 / 10",
+			state: GameState.Running
 		}
+	];
 
-		const fetchData = async () => {
-			if (tmContract) {
-				const tournaments = await getTournaments();
-				if (!tournaments) {
-					return ;
-				}
-				const formattedData = tournaments.map(async (tournament, index) => {
-					let finished = 0;
-					for (let i = 0; i < tournament.games.length; i++) {
-						if (tournament.games[i].finished) {
-							finished++;
-						}
-					}
-
-					if (finished === tournament.games.length) {
-						return (null);
-					} else {
-						const registered = String(tournament.players.length);
-						const connected = String((await getSocketNumber(index)));
-
-						return {
-							id: String(index),
-							players: connected + " / " + registered,
-							state: tournament.start_block != 0 ? GameState.Running : GameState.Waiting
-						}
-					}
-				})
-
-				const resolvedData = await Promise.all(formattedData);
-				const filteredData = resolvedData.filter(data => data !== null) as {[key: string]: string | GameState}[];
-				console.log(filteredData);
-				setData(filteredData);
-			}
-		};
-
-		if (tmContract && wsclient) {
-			fetchData
+	const rows2 = [
+		{
+		  	id: "0x0123",
+		  	score: "2"
+		},
+		{
+			id: "0x0133",
+			score: "2"
+		},
+		{
+			id: "0x0423",
+			score: "2"
 		}
-	}, [tmContract, wsclient, getTournaments]);
+	];
+
+	const rows3 = [
+		{
+			id: 1,
+		  	player: "0x01231231231231231231231231123",
+		  	against: "0x01231231231231231231231231123"
+		},
+		{
+			id: 2,
+			player: "0x01231231231231231231231231123",
+			against: "0x01231231231231231231231231123"
+		},
+		{
+			id: 3,
+			player: "0x01231231231231231231231231123",
+			against: "0x01231231231231231231231231123"
+		}
+	];
+
+	// useEffect(() => {
+	// 	const getSocketNumber = async (index: number) => {
+	// 		if (wsclient) {
+	// 			const number = await wsclient.getNumberOfSocketsInTournament(index);
+	// 			return (number);
+	// 		}
+	// 		return (0);
+	// 	}
+
+	// 	const fetchData = async () => {
+	// 		if (tmContract) {
+	// 			const tournaments = await getTournaments();
+	// 			if (!tournaments) {
+	// 				return ;
+	// 			}
+	// 			const formattedData = tournaments.map(async (tournament, index) => {
+	// 				let finished = 0;
+	// 				for (let i = 0; i < tournament.games.length; i++) {
+	// 					if (tournament.games[i].finished) {
+	// 						finished++;
+	// 					}
+	// 				}
+
+	// 				if (finished === tournament.games.length) {
+	// 					return (null);
+	// 				} else {
+	// 					const registered = String(tournament.players.length);
+	// 					const connected = String((await getSocketNumber(index)));
+
+	// 					return {
+	// 						id: String(index),
+	// 						players: connected + " / " + registered,
+	// 						state: tournament.start_block != 0 ? GameState.Running : GameState.Waiting
+	// 					}
+	// 				}
+	// 			})
+
+	// 			const resolvedData = await Promise.all(formattedData);
+	// 			const filteredData = resolvedData.filter(data => data !== null) as {[key: string]: string | GameState}[];
+	// 			console.log(filteredData);
+	// 			setData(filteredData);
+	// 		}
+	// 	};
+
+	// 	if (tmContract && wsclient) {
+	// 		fetchData
+	// 	}
+	// }, [tmContract, wsclient, getTournaments]);
 
 	if (selectedTournament !== "") {
 		return (
@@ -175,14 +193,24 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose }) => {
 				onBack={() => setSelectedTournament("")}
 				title={`Game Results of Game ${selectedTournament}`}
 			>
-				<SearchableGamesTable
-					ariaLabel="Tournaments Table"
-					columns={{
-						id: "Player",
-						score: "Score"
-					}}
-					rows={rows2}
-				/>
+				<div className="flex gap-4">
+					<SearchableGamesTable
+						ariaLabel="Tournaments Table"
+						columns={{
+							id: "Player",
+							score: "Score"
+						}}
+						rows={rows2}
+					/>
+					<SearchableGamesTable
+						ariaLabel="Tournaments Table"
+						columns={{
+							player: "Player",
+							against: "Against"
+						}}
+						rows={rows3}
+					/>
+				</div>
 			</ModalContentsWrapper>
 		)
 	}
@@ -206,7 +234,8 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose }) => {
 					players: "Number of Players",
 					state: "Status"
 				}}
-				rows={data}
+				rows={rows}
+				highlightedRows={[rows[0]]}
 				onJoin={(row) => console.log(row)}
 				onRowClick={(row) => setSelectedTournament(row.id)}
 			/>
