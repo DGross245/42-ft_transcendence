@@ -6,6 +6,7 @@ import threading
 import json
 import curses
 import signal
+import time
 
 # -------------------------------------------------------------------------- #
 #                               Data Structure                               #
@@ -16,7 +17,7 @@ RED = '\033[91m'
 YELLOW = '\033[93m'
 RESET = '\033[0m'
 
-# logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO)
 # logging.basicConfig(level=logging.DEBUG)
 # logging.basicConfig(level=logging.ERROR)
 
@@ -44,8 +45,10 @@ g_scaling_factor_height = 1
 g_game_state = {}
 
 event_quit = threading.Event()
+event_room_full = threading.Event()
 event_game_active = threading.Event()
 event_pause = threading.Event()
+event_socket_ready = threading.Event()
 
 # -------------------------------------------------------------------------- #
 #                                   Utils                                    #
@@ -78,21 +81,17 @@ def init_game_state():
 		'left_paddle': {
 			'x': server_x_to_cli_x(-g_game_width // 2 + 1),
 			'y': [
-				# curses.LINES // 2 - 2,
 				curses.LINES // 2 - 1,
 				curses.LINES // 2,
 				curses.LINES // 2 + 1,
-				# curses.LINES // 2 + 2
 			]
 		},
 		'right_paddle': {
 			'x': server_x_to_cli_x(g_game_width // 2 - 1),
 			'y': [
-				# curses.LINES // 2 - 2,
 				curses.LINES // 2 - 1,
 				curses.LINES // 2,
 				curses.LINES // 2 + 1,
-				# curses.LINES // 2 + 2
 			]
 		},
 		'score': {
@@ -135,7 +134,7 @@ def init_scaling_factors():
 
 def signal_handler(sig, frame):
 	event_quit.set()
-	logging.info(YELLOW + "Signal handler called" + RESET)
+	logging.info(YELLOW + "SIG INT detected" + RESET)
 
 # -------------------------------------------------------------------------- #
 #                                Socket Setup                                #
@@ -144,9 +143,15 @@ def signal_handler(sig, frame):
 sio = socketio.AsyncClient(logger=False, engineio_logger=False)
 
 async def socket_initialize():
-	requests.get('http://localhost:3000/api/socket')
-	await sio.connect('http://localhost:3000')
-	logging.info(YELLOW + f'socket initialized' + RESET)
+	try:
+		requests.get('http://localhost:3000/api/socket')
+		await sio.connect('http://localhost:3000')
+	except Exception as e:
+		logging.error(RED + f'Error connecting to server: {e}' + RESET)
+		event_quit.set()
+		return
+	logging.debug(YELLOW + f'socket initialized' + RESET)
+	event_socket_ready.set()
 
 async def start_socketio():
 	try:
@@ -160,10 +165,10 @@ async def start_socketio():
 				joined_game = False
 			await asyncio.sleep(0.1)
 	except asyncio.CancelledError:
-		logging.info(YELLOW + "Asyncio task was cancelled" + RESET)
+		logging.debug(YELLOW + "Asyncio task was cancelled" + RESET)
 	finally:
 		await sio.disconnect()
-		logging.info(YELLOW + "Disconnected" + RESET)
+		logging.debug(YELLOW + "Disconnected" + RESET)
 
 # -------------------------------------------------------------------------- #
 #                              Message Handler                               #
@@ -176,17 +181,17 @@ async def start_socketio():
 
 @sio.on(f'message-{game_id}-Players-{game_id}')
 async def room_full(msg: str):
-	logging.info(RED + f'Room full: {msg}' + RESET)
-	# event_game_active.set()
+	logging.debug(RED + f'Room full: {msg}' + RESET)
+	event_room_full.set()
 
 @sio.on(f'room-joined-{game_id}')
 async def room_joined(num_clients: int):
-	logging.info(RED + f'Room joined, number of clients: {num_clients}' + RESET)
+	logging.debug(RED + f'Room joined, number of clients: {num_clients}' + RESET)
 
 @sio.on(f'message-{game_id}-paddleUpdate-{game_id}')
 async def receive_paddle_data(msg: str):
 	paddle_y = json.loads(msg)
-	logging.info(RED + f'Received Paddle Data: {paddle_y}' + RESET)
+	logging.debug(RED + f'Received Paddle Data: {paddle_y}' + RESET)
 	global g_game_state
 	g_game_state['left_paddle']['y'] = server_paddle_y_to_cli_paddle_y(int(paddle_y), paddle_length)
 
@@ -194,7 +199,7 @@ async def receive_paddle_data(msg: str):
 async def receive_ball_data(msg: str):
 	ball = json.loads(msg)
 	ball_pos = ball['position']
-	logging.info(RED + f'Received Ball Data: {ball_pos}' + RESET)
+	logging.debug(RED + f'Received Ball Data: {ball_pos}' + RESET)
 	new_ball = {
 		'x': server_x_to_cli_x(ball_pos['x']),
 		'y': server_y_to_cli_y(ball_pos['z'])
@@ -205,7 +210,7 @@ async def receive_ball_data(msg: str):
 
 @sio.on(f'message-{game_id}-player-disconnected-${game_id}')
 async def player_disconnected(msg: str):
-	logging.info(RED + f'Player disconnected: {msg}' + RESET)
+	logging.debug(RED + f'Player disconnected: {msg}' + RESET)
 	print("Player disconnected")
 	event_quit.set()
 
@@ -316,62 +321,88 @@ def draw_start_screen(stdscr):
 	stdscr.addstr(curses.LINES // 2 - 2, curses.COLS // 2 - 14, "press 'space' to start")
 	stdscr.addstr(curses.LINES // 2 + 2, curses.COLS // 2 - 8, "press 'q' to quit")
 
+def draw_wait_screen(stdscr):
+	draw_box(stdscr, curses.LINES // 2 - 7, curses.COLS // 2 - 20, 15, 40)
+	stdscr.addstr(curses.LINES // 2 - 4, curses.COLS // 2 - 10, "Waiting for opponent...")
+	stdscr.addstr(curses.LINES // 2 + 2, curses.COLS // 2 - 8, "press 'q' to quit")
+
+def draw_countdown(stdscr):
+	draw_box(stdscr, curses.LINES // 2 - 7, curses.COLS // 2 - 20, 15, 40)
+	count = 3
+	while count > 0:
+		stdscr.addstr(curses.LINES // 2 - 4, curses.COLS // 2 - 15, f"Starting in {count}...")
+		stdscr.refresh()
+		time.sleep(1)
+		count -= 1
+	draw_box(stdscr, curses.LINES // 2 - 7, curses.COLS // 2 - 20, 15, 40)
+	stdscr.addstr(curses.LINES // 2 - 4, curses.COLS // 2 - 10, "GO!")
+	stdscr.refresh()
+	time.sleep(1)
+
 def curses_thread(stdscr):
 	curses.curs_set(False)
 	stdscr.nodelay(True)
 	stdscr.keypad(True)
 
+	draw_start_screen(stdscr)
+	while not event_game_active.is_set() and not event_quit.is_set():
+		key = stdscr.getch()
+		if key == ord(' '):
+			event_game_active.set()
+		if key == ord('q'):
+			return
+	stdscr.clear()
+	draw_wait_screen(stdscr)
+	while not event_room_full.is_set() and not event_quit.is_set():
+		key = stdscr.getch()
+		if key == ord('q'):
+			return
+	stdscr.clear()
 	init_scaling_factors()
-
 	global g_game_state
 	g_game_state = init_game_state()
 	game_state = init_game_state_empty()
-
-	while not event_quit.is_set():
-		if not event_game_active.is_set():
-			draw_start_screen(stdscr)
-		else:
-			if g_game_state['score']['left'] < win_score and g_game_state['score']['right'] < win_score:
-				g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
-				game_state['left_paddle'] = draw_paddle(stdscr, game_state['left_paddle'], g_game_state['left_paddle'])
-				game_state['right_paddle'] = draw_paddle(stdscr, game_state['right_paddle'], g_game_state['right_paddle'])
-				game_state['ball'] = draw_ball(stdscr, game_state['ball'], g_game_state['ball'], g_game_state['score'])
-				draw_score(stdscr, g_game_state)
-				draw_field(stdscr)
-			else:
-				draw_end_screen(stdscr, g_game_state)
-				if key == ord(' '):
-					g_game_state = init_game_state()
-					game_state = init_game_state_empty()
-					event_game_active.clear()
+	draw_field(stdscr)
+	draw_countdown(stdscr)
+	stdscr.clear()
+	while event_game_active.is_set() and not event_quit.is_set() and g_game_state['score']['left'] < win_score and g_game_state['score']['right'] < win_score:
 		key = stdscr.getch()
-		if key == curses.KEY_EXIT or key == ord('q'):
-			event_quit.set()
-			break
-		if key == ord(' '):
-			event_game_active.set()
-			stdscr.clear()
+		g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
+		game_state['left_paddle'] = draw_paddle(stdscr, game_state['left_paddle'], g_game_state['left_paddle'])
+		game_state['right_paddle'] = draw_paddle(stdscr, game_state['right_paddle'], g_game_state['right_paddle'])
+		game_state['ball'] = draw_ball(stdscr, game_state['ball'], g_game_state['ball'], g_game_state['score'])
+		draw_score(stdscr, g_game_state)
+		draw_field(stdscr)
 		stdscr.refresh()
-	curses.endwin()
-	logging.info(YELLOW + "Curses thread ended" + RESET)
+	draw_end_screen(stdscr, g_game_state)
+	while not event_quit.is_set():
+		key = stdscr.getch()
+		if key == curses.KEY_EXIT or key == ord('q') or key == ord(' '):
+			return
 
 def start_curses():
-	curses.wrapper(curses_thread)
+	while (not event_socket_ready.is_set() and not event_quit.is_set()):
+		time.sleep(0.1)
+	if not event_quit.is_set():
+		curses.wrapper(curses_thread)
+		curses.endwin()
+		event_quit.set()
+		logging.debug(YELLOW + "Curses thread ended" + RESET)
 
 # -------------------------------------------------------------------------- #
 #                                    Main                                    #
 # -------------------------------------------------------------------------- #
 
 def main():
-	signal.signal(signal.SIGINT, signal_handler)
-	curses_thread = threading.Thread(target=start_curses, daemon=True)
-	curses_thread.start()
 	try:
+		signal.signal(signal.SIGINT, signal_handler)
+		curses_thread = threading.Thread(target=start_curses, daemon=True)
+		curses_thread.start()
 		asyncio.run(start_socketio())
 	except KeyboardInterrupt:
 		logging.info(YELLOW + "KeyboardInterrupt caught, cleaning up" + RESET)
 	except asyncio.CancelledError:
-		logging.info(YELLOW + "Asyncio task was cancelled" + RESET)
+		logging.debug(YELLOW + "Asyncio task was cancelled" + RESET)
 	finally:
 		logging.info(YELLOW + "Exiting" + RESET)
 		event_quit.set()
