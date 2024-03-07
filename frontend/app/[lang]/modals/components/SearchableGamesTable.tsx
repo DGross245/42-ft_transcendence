@@ -2,6 +2,7 @@ import { Chip, Input, Spinner, Table, TableBody, TableCell, TableColumn, TableHe
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import TextButton from "./TextButton";
+import clsx from "clsx";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Interfaces                                 */
@@ -62,16 +63,17 @@ const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, ro
 			isStriped={!onRowClick}
 			isHeaderSticky classNames={{
 				base: "h-[250px] overflow-scroll",
-				wrapper: "h-[250px]"
+				wrapper: "h-[250px]",
+				td: clsx({"cursor-pointer": onRowClick})
 			}}
 			selectionMode={onRowClick ? "single" : "none"}
 			selectionBehavior={undefined} aria-label={ariaLabel}
 		>
 			<TableHeader>
 				{Object.entries(columns).map(([key, value]) => (
-					<TableColumn key={key}>{value}</TableColumn>
+					<TableColumn key={key} align="center">{value}</TableColumn>
 				)).concat(onJoin ? [
-					<TableColumn key="actions">Actions</TableColumn>
+					<TableColumn key="actions" align="center">Actions</TableColumn>
 				] : [])}
 			</TableHeader>
 			<TableBody
