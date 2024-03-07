@@ -34,6 +34,7 @@ game_id = "0"
 paddle_length = 3
 paddle_speed = 1
 score_offset = 46
+win_score = 7
 
 g_game_width = 300
 g_game_height = 200
@@ -42,7 +43,9 @@ g_scaling_factor_height = 1
 
 g_game_state = {}
 
-exit_flag = threading.Event()
+event_quit = threading.Event()
+event_game_active = threading.Event()
+event_pause = threading.Event()
 
 # -------------------------------------------------------------------------- #
 #                                   Utils                                    #
@@ -131,7 +134,7 @@ def init_scaling_factors():
 # -------------------------------------------------------------------------- #
 
 def signal_handler(sig, frame):
-	exit_flag.set()
+	event_quit.set()
 	logging.info(YELLOW + "Signal handler called" + RESET)
 
 # -------------------------------------------------------------------------- #
@@ -141,7 +144,6 @@ def signal_handler(sig, frame):
 sio = socketio.AsyncClient(logger=False, engineio_logger=False)
 
 async def socket_initialize():
-	# makes server initialize socket
 	requests.get('http://localhost:3000/api/socket')
 	await sio.connect('http://localhost:3000')
 	logging.info(YELLOW + f'socket initialized' + RESET)
@@ -149,9 +151,14 @@ async def socket_initialize():
 async def start_socketio():
 	try:
 		await socket_initialize()
-		await join_game(game_id, 'Pong', False)
-		while not exit_flag.is_set():
-			await asyncio.sleep(1)
+		joined_game = False
+		while not event_quit.is_set():
+			if event_game_active.is_set() and not joined_game:
+				await join_game(game_id, 'Pong', False)
+				joined_game = True
+			if not event_game_active.is_set():
+				joined_game = False
+			await asyncio.sleep(0.1)
 	except asyncio.CancelledError:
 		logging.info(YELLOW + "Asyncio task was cancelled" + RESET)
 	finally:
@@ -167,10 +174,10 @@ async def start_socketio():
 # 	logging.info(RED + f'Opponent data: {msg}' + RESET)
 # 	exit
 
-# @sio.on(f'message-{game_id}-Players-{game_id}')
-# async def room_full(msg: str):
-# 	logging.info(RED + f'Room full: {msg}' + RESET)
-# 	exit
+@sio.on(f'message-{game_id}-Players-{game_id}')
+async def room_full(msg: str):
+	logging.info(RED + f'Room full: {msg}' + RESET)
+	# event_game_active.set()
 
 @sio.on(f'room-joined-{game_id}')
 async def room_joined(num_clients: int):
@@ -196,6 +203,12 @@ async def receive_ball_data(msg: str):
 	g_game_state['ball']['x'] = int(new_ball['x'])
 	g_game_state['ball']['y'] = int(new_ball['y'])
 
+@sio.on(f'message-{game_id}-player-disconnected-${game_id}')
+async def player_disconnected(msg: str):
+	logging.info(RED + f'Player disconnected: {msg}' + RESET)
+	print("Player disconnected")
+	event_quit.set()
+
 # -------------------------------------------------------------------------- #
 #                               Message Sender                               #
 # -------------------------------------------------------------------------- #
@@ -209,7 +222,11 @@ async def join_game(game_id: str, game_type: str, is_bot: bool):
 	await sio.emit('join-game', (game_id, game_type, is_bot))
 
 async def send_message(msg: str, topic: str, game_id: str):
-	await sio.emit('send-message-to-game', (msg, topic, game_id))
+	try:
+		await sio.emit('send-message-to-game', (msg, topic, game_id))
+	except Exception as e:
+		logging.error(RED + f'Error sending message: {e}' + RESET)
+		event_game_active.clear()
 
 async def send_paddle_data(paddle_y: str, game_id: str):
 	msg = cli_y_to_server_y(paddle_y)
@@ -291,8 +308,13 @@ def draw_end_screen(stdscr, game_state):
 		stdscr.addstr(curses.LINES // 2 - 2, curses.COLS // 2 - 5, "YOU LOSE!")
 	else:
 		stdscr.addstr(curses.LINES // 2 - 2, curses.COLS // 2 - 4, "YOU WIN!")
-	stdscr.addstr(curses.LINES // 2 + 2, curses.COLS // 2 - 14, "press 'space' to play again")
-	stdscr.addstr(curses.LINES // 2 + 4, curses.COLS // 2 - 8, "press 'q' to quit")
+	stdscr.addstr(curses.LINES // 2 + 2, curses.COLS // 2 - 8, "press 'space' to continue")
+
+def draw_start_screen(stdscr):
+	draw_box(stdscr, curses.LINES // 2 - 7, curses.COLS // 2 - 20, 15, 40)
+	stdscr.addstr(curses.LINES // 2 - 4, curses.COLS // 2 - 10, "Welcome to Pong!")
+	stdscr.addstr(curses.LINES // 2 - 2, curses.COLS // 2 - 14, "press 'space' to start")
+	stdscr.addstr(curses.LINES // 2 + 2, curses.COLS // 2 - 8, "press 'q' to quit")
 
 def curses_thread(stdscr):
 	curses.curs_set(False)
@@ -305,23 +327,30 @@ def curses_thread(stdscr):
 	g_game_state = init_game_state()
 	game_state = init_game_state_empty()
 
-	while not exit_flag.is_set():
+	while not event_quit.is_set():
+		if not event_game_active.is_set():
+			draw_start_screen(stdscr)
+		else:
+			if g_game_state['score']['left'] < win_score and g_game_state['score']['right'] < win_score:
+				g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
+				game_state['left_paddle'] = draw_paddle(stdscr, game_state['left_paddle'], g_game_state['left_paddle'])
+				game_state['right_paddle'] = draw_paddle(stdscr, game_state['right_paddle'], g_game_state['right_paddle'])
+				game_state['ball'] = draw_ball(stdscr, game_state['ball'], g_game_state['ball'], g_game_state['score'])
+				draw_score(stdscr, g_game_state)
+				draw_field(stdscr)
+			else:
+				draw_end_screen(stdscr, g_game_state)
+				if key == ord(' '):
+					g_game_state = init_game_state()
+					game_state = init_game_state_empty()
+					event_game_active.clear()
 		key = stdscr.getch()
 		if key == curses.KEY_EXIT or key == ord('q'):
-			exit_flag.set()
+			event_quit.set()
 			break
-		if g_game_state['score']['left'] < 7 and g_game_state['score']['right'] < 7:
-			g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
-			game_state['left_paddle'] = draw_paddle(stdscr, game_state['left_paddle'], g_game_state['left_paddle'])
-			game_state['right_paddle'] = draw_paddle(stdscr, game_state['right_paddle'], g_game_state['right_paddle'])
-			game_state['ball'] = draw_ball(stdscr, game_state['ball'], g_game_state['ball'], g_game_state['score'])
-			draw_score(stdscr, g_game_state)
-			draw_field(stdscr)
-		else:
-			draw_end_screen(stdscr, g_game_state)
-			if key == ord(' '):
-				exit_flag.set()
-				break
+		if key == ord(' '):
+			event_game_active.set()
+			stdscr.clear()
 		stdscr.refresh()
 	curses.endwin()
 	logging.info(YELLOW + "Curses thread ended" + RESET)
@@ -345,7 +374,7 @@ def main():
 		logging.info(YELLOW + "Asyncio task was cancelled" + RESET)
 	finally:
 		logging.info(YELLOW + "Exiting" + RESET)
-		exit_flag.set()
+		event_quit.set()
 		curses_thread.join()
 
 if __name__ == '__main__':
@@ -353,16 +382,15 @@ if __name__ == '__main__':
 
 # goals
 	# create game
+		# allow cli client to join first without hosting game
 	# join game
 	# leave game
 	# rematch
 	# pause button
 	# react to opponent disconnecting
 	# login in with wallet
-	# separate into socket file and cli file
 	# pass url and port as arguments
 	# how to start cli-client? makefile?
-	# add colors
 	# fix scaling issues at very wide widths and small heights
 	# add countdown
 # approach
