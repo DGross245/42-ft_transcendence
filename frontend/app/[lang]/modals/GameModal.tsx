@@ -1,6 +1,6 @@
 import { Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
-import { PauseIcon } from "@heroicons/react/24/solid";
-import ModalButton from "./ModalButton";
+import { ArrowRightIcon, PauseIcon } from "@heroicons/react/24/solid";
+import ModalButton from "./components/ModalButton";
 import styles from "./Modals.module.css";
 import clsx from "clsx";
 import { RightArrowIcon } from "@/components/icons";
@@ -10,7 +10,7 @@ import { RightArrowIcon } from "@/components/icons";
 /* -------------------------------------------------------------------------- */
 enum GameResult {
 	Winner,
-	Looser,
+	Loser,
 	Draw,
 	Paused
 }
@@ -66,7 +66,7 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 				</div>}
 				<ModalHeader className={clsx({"opacity-0": loading})}>
 					{gameResult == GameResult.Winner	&& <h1 className={styles.emojiIcon}>🏆</h1>}
-					{gameResult == GameResult.Looser	&& <h1 className={styles.emojiIcon}>😕</h1>}
+					{gameResult == GameResult.Loser	&& <h1 className={styles.emojiIcon}>😕</h1>}
 					{gameResult == GameResult.Draw		&& <h1 className={styles.emojiIcon}>➖</h1>}
 					{gameResult == GameResult.Paused	&& <h1 className={styles.emojiIcon}>⏱️</h1>}
 				</ModalHeader>
@@ -74,7 +74,7 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 					<div className="flex justify-center">
 						<div className="mb-2 text-center">
 							{gameResult == GameResult.Winner	&& <InfoText className="text-green-500">Winner</InfoText>}
-							{gameResult == GameResult.Looser	&& <InfoText className="text-red-500">Looser</InfoText>}
+							{gameResult == GameResult.Loser	&& <InfoText className="text-red-500">Loser</InfoText>}
 							{gameResult == GameResult.Draw		&& <InfoText className="text-yellow-500">Draw</InfoText>}
 							{gameResult == GameResult.Paused	&& (
 								<div className="flex items-center">

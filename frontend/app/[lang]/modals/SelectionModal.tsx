@@ -1,18 +1,19 @@
-import { Card, CardBody, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Slider, Spinner, Switch, Tab, Tabs } from "@nextui-org/react";
+import { Button, Card, CardBody, Divider, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Slider, Snippet, Spinner, Switch, Tab, Tabs } from "@nextui-org/react";
+import SearchableGamesTable, { GameState } from "./components/SearchableGamesTable";
+import ModalButton from "./components/ModalButton";
+import { randInt } from "three/src/math/MathUtils";
+import pongGameImage from "@/assets/pongGame.png";
+import BackButton from "./components/BackButton";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./Modals.module.css";
-import ModalButton from "./ModalButton";
-import { useEffect, useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
 
-import pongGameImage from "@/assets/pongGame.png";
-import { ArrowLeftIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import useContract from "@/components/hooks/useContract";
 import { useJoinEvents } from "@/components/JoinGame";
-import { TournamentSubModal } from "./tournamentSubModal";
 import useWSClient from "@/helpers/wsclient";
-
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
 /* -------------------------------------------------------------------------- */
@@ -22,53 +23,102 @@ export interface GameOptions {
 	botStrength: number;
 }
 
-interface SelectionModalProps {
-	isOpen: boolean,
-	onClose: (selected: string) => void,
-	loading?: boolean
-	setGameOptions: (options: GameOptions) => void;
-}
-
 export interface TournamentData {
-	tournamentID: number,
-	numberOfPlayers: number,
-	connected?: number,
-	isStarted: boolean,
+	id: string,
+	players: string,
+	state: GameState,
+}
+
+interface SelectionModalProps {
+	isOpen: boolean;
+	onClose: () => void;
+	loading?: boolean;
+}
+
+interface ModalContentProps {
+	onClose?: () => void;
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                  Component                                 */
+/*                                 Components                                 */
 /* -------------------------------------------------------------------------- */
-const DescriptionBox: React.FC<{children?: string}> = ({ children }) => {
-	return (
-		<Card className="w-full">
-			<CardBody>
-				{children}
-			</CardBody>
-		</Card>
-	)
+const ModalContentsWrapper: React.FC<{children?: React.ReactNode, loading?: boolean, onBack?: () => void, title: string}> = ({ children, loading, onBack, title }) => {
+	return (<>
+		{loading && <div className=" absolute flex justify-center items-center h-full w-full">
+			<Spinner size="lg"/>
+		</div>}
+		{onBack && (<BackButton onClick={onBack}/>)}
+		<ModalHeader className={clsx({"opacity-0": loading})}>
+			<h1 className={clsx(styles.textWiggle, "text-2xl")}>{title}</h1>
+		</ModalHeader>
+		<ModalBody className={clsx({"opacity-0": loading})}>
+			{children}
+		</ModalBody>
+	</>)
 }
 
-// TODO:  Add a refresh button (with a refrech delay)
-// TODO:  Add a snippet for sharing GameID (Custom game only) should disapear on match start
-// TODO:  similar modal from tournament also for Custome Games
-// TODO:  Add a function that pulls an image based on selected modus for the gameType
-// TODO:  Tournament end sequence missing, a mechnaic that displays maybe a winner of the tournament, and away to exit the game after tournament is finished.
-//		  also reset tournament state
-// TODO:  Add a block for not connected users to access pages other then home
-
-// FIXME: If player swtiches pages, he doesnt leave the room
-// FIXME: Add a handler for each contract call when an  error happens (when null is returned)
-const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, setGameOptions }) => {
-	const [tournamentMode, setTournamentMode] = useState(false);
-	const [selected, setSelected] = useState("singleplayer");
-	const [botSelected, setBotSelected] = useState(false);
-	const [strength, setStrength] = useState(0.5);
-	const router = useRouter();
-	const [data, setData] = useState<TournamentData[]>([]);
+/* -------------------------------------------------------------------------- */
+/*                               Modal Contents                               */
+/* -------------------------------------------------------------------------- */
+const TournamentContent: React.FC<ModalContentProps> = ({ onClose }) => {
+	const [selectedTournament, setSelectedTournament] = useState("");
+	const [tournament, setTournament] = useState(false);
+	const [data, setData] = useState<{[key: string]: string | GameState}[]>([]);
 	const { getTournaments, tmContract } = useContract();
-	const { onJoinTournament, onCreateTournament } = useJoinEvents();
 	const wsclient = useWSClient();
+
+	// const rows = [
+	// 	{
+	// 	  	id: "1",
+	// 	  	players: "1 / 10",
+	// 	  	state: GameState.Running
+	// 	},
+	// 	{
+	// 		id: "2",
+	// 		players: "5 / 10",
+	// 		state: GameState.Waiting
+	// 	},
+	// 	{
+	// 		id: "3",
+	// 		players: "3 / 10",
+	// 		state: GameState.Running
+	// 	},
+	// 	{
+	// 		id: "4",
+	// 		players: "3 / 10",
+	// 		state: GameState.Running
+	// 	},
+	// 	{
+	// 		id: "5",
+	// 		players: "3 / 10",
+	// 		state: GameState.Running
+	// 	},
+	// 	{
+	// 		id: "6",
+	// 		players: "3 / 10",
+	// 		state: GameState.Running
+	// 	},
+	// 	{
+	// 		id: "7",
+	// 		players: "3 / 10",
+	// 		state: GameState.Running
+	// 	}
+	// ];
+
+	// const rows2 = [
+	// 	{
+	// 	  	id: "0x0123",
+	// 	  	score: "2"
+	// 	},
+	// 	{
+	// 		id: "0x0133",
+	// 		score: "2"
+	// 	},
+	// 	{
+	// 		id: "0x0423",
+	// 		score: "2"
+	// 	}
+	// ];
 
 	useEffect(() => {
 		const getSocketNumber = async (index: number) => {
@@ -96,55 +146,200 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 					if (finished === tournament.games.length) {
 						return (null);
 					} else {
+						const registered = String(tournament.players.length);
+						const connected = String((await getSocketNumber(index)));
+
 						return {
-							tournamentID: index,
-							connected: (await getSocketNumber(index)),
-							numberOfPlayers: tournament.players.length,
-							isStarted: tournament.start_block != 0
+							id: String(index),
+							players: connected + " / " + registered,
+							state: tournament.start_block != 0 ? GameState.Running : GameState.Waiting
 						}
 					}
 				})
 
 				const resolvedData = await Promise.all(formattedData);
-				const filteredData = resolvedData.filter(data => data !== null) as TournamentData[];
-
+				const filteredData = resolvedData.filter(data => data !== null) as {[key: string]: string | GameState}[];
+				console.log(filteredData);
 				setData(filteredData);
 			}
 		};
 
-		if (isOpen && wsclient) {
-			fetchData();
-		} else {
-			setData([]);
-			setTournamentMode(false);
-			setSelected("singleplayer");
+		if (tmContract && wsclient) {
+			fetchData
 		}
-	  }, [isOpen, tmContract, wsclient, tournamentMode, getTournaments, setData, setTournamentMode, setSelected]);
+	}, [tmContract, wsclient, getTournaments]);
+
+	if (selectedTournament !== "") {
+		return (
+			<ModalContentsWrapper
+				onBack={() => setSelectedTournament("")}
+				title={`Game Results of Game ${selectedTournament}`}
+			>
+				<SearchableGamesTable
+					ariaLabel="Tournaments Table"
+					columns={{
+						id: "Player",
+						score: "Score"
+					}}
+					rows={rows2}
+				/>
+			</ModalContentsWrapper>
+		)
+	}
+
+	return (
+		<ModalContentsWrapper
+			onBack={onClose}
+			title="Select Your Game"
+		>
+			<div className="flex items-end gap-2 justify-between">
+				<Snippet className="w-64 h-unit-10" symbol="ID" disableCopy={!tournament}>100</Snippet>
+				<Button className="w-full" color="primary" onClick={() => setTournament((last) => !last)}>
+					{tournament ? "Start Tournament" : "Create New Tournament"}
+				</Button>
+			</div>
+			<Divider/>
+			<SearchableGamesTable
+				ariaLabel="Tournaments Table"
+				columns={{
+					id: "Tournament ID",
+					players: "Number of Players",
+					state: "Status"
+				}}
+				rows={data}
+				onJoin={(row) => console.log(row)}
+				onRowClick={(row) => setSelectedTournament(row.id)}
+			/>
+		</ModalContentsWrapper>
+	)
+}
+
+const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose }) => {
+	const [game, setGame] = useState<undefined | number>(undefined);
+	const [botEnabled, setBotEnabled] = useState(false);
+	const [botSelected, setBotSelected] = useState(false);
+	const [strength, setStrength] = useState(0.5);
+
+	const rows = [
+		{
+			id: "1",
+			state: "Running"
+		},
+		{
+			id: "2",
+			state: "Running"
+		},
+		{
+			id: "3",
+			state: "Waiting..."
+		}
+	];
+
+	const onGameCreate = () => {
+		setGame(randInt(100, 999));
+	}
+
+	return (
+		<ModalContentsWrapper
+			onBack={onClose}
+			title="Select Your Game"
+		>
+			<div className="flex gap-4">
+				<Switch size="md" isSelected={botEnabled} onValueChange={setBotEnabled}>
+					Enable Bot Mode
+				</Switch>
+				<Slider
+					isDisabled={!botEnabled}
+					className="w-full"
+					label="Difficulty"
+					step={10}
+					defaultValue={50}
+				/>
+			</div>
+			<Tabs aria-label="Playermode" fullWidth isDisabled={(game ?? -1) >= 0}>
+				<Tab key="photos" title="Single Opponent"/>
+				<Tab key="music" title="Multiple Opponents"/>
+			</Tabs>
+			<div className="flex gap-4">
+				<Snippet
+					symbol="ID"
+					disableCopy={!game}
+					className={clsx("w-64 h-unit-10", {"opacity-40 cursor-not-allowed": !game})}
+				>
+					{game ?? ""}
+				</Snippet>
+				<Button className="w-full" color="primary" onClick={onGameCreate}>
+					Create New Game
+				</Button>
+			</div>
+			<Divider/>
+			<SearchableGamesTable
+				ariaLabel="Games Table"
+				columns={{
+					id: "Tournament ID"
+				}}
+				onJoin={(row) => console.log(row)}
+				rows={rows}
+			/>
+		</ModalContentsWrapper>
+	)
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                    Modal                                   */
+/* -------------------------------------------------------------------------- */
+// TODO:  Add a refresh button (with a refrech delay)
+// TODO:  Add a snippet for sharing GameID (Custom game only) should disapear on match start
+// TODO:  similar modal from tournament also for Custome Games
+// TODO:  Add a function that pulls an image based on selected modus for the gameType
+// TODO:  Tournament end sequence missing, a mechnaic that displays maybe a winner of the tournament, and away to exit the game after tournament is finished.
+//		  also reset tournament state
+// TODO:  Add a block for not connected users to access pages other then home
+
+// FIXME: If player swtiches pages, he doesnt leave the room
+// FIXME: Add a handler for each contract call when an  error happens (when null is returned)
+const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading }) => {
+	const modalData = useMemo(() => ({
+		"custom-games": {
+			title: "Custom Games",
+			description: "Custom Games Description",
+			button: "Create/Join Game 🎮"
+		},
+		"matchmaking": {
+			title: "Matchmaking",
+			description: "Matchmaking Description",
+			button: "Find Match 🎮"
+		},
+		"tournament-modes": {
+			img: "",
+			title: "Tournament Modes",
+			description: "Tournament Modes Description",
+			button: "Play Tournament 🚀"
+		}
+	}), [])
+
+	const [selected, setSelected] = useState(Object.keys(modalData)[0] as keyof typeof modalData);
+	const [openSubModal, setOpenSubModal] = useState(false);
+	const router = useRouter();
+	const { onJoinTournament, onCreateTournament } = useJoinEvents();
 
 	useEffect(() => {
-		if (selected !== "singleplayer" && selected !== "multiplayer") {
-			setBotSelected(false);
+		if (!isOpen) {
+			setOpenSubModal(false);
+			setSelected(Object.keys(modalData)[0] as keyof typeof modalData);
 		}
-	}, [selected, setBotSelected]);
+	  }, [isOpen, modalData, setSelected]);
 
-	const onButtonClick = () => {
-		if (selected === "tournament-modes") {
-			setTournamentMode(true);
-		} else if (selected === "singleplayer") {
-			setGameOptions({ gameMode: false, isBotActive: botSelected, botStrength: strength });
-		} else if (selected === "multiplayer") {
-			setGameOptions({ gameMode: true, isBotActive: botSelected, botStrength: strength });
-		} else if (selected === "matchmaking"){
-			setGameOptions({ gameMode: false, isBotActive: botSelected, botStrength: strength });
+	  const onButtonClick = () => {
+		if (selected == "matchmaking") {
+			return;
 		}
-
-		if (selected !== "tournament-modes") {
-			onClose(selected);
-		}
+		setOpenSubModal(true);
 	}
 
 	const returnToHome = () => {
 		router.push('/');
+		setOpenSubModal(true);
 	}
 
 	return (
@@ -162,23 +357,11 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 			}
 		>
 			<ModalContent>
-				{tournamentMode && (
-					<button
-						type="button"
-						onClick={() => setTournamentMode(false)}
-						className="absolute appearance-none select-none top-1 left-1 p-2 text-foreground-500 rounded-full hover:bg-default-100 active:bg-default-200 tap-highlight-transparent outline-none data-[focus-visible=true]:z-10 data-[focus-visible=true]:outline-2 data-[focus-visible=true]:outline-focus data-[focus-visible=true]:outline-offset-2"
-					>
-						<ArrowLeftIcon className="w-6 h-6"/>
-					</button>
-				)}
-				{loading && <div className=" absolute flex justify-center items-center h-full w-full">
-					<Spinner size="lg"/>
-				</div>}
-				<ModalHeader className={clsx({"opacity-0": loading})}>
-					<h1 className={clsx(styles.textWiggle, "text-2xl")}>Select Your Game</h1>
-				</ModalHeader>
-				<ModalBody className={clsx({"opacity-0": loading})}>
-					{!tournamentMode && (<>
+				{!openSubModal && (<>
+					<ModalHeader className={clsx({"opacity-0": loading})}>
+						<h1 className={clsx(styles.textWiggle, "text-2xl")}>Select Your Game</h1>
+					</ModalHeader>
+					<ModalBody className={clsx({"opacity-0": loading})}>
 						<div className="flex w-full flex-col gap-4">
 							<Image
 								alt={"Game Preview"}
@@ -191,52 +374,26 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 								selectedKey={selected}
 								className="self-center"
 								aria-label="Pong GameModes"
-								onSelectionChange={(key) => setSelected(key as string)}
+								onSelectionChange={(key) => setSelected(key as keyof typeof modalData)}
 							>
-								<Tab key="singleplayer" title="Singleplayer">
-									<DescriptionBox>Singleplayer Description</DescriptionBox> 
-								</Tab>
-								<Tab key="multiplayer" title="Multiplayer">
-									<DescriptionBox>Multiplayer Description</DescriptionBox> 
-								</Tab>
-								<Tab key="matchmaking" title="Matchmaking">
-									<DescriptionBox>Matchmaking Description</DescriptionBox> 
-								</Tab>
-								<Tab key="tournament-modes" title="Tournament Modes">
-									<DescriptionBox>Tournament Modes Description</DescriptionBox> 
-								</Tab>
+								{Object.keys(modalData).map((key: string) => (
+									<Tab key={key as keyof typeof modalData} title={modalData[key as keyof typeof modalData].title}>
+										<Card className="w-full">
+											<CardBody>{modalData[key as keyof typeof modalData].description}</CardBody>
+										</Card>
+									</Tab>
+								))}
 							</Tabs>
 						</div>
-						<div className="flex items-center gap-4">
-							<Switch isSelected={botSelected} onValueChange={setBotSelected} size="md" className="p-3" isDisabled={selected !== "singleplayer" && selected !== "multiplayer"}>
-								Enable Bot Mode
-							</Switch>
-							<Slider
-								label="Strength"
-								showTooltip={true}
-								formatOptions={{style: 'percent'}}
-								tooltipValueFormatOptions={{style: 'percent' }}
-								defaultValue={0.5}
-								step={0.1}
-								maxValue={1}
-								minValue={0}
-								value={strength}
-								onChangeEnd={setStrength}
-								style={{ width: '300px' }}
-								isDisabled={!botSelected}
-							/>
-						</div>
-					</>)}
-					{tournamentMode && (
-						<TournamentSubModal data={data} onCreateTournament={onCreateTournament} onJoinTournament={onJoinTournament} />
-					)}
-				</ModalBody>
-				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
-					{!tournamentMode && (<ModalButton onClick={onButtonClick}>{selected != "tournament-modes" ? "Create/Join Game 🎮" : "Play Tournament 🚀"}</ModalButton>)}
-				</ModalFooter>
+					</ModalBody>
+					<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
+						<ModalButton onClick={onButtonClick}>{modalData[selected].button}</ModalButton>
+					</ModalFooter>
+				</>)}
+				{openSubModal && selected == "tournament-modes" && <TournamentContent onClose={() => setOpenSubModal(false)}/>}
+				{openSubModal && selected == "custom-games" && <CustomGamesContent onClose={() => setOpenSubModal(false)}/>}
 			</ModalContent>
 		</Modal>
 	)
 }
-
 export default SelectionModal;
