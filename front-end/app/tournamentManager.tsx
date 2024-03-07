@@ -5,7 +5,7 @@ import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers5/re
 import scoresAbi from '../public/tournamentManager_abi.json';
 import erc20Abi from '../public/erc20_abi.json';
 
-const contract_address = '0x8e627ECD303Ff1735948C62D3754D364D82583ED'
+const contract_address = '0x4982051409D3F7f1C37d9f1e544EF6c6e8557148'
 
 function Scores() {
 	const { address, chainId, isConnected } = useWeb3ModalAccount()

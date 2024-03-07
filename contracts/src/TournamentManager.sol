@@ -22,6 +22,7 @@ contract TournamentManager {
 	// tournament related
 	struct Tournament {
 		address master;
+		string game_type;
 		uint256 duration_in_blocks;
 		uint256 start_block;
 		uint256 end_block;
@@ -157,7 +158,7 @@ contract TournamentManager {
 	/*                            Tournament Functions                            */
 	/* -------------------------------------------------------------------------- */
 
-	function createTournament(uint256 duration_in_blocks)
+	function createTournament(uint256 duration_in_blocks, string memory game_type)
 	external
 	returns (uint256) {
 		require (duration_in_blocks > 0, "Duration must be greater than 0");
@@ -165,6 +166,7 @@ contract TournamentManager {
 		delete _tournament;
 		Tournament storage tournament = _tournament;
 		tournament.master = msg.sender;
+		tournament.game_type = game_type;
 		tournament.duration_in_blocks = duration_in_blocks;
 		tournaments.push(tournament);
 

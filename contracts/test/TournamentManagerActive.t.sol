@@ -37,7 +37,7 @@ contract TournamentManagerTest is Test {
 
     function testJoinTournament() public {
         tm.setNameAndColor("test1", 0xFFFFFF);
-        uint256 tournament_id = tm.createTournament(10);
+        uint256 tournament_id = tm.createTournament(10, "test");
         tm.joinTournament(tournament_id);
         TournamentManager.Tournament memory tournament = tm.getTournament(tournament_id);
         assertEq(tournament.players.length, 1);
@@ -46,8 +46,8 @@ contract TournamentManagerTest is Test {
 
     function testCreateTournament() public {
         uint256 duration_in_blocks = 10;
-        uint256 tournament_id = tm.createTournament(duration_in_blocks);
-        uint256 tournament_id2 = tm.createTournament(duration_in_blocks);
+        uint256 tournament_id = tm.createTournament(duration_in_blocks, "test");
+        uint256 tournament_id2 = tm.createTournament(duration_in_blocks, "test2");
         TournamentManager.Tournament memory tournament = tm.getTournament(tournament_id);
         assertEq(tournament_id2, 1);
         assertEq(tournament.master, address(this));
@@ -59,7 +59,7 @@ contract TournamentManagerTest is Test {
     }
 
     function testStartTournament() public {
-        tm.createTournament(10);
+        tm.createTournament(10, "test");
         tm.setNameAndColor("test1", 0xFFFFFF);
         tm.joinTournament(0);
         vm.startPrank(address(1));
@@ -113,8 +113,8 @@ contract TournamentManagerTest is Test {
     }
 
     function testGetTournaments() public {
-        tm.createTournament(10);
-        tm.createTournament(100);
+        tm.createTournament(10, "test");
+        tm.createTournament(100, "test");
         TournamentManager.Tournament[] memory tournaments = tm.getTournaments();
         assertEq(tournaments.length, 2);
     }
