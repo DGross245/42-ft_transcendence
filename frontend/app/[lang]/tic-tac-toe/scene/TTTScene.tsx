@@ -33,7 +33,7 @@ import { Button } from "@nextui-org/react";
  * resizing, modal display, and game completion.
  * @returns The entire Three.js scene, including the modal.
  */
-const TTTScene : React.FC<{ selected: string }> = ({ selected }) => {
+const TTTScene = () => {
 	const { dimensions } = useWindow();
 	const { wsclient } = useSocket();
 	const {
@@ -52,7 +52,6 @@ const TTTScene : React.FC<{ selected: string }> = ({ selected }) => {
 
 	const onCreateTournament = async () => {
 		if (!wsclient) return;
-		await createTournament(300000000);
 		setTopic((await getTournaments()).length - 1);
 	}
 
@@ -87,7 +86,7 @@ const TTTScene : React.FC<{ selected: string }> = ({ selected }) => {
 		updateGameState({ gameId: String(topic) })
 	}
 	const onCreate = async () => {
-		wsclient?.createGame();
+		wsclient?.createGame("TTT");
 	}
 
 	const joinQueue = () => {

@@ -15,8 +15,9 @@ export const useField = (props: FieldProps) => {
 
 	const handleHover = useCallback(( state: boolean) => {
 		if (playerState.client === -1 || gameState.pause || countdownVisible) return ;
-		if (playerState.players[playerState.client].symbol == currentTurn)
+		if (playerState.players[playerState.client].symbol == currentTurn) {
 			hover(state);
+		}
 	},[countdownVisible, currentTurn, gameState.pause, playerState.client, playerState.players]);
 
 	const handleClick = useCallback(() => {

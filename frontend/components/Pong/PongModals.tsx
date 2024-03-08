@@ -68,14 +68,14 @@ export const PongModals = memo(() => {
 			if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect")) {
 				return (GameResult.Winner);
 			} else {
-				return (GameResult.Looser);
+				return (GameResult.Loser);
 			}
 		}
 	}, [showModal, playerState, winner, playerStatus])
 
 	// Function to handle sending player scores and continuing the game
 	const sendScoreAndContinue = async () => {
-		if (playerState.client === 0 || playerStatus === "disconnect" || playerStatus === "leave" ) {
+		if (playerState.master || playerStatus === "disconnect" || playerStatus === "leave" ) {
 			const maxClient = isGameMode ? 4 : 2;
 			const playerScore: PlayerScore[] = [];
 
@@ -90,7 +90,7 @@ export const PongModals = memo(() => {
 				if (!finished) {
 					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
 				}
-			} else if (playerState.client === 0) {
+			} else if (playerState.master) {
 				await submitGameResultRanked(playerScore);
 			}
 			

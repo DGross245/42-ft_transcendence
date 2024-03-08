@@ -49,9 +49,11 @@ interface Coordinate {
 /* -------------------------------------------------------------------------- */
 
 // strength: number between 0 and 1, indicating how well the bot plays
-export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol: string, strength: number, setBoard: Dispatch<SetStateAction<string[][][]>>) => {
+export const TicTacToeBot = ( board: string[][][], SymbolArray: string[], symbol: string, strength: number, setBoard: Dispatch<SetStateAction<string[][][]>>, setBotMoved: Dispatch<SetStateAction<boolean>>) => {
 
 	function placeAtCoordinate(coords: Coordinate) {
+		setBotMoved(true);
+
 		setTimeout(() => {
 			const newBoard = [...board];
 			newBoard[coords.x][coords.y][coords.z] = symbol;

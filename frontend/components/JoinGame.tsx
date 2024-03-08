@@ -12,8 +12,8 @@ export const useJoinEvents = () => {
 	} = useContract();
 	const { updateGameState } = useGameState();
 	
-	const onCreateTournament = async () => {
-		const number = await createTournament(300000000);
+	const onCreateTournament = async (gameType: string) => {
+		const number = await createTournament(300000000, gameType);
 	}
 	
 	const onStartTournament = async (id: number, gameType: string) => {
@@ -29,16 +29,18 @@ export const useJoinEvents = () => {
 		return (await setNameAndColor(username, color));
 	}
 	
-	const onCreateCustom = () => {
-		wsclient?.createGame();
+	const onCreateCustom = (gameMode: string) => {
+		wsclient?.createGame(gameMode);
 	}
 	
 	const onJoinQueue = () => {
 		wsclient?.joinQueue("tictactoe")
 	}
 
-	const onJoinTournament = async (id: number) =>  {
-		await joinTournament(id);
+	const onJoinTournament = async (id: number, skip: boolean) =>  {
+		if (!skip) {
+			await joinTournament(id);
+		}
 		wsclient?.joinTournament(id);
 	}
 

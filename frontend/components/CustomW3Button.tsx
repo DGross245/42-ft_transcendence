@@ -33,7 +33,6 @@ const CustomW3Button: React.FC<CustomW3ButtonProps> = ({ size = "md" }) => {
 	}, [t])
 
 	const test = () => {
-		console.log("opening");
 		open();
 	}
 

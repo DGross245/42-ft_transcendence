@@ -4,7 +4,7 @@ import io, { Socket } from 'socket.io-client';
 import { useEffect, useState } from 'react';
 
 export type WSClientType = {
-	createGame: () => void;
+	createGame: (gameType: string) => void;
 	waitingRoom: () => Promise<{gameID: string, tournamentId: number, gameIndex: number}>;
 	joinGame: (gameId: string, gameType: string, isBot: boolean) => Promise<number>;
 	getNumberOfSocketsInTournament: (tournamentID: number) => Promise<number>;
@@ -19,6 +19,7 @@ export type WSClientType = {
 	joinTournament: (tournamentID: number) => void;
 	requestTournament: (tournamentID: number, gameType: string) => void;
 	updateStatus: (isInGame: boolean, gameID: string) => Promise<boolean>;
+	getCustomGames: (gameType: string) => Promise<any>;
 	leave: () => void;
 	disconnect: () => void;
 };
@@ -64,9 +65,23 @@ class WSClient {
 	leave() {
 		this.socket?.emit('leave');
 	}
-	createGame() {
-		this.socket!.emit('create-game');
+	createGame(gameType: string) {
+		this.socket!.emit('create-game', gameType);
 	}
+	async getCustomGames(gameType: string) : Promise<any> {
+		if (!this.socket) {
+			await this.waitingForSocket();
+		}
+
+		return new Promise((resolve, reject) => {
+			this.socket!.emit('get-custom-games', gameType);
+			this.socket!.on('custome-rooms', (CustomRooms: any) => {
+				this.socket!.removeListener('custome-rooms');
+				resolve(CustomRooms);
+			})
+		})
+	}
+
 	async updateStatus(isInGame: boolean, gameID: string) : Promise<boolean> {
 		return new Promise((resolve, reject) => {
 			this.socket!.emit('Update-Status', isInGame, gameID);
@@ -108,8 +123,8 @@ class WSClient {
 		}
 		return new Promise((resolve, reject) => {
 			this.socket!.emit('get-number-of-player-in-tournament', tournamentID);
-			this.socket!.on('number-of-players', (numberOfPlayer: number) => {
-				this.socket!.removeListener('number-of-players');
+			this.socket!.on(`number-of-players-${tournamentID}`, (numberOfPlayer: number) => {
+				this.socket!.removeListener(`number-of-players-${tournamentID}`);
 				resolve(numberOfPlayer);
 			})
 		});

@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from "react";
 
-import useWSClient from "@/helpers/wsclient";
+import useWSClient, { WSClientType } from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
 import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
@@ -30,7 +30,7 @@ export const TTTSocketEvents = memo(() => {
 		timerState,
 		setTimerState,
 		customized,
-		setPlayerAddress
+		setPlayerAddress,
 	} = useSocket();
 	const {
 		gameState,
@@ -40,7 +40,7 @@ export const TTTSocketEvents = memo(() => {
 		botState,
 		setTournament,
 		setBot,
-		tournament
+		tournament,
 	} = useGameState();
 	const {
 		getPlayer,
@@ -63,7 +63,7 @@ export const TTTSocketEvents = memo(() => {
 			if (newClient) {
 				await newClient.waitingForSocket();
 				newClient.sendAddress(address);
-				setWsclient(newClient);
+				setWsclient(newClient as WSClientType);
 				setPlayerAddress(String(address));
 			}
 		};
@@ -170,6 +170,16 @@ export const TTTSocketEvents = memo(() => {
 				symbol: playerState.players[playerState.client].symbol,
 			}
 			wsclient?.emitMessageToGame(JSON.stringify(playerData), `PlayerData-${gameState.gameId}`, gameState.gameId);
+			if (botState.isActive && playerState.client === 0 && isGameMode) {
+				const botData = {
+					name: playerState.players[botState.client].name,
+					addr: playerState.players[botState.client].addr,
+					color: playerState.players[botState.client].color,
+					number: playerState.players[botState.client].number,
+					symbol: playerState.players[botState.client].symbol,
+				}
+				wsclient?.emitMessageToGame(JSON.stringify(botData), `PlayerData-${gameState.gameId}`, gameState.gameId);
+			}
 		};
 
 		if (playerState.client !== -1 && isFull === "FULL") {
@@ -179,7 +189,7 @@ export const TTTSocketEvents = memo(() => {
 			}
 			// updateGameState({ pause: false });
 		}
-	}, [playerState.client, isFull, botState.isActive, gameState.gameId, playerState.players, isGameMode, wsclient]);
+	}, [playerState.client, isFull, botState, gameState.gameId, playerState.players, isGameMode, wsclient]);
 
 	// Initial communication between both players (RECEIVE message)
 	useEffect(() => {
@@ -205,6 +215,10 @@ export const TTTSocketEvents = memo(() => {
 
 					return { ...prevState, players: updatedPlayers };
 				});
+
+				if (playerData.addr === "0xBotBOB01245") {
+					setBot((prevState) => ({ ...prevState, isActive: true }));
+				}
 			}
 
 			const notSetPlayer = playerState.players.find(player => player.name === "None");
@@ -222,7 +236,7 @@ export const TTTSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
-	},[wsclient, gameState.gameId, playerState.players, isGameMode, setPlayerState]);
+	},[wsclient, gameState.gameId, playerState.players, isGameMode, setBot, setPlayerState]);
 
 	// Update 'isFull' state when lobby is full
 	useEffect(() => {
@@ -292,14 +306,12 @@ export const TTTSocketEvents = memo(() => {
 	// Handle tournament finish
 	useEffect(() => {
 		const finish = (msg: string) => {
-			console.log("KEK")
 			setTournament({ id: -1, index: -1});
 			wsclient?.leave();
 			router.push('/');
 		};
 
 		if (wsclient && tournament.id !== -1) {
-			console.log("listin")
 			wsclient?.addMessageListener('tournament-finished', String(tournament.id), finish)
 
 			return () => {
@@ -397,7 +409,7 @@ export const TTTSocketEvents = memo(() => {
 			}
 
 			if (botState.isActive) {
-				setBot((prevState) => ({ ...prevState, symbol: playerState.players[botClientNumber].symbol }));
+				setBot(({ ...botState, symbol: symbols[botClientNumber] }));
 			}
 			setSymbolSet(true);
 			updateGameState({ pause: false });
@@ -406,7 +418,7 @@ export const TTTSocketEvents = memo(() => {
 		if (playerSet && playerState.client === 0 && !symbolSet) {
 			sendRandomSymbol();
 		}
-	}, [playerSet, symbolSet, playerState, botState.isActive, gameState.gameId, isGameMode, wsclient, setBot, setPlayerState, updateGameState]);
+	}, [playerSet, symbolSet, playerState, botState, gameState.gameId, isGameMode, wsclient, setBot, setPlayerState, updateGameState]);
 
 	// Opponents receive newly shuffled symbols
 	useEffect(() => {

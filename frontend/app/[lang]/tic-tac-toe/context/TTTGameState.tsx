@@ -153,11 +153,14 @@ interface GameStateContextValue {
 	started: boolean,
 	/** Sets whether the game has started. */
 	setStarted: Dispatch<SetStateAction<boolean>>,
+	botMoved: boolean,
+	/** Sets whether the game has started. */
+	setBotMoved: Dispatch<SetStateAction<boolean>>,
 }
 
 export const GameStateContext = createContext<GameStateContextValue>({} as GameStateContextValue);
 
-export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, children: ReactNode }> = ({ gameMode = false, isBotActive = false, children }) => {
+export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, strength: number, children: ReactNode }> = ({ gameMode = false, isBotActive = false, strength = 0.9, children}) => {
 	const [isGameMode, setGameMode] = useState(gameMode);
 	const [tournament, setTournament] = useState({ id: -1, index: -1 });
 	const [countdownVisible, setCountdownVisible] = useState(true);
@@ -168,8 +171,9 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 	const [gameState, setGameState] = useState({ gameId: "-1", pause: true, reset: false, gameOver: false });
 	const [lineCoords, setLineCoords] = useState([...winningCoords]);
 	const [isLineVisible, setLineVisible] = useState(false);
-	const [botState, setBot] = useState({ isActive: isBotActive, symbol: 'NOT DEFINED', strength: 0.9, client: -1});
+	const [botState, setBot] = useState({ isActive: isBotActive, symbol: 'NOT DEFINED', strength: strength, client: -1});
 	const [started, setStarted] = useState(false);
+	const [botMoved, setBotMoved] = useState(false);
 
 	const updateGameState = useCallback((newState: Partial<GameStateContextValue['gameState']>) => {
 		setGameState(prevState => ({
@@ -207,7 +211,9 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 		tournament,
 		setTournament,
 		started,
-		setStarted
+		setStarted,
+		botMoved,
+		setBotMoved
 	};
 
 	return (
