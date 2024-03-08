@@ -16,7 +16,7 @@ import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
 
-function intToHexColor(intValue: number) {
+export function intToHexColor(intValue: number) {
 	return ('#' + intValue.toString(16).padStart(6, '0').toUpperCase());
 }
 
@@ -29,7 +29,8 @@ export const TTTModals = memo(() => {
 		winner,
 		updateGameState,
 		setStarted,
-		tournament
+		tournament,
+		setTournament
 	} = useGameState();
 	const {
 		continueIndex,
@@ -73,6 +74,7 @@ export const TTTModals = memo(() => {
 	const [isClicked, setIsClicked] = useState(false);
 	const [playerInfos, setPlayerInfos] = useState({ color: "#ffffff", name: "KEK" });
 	const [showSetModal, setShowSetModal] = useState(false);
+	const [showCustomModal, setShowCustomModal] = useState(false);
 
 	/* ------------------------------- functions ------------------------------ */
 	const handleButtonClick = useCallback(() => {
@@ -132,6 +134,7 @@ export const TTTModals = memo(() => {
 			setPlayerState(initialTTTPlayerState());
 			setStarted(false);
 			setChipDisappear(false);
+			setTournament({ ...tournament, index: -1});
 
 			if (status) {
 				if (tournament.id !== -1) {
@@ -211,6 +214,22 @@ export const TTTModals = memo(() => {
 		}
 	}
 
+	useEffect(() => {
+		let timerId: NodeJS.Timeout;
+
+		if (gameState.gameId !== '-1' && !customized && tournament.id !== -1) {
+			timerId = setTimeout(() => {
+				setShowCustomModal(true);
+			}, 3000); 
+		}
+		else {
+			setShowCustomModal(false);
+		}
+		return () => {
+			clearTimeout(timerId);
+		};
+	}, [gameState.gameId, customized, tournament]);
+
 	return (
 		<>
 			{/* Pause Modal */}
@@ -237,7 +256,7 @@ export const TTTModals = memo(() => {
 			)}
 
 			{!customized && (
-				<CustomizeModal isOpen={gameState.gameId !== '-1' && !customized} color={playerInfos.color} username={playerInfos.name} startGame={initiateGame}/>
+				<CustomizeModal isOpen={showCustomModal} color={playerInfos.color} username={playerInfos.name} startGame={initiateGame}/>
 			)}
 			{unregistered && (
 				<CustomizeModal isOpen={showSetModal} startGame={registerNewPlayer} />

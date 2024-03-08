@@ -160,9 +160,9 @@ interface GameStateContextValue {
 
 export const GameStateContext = createContext<GameStateContextValue>({} as GameStateContextValue);
 
-export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, strength: number, children: ReactNode }> = ({ gameMode = false, isBotActive = false, strength = 0.9, children}) => {
+export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, strength: number, children: ReactNode, tournament: {id: number, index: number}, setTournament: Dispatch<SetStateAction<{id: number, index: number}>>}> = ({ gameMode = false, isBotActive = false, strength = 0.9, tournament, setTournament, children}) => {
 	const [isGameMode, setGameMode] = useState(gameMode);
-	const [tournament, setTournament] = useState({ id: -1, index: -1 });
+	// const [tournament, setTournament] = useState({ id: -1, index: -1 });
 	const [countdownVisible, setCountdownVisible] = useState(true);
 	const [currentTurn, setTurn] = useState('');
 	const [board, setBoard] = useState(initialBoard());

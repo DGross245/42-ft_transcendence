@@ -44,6 +44,12 @@ interface PongSocketContextValue {
 	setTimerState: Dispatch<SetStateAction<string>>
 	chipDisappear: boolean,
 	setChipDisappear: Dispatch<SetStateAction<boolean>>
+	playerAddress: string;
+	setPlayerAddress: Dispatch<SetStateAction<string>>;
+	customized: boolean;
+	setCustomized: Dispatch<SetStateAction<boolean>>;
+	unregistered: boolean
+	setUnregistered: Dispatch<SetStateAction<boolean>>;
 };
 
 export const initialPongPlayerState = () => ({
@@ -71,6 +77,9 @@ export const PongSocket: React.FC<{ initialWsClient?: WSClientType | null, child
 	const [isFull, setIsFull] = useState("");
 	const [timerState, setTimerState] = useState("");
 	const [playerState, setPlayerState] = useState(initialPongPlayerState());
+	const [playerAddress, setPlayerAddress] = useState("");
+	const [customized, setCustomized] = useState(false);
+	const [unregistered, setUnregistered] = useState(true);
 
 	const value: PongSocketContextValue = {
 		wsclient,
@@ -94,7 +103,13 @@ export const PongSocket: React.FC<{ initialWsClient?: WSClientType | null, child
 		timerState,
 		setTimerState,
 		chipDisappear,
-		setChipDisappear
+		setChipDisappear,
+		playerAddress,
+		setPlayerAddress,
+		customized,
+		setCustomized,
+		unregistered,
+		setUnregistered
 	}
 
 	return (

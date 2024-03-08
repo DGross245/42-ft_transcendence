@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
 
 import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
@@ -8,6 +8,10 @@ import GameModal, { GameResult, Status } from "@/app/[lang]/modals/GameModal";
 import useContract, { PlayerScore } from "../hooks/useContract";
 import { usePongUI } from "@/app/[lang]/pong/hooks/usePongUI";
 import { initialPongPlayerState } from "@/app/[lang]/pong/context/PongSockets";
+import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
+import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
+import { useJoinEvents } from "../JoinGame";
+import { intToHexColor } from "../TTT/TTTModals";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -39,21 +43,35 @@ export const PongModals = memo(() => {
 		wsclient,
 		setPlayerState,
 		setSendRequest,
+		playerAddress,
+		customized,
+		setCustomized,
+		unregistered,
 		sendRequest
 	} = usePongSocket();
 	const {
 		submitGameResultRanked,
 		submitGameResultTournament,
-		getTournament
+		getTournament,
+		getPlayer
 	} = useContract();
 	const {
 		closeModal,
 		showModal
 	} = usePongUI();
+
+	const {
+		onSetNameAndColor
+	} = useJoinEvents();
 	const router = useRouter();
+	const { tmContract } = useContract();
+	const {isConnected, address} = useWeb3ModalAccount();
 
 	//* ------------------------------- state variables ------------------------------ */
 	const [isClicked, setIsClicked] = useState(false);
+	const [playerInfos, setPlayerInfos] = useState({ color: "#ffffff", name: "KEK" });
+	const [showSetModal, setShowSetModal] = useState(false);
+	const [showCustomModal, setShowCustomModal] = useState(false);
 
 	/* ------------------------------- functions ------------------------------ */
 	const handleButtonClick = useCallback(() => {
@@ -141,8 +159,75 @@ export const PongModals = memo(() => {
 		wsclient?.leave();
 	}, [wsclient, router]);
 
+	useEffect(() => {
+		const getPlayerInfo = async () => {
+			if (playerAddress !== "") {
+				const playerInfo = await getPlayer(String(playerAddress));
+
+				const color = intToHexColor(Number(playerInfo.color));
+				setPlayerInfos({ color: color, name: String(playerInfo.name)});
+			}
+		}
+
+		if (pongGameState.gameId !== '-1' && !customized) {
+			getPlayerInfo();
+		}
+	}, [customized, pongGameState.gameId, playerAddress, getPlayer, setPlayerInfos]);
+
+	const initiateGame = async (username: string, color: string) => {
+		if (username !== playerInfos.name || color !== playerInfos.color) {
+			const colorCopy = color.replace('#', '0x');
+			const number = await onSetNameAndColor(username, colorCopy);
+		}
+
+		setCustomized(true);
+	}
+
+	useEffect(() => {
+		if (pongGameState.reset) {
+			closeModal();
+		}
+	}, [pongGameState.reset, closeModal])
+
+	useEffect(() => {
+		const checkPlayerInfo = async () => {
+			const playerInfo = await getPlayer(String(address));
+			if (Number(playerInfo.addr) === 0) {
+				setShowSetModal(true);
+			}
+		}
+
+		if (isConnected && tmContract && address) {
+			checkPlayerInfo();
+		}
+	}, [isConnected, getPlayer, address, tmContract]);
+
+	const registerNewPlayer = async (username: string, color: string) => {
+		const colorCopy = color.replace('#', '0x');
+		const number = await onSetNameAndColor(username, colorCopy);
+		if (number) {
+			setShowSetModal(false);
+		}
+	}
+
+	useEffect(() => {
+		let timerId: NodeJS.Timeout;
+
+		if (pongGameState.gameId !== '-1' && !customized && tournament.id !== -1) {
+			timerId = setTimeout(() => {
+				setShowCustomModal(true);
+			}, 3000); 
+		}
+		else {
+			setShowCustomModal(false);
+		}
+		return () => {
+			clearTimeout(timerId);
+		};
+	}, [pongGameState.gameId, customized, tournament]);
+
 	return (
-		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">
+		<>
 			{/* Pause Modal */}
 			<GameModal
 				isOpen={started && pongGameState.pause && !pongGameState.gameOver && pongGameState.gameId !== '-1'}
@@ -166,6 +251,12 @@ export const PongModals = memo(() => {
 				)
 			)}
 
+			{!customized && (
+				<CustomizeModal isOpen={showCustomModal} color={playerInfos.color} username={playerInfos.name} startGame={initiateGame}/>
+			)}
+			{unregistered && (
+				<CustomizeModal isOpen={showSetModal} startGame={registerNewPlayer} />
+			)}
 			<Timer
 				playerClient={playerState.client}
 				isFull={isFull}
@@ -176,7 +267,7 @@ export const PongModals = memo(() => {
 				disappear={chipDisappear}
 				setDisappear={setChipDisappear}
 			/>
-		</section>
+		</>
 	)
 })
 

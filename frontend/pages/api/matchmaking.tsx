@@ -135,11 +135,12 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 				shuffledPlayers[k].player!.emit('match-found', id, tournamentID, i);
 				if (skipGame) {
 					let address;
-					if (shuffledPlayers[0].player === null)
+					if (shuffledPlayers[0].player === null) {
 						address = shuffledPlayers[0].address;
-					else
+					} else {
 						address = shuffledPlayers[1].address
-						shuffledPlayers[k].player!.emit('Skip', address);
+					}
+					shuffledPlayers[k].player!.emit('Skip', address);
 				}
 			}
 			l++

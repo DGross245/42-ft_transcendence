@@ -1,10 +1,9 @@
 import { Button, Card, CardBody, Divider, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Slider, Snippet, Spinner, Switch, Tab, Tabs } from "@nextui-org/react";
 import SearchableGamesTable, { GameState } from "./components/SearchableGamesTable";
 import ModalButton from "./components/ModalButton";
-import { randInt } from "three/src/math/MathUtils";
 import pongGameImage from "@/assets/pongGame.png";
 import BackButton from "./components/BackButton";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./Modals.module.css";
 import Image from "next/image";
 import clsx from "clsx";
@@ -14,8 +13,9 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import useContract from "@/components/hooks/useContract";
 import { useJoinEvents } from "@/components/JoinGame";
-import useWSClient, { WSClientType } from "@/helpers/wsclient";
+import useWSClient from "@/helpers/wsclient";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
+import { useKey } from "@/components/hooks/useKey";
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
 /* -------------------------------------------------------------------------- */
@@ -44,6 +44,8 @@ interface SelectionModalProps {
 	loading?: boolean;
 	gameType: string;
 	setGameOptions: React.Dispatch<React.SetStateAction<GameOptions>>;
+	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	tournamentState?: {id: number, index: number},
 }
 
 interface ModalContentProps {
@@ -51,6 +53,7 @@ interface ModalContentProps {
 	closeMain: () => void;
 	gameType: string;
 	setGameOptions: React.Dispatch<React.SetStateAction<GameOptions>>;
+	tournamentState?: {id: number, index: number};
 }
 
 /* -------------------------------------------------------------------------- */
@@ -74,7 +77,7 @@ const ModalContentsWrapper: React.FC<{children?: React.ReactNode, loading?: bool
 /* -------------------------------------------------------------------------- */
 /*                               Modal Contents                               */
 /* -------------------------------------------------------------------------- */
-const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, closeMain, setGameOptions }) => {
+const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, closeMain, setGameOptions, tournamentState }) => {
 	const [selectedTournament, setSelectedTournament] = useState("");
 	const [tournament, setTournament] = useState(false);
 	const [tournamentID, setTournamentID] = useState(0);
@@ -84,8 +87,8 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 	const { onCreateTournament, onJoinTournament, onStartTournament } = useJoinEvents()
 	const wsclient = useWSClient();
 	const { address } = useWeb3ModalAccount();
-
 	const _gameMode = useRef("");
+	const [games, setGames] = useState<{[key: string]: string | GameState}[]>([]);
 
 	useEffect(() => {
 		const getSocketNumber = async (index: number) => {
@@ -132,14 +135,19 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 			}
 		};
 
+		const fetchDataInterval = setInterval(fetchData, 5000);
+
 		if (tmContract && wsclient) {
 			fetchData();
 		}
+
+		return () => clearInterval(fetchDataInterval);
 	}, [tmContract, wsclient, gameType, getTournaments]);
 
 	useEffect(() => {
 		const fetchTournamentData = async () => {
 			const tournametInfo = [];
+			const gameStats = [];
 
 			if (selectedTournament) {
 				const players = (await getTournament(Number(selectedTournament))).players;
@@ -154,13 +162,22 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 
 				const games = await getTournamentTree(Number(selectedTournament));
 
+				for (let i = 0; i < games.length; i++) {
+					gameStats.push({
+						id: String(i),
+						player1: games[i].player_scores[0].addr,
+						player2: games[i].player_scores[1].addr
+					});
+				}
+				setGames(gameStats);
+
 				for (let i = 0; i < games.length; i++ ) {
 					if (games[i].finished) {
 						for (let j = 0; j < 2; j++) {
 							const index = tournametInfo.findIndex(info => info.id === games[i].player_scores[j].addr)
 
 							if (index) {
-								tournametInfo[index].score += games[i].player_scores[j].score;
+								tournametInfo[index].score = String(Number(tournametInfo[index].score) + games[i].player_scores[j].score);
 							}
 						}
 					}
@@ -170,8 +187,14 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 			}
 		}
 
-		fetchTournamentData();
-	}, [selectedTournament, getTournament, getTournamentTree]);
+		const fetchDataInterval = setInterval(fetchTournamentData, 5000);
+
+		if (selectedTournament) {
+			fetchTournamentData();
+		}
+
+		return () => clearInterval(fetchDataInterval);
+	}, [selectedTournament, tournamentState, getTournament, getTournamentTree]);
 
 	const onGameCreate = async () => {
 		// search for already created tournaments
@@ -179,8 +202,18 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 
 		for (let i = 0; i < tournaments.length; i++) {
 			if (tournaments[i].master === address) {
-				toast.info("You already have an tournament running")
-				return ;
+				let finished = 0;
+
+				for (let j = 0; j < tournaments[i].games.length; j++ ) {
+					if (tournaments[i].games[j].finished) {
+						finished++;
+					}
+				}
+
+				if (finished !== tournaments[i].games.length) {
+					toast.info("You already have an tournament running")
+					return ;
+				}
 			}
 		}
 
@@ -199,15 +232,15 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 
 			if (player) {
 				if (Number(tournaments[i].start_block) !== 0) {
-					let finsihed = 0;
+					let finished = 0;
 
 					for (let j = 0; j < tournaments[i].games.length; j++ ) {
 						if (tournaments[i].games[j].finished) {
-							finsihed++;
+							finished++;
 						}
 					}
 
-					if (finsihed !== tournaments[i].games.length && Number(id) !== i) {
+					if (finished !== tournaments[i].games.length && Number(id) !== i) {
 						toast.info("You already joined a tournament")
 						return ;
 					}
@@ -231,21 +264,33 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 		setGameOptions({ gameMode: isGameMode, botStrength: 0, isBotActive: false });
 		onJoinTournament(Number(id), skip);
 		setGameOptions({ gameMode: false, botStrength: 0, isBotActive: false });
+
 		// Joining back after leaving
 		if (Number(tournaments[Number(id)].start_block) !== 0) {
 			wsclient?.requestTournament(Number(id), gameType);
-			closeMain();
 		}
-
 
 		if (tournaments[Number(id)].master === String(address)) {
 			setTournament(true);
 		} else {
-			closeMain();
+			setSelectedTournament(id);
 		}
 
 		setTournamentID(Number(id));
 	}
+
+	// TODO: Maybe change this to not close when opened with key
+	useEffect(() => {
+		if (tournamentState?.index !== -1) {
+			setSelectedTournament(String(tournamentState?.id));
+			setTimeout(() => {
+				closeMain();
+			}, 2500);
+		}
+		if (tournamentState?.id !== -1 && tournamentState?.index === -1) {
+			setSelectedTournament(String(tournamentState?.id));
+		}
+	}, [tournamentState, closeMain])
 
 	if (selectedTournament !== "") {
 		return (
@@ -265,10 +310,12 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 					<SearchableGamesTable
 						ariaLabel="Tournaments Table"
 						columns={{
-							player: "Player",
-							against: "Against"
+							player1: "Player",
+							player2: "Against"
 						}}
-						rows={rows3}
+						rows={games}
+						highlightedRows={tournamentState!.index === -1 ? [] : [games[tournamentState!.index]]}
+						tooltipEnabled={true}
 					/>
 				</div>
 			</ModalContentsWrapper>
@@ -286,7 +333,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 				<Button className="w-full" color="primary" onClick={async () => {
 					if (tournament) {
 						onStartTournament(tournamentID, gameType);
-						closeMain();
+						setSelectedTournament(String(tournamentID));
 					} else {
 						onGameCreate();
 					}
@@ -304,7 +351,6 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 				}}
 				rows={data}
 				onJoin={(row) => joinTournament(row.id)}
-				highlightedRows={[rows[0]]}
 				onRowClick={(row) => setSelectedTournament(row.id)}
 			/>
 		</ModalContentsWrapper>
@@ -318,7 +364,6 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 	const { onCreateCustom, onJoinCustom } = useJoinEvents();
 	const wsclient = useWSClient();
 	const [customGames, setCustomGames] = useState<{[key: string]: string}[]>([]);
-	
 	const _gameMode = useRef("");
 	const [gameMode, setGameMode] = useState<GameMode>(gameType === 'TTT' ? GameMode.TTT : GameMode.Pong);
 
@@ -334,9 +379,13 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 			setCustomGames(games);
 		}
 
+		const fetchDataInterval = setInterval(getAllCustomGame, 5000);
+
 		if (wsclient) {
 			getAllCustomGame();
 		}
+
+		return () => clearInterval(fetchDataInterval);
 	}, [wsclient, gameType, gameMode]);
 
 	const onGameCreate = () => {
@@ -422,13 +471,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 /* -------------------------------------------------------------------------- */
 /*                                    Modal                                   */
 /* -------------------------------------------------------------------------- */
-// TODO:  Add a function that pulls an image based on selected modus for the gameType
-// TODO:  Tournament end sequence missing, a mechnaic that displays maybe a winner of the tournament, and away to exit the game after tournament is finished.
-//		  also reset tournament state
-// TODO:  Add a block for not connected users to access pages other then home
-
-// FIXME: Add a handler for each contract call when an  error happens (when null is returned)
-const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, gameType, setGameOptions }) => {
+const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, gameType, setGameOptions, tournamentState, setOpen}) => {
 	const modalData = useMemo(() => ({
 		"custom-games": {
 			title: "Custom Games",
@@ -451,16 +494,35 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 	const [selected, setSelected] = useState(Object.keys(modalData)[0] as keyof typeof modalData);
 	const [openSubModal, setOpenSubModal] = useState(false);
 	const router = useRouter();
-	const { onJoinTournament, onCreateTournament, onJoinQueue } = useJoinEvents();
+	const { onJoinQueue } = useJoinEvents();
+	const tkey = useKey(['T', 't']);
 
 	useEffect(() => {
 		if (!isOpen) {
 			setOpenSubModal(false);
 			setSelected(Object.keys(modalData)[0] as keyof typeof modalData);
 		}
-	  }, [isOpen, modalData, setSelected]);
 
-	  const onButtonClick = () => {
+		if (isOpen && tournamentState?.index !== -1 && tournamentState?.id !== -1) {
+			setOpen(true);
+			setOpenSubModal(true);
+			setSelected("tournament-modes");
+		}
+
+		if (tournamentState?.index === -1 && tournamentState?.id !== -1) {
+			setOpen(true);
+			setOpenSubModal(true);
+			setSelected("tournament-modes");
+		}
+	}, [isOpen, modalData, tournamentState, setOpen, setSelected]);
+
+	useEffect(() => {
+		if (tkey.isKeyDown && tournamentState?.id !== -1) {
+			setOpen((prevState) => !prevState);
+		}
+	}, [tkey.isKeyDown, tournamentState, setOpen]);
+
+	const onButtonClick = () => {
 		if (selected == "matchmaking") {
 			onJoinQueue();
 			onClose();
@@ -522,7 +584,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 						<ModalButton onClick={onButtonClick}>{modalData[selected].button}</ModalButton>
 					</ModalFooter>
 				</>)}
-				{openSubModal && selected == "tournament-modes" && <TournamentContent setGameOptions={setGameOptions} gameType={gameType} closeMain={onClose} onClose={() => setOpenSubModal(false)}/>}
+				{openSubModal && selected == "tournament-modes" && <TournamentContent tournamentState={tournamentState} setGameOptions={setGameOptions} gameType={gameType} closeMain={onClose} onClose={() => setOpenSubModal(false)}/>}
 				{openSubModal && selected == "custom-games" && <CustomGamesContent setGameOptions={setGameOptions} gameType={gameType} closeMain={onClose} onClose={() => setOpenSubModal(false)}/>}
 			</ModalContent>
 		</Modal>
