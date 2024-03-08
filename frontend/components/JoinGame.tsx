@@ -1,9 +1,8 @@
-import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 import useContract from "./hooks/useContract";
 import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
+import { WSClientType } from "@/helpers/wsclient";
 
-export const useJoinEvents = () => {
-	const { wsclient } = useSocket();
+export const useJoinEvents = (wsclient: WSClientType | null) => {
 	const {
 		createTournament,
 		setNameAndColor,

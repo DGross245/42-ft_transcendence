@@ -13,7 +13,7 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import useContract from "@/components/hooks/useContract";
 import { useJoinEvents } from "@/components/JoinGame";
-import useWSClient from "@/helpers/wsclient";
+import useWSClient, { WSClientType } from "@/helpers/wsclient";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import { useKey } from "@/components/hooks/useKey";
 import { useTranslation } from "@/app/i18n";
@@ -47,6 +47,7 @@ interface SelectionModalProps {
 	setGameOptions: React.Dispatch<React.SetStateAction<GameOptions>>;
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	tournamentState?: {id: number, index: number},
+	wsclient: WSClientType | null;
 }
 
 interface ModalContentProps {
@@ -55,6 +56,7 @@ interface ModalContentProps {
 	gameType: string;
 	setGameOptions: React.Dispatch<React.SetStateAction<GameOptions>>;
 	tournamentState?: {id: number, index: number};
+	wsclient: WSClientType | null;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -78,15 +80,14 @@ const ModalContentsWrapper: React.FC<{children?: React.ReactNode, loading?: bool
 /* -------------------------------------------------------------------------- */
 /*                               Modal Contents                               */
 /* -------------------------------------------------------------------------- */
-const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, closeMain, setGameOptions, tournamentState }) => {
+const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, closeMain, setGameOptions, tournamentState, wsclient }) => {
 	const [selectedTournament, setSelectedTournament] = useState("");
 	const [tournament, setTournament] = useState(false);
 	const [tournamentID, setTournamentID] = useState(0);
 	const [data, setData] = useState<{[key: string]: string | GameState}[]>([]);
 	const [tournamentData, setTournamentData] = useState<{[key: string]: string | GameState}[]>([]);
 	const { getTournaments, getTournament, tmContract, getTournamentTree } = useContract();
-	const { onCreateTournament, onJoinTournament, onStartTournament } = useJoinEvents()
-	const wsclient = useWSClient();
+	const { onCreateTournament, onJoinTournament, onStartTournament } = useJoinEvents(wsclient)
 	const { address } = useWeb3ModalAccount();
 	const [games, setGames] = useState<{[key: string]: string | GameState}[]>([]);
 	const { t } = useTranslation("modals");
@@ -350,12 +351,11 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 	)
 }
 
-const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, gameType, setGameOptions }) => {
+const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, gameType, setGameOptions, wsclient }) => {
 	const [game, setGame] = useState<undefined | number>(undefined);
 	const [botEnabled, setBotEnabled] = useState(false);
 	const [strength, setStrength] = useState(0.5);
-	const { onCreateCustom, onJoinCustom } = useJoinEvents();
-	const wsclient = useWSClient();
+	const { onCreateCustom, onJoinCustom } = useJoinEvents(wsclient);
 	const [customGames, setCustomGames] = useState<{[key: string]: string}[]>([]);
 	const _gameMode = useRef("");
 	const [gameMode, setGameMode] = useState<GameMode>(gameType === 'TTT' ? GameMode.TTT : GameMode.Pong);
@@ -368,7 +368,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 			} else {
 				_gameMode.current = gameMode === GameMode.Pong ? "Pong" : "OneForAll";
 			}
-			console.log("_gameMode", _gameMode.current)
+
 			const games = await wsclient?.getCustomGames(_gameMode.current);
 			setCustomGames(games);
 		}
@@ -467,7 +467,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 /* -------------------------------------------------------------------------- */
 /*                                    Modal                                   */
 /* -------------------------------------------------------------------------- */
-const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, gameType, setGameOptions, tournamentState, setOpen}) => {
+const SelectionModal: React.FC<SelectionModalProps> = ({ wsclient, isOpen, onClose, loading, gameType, setGameOptions, tournamentState, setOpen}) => {
 	const { t } = useTranslation("modals");
 
 	const modalData = useMemo(() => ({
@@ -491,7 +491,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 	const [selected, setSelected] = useState(Object.keys(modalData)[0] as keyof typeof modalData);
 	const [openSubModal, setOpenSubModal] = useState(false);
 	const router = useRouter();
-	const { onJoinQueue } = useJoinEvents();
+	const { onJoinQueue } = useJoinEvents(wsclient);
 	const tkey = useKey(['T', 't']);
 
 	useEffect(() => {

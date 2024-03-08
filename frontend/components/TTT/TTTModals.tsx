@@ -228,7 +228,10 @@ export const TTTModals = memo(() => {
 			setShowCustomModal(false);
 		}
 		return () => {
-			clearTimeout(timerId);
+			if (timerId) {
+				clearTimeout(timerId);
+				
+			}
 		};
 	}, [gameState.gameId, customized, tournament]);
 

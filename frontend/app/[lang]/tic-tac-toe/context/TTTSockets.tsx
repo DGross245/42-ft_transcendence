@@ -105,8 +105,7 @@ export const initialTTTPlayerState = () => ({
 
 export const SocketContext = createContext<SocketContextValue>({} as SocketContextValue);
 
-export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children: ReactNode }> = ({ initialWsClient, children }) => {
-	const [wsclient, setWsclient] = useState( initialWsClient !== undefined ? initialWsClient : null);
+export const Socket: React.FC<{ children: ReactNode, wsclient: WSClientType | null, setWsclient: Dispatch<SetStateAction<WSClientType | null>>}> = ({ wsclient, setWsclient, children }) => {
 	const [sendRequest, setSendRequest] = useState(false);
 	const [requestRematch, setRequestRematch] = useState(false);
 	const [playerStatus, setPlayerStatus] = useState("");
