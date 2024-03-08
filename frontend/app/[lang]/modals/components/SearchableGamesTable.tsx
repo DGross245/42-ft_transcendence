@@ -1,4 +1,4 @@
-import { Chip, Input, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, getKeyValue } from "@nextui-org/react";
+import { Chip, Input, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, getKeyValue } from "@nextui-org/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import TextButton from "./TextButton";
@@ -19,16 +19,19 @@ interface SearchableGamesTableProps {
 	rows?: {
 		[key: string]: string | GameState;
 	}[],
-	loading?: boolean,
+	highlightedRows?: {
+		[key: string]: string | GameState;
+	}[],
 	onRowClick?: (row: any) => void,
 	ariaLabel: string,
-	onJoin?: (row: any) => void
+	onJoin?: (row: any) => void,
+	tooltipEnabled?: boolean
 }
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
-const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, rows, loading, onRowClick, ariaLabel, onJoin }) => {
+const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, rows, highlightedRows, onRowClick, ariaLabel, onJoin, tooltipEnabled }) => {
 	const [filteredRows, setFilteredRows] = useState(rows ?? []);
 	const [search, setSearch] = useState("");
 
@@ -48,7 +51,7 @@ const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, ro
 		}
 	}, [search, rows]);
 
-	return (<>
+	return (<div className="flex flex-col gap-2">
 		<Input
 			size="sm"
 			isClearable
@@ -83,29 +86,38 @@ const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, ro
 				loadingContent={<Spinner label="Loading..."/>}
 				isLoading={typeof rows === 'undefined'}
 			>
-				{(item) => (
-					<TableRow key={item.id} onClick={() => onRowClick && onRowClick(item)}>
-						{Object.entries(columns).map(([key, value]) => {
-							if (key == "state") {
-								return (
-									<TableCell key={key}>
-										{getKeyValue(item, key) == GameState.Running && <Chip className="capitalize" color="success" size="sm" variant="flat">Running</Chip>}
-										{getKeyValue(item, key) == GameState.Waiting && <Chip className="capitalize" color="warning" size="sm" variant="flat">Waiting...</Chip>}
-									</TableCell>
-								)
-							} else {
-								return (<TableCell key={key}>{getKeyValue(item, key)}</TableCell>)
-							}
-						}).concat(onJoin ? [
-							<TableCell key="actions">
-								<TextButton onClick={() => {onJoin(item)}}>Join</TextButton>
-							</TableCell>
-						] : [])}
-					</TableRow>
-				)}
+				{(item) => {
+					const classes = clsx({"before:!bg-green-100 before:!bg-opacity-25 before:opacity-100 group-aria-[selected=true]:before:!bg-opacity-50 group-aria-[selected=true]:before:!bg-green-100 data-[selected=true]:!text-default": highlightedRows?.includes(item)});
+					return (
+						<TableRow key={item.id} onClick={() => onRowClick && onRowClick(item)}>
+							{Object.entries(columns).map(([key, value]) => {
+								if (key == "state") {
+									return (
+										<TableCell key={key} className={classes}>
+											{getKeyValue(item, key) == GameState.Running && <Chip className="capitalize" color="success" size="sm" variant="flat">Running</Chip>}
+											{getKeyValue(item, key) == GameState.Waiting && <Chip className="capitalize" color="warning" size="sm" variant="flat">Waiting...</Chip>}
+										</TableCell>
+									)
+								} else {
+									return (
+										<TableCell key={key} className={classes}>
+											<Tooltip showArrow={true} content={getKeyValue(item, key)} isDisabled={!tooltipEnabled}>
+												<div className="overflow-hidden :">{getKeyValue(item, key)}</div>
+											</Tooltip>
+										</TableCell>
+									)
+								}
+							}).concat(onJoin ? [
+								<TableCell key="actions" className={classes}>
+									<TextButton onClick={() => {onJoin(item)}}>Join</TextButton>
+								</TableCell>
+							] : [])}
+						</TableRow>
+					)
+				}}
 			</TableBody>
 		</Table>
-	</>)
+	</div>)
 }
 export default SearchableGamesTable;
 export { GameState };

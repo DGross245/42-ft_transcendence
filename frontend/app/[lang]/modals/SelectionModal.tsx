@@ -253,14 +253,24 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 				onBack={() => setSelectedTournament("")}
 				title={`Game Results of Game ${selectedTournament}`}
 			>
-				<SearchableGamesTable
-					ariaLabel="Tournaments Table"
-					columns={{
-						id: "Player",
-						score: "Score"
-					}}
-					rows={tournamentData}
-				/>
+				<div className="flex gap-4">
+					<SearchableGamesTable
+						ariaLabel="Tournaments Table"
+						columns={{
+							id: "Player",
+							score: "Score"
+						}}
+						rows={tournamentData}
+					/>
+					<SearchableGamesTable
+						ariaLabel="Tournaments Table"
+						columns={{
+							player: "Player",
+							against: "Against"
+						}}
+						rows={rows3}
+					/>
+				</div>
 			</ModalContentsWrapper>
 		)
 	}
@@ -294,6 +304,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 				}}
 				rows={data}
 				onJoin={(row) => joinTournament(row.id)}
+				highlightedRows={[rows[0]]}
 				onRowClick={(row) => setSelectedTournament(row.id)}
 			/>
 		</ModalContentsWrapper>
