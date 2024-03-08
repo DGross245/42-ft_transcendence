@@ -1,0 +1,558 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "success",
+        "type": "bool"
+      }
+    ],
+    "name": "GameResultSubmitted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      }
+    ],
+    "name": "PlayerDataChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tournament_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "TournamentCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tournament_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "TournamentStarted",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "duration_in_blocks",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "game_type",
+        "type": "string"
+      }
+    ],
+    "name": "createTournament",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      }
+    ],
+    "name": "getPlayer",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "addr",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "color",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct TournamentManager.Player",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      }
+    ],
+    "name": "getPlayerRankedElo",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getRankedGames",
+    "outputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "addr",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "score",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct TournamentManager.PlayerScore[]",
+            "name": "player_scores",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "finished",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct TournamentManager.Game[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tournament_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTournament",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "master",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "game_type",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "duration_in_blocks",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "start_block",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "end_block",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "players",
+            "type": "address[]"
+          },
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "address",
+                    "name": "addr",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "score",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct TournamentManager.PlayerScore[]",
+                "name": "player_scores",
+                "type": "tuple[]"
+              },
+              {
+                "internalType": "bool",
+                "name": "finished",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct TournamentManager.Game[]",
+            "name": "games",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct TournamentManager.Tournament",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tournament_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "getTournamentTree",
+    "outputs": [
+      {
+        "components": [
+          {
+            "components": [
+              {
+                "internalType": "address",
+                "name": "addr",
+                "type": "address"
+              },
+              {
+                "internalType": "uint256",
+                "name": "score",
+                "type": "uint256"
+              }
+            ],
+            "internalType": "struct TournamentManager.PlayerScore[]",
+            "name": "player_scores",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "bool",
+            "name": "finished",
+            "type": "bool"
+          }
+        ],
+        "internalType": "struct TournamentManager.Game[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getTournaments",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "master",
+            "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "game_type",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "duration_in_blocks",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "start_block",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "end_block",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address[]",
+            "name": "players",
+            "type": "address[]"
+          },
+          {
+            "components": [
+              {
+                "components": [
+                  {
+                    "internalType": "address",
+                    "name": "addr",
+                    "type": "address"
+                  },
+                  {
+                    "internalType": "uint256",
+                    "name": "score",
+                    "type": "uint256"
+                  }
+                ],
+                "internalType": "struct TournamentManager.PlayerScore[]",
+                "name": "player_scores",
+                "type": "tuple[]"
+              },
+              {
+                "internalType": "bool",
+                "name": "finished",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct TournamentManager.Game[]",
+            "name": "games",
+            "type": "tuple[]"
+          }
+        ],
+        "internalType": "struct TournamentManager.Tournament[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tournament_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "joinTournament",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "players",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "color",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "ranked_games",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "finished",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "color",
+        "type": "uint256"
+      }
+    ],
+    "name": "setNameAndColor",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tournament_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "startTournament",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "addr",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "score",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct TournamentManager.PlayerScore[]",
+        "name": "player_scores",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "submitGameResultRanked",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tournament_id",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "game_id",
+        "type": "uint256"
+      },
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "addr",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "score",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct TournamentManager.PlayerScore[]",
+        "name": "player_scores",
+        "type": "tuple[]"
+      }
+    ],
+    "name": "submitGameResultTournament",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "tournaments",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "master",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "game_type",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "duration_in_blocks",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "start_block",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "end_block",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]
