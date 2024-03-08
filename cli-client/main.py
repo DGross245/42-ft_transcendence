@@ -180,9 +180,14 @@ async def start_socketio():
 			await asyncio.sleep(0.1)
 	except asyncio.CancelledError:
 		logging.debug(YELLOW + "Asyncio task was cancelled" + RESET)
+	except asyncio.TimeoutError:
+		logging.error(RED + "Timeout error. Is the server still running?" + RESET)
+	except Exception as e:
+		logging.error(RED + f'Error: {e}' + RESET)
 	finally:
 		await sio.disconnect()
 		logging.debug(YELLOW + "Disconnected" + RESET)
+	event_quit.set()
 
 # -------------------------------------------------------------------------- #
 #                              Message Handler                               #
@@ -224,8 +229,7 @@ async def receive_ball_data(msg: str):
 
 @sio.on(f'message-{game_id}-player-disconnected-${game_id}')
 async def player_disconnected(msg: str):
-	logging.debug(RED + f'Player disconnected: {msg}' + RESET)
-	print("Player disconnected")
+	logging.info(RED + f'Player disconnected: {msg}' + RESET)
 	event_quit.set()
 
 # -------------------------------------------------------------------------- #
@@ -439,7 +443,7 @@ def main():
 		asyncio.run(start_socketio())
 	except KeyboardInterrupt:
 		logging.info(YELLOW + "KeyboardInterrupt caught, cleaning up" + RESET)
-	except asyncio.CancelledError:
+	except asyncio.CancelledError: 
 		logging.debug(YELLOW + "Asyncio task was cancelled" + RESET)
 	finally:
 		logging.info(YELLOW + "Exiting" + RESET)
@@ -452,16 +456,13 @@ if __name__ == '__main__':
 # goals
 	# create game
 		# allow cli client to join first without hosting game
-	# join game
-	# leave game
-	# rematch
 	# pause button
-	# react to opponent disconnecting
-	# login in with wallet
 	# pass url and port as arguments
 	# how to start cli-client? makefile?
-	# fix scaling issues at very wide widths and small heights
-	# add countdown
+	# this:
+		# `message-${gameId}-`IsCLI-${pongGameState.gameId}` mit der msg "CLI" brauch ich damit ich den browser client zu master machen kann
+		# Browser code : wsclient?.addMessageListener(`IsCLI-${pongGameState.gameId}`, pongGameState.gameId, makeMaster);
+		# `message-${gameId}-`ScoreUpdate-${ pongGameState.gameId}` für nen obj mit p1score und p2score
 # approach
 	# create communication interface
 	# make it controllable via terminal
