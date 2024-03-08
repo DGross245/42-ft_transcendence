@@ -1,0 +1,5 @@
+{
+	"toast.minted": "Transaktion wird geprägt...",
+	"toast.rejecteduser": "Transaktion vom Benutzer abgelehnt",
+	"toast.errorcall": "Fehler beim Aufruf der Vertragsfunktion"
+}

@@ -1,0 +1,5 @@
+{
+	"toast.minted": "Transacción está siendo acuñada...",
+	"toast.rejecteduser": "Transacción rechazada por el usuario",
+	"toast.errorcall": "Error al llamar a la función del contrato"
+}

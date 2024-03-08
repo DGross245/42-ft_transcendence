@@ -3,9 +3,10 @@
 import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers5/react'
 import scoresAbi from '../../public/tournamentManager_abi.json';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from '@/app/i18n';
 import { toast } from 'react-toastify';
-import { ethers } from 'ethers';
 import { useSound } from './Sound';
+import { ethers } from 'ethers';
 
 export const contract_address = '0x4982051409D3F7f1C37d9f1e544EF6c6e8557148'
 
@@ -42,6 +43,7 @@ function useContract() {
 	const [tmContract, setTmContract] = useState<ethers.Contract | null>(null);
 	const { address, chainId, isConnected } = useWeb3ModalAccount();
 	const { walletProvider } = useWeb3ModalProvider();
+	const { t } = useTranslation("toasts");
 	const playSound =  useSound();
 
 	useEffect(() => {
@@ -59,7 +61,7 @@ function useContract() {
 			const result = await tmContract?.[functionName](...args);
 			if (result && typeof result.wait !== "undefined") {
 				playSound("pay");
-				toast.info("Transaction is being minted...")
+				toast.info(t("toast.minted"))
 				const receipt = await result.wait();
 				// const event = receipt.events.find(event => event.event === events)
 				// const value = event.args.value;
@@ -70,13 +72,13 @@ function useContract() {
 		} catch (error) {
 			console.log("eroror", error);
 			if ((error as any)?.code == "ACTION_REJECTED") {
-				toast.warning("Transaction rejected by user");
+				toast.warning(t("toast.rejecteduser"));
 			} else {
-				toast.error("Error calling contract function");
+				toast.error(t("toast.errorcall"));
 			}
 		}
 		return null;
-	},[tmContract, playSound]);
+	},[tmContract, playSound, t]);
 
 	// creates a new tournament and adds calling address as master
 	// the caller HAS to join separately as a player if he wants to participate

@@ -16,6 +16,7 @@ import { useJoinEvents } from "@/components/JoinGame";
 import useWSClient from "@/helpers/wsclient";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import { useKey } from "@/components/hooks/useKey";
+import { useTranslation } from "@/app/i18n";
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
 /* -------------------------------------------------------------------------- */
@@ -88,6 +89,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 	const wsclient = useWSClient();
 	const { address } = useWeb3ModalAccount();
 	const [games, setGames] = useState<{[key: string]: string | GameState}[]>([]);
+	const { t } = useTranslation("modals");
 
 	useEffect(() => {
 		const getSocketNumber = async (index: number) => {
@@ -210,7 +212,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 				}
 
 				if (finished !== tournaments[i].games.length) {
-					toast.info("You already have an tournament running")
+					toast.info(t("selectionmodal.toast.tournamentrunning"))
 					return ;
 				}
 			}
@@ -240,7 +242,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 					}
 
 					if (finished !== tournaments[i].games.length && Number(id) !== i) {
-						toast.info("You already joined a tournament")
+						toast.info(t("selectionmodal.toast.alreadyjoined"))
 						return ;
 					}
 
@@ -287,22 +289,22 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 		return (
 			<ModalContentsWrapper
 				onBack={() => setSelectedTournament("")}
-				title={`Game Results of Game ${selectedTournament}`}
+				title={t("selectionmodal.gameresults.title", {gameid: selectedTournament})}
 			>
 				<div className="flex gap-4">
 					<SearchableGamesTable
 						ariaLabel="Tournaments Table"
 						columns={{
-							id: "Player",
-							score: "Score"
+							id: t("selectionmodal.player"),
+							score: t("selectionmodal.score")
 						}}
 						rows={tournamentData}
 					/>
 					<SearchableGamesTable
 						ariaLabel="Tournaments Table"
 						columns={{
-							player1: "Player",
-							player2: "Against"
+							player1: t("selectionmodal.player"),
+							player2: t("selectionmodal.against")
 						}}
 						rows={games}
 						highlightedRows={tournamentState!.index === -1 ? [] : [games[tournamentState!.index]]}
@@ -317,7 +319,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 	return (
 		<ModalContentsWrapper
 			onBack={onClose}
-			title="Select Your Game"
+			title={t("selectionmodal.selectgame.title")}
 		>
 			<div className="flex items-end gap-2 justify-between">
 				<Snippet className="w-64 h-unit-10" symbol="ID" disableCopy={!tournament}> 0 </Snippet>
@@ -329,16 +331,16 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 						onGameCreate();
 					}
 				}}>
-					{tournament ? "Start Tournament" : "Create New Tournament"}
+					{tournament ? t("selectionmodal.selectgame.start") : t("selectionmodal.selectgame.start")}
 				</Button>
 			</div>
 			<Divider/>
 			<SearchableGamesTable
 				ariaLabel="Tournaments Table"
 				columns={{
-					id: "Tournament ID",
-					players: "Number of Players",
-					state: "Status"
+					id: t("selectionmodal.selectgame.tournamentid"),
+					players: t("selectionmodal.selectgame.numplayers"),
+					state: t("selectionmodal.selectgame.status")
 				}}
 				rows={data}
 				onJoin={(row) => joinTournament(row.id)}
@@ -357,6 +359,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 	const [customGames, setCustomGames] = useState<{[key: string]: string}[]>([]);
 	const _gameMode = useRef("");
 	const [gameMode, setGameMode] = useState<GameMode>(gameType === 'TTT' ? GameMode.TTT : GameMode.Pong);
+	const { t } = useTranslation("modals");
 
 	useEffect(() => {
 		const getAllCustomGame = async () => {
@@ -410,7 +413,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 	return (
 		<ModalContentsWrapper
 			onBack={onClose}
-			title="Select Your Game"
+			title={t("selectionmodal.selectgame.title")}
 		>
 			<div className="flex gap-4">
 				<Switch size="md" isSelected={botEnabled} onValueChange={setBotEnabled}>
@@ -419,7 +422,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 				<Slider
 					isDisabled={!botEnabled}
 					className="w-full"
-					label="Difficulty"
+					label={t("selectionmodal.selectgame.difficulty")}
 					step={10}
 					defaultValue={50}
 					value={strength}
@@ -433,8 +436,8 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 					setGameMode(gameType === 'TTT' ? GameMode.Qubic: GameMode.OneForAll);
 				}
 			}}>
-				<Tab key="single" title="Single Opponent" />
-				<Tab key="multi" title="Multiple Opponents" />
+				<Tab key="single" title={t("selectionmodal.selectgame.singleopponent")} />
+				<Tab key="multi" title={t("selectionmodal.selectgame.multiopponent")} />
 			</Tabs>
 			<div className="flex gap-4">
 				<Snippet
@@ -445,14 +448,14 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 					{game ?? ""}
 				</Snippet>
 				<Button className="w-full" color="primary" onClick={onGameCreate}>
-					Create New Game
+					{t("selectionmodal.selectgame.creategame")}
 				</Button>
 			</div>
 			<Divider/>
 			<SearchableGamesTable
 				ariaLabel="Games Table"
 				columns={{
-					id: "Tournament ID",
+					id: t("selectionmodal.selectgame.tournamentid"),
 				}}
 				onJoin={(row) => onJoinGame(row.id)}
 				rows={customGames}
@@ -465,24 +468,25 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 /*                                    Modal                                   */
 /* -------------------------------------------------------------------------- */
 const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loading, gameType, setGameOptions, tournamentState, setOpen}) => {
+	const { t } = useTranslation("modals");
+
 	const modalData = useMemo(() => ({
 		"custom-games": {
-			title: "Custom Games",
-			description: "Custom Games Description",
-			button: "Create/Join Game 🎮"
+			title: t("selectionmodal.customgames.title"),
+			description: t("selectionmodal.customgames.description"),
+			button: t("selectionmodal.customgames.createjoin")
 		},
 		"matchmaking": {
-			title: "Matchmaking",
-			description: "Matchmaking Description",
-			button: "Find Match 🎮"
+			title: t("selectionmodal.matchmaking.title"),
+			description: t("selectionmodal.matchmaking.description"),
+			button: t("selectionmodal.matchmaking.find")
 		},
 		"tournament-modes": {
-			img: "",
-			title: "Tournament Modes",
-			description: "Tournament Modes Description",
-			button: "Play Tournament 🚀"
+			title: t("selectionmodal.tournament.title"),
+			description: t("selectionmodal.tournament.description"),
+			button: t("selectionmodal.tournament.play")
 		}
-	}), [])
+	}), [t])
 
 	const [selected, setSelected] = useState(Object.keys(modalData)[0] as keyof typeof modalData);
 	const [openSubModal, setOpenSubModal] = useState(false);
@@ -546,7 +550,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 			<ModalContent>
 				{!openSubModal && (<>
 					<ModalHeader className={clsx({"opacity-0": loading})}>
-						<h1 className={clsx(styles.textWiggle, "text-2xl")}>Select Your Game</h1>
+						<h1 className={clsx(styles.textWiggle, "text-2xl")}>{t("selectionmodal.selectgame.title")}</h1>
 					</ModalHeader>
 					<ModalBody className={clsx({"opacity-0": loading})}>
 						<div className="flex w-full flex-col gap-4">

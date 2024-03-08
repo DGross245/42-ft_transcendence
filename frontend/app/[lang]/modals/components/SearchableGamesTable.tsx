@@ -1,9 +1,9 @@
 import { Chip, Input, Spinner, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip, getKeyValue } from "@nextui-org/react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
+import { useTranslation } from "@/app/i18n";
 import TextButton from "./TextButton";
 import clsx from "clsx";
-import { useJoinEvents } from "@/components/JoinGame";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Interfaces                                 */
@@ -34,6 +34,7 @@ interface SearchableGamesTableProps {
 const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, rows, highlightedRows, onRowClick, ariaLabel, onJoin, tooltipEnabled }) => {
 	const [filteredRows, setFilteredRows] = useState(rows ?? []);
 	const [search, setSearch] = useState("");
+	const { t } = useTranslation("modals");
 
 	useEffect(() => {
 		if (search == "") {
@@ -57,7 +58,7 @@ const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, ro
 			isClearable
 			value={search}
 			className="w-full"
-			placeholder="Search..."
+			placeholder={t("searchtable.search")}
 			onClear={() => setSearch("")}
 			onChange={(e) => setSearch(e.target.value)}
 			startContent={<MagnifyingGlassIcon className="w-4 h-4"/>}
@@ -77,13 +78,13 @@ const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, ro
 				{Object.entries(columns).map(([key, value]) => (
 					<TableColumn key={key} align="center">{value}</TableColumn>
 				)).concat(onJoin ? [
-					<TableColumn key="actions" align="center">Actions</TableColumn>
+					<TableColumn key="actions" align="center">{t("searchtable.actions")}</TableColumn>
 				] : [])}
 			</TableHeader>
 			<TableBody
 				items={filteredRows}
-				emptyContent={typeof rows !== 'undefined' ? "Nothing Found 🔎" : " "}
-				loadingContent={<Spinner label="Loading..."/>}
+				emptyContent={typeof rows !== 'undefined' ? t("searchtable.nothingfound") : " "}
+				loadingContent={<Spinner label={t("searchtable.loading")}/>}
 				isLoading={typeof rows === 'undefined'}
 			>
 				{(item) => {
@@ -94,8 +95,8 @@ const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, ro
 								if (key == "state") {
 									return (
 										<TableCell key={key} className={classes}>
-											{getKeyValue(item, key) == GameState.Running && <Chip className="capitalize" color="success" size="sm" variant="flat">Running</Chip>}
-											{getKeyValue(item, key) == GameState.Waiting && <Chip className="capitalize" color="warning" size="sm" variant="flat">Waiting...</Chip>}
+											{getKeyValue(item, key) == GameState.Running && <Chip className="capitalize" color="success" size="sm" variant="flat">{t("searchtable.running")}</Chip>}
+											{getKeyValue(item, key) == GameState.Waiting && <Chip className="capitalize" color="warning" size="sm" variant="flat">{t("searchtable.waiting")}</Chip>}
 										</TableCell>
 									)
 								} else {
@@ -109,7 +110,7 @@ const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, ro
 								}
 							}).concat(onJoin ? [
 								<TableCell key="actions" className={classes}>
-									<TextButton onClick={() => {onJoin(item)}}>Join</TextButton>
+									<TextButton onClick={() => {onJoin(item)}}>{t("searchtable.join")}</TextButton>
 								</TableCell>
 							] : [])}
 						</TableRow>

@@ -1,0 +1,5 @@
+{
+	"toast.minted": "Transaction is being minted...",
+	"toast.rejecteduser": "Transaction rejected by user",
+	"toast.errorcall": "Error calling contract function"
+}
