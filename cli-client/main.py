@@ -341,6 +341,7 @@ def draw_wait_screen(stdscr):
 	stdscr.addstr(curses.LINES // 2 + 2, curses.COLS // 2 - 8, "press 'q' to quit")
 
 def draw_countdown(stdscr):
+	draw_field(stdscr)
 	draw_box(stdscr, curses.LINES // 2 - 7, curses.COLS // 2 - 20, 15, 40)
 	count = 3
 	while count > 0:
@@ -353,15 +354,7 @@ def draw_countdown(stdscr):
 	stdscr.refresh()
 	time.sleep(1)
 
-def curses_thread(stdscr):
-	curses.curs_set(False)
-	stdscr.nodelay(True)
-	stdscr.keypad(True)
-	if curses.LINES < 20 or curses.COLS < 50:
-		logging.error(RED + "Terminal too small, exiting" + RESET)
-		event_quit.set()
-		raise WindowTooSmall
-
+def start_loop(stdscr):
 	draw_start_screen(stdscr)
 	while not event_game_active.is_set() and not event_quit.is_set():
 		key = stdscr.getch()
@@ -369,26 +362,18 @@ def curses_thread(stdscr):
 			event_game_active.set()
 		if key == ord('q'):
 			raise Quit
-	stdscr.clear()
-	if event_quit.is_set():
-		raise Quit
+
+def wait_loop(stdscr):
 	draw_wait_screen(stdscr)
 	while not event_room_full.is_set() and not event_quit.is_set():
 		key = stdscr.getch()
 		if key == ord('q'):
 			raise Quit
-	stdscr.clear()
-	if event_quit.is_set():
-		raise Quit
-	init_scaling_factors()
+
+def game_loop(stdscr):
 	global g_game_state
 	g_game_state = init_game_state()
 	game_state = init_game_state_empty()
-	draw_field(stdscr)
-	draw_countdown(stdscr)
-	stdscr.clear()
-	if event_quit.is_set():
-		raise Quit
 	while event_game_active.is_set() and not event_quit.is_set() and g_game_state['score']['left'] < win_score and g_game_state['score']['right'] < win_score:
 		key = stdscr.getch()
 		g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
@@ -398,12 +383,31 @@ def curses_thread(stdscr):
 		draw_score(stdscr, g_game_state)
 		draw_field(stdscr)
 		stdscr.refresh()
-	if event_quit.is_set():
-		raise Quit
+
+def end_loop(stdscr):
+	global g_game_state
 	draw_end_screen(stdscr, g_game_state)
 	while not event_quit.is_set():
 		key = stdscr.getch()
 		if key == curses.KEY_EXIT or key == ord('q') or key == ord(' '):
+			raise Quit
+
+def curses_thread(stdscr):
+	curses.curs_set(False)
+	stdscr.nodelay(True)
+	stdscr.keypad(True)
+	if curses.LINES < 20 or curses.COLS < 50:
+		logging.error(RED + "Terminal too small, exiting" + RESET)
+		event_quit.set()
+		raise WindowTooSmall
+	init_scaling_factors()
+	global g_game_state
+	
+	funcs = [start_loop, wait_loop, draw_countdown, game_loop, end_loop]
+	for i in range(len(funcs)):
+		funcs[i](stdscr)
+		stdscr.clear()
+		if event_quit.is_set():
 			raise Quit
 
 def start_curses():
