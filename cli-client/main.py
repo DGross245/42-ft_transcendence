@@ -372,7 +372,6 @@ def wait_loop(stdscr):
 
 def game_loop(stdscr):
 	global g_game_state
-	g_game_state = init_game_state()
 	game_state = init_game_state_empty()
 	while event_game_active.is_set() and not event_quit.is_set() and g_game_state['score']['left'] < win_score and g_game_state['score']['right'] < win_score:
 		key = stdscr.getch()
@@ -402,6 +401,7 @@ def curses_thread(stdscr):
 		raise WindowTooSmall
 	init_scaling_factors()
 	global g_game_state
+	g_game_state = init_game_state()
 	
 	funcs = [start_loop, wait_loop, draw_countdown, game_loop, end_loop]
 	for i in range(len(funcs)):
