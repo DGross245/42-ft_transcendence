@@ -1,3 +1,5 @@
+"use client";
+
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import { PongGameState } from "./context/PongGameState";
 import { PongSocket } from "./context/PongSockets";
