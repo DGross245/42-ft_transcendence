@@ -33,8 +33,8 @@ export const useJoinEvents = () => {
 		wsclient?.createGame(gameMode);
 	}
 	
-	const onJoinQueue = () => {
-		wsclient?.joinQueue("tictactoe")
+	const onJoinQueue = (gameType: string) => {
+		wsclient?.joinQueue(gameType)
 	}
 
 	const onJoinTournament = async (id: number, skip: boolean) =>  {

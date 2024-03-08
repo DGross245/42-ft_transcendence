@@ -222,7 +222,9 @@ export const TTTModals = memo(() => {
 				setShowCustomModal(true);
 			}, 3000); 
 		}
-		else {
+		else if (gameState.gameId !== '-1' && !customized) {
+			setShowCustomModal(true);
+		} else {
 			setShowCustomModal(false);
 		}
 		return () => {

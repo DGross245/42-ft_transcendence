@@ -1,8 +1,13 @@
+"use client"
+
 import { PongGameState } from "./context/PongGameState";
 import { PongSocket } from "./context/PongSockets";
 import OneForAllScene from "./scene/OneForAllScene";
 import { useRouter } from "next/navigation";
 import PongScene from "./scene/PongScene";
+import { useEffect, useState } from "react";
+import SelectionModal, { GameOptions } from "../modals/SelectionModal";
+import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 
 export default function PongPage() {
 	const [gameOptions, setGameOptions] = useState<GameOptions>({ gameMode: false, isBotActive: false, botStrength: 0.5});

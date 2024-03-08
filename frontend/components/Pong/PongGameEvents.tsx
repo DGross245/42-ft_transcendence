@@ -30,7 +30,8 @@ export const PongGameEvents = () => {
 		setCountdownRot,
 		setCountdownPos,
 		isGameMode,
-		isScoreVisible
+		isScoreVisible,
+		
 	} = usePongGameState();
 	const {
 		playerState,
@@ -40,7 +41,8 @@ export const PongGameEvents = () => {
 		setRematchIndex,
 		continueIndex,
 		setSendContinueRequest,
-		setContinueIndex
+		setContinueIndex,
+		setCustomized
 	} = usePongSocket();
 	const escape = useKey(['Escape']);
 	const playSound = useSound();
@@ -112,9 +114,10 @@ export const PongGameEvents = () => {
 			setScores({ p1Score: 0, p2Score: 0, p3Score: 0, p4Score: 0 });
 			setWinner('');
 			setScoreVisibility(false);
+			setCustomized(false);
 			updatePongGameState({ reset: false, gameOver: false });
 		}
-	}, [pongGameState.reset, setBallVisibility, setScoreVisibility, setScores, setWinner, updatePongGameState]);
+	}, [pongGameState.reset, setCustomized, setBallVisibility, setScoreVisibility, setScores, setWinner, updatePongGameState]);
 
 	// Handle pause when esc is pressed
 	useEffect(() => {

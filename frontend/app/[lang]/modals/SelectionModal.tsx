@@ -87,7 +87,6 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 	const { onCreateTournament, onJoinTournament, onStartTournament } = useJoinEvents()
 	const wsclient = useWSClient();
 	const { address } = useWeb3ModalAccount();
-	const _gameMode = useRef("");
 	const [games, setGames] = useState<{[key: string]: string | GameState}[]>([]);
 
 	useEffect(() => {
@@ -254,16 +253,8 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 			}
 		}
 	
-		let isGameMode = undefined;
-
-		if (gameType === 'TTT') {
-			isGameMode = _gameMode.current === 'TTT' ? false : true; 
-		} else {
-			isGameMode = _gameMode.current === 'Pong' ? false : true; 
-		}
-		setGameOptions({ gameMode: isGameMode, botStrength: 0, isBotActive: false });
-		onJoinTournament(Number(id), skip);
 		setGameOptions({ gameMode: false, botStrength: 0, isBotActive: false });
+		onJoinTournament(Number(id), skip);
 
 		// Joining back after leaving
 		if (Number(tournaments[Number(id)].start_block) !== 0) {
@@ -374,7 +365,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 			} else {
 				_gameMode.current = gameMode === GameMode.Pong ? "Pong" : "OneForAll";
 			}
-
+			console.log("_gameMode", _gameMode.current)
 			const games = await wsclient?.getCustomGames(_gameMode.current);
 			setCustomGames(games);
 		}
@@ -396,6 +387,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 		} else {
 			isGameMode = _gameMode.current === 'Pong' ? false : true; 
 		}
+
 		setGameOptions({ gameMode: isGameMode, botStrength: strength, isBotActive: botEnabled });
 		onCreateCustom(_gameMode.current);
 		closeMain();
@@ -409,6 +401,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 		} else {
 			isGameMode = _gameMode.current === 'Pong' ? false : true; 
 		}
+
 		setGameOptions({ gameMode: isGameMode, botStrength: strength, isBotActive: botEnabled });
 		onJoinCustom(id);
 		closeMain();
@@ -434,10 +427,10 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ onClose, closeMain, g
 				/>
 			</div>
 			<Tabs aria-label="Playermode" fullWidth isDisabled={(game ?? -1) >= 0} onSelectionChange={(value) => {
-				if (gameType === 'TTT') {
-					setGameMode(value === 'single' ? GameMode.TTT : GameMode.Pong);
+				if (value === 'single') {
+					setGameMode(gameType === 'TTT' ? GameMode.TTT : GameMode.Pong);
 				} else {
-					setGameMode(value === 'multi' ? GameMode.Qubic: GameMode.OneForAll);
+					setGameMode(gameType === 'TTT' ? GameMode.Qubic: GameMode.OneForAll);
 				}
 			}}>
 				<Tab key="single" title="Single Opponent" />
@@ -524,7 +517,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ isOpen, onClose, loadin
 
 	const onButtonClick = () => {
 		if (selected == "matchmaking") {
-			onJoinQueue();
+			onJoinQueue(gameType);
 			onClose();
 			return;
 		}
