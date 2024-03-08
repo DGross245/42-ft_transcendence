@@ -18,14 +18,20 @@ YELLOW = '\033[93m'
 RESET = '\033[0m'
 
 logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.ERROR)
 # logging.basicConfig(level=logging.DEBUG)
-# logging.basicConfig(level=logging.ERROR)
 
 player_data = {
 	'name': 'CLI-KEK',
 	'color': 0x00ff00,
 	'number': 1 # client number
 }
+
+class Quit(Exception):
+	pass
+
+class WindowTooSmall(Exception):
+	pass
 
 # -------------------------------------------------------------------------- #
 #                                  Globals                                   #
@@ -132,9 +138,17 @@ def init_scaling_factors():
 #                               Signal Handler                               #
 # -------------------------------------------------------------------------- #
 
-def signal_handler(sig, frame):
+def handle_sigint(sig, frame):
 	event_quit.set()
 	logging.info(YELLOW + "SIG INT detected" + RESET)
+
+def handle_resize(sig, frame):
+	if curses.LINES < 20 or curses.COLS < 50:
+		logging.error(RED + "Terminal too small, exiting" + RESET)
+		event_quit.set()
+		return
+	init_scaling_factors()
+	logging.debug(YELLOW + "SIG WINCH detected" + RESET)
 
 # -------------------------------------------------------------------------- #
 #                                Socket Setup                                #
@@ -343,6 +357,10 @@ def curses_thread(stdscr):
 	curses.curs_set(False)
 	stdscr.nodelay(True)
 	stdscr.keypad(True)
+	if curses.LINES < 20 or curses.COLS < 50:
+		logging.error(RED + "Terminal too small, exiting" + RESET)
+		event_quit.set()
+		raise WindowTooSmall
 
 	draw_start_screen(stdscr)
 	while not event_game_active.is_set() and not event_quit.is_set():
@@ -350,14 +368,18 @@ def curses_thread(stdscr):
 		if key == ord(' '):
 			event_game_active.set()
 		if key == ord('q'):
-			return
+			raise Quit
 	stdscr.clear()
+	if event_quit.is_set():
+		raise Quit
 	draw_wait_screen(stdscr)
 	while not event_room_full.is_set() and not event_quit.is_set():
 		key = stdscr.getch()
 		if key == ord('q'):
-			return
+			raise Quit
 	stdscr.clear()
+	if event_quit.is_set():
+		raise Quit
 	init_scaling_factors()
 	global g_game_state
 	g_game_state = init_game_state()
@@ -365,6 +387,8 @@ def curses_thread(stdscr):
 	draw_field(stdscr)
 	draw_countdown(stdscr)
 	stdscr.clear()
+	if event_quit.is_set():
+		raise Quit
 	while event_game_active.is_set() and not event_quit.is_set() and g_game_state['score']['left'] < win_score and g_game_state['score']['right'] < win_score:
 		key = stdscr.getch()
 		g_game_state['right_paddle'] = move_paddle(g_game_state['right_paddle'], key)
@@ -374,18 +398,27 @@ def curses_thread(stdscr):
 		draw_score(stdscr, g_game_state)
 		draw_field(stdscr)
 		stdscr.refresh()
+	if event_quit.is_set():
+		raise Quit
 	draw_end_screen(stdscr, g_game_state)
 	while not event_quit.is_set():
 		key = stdscr.getch()
 		if key == curses.KEY_EXIT or key == ord('q') or key == ord(' '):
-			return
+			raise Quit
 
 def start_curses():
 	while (not event_socket_ready.is_set() and not event_quit.is_set()):
 		time.sleep(0.1)
 	if not event_quit.is_set():
-		curses.wrapper(curses_thread)
-		curses.endwin()
+		try:
+			curses.wrapper(curses_thread)
+			curses.endwin()
+		except Quit:
+			logging.info(YELLOW + "User quitted" + RESET)
+		except WindowTooSmall:
+			logging.error(RED + "Terminal too small, exiting" + RESET)
+		except Exception as e:
+			logging.error(RED + f"Error: {e}" + RESET)
 		event_quit.set()
 		logging.debug(YELLOW + "Curses thread ended" + RESET)
 
@@ -395,7 +428,8 @@ def start_curses():
 
 def main():
 	try:
-		signal.signal(signal.SIGINT, signal_handler)
+		signal.signal(signal.SIGINT, handle_sigint)
+		signal.signal(signal.SIGWINCH, handle_resize)
 		curses_thread = threading.Thread(target=start_curses, daemon=True)
 		curses_thread.start()
 		asyncio.run(start_socketio())
