@@ -3,6 +3,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import TextButton from "./TextButton";
 import clsx from "clsx";
+import { useJoinEvents } from "@/components/JoinGame";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Interfaces                                 */
@@ -108,7 +109,7 @@ const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, ro
 								}
 							}).concat(onJoin ? [
 								<TableCell key="actions" className={classes}>
-									<TextButton>Join</TextButton>
+									<TextButton onClick={() => {onJoin(item)}}>Join</TextButton>
 								</TableCell>
 							] : [])}
 						</TableRow>

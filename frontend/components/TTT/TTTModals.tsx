@@ -89,7 +89,7 @@ export const TTTModals = memo(() => {
 			} else if (winner === "draw") {
 				return (GameResult.Draw);
 			} else {
-				return (GameResult.Looser);
+				return (GameResult.Loser);
 			}
 		}
 	}, [showModal, playerState, winner, playerStatus])
@@ -137,7 +137,6 @@ export const TTTModals = memo(() => {
 				if (tournament.id !== -1) {
 					wsclient?.requestTournament(tournament.id, 'TTT');
 				} else {
-					console.log("test")
 					wsclient?.joinQueue('TTT');
 				}
 			}
@@ -177,11 +176,9 @@ export const TTTModals = memo(() => {
 	}, [customized, gameState.gameId, playerAddress, getPlayer, setPlayerInfos]);
 
 	const initiateGame = async (username: string, color: string) => {
-		console.log(username, playerInfos.name, color, playerInfos.color)
 		if (username !== playerInfos.name || color !== playerInfos.color) {
 			const colorCopy = color.replace('#', '0x');
 			const number = await onSetNameAndColor(username, colorCopy);
-			console.log(number);
 		}
 
 		setCustomized(true);

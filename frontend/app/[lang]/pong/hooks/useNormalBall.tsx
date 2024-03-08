@@ -126,6 +126,27 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		}
 	}, [wsclient, pongGameState.gameId]);
 
+	useEffect(() => {
+		const setNewScore = (msg: string) => {
+			const newScore = JSON.parse(msg);
+			if (!playerState.master) {
+				setScores((prevState) => ({
+					...prevState,
+					p1Score: newScore.p2Score,
+					p2Score: newScore.p1Score
+				}));
+			}
+		};
+
+		if (wsclient && pongGameState.gameId !== '-1') {
+			wsclient?.addMessageListener(`ScoreUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewScore);
+	
+			return () => {
+				wsclient?.removeMessageListener(`ScoreUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+			};
+		}
+	}, [wsclient, pongGameState.gameId, playerState.master, setScores]);
+
 	/**
 	 * Initiates the game by providing a random direction to the ball after the countdown 
 	 * sets the score visibility to true.
@@ -151,9 +172,17 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 			}
 		}
 
+		if (wsclient && pongGameState.gameId !== "-1" && playerState.master) {
+			const newScore = {
+				p1Score: scores.p1Score,
+				p2Score: scores.p2Score
+			}
+			wsclient?.emitMessageToGame(JSON.stringify(newScore), `ScoreUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+		}
+
 		checkWinner('1', scores.p1Score);
 		checkWinner('2', scores.p2Score);
-	}, [scores.p1Score, scores.p2Score, setWinner, setBallVisibility, updatePongGameState]);
+	}, [pongGameState.gameId, scores, wsclient, playerState.master, setWinner, setBallVisibility, updatePongGameState]);
 
 	// Game/render loop for the ball.
 	useFrame((_, deltaTime) => {
@@ -199,7 +228,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		}
 		// Handling scoring when the ball is outside of the play area.
 		else if ((ball.x > 200 || ball.x < -200) && 
-			scores.p2Score !== 7 && scores.p1Score !== 7) {
+			scores.p2Score !== 7 && scores.p1Score !== 7 && playerState.master) {
 			if (ball.x < -200)
 				setScores({ ...scores, p2Score: scores.p2Score + 1 })
 			else

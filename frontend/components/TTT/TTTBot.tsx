@@ -3,6 +3,7 @@ import { useEffect, useMemo } from "react"
 import { TicTacToeBot } from "@/components/TTT/TicTacToeBot";
 import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
+import { useEffectDebugger } from "../Pong/PongSocketEvents";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -16,7 +17,9 @@ export const TTTBot = () => {
 		setBoard,
 		isGameMode,
 		botState,
-		setBot
+		setBot,
+		setBotMoved,
+		botMoved
 	} = useGameState();
 	const {
 		playerState,
@@ -33,10 +36,10 @@ export const TTTBot = () => {
 
 	//* ------------------------------- useEffects ------------------------------ */
 	useEffect(( ) => {
-		if (currentTurn === botState.symbol && botState.isActive) {
-			TicTacToeBot(board, SymbolArray, botState.symbol, botState.strength, setBoard );
+		if (currentTurn === botState.symbol && botState.isActive && !botMoved && playerState.client === 0) {
+			TicTacToeBot(board, SymbolArray, botState.symbol, botState.strength, setBoard, setBotMoved );
 		}
-	},[currentTurn, botState, SymbolArray, board, setBoard])
+	},[currentTurn, botState, SymbolArray, board, botMoved, playerState.client, setBoard, setBotMoved])
 
 	// Function to simulate a bot joining the game as a player
 	useEffect(() => {
@@ -66,7 +69,7 @@ export const TTTBot = () => {
 			}
 		}
 
-		if (botState.isActive && wsclient) {
+		if (botState.isActive && wsclient && playerState.client === 0) {
 			joinTheGame();
 		}
 	},[botState, wsclient, playerState, isGameMode, setBot, setPlayerState])

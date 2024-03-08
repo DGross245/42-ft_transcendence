@@ -4,6 +4,32 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "bool",
+        "name": "success",
+        "type": "bool"
+      }
+    ],
+    "name": "GameResultSubmitted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "addr",
+        "type": "address"
+      }
+    ],
+    "name": "PlayerDataChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "tournament_id",
         "type": "uint256"
@@ -13,11 +39,29 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tournament_id",
+        "type": "uint256"
+      }
+    ],
+    "name": "TournamentStarted",
+    "type": "event"
+  },
+  {
     "inputs": [
       {
         "internalType": "uint256",
         "name": "duration_in_blocks",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "game_type",
+        "type": "string"
       }
     ],
     "name": "createTournament",
@@ -141,6 +185,11 @@
             "type": "address"
           },
           {
+            "internalType": "string",
+            "name": "game_type",
+            "type": "string"
+          },
+          {
             "internalType": "uint256",
             "name": "duration_in_blocks",
             "type": "uint256"
@@ -251,6 +300,11 @@
             "internalType": "address",
             "name": "master",
             "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "game_type",
+            "type": "string"
           },
           {
             "internalType": "uint256",
@@ -476,6 +530,11 @@
         "internalType": "address",
         "name": "master",
         "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "game_type",
+        "type": "string"
       },
       {
         "internalType": "uint256",

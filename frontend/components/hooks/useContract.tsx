@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 import { ethers } from 'ethers';
 import { useSound } from './Sound';
 
-export const contract_address = '0x10b5bE3344b9D3Dc9313A38dB2235C6dc2D0D2e6'
+export const contract_address = '0x4982051409D3F7f1C37d9f1e544EF6c6e8557148'
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -27,6 +27,7 @@ export interface Game {
 }
 export interface Tournament {
 	master: string
+	game_type: string,
 	duration_in_blocks: number
 	start_block: number
 	end_block: number
@@ -54,15 +55,20 @@ function useContract() {
 
 	const callContract = useCallback(async (functionName: string, args: any[] = []) => {
 		try {
+			console.log("lol", functionName);
 			const result = await tmContract?.[functionName](...args);
 			if (result && typeof result.wait !== "undefined") {
 				playSound("pay");
 				toast.info("Transaction is being minted...")
 				const receipt = await result.wait();
+				// const event = receipt.events.find(event => event.event === events)
+				// const value = event.args.value;
+				// return (value);
 				return receipt;
 			}
 			return result;
 		} catch (error) {
+			console.log("eroror", error);
 			if ((error as any)?.code == "ACTION_REJECTED") {
 				toast.warning("Transaction rejected by user");
 			} else {
@@ -74,8 +80,8 @@ function useContract() {
 
 	// creates a new tournament and adds calling address as master
 	// the caller HAS to join separately as a player if he wants to participate
-	const createTournament = useCallback(async (duration_in_blocks: number) => {
-		await callContract('createTournament', [duration_in_blocks]);
+	const createTournament = useCallback(async (duration_in_blocks: number, gameType: string) => {
+		return (await callContract('createTournament', [duration_in_blocks, gameType]));
 	},[callContract]);
 
 	// starts a previously created tournament and creates game tree

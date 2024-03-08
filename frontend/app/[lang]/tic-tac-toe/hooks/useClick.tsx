@@ -21,7 +21,9 @@ export const useClick = () => {
 		setLineCoords,
 		currentTurn,
 		isGameMode,
-		setLineVisible
+		setLineVisible,
+		setBotMoved,
+		botState
 	} = useGameState();
 
 	useEffect(() => {
@@ -36,12 +38,17 @@ export const useClick = () => {
 				updateGameState({ gameOver: true })
 				return;
 			}
-			if (isGameMode)
+			if (isGameMode) {
+				if (botState.isActive && currentTurn === botState.symbol) {
+					setBotMoved(false);
+				}
 				setTurn(currentTurn === 'X' ? 'O' : currentTurn === 'O' ? '🔳' : 'X');
-			else
+			} else {
 				setTurn(currentTurn === 'X' ? 'O' : 'X');
+				setBotMoved(false);
+			}
 		}
-	},[clicked, board, currentTurn, gameState.gameId, isGameMode, lineCoords, sceneCoords, setLineCoords, setLineVisible, setTurn, setWinner, playSound, updateGameState, wsclient]);
+	},[clicked, board, botState,currentTurn, gameState.gameId, isGameMode, lineCoords, sceneCoords, setBotMoved, setLineCoords, setLineVisible, setTurn, setWinner, playSound, updateGameState, wsclient]);
 
 	// Thinking about sending only changed array instead of all of it
 	useEffect(() => {

@@ -1,6 +1,6 @@
 import { memo, useEffect, useRef, useState } from "react";
 
-import useWSClient from "@/helpers/wsclient";
+import useWSClient, { WSClientType } from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
 import { usePongSocket } from "@/app/[lang]/pong/hooks/usePongSocket";
 import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
@@ -93,7 +93,7 @@ export const PongSocketEvents = memo(() => {
 			if (newClient) {
 				await newClient.waitingForSocket();
 				newClient.sendAddress(address);
-				setWsclient(newClient);
+				setWsclient(newClient as WSClientType);
 			}
 		};
 
@@ -159,7 +159,7 @@ export const PongSocketEvents = memo(() => {
 					const updatedPlayers = prevState.players.map((prevPlayer, index) => {
 						if (index === clients) {
 							return {
-								name: "K",
+								name: player.name,
 								addr: String(address),
 								color: Number(player.color),
 								number: clients
@@ -198,6 +198,7 @@ export const PongSocketEvents = memo(() => {
 
 		joinTheGame();
 	}, [wsclient, pongGameState.gameId, address, botState.isActive, isGameMode, skip, , bottomPaddleRef, leftPaddleRef, rightPaddleRef, topPaddleRef, getPlayer, setPlayerState, setPlayerPaddle]);
+
 
 	useEffect(() => {
 		const sendPlayerData = () => {
@@ -239,6 +240,21 @@ export const PongSocketEvents = memo(() => {
 			} 
 		}
 	},[wsclient, pongGameState.gameId, playerState, bottomPaddleRef, leftPaddleRef, rightPaddleRef, topPaddleRef, isGameMode]);
+
+	useEffect(() => {
+		const makeMaster = (msg: string) => {
+			if (msg === "CLI") {
+				setPlayerState(prevState => ({
+					...prevState,
+					master: true
+				}));
+			}
+		}
+
+		if (isFull && wsclient && pongGameState.gameId !== '-1') {
+			wsclient?.addMessageListener(`IsCLI-${pongGameState.gameId}`, pongGameState.gameId, makeMaster);
+		}
+	}, [isFull, wsclient, pongGameState.gameId, setPlayerState]);
 
 	useEffect(() => {
 		const setPlayer = (msg: string) => {

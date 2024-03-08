@@ -24,7 +24,8 @@ export const TTTGameEvents = memo(() => {
 		setLineVisible,
 		isGameMode,
 		currentTurn,
-		started
+		started,
+		setBotMoved
 	} = useGameState();
 	const {
 		rematchIndex,
@@ -97,9 +98,10 @@ export const TTTGameEvents = memo(() => {
 	// Initializes the turn after countdown
 	useEffect(() => {
 		if (!countdownVisible && currentTurn === '' && started) {
+			setBotMoved(false);
 			setTurn('X');
 		}
-	}, [countdownVisible, currentTurn, setTurn, started]);
+	}, [countdownVisible, currentTurn, setTurn, setBotMoved, started]);
 
 	return (null);
 })

@@ -19,7 +19,7 @@ export default function PongPage() {
 
 	return (
 		<div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
-				<PongGameState gameMode={gameMode} isBotActive={true}>
+				<PongGameState gameMode={gameMode} isBotActive={false}>
 					<PongSocket>
 						{ gameMode ? (<OneForAllScene />) : (<PongScene />) }
 					</PongSocket>
