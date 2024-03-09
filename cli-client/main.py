@@ -21,7 +21,7 @@ RESET = '\033[0m'
 
 logging.basicConfig(level=logging.INFO)
 logging.basicConfig(level=logging.ERROR)
-# logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.DEBUG)
 
 player_data = {
 	'name': 'CLI-KEK',
@@ -173,13 +173,16 @@ async def start_socketio():
 		joined_game = False
 		while not event_quit.is_set():
 			if event_game_active.is_set() and not joined_game:
+				if g_game_id == '-1':
+					await create_game('Pong')
+				register_message_handlers()
 				await join_game(g_game_id, 'Pong', False)
 				joined_game = True
 			if not event_game_active.is_set():
 				joined_game = False
 			await asyncio.sleep(0.1)
 	except asyncio.CancelledError:
-		logging.debug(YELLOW + "Asyncio task was cancelled" + RESET)
+		logging.error(YELLOW + "Asyncio task was cancelled" + RESET)
 	except asyncio.TimeoutError:
 		logging.error(RED + "Timeout error. Is the server still running?" + RESET)
 	except Exception as e:
@@ -198,39 +201,48 @@ async def start_socketio():
 # 	logging.info(RED + f'Opponent data: {msg}' + RESET)
 # 	exit
 
-@sio.on(f'message-{g_game_id}-Players-{g_game_id}')
-async def room_full(msg: str):
-	logging.debug(RED + f'Room full: {msg}' + RESET)
-	event_room_full.set()
+@sio.on(f'match-found')
+async def match_found(msg: str, placeholder: int, placeholder2: int):
+	logging.debug(RED + f'Match found: {msg}' + RESET)
+	global g_game_id
+	g_game_id = msg
 
-@sio.on(f'room-joined-{g_game_id}')
-async def room_joined(num_clients: int):
-	logging.debug(RED + f'Room joined, number of clients: {num_clients}' + RESET)
+def register_message_handlers():
 
-@sio.on(f'message-{g_game_id}-paddleUpdate-{g_game_id}')
-async def receive_paddle_data(msg: str):
-	paddle_y = json.loads(msg)
-	logging.debug(RED + f'Received Paddle Data: {paddle_y}' + RESET)
-	global g_game_state
-	g_game_state['left_paddle']['y'] = server_y_to_cli_y(paddle_y) - math.ceil(g_paddle_length / 2)
+	@sio.on(f'message-{g_game_id}-Players-{g_game_id}')
+	async def room_full(msg: str):
+		logging.debug(RED + f'Room full: {msg}' + RESET)
+		event_room_full.set()
+		await inform_server_is_cli(g_game_id)
 
-@sio.on(f'message-{g_game_id}-ballUpdate-{g_game_id}')
-async def receive_ball_data(msg: str):
-	ball = json.loads(msg)
-	ball_pos = ball['position']
-	logging.debug(RED + f'Received Ball Data: {ball_pos}' + RESET)
-	new_ball = {
-		'x': server_x_to_cli_x(ball_pos['x']),
-		'y': server_y_to_cli_y(ball_pos['z'])
-	}
-	global g_game_state
-	g_game_state['ball']['x'] = int(new_ball['x'])
-	g_game_state['ball']['y'] = int(new_ball['y'])
+	@sio.on(f'room-joined-{g_game_id}')
+	async def room_joined(num_clients: int):
+		logging.debug(RED + f'Room joined, number of clients: {num_clients}' + RESET)
 
-@sio.on(f'message-{g_game_id}-player-left-${g_game_id}')
-async def player_disconnected(msg: str):
-	logging.info(RED + f'Player disconnected: {msg}' + RESET)
-	event_quit.set()
+	@sio.on(f'message-{g_game_id}-paddleUpdate-{g_game_id}')
+	async def receive_paddle_data(msg: str):
+		paddle_y = json.loads(msg)
+		logging.debug(RED + f'Received Paddle Data: {paddle_y}' + RESET)
+		global g_game_state
+		g_game_state['left_paddle']['y'] = server_y_to_cli_y(paddle_y) - math.ceil(g_paddle_length / 2)
+
+	@sio.on(f'message-{g_game_id}-ballUpdate-{g_game_id}')
+	async def receive_ball_data(msg: str):
+		ball = json.loads(msg)
+		ball_pos = ball['position']
+		logging.debug(RED + f'Received Ball Data: {ball_pos}' + RESET)
+		new_ball = {
+			'x': server_x_to_cli_x(ball_pos['x']),
+			'y': server_y_to_cli_y(ball_pos['z'])
+		}
+		global g_game_state
+		g_game_state['ball']['x'] = int(new_ball['x'])
+		g_game_state['ball']['y'] = int(new_ball['y'])
+
+	@sio.on(f'message-{g_game_id}-player-left-${g_game_id}')
+	async def player_disconnected(msg: str):
+		logging.info(RED + f'Player disconnected: {msg}' + RESET)
+		event_quit.set()
 
 # -------------------------------------------------------------------------- #
 #                               Message Sender                               #
@@ -241,8 +253,26 @@ async def player_disconnected(msg: str):
 # 	topic = f'PlayerData-{game_id}'
 # 	await send_message(msg, topic, game_id)
 
+async def create_game(game_type: str):
+	try:
+		await sio.emit('create-game', (game_type))
+		timeout = 5
+		while g_game_id == '-1' and not event_quit.is_set() and timeout > 0:
+			await asyncio.sleep(1)
+			timeout -= 1
+	except Exception as e:
+		logging.error(RED + f'Error creating game: {e}' + RESET)
+		event_quit.set()
+
 async def join_game(game_id: str, game_type: str, is_bot: bool):
-	await sio.emit('join-game', (game_id, game_type, is_bot))
+	try:
+		await sio.emit('join-game', (game_id, game_type, is_bot))
+	except Exception as e:
+		logging.error(RED + f'Error joining game: {e}' + RESET)
+		event_quit.set()
+
+async def inform_server_is_cli(game_id: str):
+	await send_message('CLI', f'IsCLI-{game_id}', game_id)
 
 async def send_message(msg: str, topic: str, game_id: str):
 	try:
@@ -250,6 +280,7 @@ async def send_message(msg: str, topic: str, game_id: str):
 	except Exception as e:
 		logging.error(RED + f'Error sending message: {e}' + RESET)
 		event_game_active.clear()
+		event_quit.set()
 
 async def send_paddle_data(paddle_y: str, game_id: str):
 	msg = cli_y_to_server_y(paddle_y + math.ceil(g_paddle_length // 2))
@@ -300,15 +331,15 @@ def draw_score(stdscr, game_state):
 	stdscr.addstr(2, curses.COLS // 2 - 3, f"{game_state['score']['left']} : {game_state['score']['right']}")
 
 def draw_field(stdscr):
+	i = server_y_to_cli_y(-g_server_game_height // 2)
+	while i < server_y_to_cli_y(g_server_game_height // 2):
+		stdscr.addstr(i, server_x_to_cli_x(0), '|')
+		i += 2
 	i = server_x_to_cli_x(-g_server_game_width / 2)
 	while i <= server_x_to_cli_x(g_server_game_width / 2):
 		stdscr.addstr(server_y_to_cli_y(-g_server_game_height // 2), i, '-')
 		stdscr.addstr(server_y_to_cli_y(g_server_game_height // 2), i, '-')
 		i += 1
-	i = server_y_to_cli_y(-g_server_game_height // 2)
-	while i <= server_y_to_cli_y(g_server_game_height // 2):
-		stdscr.addstr(i, server_x_to_cli_x(0), '|')
-		i += 2
 
 def draw_box(stdscr, y, x, height, width):
 	for i in range(height):
@@ -344,11 +375,13 @@ def draw_countdown(stdscr):
 	draw_field(stdscr)
 	draw_box(stdscr, curses.LINES // 2 - 7, curses.COLS // 2 - 20, 15, 40)
 	count = 3
-	while count > 0:
+	while count > 0 and not event_quit.is_set():
 		stdscr.addstr(curses.LINES // 2 - 4, curses.COLS // 2 - 15, f"Starting in {count}...")
 		stdscr.refresh()
 		time.sleep(1)
 		count -= 1
+	if event_quit.is_set():
+		return
 	draw_box(stdscr, curses.LINES // 2 - 7, curses.COLS // 2 - 20, 15, 40)
 	stdscr.addstr(curses.LINES // 2 - 4, curses.COLS // 2 - 10, "GO!")
 	stdscr.refresh()
@@ -392,7 +425,6 @@ def end_loop(stdscr):
 			raise Quit
 
 def curses_thread(stdscr):
-	# raise Exception(g_game_id)
 	curses.curs_set(False)
 	stdscr.nodelay(True)
 	stdscr.keypad(True)
@@ -448,10 +480,10 @@ if __name__ == '__main__':
 	main()
 
 # goals
+	# activate play against bot
 	# create game
 		# allow cli client to join first without hosting game
 	# pause button
-	# pass url and port as arguments
 	# how to start cli-client? makefile?
 	# this:
 		# `message-${gameId}-`IsCLI-${pongGameState.gameId}` mit der msg "CLI" brauch ich damit ich den browser client zu master machen kann
