@@ -51,8 +51,8 @@ g_paddle_speed = 1
 g_score_offset = 46
 g_win_score = 7
 
-g_server_game_width = 300
-g_server_game_height = 200
+g_server_game_width = 298
+g_server_game_height = 206
 g_server_paddle_length = 35
 g_scaling_factor_width = 1
 g_scaling_factor_height = 1
@@ -125,10 +125,10 @@ def init_scaling_factors():
 	global g_scaling_factor_height
 	global g_scaling_factor_width
 	global g_paddle_length
-	global g_cli_game_width
-	global g_cli_game_height
+	global g_paddle_speed
 	g_scaling_factor_height = curses.LINES / g_server_game_height / 2
 	g_scaling_factor_width = curses.COLS / g_server_game_width / 2
+	g_paddle_speed = int(g_server_game_height * g_scaling_factor_height // 10)
 	while g_paddle_length % 2 == 0:
 		g_scaling_factor_height -= 0.01
 		g_scaling_factor_width -= 0.01
@@ -496,38 +496,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-
-# goals
-	# activate play against bot
-	# how to start cli-client? makefile?
-# approach
-	# create communication interface
-	# make it controllable via terminal
-	# visualize pong in terminal
-# bottlenecks
-	# error handling
-	# login
-	# additional server interactions (create game, join game, etc.)
-	# refactoring
-	# merge with latest branch
-# one thing
-	# error handling
-
-# @note messages
-		# server-receive
-			# join-game
-			# create-game
-			# send-message-to-game
-			# disconnect
-		# server-send
-			# room-joined-$gameId
-			# message-$gameId-$topic
-			# game-created-$msg (msg is a random hex string?)
-
-# @note topics
-		# Players-$gameId
-		# player-disconnected-$gameId
-		# Paddle-$gameId
-		# PlayerData-$gameId
-		# Request-Rematch-$gameId
-		# Pause-$gameId
