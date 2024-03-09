@@ -42,7 +42,7 @@ class WindowTooSmall(Exception):
 parser = argparse.ArgumentParser(description='CLI Pong Client')
 parser.add_argument('ip_addr', type=str, help='IP Address')
 parser.add_argument('port', type=str, help='Port')
-parser.add_argument('game_id', type=str, help='Game ID')
+parser.add_argument('-g', '--game_id', type=str, help='Game ID', default='-1')
 args = parser.parse_args()
 g_game_id = args.game_id
 
@@ -481,13 +481,9 @@ if __name__ == '__main__':
 
 # goals
 	# activate play against bot
-	# create game
-		# allow cli client to join first without hosting game
 	# pause button
 	# how to start cli-client? makefile?
 	# this:
-		# `message-${gameId}-`IsCLI-${pongGameState.gameId}` mit der msg "CLI" brauch ich damit ich den browser client zu master machen kann
-		# Browser code : wsclient?.addMessageListener(`IsCLI-${pongGameState.gameId}`, pongGameState.gameId, makeMaster);
 		# `message-${gameId}-`ScoreUpdate-${ pongGameState.gameId}` für nen obj mit p1score und p2score
 # approach
 	# create communication interface
