@@ -26,7 +26,7 @@ export const usePongUI = () => {
 				if (playerStatus !== 'leave') {
 					if (playerStatus === "unavailable") {
 						playSound("silly");
-					} else if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect")) {
+					} else if (winner === String(playerState.players[playerState.client].number + 1)) {
 						playSound("win");
 					} else {
 						playSound("losing");
@@ -38,7 +38,7 @@ export const usePongUI = () => {
 				clearTimeout(modalTimeout)
 			});
 		}
-	}, [pongGameState.gameOver, openModal, winner, playerStatus, playerState.players, playSound]);
+	}, [pongGameState.gameOver, openModal, winner, playerStatus, playerState.client, playerState.players, playSound]);
 
 	return {
 		closeModal,
