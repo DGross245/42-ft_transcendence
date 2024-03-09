@@ -242,19 +242,24 @@ export const PongSocketEvents = memo(() => {
 	},[wsclient, pongGameState.gameId, playerState, bottomPaddleRef, leftPaddleRef, rightPaddleRef, topPaddleRef, isGameMode]);
 
 	useEffect(() => {
-		const makeMaster = (msg: string) => {
-			if (msg === "CLI") {
-				setPlayerState(prevState => ({
-					...prevState,
-					master: true
-				}));
-			}
-		}
+        const makeMaster = (msg: string) => {
+			console.log("lool: ", msg)
+            if (msg === "CLI") {
+                setPlayerState(prevState => ({
+                    ...prevState,
+                    master: true
+                }));
+            }
+        }
 
-		if (isFull && wsclient && pongGameState.gameId !== '-1') {
-			wsclient?.addMessageListener(`IsCLI-${pongGameState.gameId}`, pongGameState.gameId, makeMaster);
-		}
-	}, [isFull, wsclient, pongGameState.gameId, setPlayerState]);
+        if (wsclient && pongGameState.gameId !== '-1') {
+            wsclient?.addMessageListener(`IsCLI-${pongGameState.gameId}`, pongGameState.gameId, makeMaster);
+
+            return () => {
+                wsclient?.removeMessageListener(`IsCLI-${pongGameState.gameId}`, pongGameState.gameId);
+            } 
+        }
+    }, [wsclient, pongGameState.gameId, setPlayerState]);
 
 	useEffect(() => {
 		const setPlayer = (msg: string) => {

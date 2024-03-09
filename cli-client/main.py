@@ -21,7 +21,7 @@ RESET = '\033[0m'
 
 logging.basicConfig(level=logging.INFO)
 logging.basicConfig(level=logging.ERROR)
-logging.basicConfig(level=logging.DEBUG)
+# logging.basicConfig(level=logging.DEBUG)
 
 player_data = {
 	'name': 'CLI-KEK',
@@ -167,11 +167,11 @@ async def socket_initialize():
 	logging.debug(YELLOW + f'socket initialized' + RESET)
 	event_socket_ready.set()
 
-async def start_socketio():
+async def socketio_loop():
 	try:
 		await socket_initialize()
 		joined_game = False
-		while not event_quit.is_set():
+		while not event_quit.is_set() and sio.connected:
 			if event_game_active.is_set() and not joined_game:
 				if g_game_id == '-1':
 					await create_game('Pong')
@@ -200,6 +200,16 @@ async def start_socketio():
 # async def receive_player_data(msg: str):
 # 	logging.info(RED + f'Opponent data: {msg}' + RESET)
 # 	exit
+
+@sio.event
+async def connect():
+	logging.debug("Connected to server")
+
+@sio.event
+async def disconnect():
+	logging.debug("Disconnected from server")
+	event_quit.set()
+
 
 @sio.on(f'match-found')
 async def match_found(msg: str, placeholder: int, placeholder2: int):
@@ -474,7 +484,7 @@ def main():
 		signal.signal(signal.SIGWINCH, handle_resize)
 		curses_thread = threading.Thread(target=start_curses, daemon=True)
 		curses_thread.start()
-		asyncio.run(start_socketio())
+		asyncio.run(socketio_loop())
 	except KeyboardInterrupt:
 		logging.info(YELLOW + "KeyboardInterrupt caught, cleaning up" + RESET)
 	except asyncio.CancelledError: 
@@ -489,7 +499,6 @@ if __name__ == '__main__':
 
 # goals
 	# activate play against bot
-	# pause button
 	# how to start cli-client? makefile?
 # approach
 	# create communication interface
