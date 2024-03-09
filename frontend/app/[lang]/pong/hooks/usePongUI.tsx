@@ -2,7 +2,6 @@ import { useSound } from "@/components/hooks/Sound";
 import { useCallback, useEffect, useState } from "react";
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
-import { useEffectDebugger } from "@/components/Pong/PongSocketEvents";
 
 export const usePongUI = () => {
 	const [showModal, setShowModal] = useState(false);

@@ -27,7 +27,7 @@ export default function PongPage() {
 
 	return (
 		<div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
-				<PongGameState gameID={gameID} gameMode={gameOptions.gameMode} isBotActive={gameOptions.isBotActive} strength={gameOptions.botStrength * 200} tournament={tournament} setTournament={setTournament}>
+				<PongGameState gameID={gameID} gameMode={gameOptions.gameMode} isBotActive={gameOptions.isBotActive} strength={gameOptions.botStrength} tournament={tournament} setTournament={setTournament}>
 					<PongSocket wsclient={wsclient} setWsclient={setWsclient}>
 					<SelectionModal setGameID={setGameID}  wsclient={wsclient} isOpen={open} setOpen={setOpen} onClose={() => setOpen(false)} gameType={"Pong"} setGameOptions={setGameOptions} tournamentState={tournament} />
 						{ gameOptions.gameMode ? (<OneForAllScene />) : (<PongScene />) }

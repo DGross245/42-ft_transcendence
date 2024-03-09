@@ -10,7 +10,8 @@ import clsx from "clsx";
 /* -------------------------------------------------------------------------- */
 enum GameState {
 	Running,
-	Waiting
+	Waiting,
+	Finished
 }
 interface SearchableGamesTableProps {
 	columns: {
@@ -97,6 +98,7 @@ const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, ro
 										<TableCell key={key} className={classes}>
 											{getKeyValue(item, key) == GameState.Running && <Chip className="capitalize" color="success" size="sm" variant="flat">{t("searchtable.running")}</Chip>}
 											{getKeyValue(item, key) == GameState.Waiting && <Chip className="capitalize" color="warning" size="sm" variant="flat">{t("searchtable.waiting")}</Chip>}
+											{getKeyValue(item, key) == GameState.Finished && <Chip className="capitalize" color="primary" size="sm" variant="flat">{t("searchtable.finished")}</Chip>}
 										</TableCell>
 									)
 								} else {
@@ -110,7 +112,7 @@ const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, ro
 								}
 							}).concat(onJoin ? [
 								<TableCell key="actions" className={classes}>
-									<TextButton onClick={() => {onJoin(item)}}>{t("searchtable.join")}</TextButton>
+									<TextButton  onClick={() => {onJoin(item)}}>{t("searchtable.join")}</TextButton>
 								</TableCell>
 							] : [])}
 						</TableRow>

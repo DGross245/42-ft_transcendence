@@ -16,7 +16,6 @@ import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
 
-// TODO: Set bot as inactive if you join a game and didnt create it
 export function intToHexColor(intValue: number) {
 	return ('#' + intValue.toString(16).padStart(6, '0').toUpperCase());
 }
@@ -132,7 +131,7 @@ export const TTTModals = memo(() => {
 			}
 			const status = await wsclient?.updateStatus(false, gameState.gameId);
 			wsclient?.leave();
-	
+
 			// reset loop important states
 			closeModal();
 			updateGameState({ gameId: "-1", pause: true, reset: true });

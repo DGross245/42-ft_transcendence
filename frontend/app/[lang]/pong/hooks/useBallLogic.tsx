@@ -48,8 +48,9 @@ export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 		const delta = isHorizontal ? ball.x - paddlePos.x : ball.z - paddlePos.z;
 		const normalized = delta / 15;
 
-		if (ball.speed <= 2)
+		if (ball.speed <= 2) {
 			ball.speed += 0.2;
+		}
 		ball.velocityX = isHorizontal ? normalized * ball.speed : direction * ball.speed;
 		ball.velocityZ = isHorizontal ? direction * ball.speed : normalized * ball.speed;
 	}
@@ -244,7 +245,7 @@ export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 		}
 		// Handling scoring when the ball is outside of the play area.
 		else if (( ball.x <= -170 || ball.x >= 170 || ball.z >= 170 || ball.z <= -170) && 
-		scores.p1Score !== 7 && scores.p2Score !== 7 && scores.p3Score !== 7 && scores.p4Score !== 7) {
+		scores.p1Score !== 4 && scores.p2Score !== 4 && scores.p3Score !== 4 && scores.p4Score !== 4) {
 			handleScore(ball);
 			randomBallDir();
 			setColor( 0xffffff );
@@ -261,24 +262,28 @@ export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
-			if (playerScore === 7) {
-				updatePongGameState({ gameOver: true });
-				setWinner(player);
+			if (playerScore === 4) {
 				let ball = temp.current;
 				ball.x = 0;
 				ball.z = 0;
 				ball.velocityX = 0;
 				ball.velocityZ = 0;
 				ball.speed = 0.1;
+				updatePongGameState({ gameOver: true });
+				setWinner(player);
 				setBallVisibility(false);
 			}
 		}
 
-		checkWinner('P1', scores.p1Score);
-		checkWinner('P2', scores.p2Score);
-		checkWinner('P3', scores.p3Score);
-		checkWinner('P4', scores.p4Score);
-	}, [scores.p1Score, scores.p2Score, scores.p3Score, scores.p4Score, setBallVisibility, setWinner, updatePongGameState]);
+		if (wsclient && pongGameState.gameId !== "-1" && playerState.master) {
+			wsclient?.emitMessageToGame(JSON.stringify(scores), `ScoreUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+		}
+
+		checkWinner('1', scores.p1Score);
+		checkWinner('2', scores.p2Score);
+		checkWinner('3', scores.p3Score);
+		checkWinner('4', scores.p4Score);
+	}, [scores, playerState.master, pongGameState.gameId, wsclient, setBallVisibility, setWinner, updatePongGameState]);
 
 	// Game/render loop for the ball.
 	useFrame((_, deltaTime) => {

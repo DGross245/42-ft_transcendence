@@ -89,7 +89,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 	const [tournamentID, setTournamentID] = useState(0);
 	const [data, setData] = useState<{[key: string]: string | GameState}[]>([]);
 	const [tournamentData, setTournamentData] = useState<{[key: string]: string | GameState}[]>([]);
-	const { getTournaments, getTournament, tmContract, getTournamentTree } = useContract();
+	const { getTournaments, getTournament, tmContract, getTournamentTree, getPlayer } = useContract();
 	const { onCreateTournament, onJoinTournament, onStartTournament } = useJoinEvents(wsclient)
 	const { address } = useWeb3ModalAccount();
 	const [games, setGames] = useState<{[key: string]: string | GameState}[]>([]);
@@ -119,8 +119,15 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 						}
 					}
 
-					if ((finished === tournament.games.length && Number(tournament.start_block) !== 0 )|| gameType !== tournament.game_type) {
+					if (gameType !== tournament.game_type) {
 						return (null);
+					}
+					else if ((finished === tournament.games.length && Number(tournament.start_block) !== 0)) {
+						return {
+							id: String(index),
+							players: "-",
+							state: GameState.Finished
+						}
 					} else {
 						const registered = String(tournament.players.length);
 						const connected = String((await getSocketNumber(index)));
@@ -332,7 +339,6 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 		)
 	}
 
-	// FIXME: onClose should leave room
 	return (
 		<ModalContentsWrapper
 			onBack={onClose}
@@ -401,6 +407,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ setGameID, onClose, c
 
 	const onGameCreate = () => {
 		let isGameMode = undefined;
+		let botStrength = 0;
 
 		if (gameType === 'TTT') {
 			isGameMode = _gameMode.current === 'TTT' ? false : true; 
@@ -408,8 +415,12 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ setGameID, onClose, c
 			isGameMode = _gameMode.current === 'Pong' ? false : true; 
 		}
 
-		console.log("Changed strenght to", ((strength as number) / 100))
-		setGameOptions({ gameMode: isGameMode, botStrength: ((strength as number) / 100), isBotActive: botEnabled });
+		if (gameType === 'TTT') {
+			botStrength = ((strength as number) / 100);
+		} else if (gameType === 'Pong') {
+			botStrength = ((strength as number) * 1.5);
+		}
+		setGameOptions({ gameMode: isGameMode, botStrength: botStrength, isBotActive: botEnabled });
 		onCreateCustom(_gameMode.current);
 		closeMain();
 	}

@@ -95,9 +95,9 @@ export const PongGameState: React.FC<{ gameID: string, gameMode:boolean, isBotAc
 
 	useEffect(() => {
 		setGameMode(gameMode);
-		setBot(prevState => ({ ...prevState, isActive: isBotActive }));
+		setBot(prevState => ({ ...prevState, isActive: isBotActive, strength: strength }));
 		updatePongGameState({ gameId: gameID})
-	}, [gameMode, isBotActive, gameID, updatePongGameState]);
+	}, [gameMode, isBotActive, gameID, strength, updatePongGameState]);
 
 	const value: PongGameStateContextValue = {
 		scores,

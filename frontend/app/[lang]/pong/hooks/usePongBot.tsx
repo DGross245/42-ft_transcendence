@@ -29,11 +29,9 @@ export const usePongBot = () => {
 			setTimeout(() => {
 				if (ballPosition >= botPaddlePosition - 15 && ballPosition <= botPaddlePosition + 15) {
 					setDirection(Direction.Stop);
-				}
-				else if (Math.round(ballPosition) > botPaddlePosition) {
+				} else if (Math.round(ballPosition) > botPaddlePosition) {
 					setDirection(Direction.Up);
-				}
-				else if (ballPosition < botPaddlePosition) {
+				} else if (ballPosition < botPaddlePosition) {
 					setDirection(Direction.Down);
 				}
 			}, botState.strength);

@@ -18,6 +18,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		rightPaddleRef,
 		setScores,
 		started,
+		isGameMode
 	} = usePongGameState();
 	const { wsclient, playerState, customized} = usePongSocket();
 
@@ -130,11 +131,21 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		const setNewScore = (msg: string) => {
 			const newScore = JSON.parse(msg);
 			if (!playerState.master) {
-				setScores((prevState) => ({
-					...prevState,
-					p1Score: newScore.p2Score,
-					p2Score: newScore.p1Score
-				}));
+				if (isGameMode) {
+					setScores((prevState) => ({
+						...prevState,
+						p1Score: newScore.p1Score,
+						p2Score: newScore.p2Score,
+						p3Score: newScore.p3Score,
+						p4Score: newScore.p4Score
+					}));
+				} else {
+					setScores((prevState) => ({
+						...prevState,
+						p1Score: newScore.p2Score,
+						p2Score: newScore.p1Score
+					}));
+				}
 			}
 		};
 
@@ -145,7 +156,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 				wsclient?.removeMessageListener(`ScoreUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 			};
 		}
-	}, [wsclient, pongGameState.gameId, playerState.master, setScores]);
+	}, [wsclient, pongGameState.gameId, playerState.master, isGameMode, setScores]);
 
 	/**
 	 * Initiates the game by providing a random direction to the ball after the countdown 

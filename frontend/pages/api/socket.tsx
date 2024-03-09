@@ -149,11 +149,6 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				});
 			});
 
-			// socket.on('create-game', (msg: string) => {
-			// 	var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
-			// 	socket.emit(`game-created-${msg}`, id);
-			// });
-
 			socket.on('create-game', (gameMode: string) => {
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 				const customGame = `Custom-Game-${gameMode}-${id}`;
