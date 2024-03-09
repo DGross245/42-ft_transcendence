@@ -17,9 +17,9 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		leftPaddleRef,
 		rightPaddleRef,
 		setScores,
-		started
+		started,
 	} = usePongGameState();
-	const { wsclient, playerState } = usePongSocket();
+	const { wsclient, playerState, customized} = usePongSocket();
 
 	const temp = useRef({ x: 0, z: 0, velocityX: 0, velocityZ: 0, speed: 0.1 });
 	const PositionRef = useRef({position: {x:0, z:0}, velocity: {x:0, z:0}, deltaTime: 0});
@@ -152,10 +152,10 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 	 * sets the score visibility to true.
 	 */
 	useEffect(() => {
-		if (started) {
+		if (started || customized) {
 			randomBallDir();
 		}
-	}, [started]);
+	}, [started, customized]);
 
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {

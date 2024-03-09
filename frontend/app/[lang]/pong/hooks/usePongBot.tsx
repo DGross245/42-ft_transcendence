@@ -50,7 +50,7 @@ export const usePongBot = () => {
 
 	useEffect(() => {
 		const joinTheGame = () => {
-			if (wsclient) {
+			if (wsclient && botState.client === -1) {
 				const client = isGameMode ? 3 : 1;
 
 				setPlayerState((prevState) => {

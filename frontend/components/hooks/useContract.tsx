@@ -57,7 +57,6 @@ function useContract() {
 
 	const callContract = useCallback(async (functionName: string, args: any[] = []) => {
 		try {
-			console.log("lol", functionName);
 			const result = await tmContract?.[functionName](...args);
 			if (result && typeof result.wait !== "undefined") {
 				playSound("pay");
@@ -70,7 +69,6 @@ function useContract() {
 			}
 			return result;
 		} catch (error) {
-			console.log("eroror", error);
 			if ((error as any)?.code == "ACTION_REJECTED") {
 				toast.warning(t("toast.rejecteduser"));
 			} else {

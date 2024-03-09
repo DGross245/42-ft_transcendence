@@ -3,7 +3,6 @@ import { useEffect, useMemo } from "react"
 import { TicTacToeBot } from "@/components/TTT/TicTacToeBot";
 import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
-import { useEffectDebugger } from "../Pong/PongSocketEvents";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -43,6 +42,7 @@ export const TTTBot = () => {
 
 	// Function to simulate a bot joining the game as a player
 	useEffect(() => {
+		console.log("dsa")
 		const joinTheGame = () => {
 			if (wsclient && botState.symbol === 'NOT DEFINED') {
 				const client = isGameMode ? 2 : 1;

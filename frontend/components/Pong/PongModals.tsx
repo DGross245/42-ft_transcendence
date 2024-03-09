@@ -27,7 +27,8 @@ export const PongModals = memo(() => {
 		tournament,
 		updatePongGameState,
 		setStarted,
-		winner
+		winner,
+		setTournament
 	} = usePongGameState();
 	const {
 		continueIndex,
@@ -103,34 +104,35 @@ export const PongModals = memo(() => {
 				})
 			}
 			if (tournament.id !== -1) {
-				const lol = getTournament(tournament.id);
-				const finished = (await lol).games[tournament.index].finished;
+				const data = await getTournament(tournament.id);
+				const finished = data.games[tournament.index].finished;
 				if (!finished) {
 					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
 				}
 			} else if (playerState.master) {
 				await submitGameResultRanked(playerScore);
 			}
+			const status = await wsclient?.updateStatus(false, pongGameState.gameId);
+			wsclient?.leave();
+	
+			// reset loop important states
+			closeModal();
+			updatePongGameState({ gameId: "-1", pause: true, reset: true });
+			setPlayerState(initialPongPlayerState());
+			setStarted(false);
+			setChipDisappear(false);
+			setTournament({ ...tournament, index: -1});
+
+			if (status) {
+				if (tournament.id !== -1) {
+					wsclient?.requestTournament(tournament.id, 'Pong');
+				} else {
+					wsclient?.joinQueue('Pong');
+				}
+			}
 			
 		}
 
-		const status = await wsclient?.updateStatus(false, pongGameState.gameId);
-		wsclient?.leave();
-
-		// reset loop important states
-		closeModal();
-		updatePongGameState({ gameId: "-1", pause: true, reset: true });
-		setPlayerState(initialPongPlayerState());
-		setStarted(false);
-		setChipDisappear(false);
-
-		if (status) {
-			if (tournament.id !== -1) {
-				wsclient?.requestTournament(tournament.id, 'Pong');
-			} else {
-				wsclient?.joinQueue('Pong');
-			}
-		}
 	}
 
 	// Returns Status enum based on playerStatus
@@ -212,17 +214,21 @@ export const PongModals = memo(() => {
 
 	useEffect(() => {
 		let timerId: NodeJS.Timeout;
-
 		if (pongGameState.gameId !== '-1' && !customized && tournament.id !== -1) {
 			timerId = setTimeout(() => {
 				setShowCustomModal(true);
 			}, 3000); 
 		}
-		else {
+		else if (pongGameState.gameId !== '-1' && !customized) {
+			setShowCustomModal(true);
+		} else {
 			setShowCustomModal(false);
 		}
 		return () => {
-			clearTimeout(timerId);
+			if (timerId) {
+				clearTimeout(timerId);
+				
+			}
 		};
 	}, [pongGameState.gameId, customized, tournament]);
 
@@ -235,7 +241,7 @@ export const PongModals = memo(() => {
 				pauseInfo={{
 					onClick: handleButtonClick,
 					currentClients: continueIndex,
-					maxClients: isGameMode ? 3 : 2
+					maxClients: isGameMode ? 4 : 2
 				}}
 			/>
 			{tournament.id !== -1 ? (

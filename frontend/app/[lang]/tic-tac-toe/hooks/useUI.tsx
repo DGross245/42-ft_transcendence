@@ -42,7 +42,6 @@ export const useUI = () => {
 			});
 		}
 	}, [gameState.gameOver, openModal, playerStatus, playerState.client, playerState.players, playSound, winner]);
-
 	return {
 		closeModal,
 		openModal,

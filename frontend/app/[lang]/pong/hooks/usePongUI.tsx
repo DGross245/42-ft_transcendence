@@ -20,6 +20,7 @@ export const usePongUI = () => {
 	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
 		if (pongGameState.gameOver) {
+			console.log("dasd")
 			const delay = 1000;
 			const modalTimeout = setTimeout(() => {
 				openModal();

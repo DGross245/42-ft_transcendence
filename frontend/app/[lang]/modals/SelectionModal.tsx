@@ -13,7 +13,7 @@ import { XMarkIcon } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import useContract from "@/components/hooks/useContract";
 import { useJoinEvents } from "@/components/JoinGame";
-import useWSClient, { WSClientType } from "@/helpers/wsclient";
+import { WSClientType } from "@/helpers/wsclient";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import { useKey } from "@/components/hooks/useKey";
 import { useTranslation } from "@/app/i18n";
@@ -104,7 +104,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 		const fetchData = async () => {
 			if (tmContract) {
 				const tournaments = await getTournaments();
-				console.log(tournaments)
+
 				if (!tournaments) {
 					return ;
 				}
@@ -200,22 +200,28 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 
 	const onGameCreate = async () => {
 		// search for already created tournaments
+		console.log("DSa")
 		const tournaments = await getTournaments();
 
 		for (let i = 0; i < tournaments.length; i++) {
 			if (tournaments[i].master === address) {
 				let finished = 0;
 
-				for (let j = 0; j < tournaments[i].games.length; j++ ) {
-					if (tournaments[i].games[j].finished) {
-						finished++;
+				if (Number(tournaments[i].start_block) !== 0) {
+					for (let j = 0; j < tournaments[i].games.length; j++ ) {
+						if (tournaments[i].games[j].finished) {
+							finished++;
+						}
 					}
-				}
-
-				if (finished !== tournaments[i].games.length) {
+					if (finished !== tournaments[i].games.length) {
+						toast.info(t("selectionmodal.toast.tournamentrunning"))
+						return ;
+					}
+				} else {
 					toast.info(t("selectionmodal.toast.tournamentrunning"))
 					return ;
 				}
+
 			}
 		}
 
@@ -332,7 +338,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 						onGameCreate();
 					}
 				}}>
-					{tournament ? t("selectionmodal.selectgame.start") : t("selectionmodal.selectgame.start")}
+					{tournament ? t("selectionmodal.selectgame.start") : t("selectionmodal.selectgame.create")}
 				</Button>
 			</div>
 			<Divider/>
