@@ -29,6 +29,7 @@ export const useJoinEvents = (wsclient: WSClientType | null) => {
 	}
 	
 	const onCreateCustom = (gameMode: string) => {
+		console.log("KEK")
 		wsclient?.createGame(gameMode);
 	}
 	

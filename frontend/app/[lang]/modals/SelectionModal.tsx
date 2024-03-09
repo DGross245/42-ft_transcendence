@@ -581,8 +581,8 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ wsclient, isOpen, onClo
 						<ModalButton onClick={onButtonClick}>{modalData[selected].button}</ModalButton>
 					</ModalFooter>
 				</>)}
-				{openSubModal && selected == "tournament-modes" && <TournamentContent tournamentState={tournamentState} setGameOptions={setGameOptions} gameType={gameType} closeMain={onClose} onClose={() => setOpenSubModal(false)}/>}
-				{openSubModal && selected == "custom-games" && <CustomGamesContent setGameOptions={setGameOptions} gameType={gameType} closeMain={onClose} onClose={() => setOpenSubModal(false)}/>}
+				{openSubModal && selected == "tournament-modes" && <TournamentContent wsclient={wsclient} tournamentState={tournamentState} setGameOptions={setGameOptions} gameType={gameType} closeMain={onClose} onClose={() => setOpenSubModal(false)}/>}
+				{openSubModal && selected == "custom-games" && <CustomGamesContent wsclient={wsclient} setGameOptions={setGameOptions} gameType={gameType} closeMain={onClose} onClose={() => setOpenSubModal(false)}/>}
 			</ModalContent>
 		</Modal>
 	)

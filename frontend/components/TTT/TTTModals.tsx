@@ -65,7 +65,7 @@ export const TTTModals = memo(() => {
 
 	const {
 		onSetNameAndColor
-	} = useJoinEvents();
+	} = useJoinEvents(wsclient);
 	const router = useRouter();
 	const { tmContract } = useContract();
 	const {isConnected, address} = useWeb3ModalAccount();
