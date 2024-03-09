@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Server } from "Socket.IO";
+import { Server } from "socket.io";
 import crypto from 'crypto';
 import { ethers } from 'ethers';
 import tournamentAbi from '@/public/tournamentManager_abi.json';
