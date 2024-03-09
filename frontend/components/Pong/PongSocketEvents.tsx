@@ -270,7 +270,6 @@ export const PongSocketEvents = memo(() => {
             }
         }
 
-<<<<<<< HEAD
 		if (wsclient && pongGameState.gameId !== '-1') {
 			wsclient?.addMessageListener(`IsCLI-${pongGameState.gameId}`, pongGameState.gameId, makeMaster);
 
@@ -279,16 +278,6 @@ export const PongSocketEvents = memo(() => {
 			} 
 		}
 	}, [wsclient, pongGameState.gameId, setPlayerState]);
-=======
-        if (wsclient && pongGameState.gameId !== '-1') {
-            wsclient?.addMessageListener(`IsCLI-${pongGameState.gameId}`, pongGameState.gameId, makeMaster);
-
-            return () => {
-                wsclient?.removeMessageListener(`IsCLI-${pongGameState.gameId}`, pongGameState.gameId);
-            } 
-        }
-    }, [wsclient, pongGameState.gameId, setPlayerState]);
->>>>>>> cli_client
 
 	useEffect(() => {
 		const setPlayer = (msg: string) => {
