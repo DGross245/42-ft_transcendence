@@ -247,6 +247,11 @@ def register_message_handlers():
 		g_game_state['score']['left'] = score['p1Score']
 		g_game_state['score']['right'] = score['p2Score']
 
+	@sio.on(f'message-{g_game_id}-Pause-{g_game_id}')
+	async def receive_pause_data(msg: str):
+		logging.debug(RED + f'Pause: {msg}' + RESET)
+		await send_message('true', f'Continue-{g_game_id}', g_game_id)
+
 	@sio.on(f'message-{g_game_id}-player-left-${g_game_id}')
 	async def player_disconnected(msg: str):
 		logging.info(RED + f'Player disconnected: {msg}' + RESET)
@@ -486,8 +491,6 @@ if __name__ == '__main__':
 	# activate play against bot
 	# pause button
 	# how to start cli-client? makefile?
-	# this:
-		# `message-${gameId}-`ScoreUpdate-${ pongGameState.gameId}` für nen obj mit p1score und p2score
 # approach
 	# create communication interface
 	# make it controllable via terminal
