@@ -239,6 +239,14 @@ def register_message_handlers():
 		g_game_state['ball']['x'] = int(new_ball['x'])
 		g_game_state['ball']['y'] = int(new_ball['y'])
 
+	@sio.on(f'message-{g_game_id}-ScoreUpdate-{g_game_id}')
+	async def receive_score_data(msg: str):
+		score = json.loads(msg)
+		logging.debug(RED + f'Received Score Data: {score}' + RESET)
+		global g_game_state
+		g_game_state['score']['left'] = score['p1Score']
+		g_game_state['score']['right'] = score['p2Score']
+
 	@sio.on(f'message-{g_game_id}-player-left-${g_game_id}')
 	async def player_disconnected(msg: str):
 		logging.info(RED + f'Player disconnected: {msg}' + RESET)
@@ -308,11 +316,6 @@ def draw_ball(stdscr, ball, global_ball, score):
 	if global_ball['x'] != ball['x'] or global_ball['y'] != ball['y']:
 		stdscr.addstr(ball['y'], ball['x'], ' ')
 		stdscr.addstr(global_ball['y'], global_ball['x'], 'O')
-		global g_game_state
-		if global_ball['x'] < server_x_to_cli_x(g_server_game_width // 2 * -1 - g_score_offset):
-			score['right'] += 1
-		elif global_ball['x'] > server_x_to_cli_x(g_server_game_width // 2 + g_score_offset):
-			score['left'] += 1
 		ball['x'] = global_ball['x']
 		ball['y'] = global_ball['y']
 	return ball
@@ -328,7 +331,7 @@ def move_paddle(paddle, key):
 	return paddle
 
 def draw_score(stdscr, game_state):
-	stdscr.addstr(2, curses.COLS // 2 - 3, f"{game_state['score']['left']} : {game_state['score']['right']}")
+	stdscr.addstr(2, curses.COLS // 2 - 3, f"{g_game_state['score']['left']} : {g_game_state['score']['right']}")
 
 def draw_field(stdscr):
 	i = server_y_to_cli_y(-g_server_game_height // 2)
