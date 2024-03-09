@@ -1,5 +1,4 @@
-import useContract from "./hooks/useContract";
-import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
+import useContract from "./useContract";
 import { WSClientType } from "@/helpers/wsclient";
 
 export const useJoinEvents = (wsclient: WSClientType | null) => {
@@ -9,15 +8,24 @@ export const useJoinEvents = (wsclient: WSClientType | null) => {
 		joinTournament,
 		startTournament,
 	} = useContract();
-	const { updateGameState } = useGameState();
 	
 	const onCreateTournament = async (gameType: string) => {
-		const number = await createTournament(300000000, gameType);
+		const result = await createTournament(300000000, gameType);
+		if (!result) {
+			return (1)
+		} else {
+			return (0);
+		}
 	}
 	
 	const onStartTournament = async (id: number, gameType: string) => {
-		await startTournament(id);
-		wsclient?.requestTournament(id, gameType);
+		const result = await startTournament(id);
+		if (!result) {
+			return (1);
+		} else {
+			wsclient?.requestTournament(id, gameType);
+			return (0);
+		}
 	}
 	
 	const onNextMatch = async (id: number, gameType: string) => {
@@ -25,11 +33,15 @@ export const useJoinEvents = (wsclient: WSClientType | null) => {
 	}
 
 	const onSetNameAndColor = async (username: string, color: string) => {
-		return (await setNameAndColor(username, color));
+		const result = await setNameAndColor(username, color);
+		if (!result) {
+			return (1);
+		} else {
+			return (0);
+		}
 	}
 	
 	const onCreateCustom = (gameMode: string) => {
-		console.log("KEK")
 		wsclient?.createGame(gameMode);
 	}
 	
@@ -39,13 +51,13 @@ export const useJoinEvents = (wsclient: WSClientType | null) => {
 
 	const onJoinTournament = async (id: number, skip: boolean) =>  {
 		if (!skip) {
-			await joinTournament(id);
+			const result = await joinTournament(id);
+			if (!result) {
+				return (1);
+			}
 		}
 		wsclient?.joinTournament(id);
-	}
-
-	const onJoinCustom = (id: number) => {
-		updateGameState({ gameId: String(id) })
+		return (0);
 	}
 
 	return {
@@ -55,7 +67,6 @@ export const useJoinEvents = (wsclient: WSClientType | null) => {
 		onNextMatch,
 		onStartTournament,
 		onCreateTournament,
-		onJoinTournament,
-		onJoinCustom
+		onJoinTournament
 	};
 }

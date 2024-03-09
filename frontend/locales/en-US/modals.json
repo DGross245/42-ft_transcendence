@@ -30,6 +30,7 @@
 
 	"selectionmodal.toast.tournamentrunning": "You already have an tournament running",
 	"selectionmodal.toast.alreadyjoined": "You already joined a tournament",
+	"selectionmodal.toast.cantjoined": "You cannot join this ongoing tournament",
 	"selectionmodal.gameresults.title": "Game Results of Game {{gameid, string}}",
 	"selectionmodal.player": "Player",
 	"selectionmodal.score": "Score",

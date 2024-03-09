@@ -9,13 +9,14 @@ import { useUI } from "@/app/[lang]/tic-tac-toe/hooks/useUI";
 import { initialTTTPlayerState } from "@/app/[lang]/tic-tac-toe/context/TTTSockets";
 import useContract, { PlayerScore } from "../hooks/useContract";
 import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
-import { useJoinEvents } from "../JoinGame";
+import { useJoinEvents } from "../hooks/useJoinGame";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
 
+// TODO: Set bot as inactive if you join a game and didnt create it
 export function intToHexColor(intValue: number) {
 	return ('#' + intValue.toString(16).padStart(6, '0').toUpperCase());
 }
@@ -120,10 +121,14 @@ export const TTTModals = memo(() => {
 				const data = await getTournament(tournament.id);
 				const finished = data.games[tournament.index].finished;
 				if (!finished) {
-					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+					if (!(await submitGameResultTournament(tournament.id, tournament.index, playerScore))) {
+						return ;
+					}
 				}
 			} else if (playerState.client === 0) {
-				await submitGameResultRanked(playerScore);
+				if (!(await submitGameResultRanked(playerScore))) {
+					return ;
+				}
 			}
 			const status = await wsclient?.updateStatus(false, gameState.gameId);
 			wsclient?.leave();
@@ -181,7 +186,10 @@ export const TTTModals = memo(() => {
 	const initiateGame = async (username: string, color: string) => {
 		if (username !== playerInfos.name || color !== playerInfos.color) {
 			const colorCopy = color.replace('#', '0x');
-			const number = await onSetNameAndColor(username, colorCopy);
+			if (await onSetNameAndColor(username, colorCopy)) {
+				return ;
+			}
+
 		}
 
 		setCustomized(true);
@@ -208,8 +216,7 @@ export const TTTModals = memo(() => {
 
 	const registerNewPlayer = async (username: string, color: string) => {
 		const colorCopy = color.replace('#', '0x');
-		const number = await onSetNameAndColor(username, colorCopy);
-		if (number) {
+		if (!(await onSetNameAndColor(username, colorCopy))) {
 			setShowSetModal(false);
 		}
 	}

@@ -87,7 +87,7 @@ function useContract() {
 	// starts a previously created tournament and creates game tree
 	// players cannot join after this
 	const startTournament = useCallback(async (tournament_id: number) => {
-		await callContract('startTournament', [tournament_id]);
+		return (await callContract('startTournament', [tournament_id]));
 	},[callContract]);
 
 	// sets name and color of the player (player = calling address)
@@ -99,7 +99,7 @@ function useContract() {
 
 	// calling address/player joins the specified tournament
 	const joinTournament = useCallback(async (tournament_id: number) => {
-		await callContract('joinTournament', [tournament_id]);
+		return (await callContract('joinTournament', [tournament_id]));
 	},[callContract]);
 
 	// tournament has to have at least 2 players for this to work
@@ -109,7 +109,7 @@ function useContract() {
 		// 	{ player: '0x0000000000', score: 1 },
 		// 	{ player: '0x4242424242', score: 2 },
 		// ]
-		await callContract('submitGameResultTournament', [tournament_id, game_id, scores]);
+		return (await callContract('submitGameResultTournament', [tournament_id, game_id, scores]));
 	},[callContract]);
 
 	// ranked games cannot be created beforehand, they will automatically be created upon submission of scores
@@ -120,7 +120,7 @@ function useContract() {
 		// 	{ player: '0x0000000000', score: 1 },
 		// 	{ player: '0x4242424242', score: 2 },
 		// ]
-		await callContract('submitGameResultRanked', [scores]);
+		return (await callContract('submitGameResultRanked', [scores]));
 	},[callContract]);
 
 	// returns array of all available tournaments

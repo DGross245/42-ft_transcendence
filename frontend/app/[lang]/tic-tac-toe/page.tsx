@@ -17,6 +17,7 @@ export default function TicTacToePage() {
 	const [tournament, setTournament] = useState({ id: -1, index: -1 });
 	const { isConnected } = useWeb3ModalAccount();
 	const router = useRouter();
+	const [gameID, setGameID] = useState("-1");
 
 	useEffect(() => {
 		if (!isConnected) {
@@ -26,9 +27,9 @@ export default function TicTacToePage() {
 
 	return (
 		<div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
-			<GameState gameMode={gameOptions.gameMode} isBotActive={gameOptions.isBotActive} strength={gameOptions.botStrength} tournament={tournament} setTournament={setTournament} >
+			<GameState gameID={gameID} gameMode={gameOptions.gameMode} isBotActive={gameOptions.isBotActive} strength={gameOptions.botStrength} tournament={tournament} setTournament={setTournament} >
 				<Socket wsclient={wsclient} setWsclient={setWsclient}>
-					<SelectionModal wsclient={wsclient} isOpen={open} setOpen={setOpen} onClose={() => setOpen(false)} gameType={"TTT"} setGameOptions={setGameOptions} tournamentState={tournament} />
+					<SelectionModal setGameID={setGameID} wsclient={wsclient} isOpen={open} setOpen={setOpen} onClose={() => setOpen(false)} gameType={"TTT"} setGameOptions={setGameOptions} tournamentState={tournament} />
 					<TTTScene />
 				</Socket>
 			</GameState>

@@ -2,6 +2,7 @@ import { useSound } from "@/components/hooks/Sound";
 import { useCallback, useEffect, useState } from "react";
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
+import { useEffectDebugger } from "@/components/Pong/PongSocketEvents";
 
 export const usePongUI = () => {
 	const [showModal, setShowModal] = useState(false);
@@ -20,19 +21,20 @@ export const usePongUI = () => {
 	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
 		if (pongGameState.gameOver) {
-			console.log("dasd")
-			const delay = 1000;
+			const delay = 2000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
-				if (playerStatus === "unavailable") {
-					playSound("silly");
-				} else if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect")) {
-					playSound("win");
-				} else {
-					playSound("losing");
+				if (playerStatus !== 'leave') {
+					if (playerStatus === "unavailable") {
+						playSound("silly");
+					} else if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect")) {
+						playSound("win");
+					} else {
+						playSound("losing");
+					}
 				}
 			}, delay);
-
+			
 			return (() => {
 				clearTimeout(modalTimeout)
 			});

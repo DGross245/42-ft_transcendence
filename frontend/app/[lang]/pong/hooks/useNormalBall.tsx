@@ -85,7 +85,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		}
 	
 		if (onPositionChange && ballRef.current) {
-				onPositionChange(ballRef.current.position);
+			onPositionChange(ballRef.current.position);
 		}
 	}
 
@@ -159,7 +159,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
-			if (playerScore === 7) {
+			if (playerScore === 7 && !pongGameState.gameOver) {
 				let ball = temp.current;
 				ball.x = 0;
 				ball.z = 0;
@@ -182,7 +182,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 
 		checkWinner('1', scores.p1Score);
 		checkWinner('2', scores.p2Score);
-	}, [pongGameState.gameId, scores, wsclient, playerState.master, setWinner, setBallVisibility, updatePongGameState]);
+	}, [pongGameState.gameId, pongGameState.gameOver, scores, wsclient, playerState.master, setWinner, setBallVisibility, updatePongGameState]);
 
 	// Game/render loop for the ball.
 	useFrame((_, deltaTime) => {

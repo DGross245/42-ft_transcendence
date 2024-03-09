@@ -10,7 +10,7 @@ import { usePongUI } from "@/app/[lang]/pong/hooks/usePongUI";
 import { initialPongPlayerState } from "@/app/[lang]/pong/context/PongSockets";
 import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
-import { useJoinEvents } from "../JoinGame";
+import { useJoinEvents } from "../hooks/useJoinGame";
 import { intToHexColor } from "../TTT/TTTModals";
 
 /* -------------------------------------------------------------------------- */
@@ -92,6 +92,16 @@ export const PongModals = memo(() => {
 		}
 	}, [showModal, playerState, winner, playerStatus])
 
+
+	// Click handler for preventing clicking a button multiple times
+	const handleNextClick = async () => {
+		if (!isClicked) {
+			setIsClicked(true);
+			await sendScoreAndContinue();
+			setIsClicked(false);
+		}
+	};
+
 	// Function to handle sending player scores and continuing the game
 	const sendScoreAndContinue = async () => {
 		if (playerState.master || playerStatus === "disconnect" || playerStatus === "leave" ) {
@@ -107,10 +117,14 @@ export const PongModals = memo(() => {
 				const data = await getTournament(tournament.id);
 				const finished = data.games[tournament.index].finished;
 				if (!finished) {
-					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+					if (!(await submitGameResultTournament(tournament.id, tournament.index, playerScore))) {
+						return ;
+					}
 				}
 			} else if (playerState.master) {
-				await submitGameResultRanked(playerScore);
+				if (!(await submitGameResultRanked(playerScore))) {
+					return ;
+				}
 			}
 			const status = await wsclient?.updateStatus(false, pongGameState.gameId);
 			wsclient?.leave();
@@ -146,15 +160,6 @@ export const PongModals = memo(() => {
 		}
 	}, [playerStatus]);
 
-	// Click handler for preventing clicking a button multiple times
-	const handleNextClick = async () => {
-		if (!isClicked) {
-			setIsClicked(true);
-			await sendScoreAndContinue();
-			setIsClicked(false);
-		}
-	};
-
 	// Quit handler
 	const quitGame = useCallback(() => {
 		router.push('/');
@@ -179,7 +184,9 @@ export const PongModals = memo(() => {
 	const initiateGame = async (username: string, color: string) => {
 		if (username !== playerInfos.name || color !== playerInfos.color) {
 			const colorCopy = color.replace('#', '0x');
-			const number = await onSetNameAndColor(username, colorCopy);
+			if (await onSetNameAndColor(username, colorCopy)) {
+				return ;
+			}
 		}
 
 		setCustomized(true);
@@ -206,8 +213,7 @@ export const PongModals = memo(() => {
 
 	const registerNewPlayer = async (username: string, color: string) => {
 		const colorCopy = color.replace('#', '0x');
-		const number = await onSetNameAndColor(username, colorCopy);
-		if (number) {
+		if (!(await onSetNameAndColor(username, colorCopy))) {
 			setShowSetModal(false);
 		}
 	}
@@ -250,7 +256,7 @@ export const PongModals = memo(() => {
 				) : (
 					pongGameState.gameId.includes("Custom-Game-") ? (
 						// Custom-Game Modal
-						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} loading={sendRequest} status={getStatus()} quit={quitGame}/>
+						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} status={getStatus()} buttonLoading={sendRequest} quit={quitGame}/>
 				) : (
 					// Ranked Modal
 					<GameModal isOpen={showModal} gameResult={getGameResult()} queue={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
@@ -277,4 +283,4 @@ export const PongModals = memo(() => {
 	)
 })
 
-PongModals.displayName = "TTTModals"
+PongModals.displayName = "PongModals"

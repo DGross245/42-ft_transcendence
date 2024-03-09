@@ -7,39 +7,39 @@ import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
 import useContract from "@/components/hooks/useContract";
 import { useRouter } from "next/navigation";
 
-// TODO: REMOVE THIS LATTER
-export const usePrevious = (value, initialValue) => {
-	const ref = useRef(initialValue);
-	useEffect(() => {
-	  ref.current = value;
-	});
-	return ref.current;
-  };
+// // TODO: REMOVE THIS LATTER
+// export const usePrevious = (value, initialValue) => {
+// 	const ref = useRef(initialValue);
+// 	useEffect(() => {
+// 	  ref.current = value;
+// 	});
+// 	return ref.current;
+//   };
 
-  export const useEffectDebugger = (effectHook, dependencies, dependencyNames = []) => {
-	const previousDeps = usePrevious(dependencies, []);
+//   export const useEffectDebugger = (effectHook, dependencies, dependencyNames = []) => {
+// 	const previousDeps = usePrevious(dependencies, []);
   
-	const changedDeps = dependencies.reduce((accum, dependency, index) => {
-	  if (dependency !== previousDeps[index]) {
-		const keyName = dependencyNames[index] || index;
-		return {
-		  ...accum,
-		  [keyName]: {
-			before: previousDeps[index],
-			after: dependency
-		  }
-		};
-	  }
+// 	const changedDeps = dependencies.reduce((accum, dependency, index) => {
+// 	  if (dependency !== previousDeps[index]) {
+// 		const keyName = dependencyNames[index] || index;
+// 		return {
+// 		  ...accum,
+// 		  [keyName]: {
+// 			before: previousDeps[index],
+// 			after: dependency
+// 		  }
+// 		};
+// 	  }
   
-	  return accum;
-	}, {});
+// 	  return accum;
+// 	}, {});
   
-	if (Object.keys(changedDeps).length) {
-	  console.log('[use-effect-debugger] ', changedDeps);
-	}
+// 	if (Object.keys(changedDeps).length) {
+// 	  console.log('[use-effect-debugger] ', changedDeps);
+// 	}
   
-	useEffect(effectHook, dependencies);
-};
+// 	useEffect(effectHook, dependencies);
+// };
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -269,10 +269,14 @@ export const PongSocketEvents = memo(() => {
 			}
 		}
 
-		if (isFull && wsclient && pongGameState.gameId !== '-1') {
+		if (wsclient && pongGameState.gameId !== '-1') {
 			wsclient?.addMessageListener(`IsCLI-${pongGameState.gameId}`, pongGameState.gameId, makeMaster);
+
+			return () => {
+				wsclient?.removeMessageListener(`IsCLI-${pongGameState.gameId}`, pongGameState.gameId);
+			} 
 		}
-	}, [isFull, wsclient, pongGameState.gameId, setPlayerState]);
+	}, [wsclient, pongGameState.gameId, setPlayerState]);
 
 	useEffect(() => {
 		const setPlayer = (msg: string) => {

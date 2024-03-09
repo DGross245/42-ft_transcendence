@@ -160,14 +160,14 @@ interface GameStateContextValue {
 
 export const GameStateContext = createContext<GameStateContextValue>({} as GameStateContextValue);
 
-export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, strength: number, children: ReactNode, tournament: {id: number, index: number}, setTournament: Dispatch<SetStateAction<{id: number, index: number}>>}> = ({ gameMode = false, isBotActive = false, strength = 0.9, tournament, setTournament, children}) => {
+export const GameState: React.FC<{ gameID: string, gameMode: boolean, isBotActive: boolean, strength: number, children: ReactNode, tournament: {id: number, index: number}, setTournament: Dispatch<SetStateAction<{id: number, index: number}>>}> = ({ gameID, gameMode = false, isBotActive = false, strength = 0.9, tournament, setTournament, children}) => {
 	const [isGameMode, setGameMode] = useState(gameMode);
 	const [countdownVisible, setCountdownVisible] = useState(true);
 	const [currentTurn, setTurn] = useState('');
 	const [board, setBoard] = useState(initialBoard());
 	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
 	const [winner, setWinner] = useState('');
-	const [gameState, setGameState] = useState({ gameId: "-1", pause: true, reset: false, gameOver: false });
+	const [gameState, setGameState] = useState({ gameId: gameID, pause: true, reset: false, gameOver: false });
 	const [lineCoords, setLineCoords] = useState([...winningCoords]);
 	const [isLineVisible, setLineVisible] = useState(false);
 	const [botState, setBot] = useState({ isActive: isBotActive, symbol: 'NOT DEFINED', strength: strength, client: -1});
@@ -183,8 +183,9 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, stre
 
 	useEffect(() => {
 		setGameMode(gameMode);
-		setBot(prevState => ({ ...prevState, isActive: isBotActive }));
-	}, [gameMode, isBotActive]);
+		setBot(prevState => ({ ...prevState, isActive: isBotActive, strength: strength }));
+		updateGameState({ gameId: gameID })
+	}, [gameMode, isBotActive, gameID, strength, updateGameState]);
 
 	const value: GameStateContextValue = {
 		currentTurn,

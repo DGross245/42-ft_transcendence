@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Direction } from "../../app/[lang]/pong/hooks/usePongBot";
 
 import { useKey } from "@/components/hooks/useKey";
@@ -25,6 +25,14 @@ export const RightPaddle : React.FC<{ direction: Direction }> = ({ direction }) 
 
 	const paddleSpeed = 300;
 	const borderPositionZ = 103;
+
+	const getColor = useMemo(() => {
+		if (playerState.client !== -1) {
+			return (playerState.client === 1 ? playerState.players[0].color : playerState.players[1].color);
+		} else {
+			return (0xffffff);
+		}
+	},[playerState.client, playerState.players]);
 
 	//* ------------------------------- useEffects ------------------------------ */
 	useEffect(() => {
@@ -60,7 +68,7 @@ export const RightPaddle : React.FC<{ direction: Direction }> = ({ direction }) 
 	return (
 		<mesh ref={rightPaddleRef} position={[151, 0, 0]} rotation={[Math.PI / 2, 0, 0]} >
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ playerState.players[1].color } />
+			<meshBasicMaterial color={ getColor } />
 		</mesh>
 	);
 };
@@ -104,7 +112,7 @@ export const LeftPaddle = () => {
 	return (
 		<mesh ref={leftPaddleRef} position={[-151, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
 			<boxGeometry args={[4, 30, 4]} />
-			<meshBasicMaterial color={ playerState.players[0].color } />
+			<meshBasicMaterial color={ playerState.client === -1 ? 0xffffff : playerState.players[playerState.client].color } />
 		</mesh>
 	);
 };

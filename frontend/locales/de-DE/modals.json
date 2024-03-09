@@ -30,6 +30,7 @@
 
 	"selectionmodal.toast.tournamentrunning": "Sie haben bereits ein Turnier laufen",
 	"selectionmodal.toast.alreadyjoined": "Sie haben bereits an einem Turnier teilgenommen",
+	"selectionmodal.toast.cantjoined": "Sie können diesem laufenden Turnier nicht beitreten",
 	"selectionmodal.gameresults.title": "Spielergebnisse von Spiel {{gameid, string}}",
 	"selectionmodal.player": "Spieler",
 	"selectionmodal.score": "Punktzahl",

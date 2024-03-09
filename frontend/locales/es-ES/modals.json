@@ -30,6 +30,7 @@
 
 	"selectionmodal.toast.tournamentrunning": "Ya tienes un torneo en curso",
 	"selectionmodal.toast.alreadyjoined": "Ya te has unido a un torneo",
+	"selectionmodal.toast.cantjoined": "No puedes unirte a este torneo en curso",
 	"selectionmodal.gameresults.title": "Resultados del juego {{gameid, string}}",
 	"selectionmodal.player": "Jugador",
 	"selectionmodal.score": "Puntuación",
