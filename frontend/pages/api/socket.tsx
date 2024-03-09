@@ -152,6 +152,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			socket.on('create-game', (gameMode: string) => {
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 				const customGame = `Custom-Game-${gameMode}-${id}`;
+				console.log("custom game: ", customGame);
 				socket.emit('match-found', customGame, -1, -1);
 			});
 
