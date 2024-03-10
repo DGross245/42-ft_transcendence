@@ -9,6 +9,7 @@ export const useUI = () => {
 	const playSound = useSound();
 	const { gameState, winner } = useGameState();
 	const { playerState, playerStatus } = useSocket();
+	const [soundPlayed, setSoundPlayed] = useState(false);
 
 	const closeModal = useCallback(() => {
 		setShowModal(false);
@@ -20,7 +21,7 @@ export const useUI = () => {
 
 	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
-		if (gameState.gameOver) {
+		if (gameState.gameOver && !soundPlayed) {
 			const delay = 2000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
@@ -35,13 +36,16 @@ export const useUI = () => {
 						playSound("losing");
 					}
 				}
+				setSoundPlayed(true);
 			}, delay);
 
 			return (() => {
 				clearTimeout(modalTimeout)
 			});
+		} else if (!gameState.gameOver && soundPlayed) {
+			setSoundPlayed(false);
 		}
-	}, [gameState.gameOver, openModal, playerStatus, playerState.client, playerState.players, playSound, winner]);
+	}, [gameState.gameOver, soundPlayed, openModal, playerStatus, playerState.client, playerState.players, playSound, winner]);
 	return {
 		closeModal,
 		openModal,
