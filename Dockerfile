@@ -21,8 +21,5 @@ USER nextjs
 
 COPY --chown=nextjs:nodejs ./ ./
 
-# Build the development version and start the app
-CMD npm run dev
-
 # Build the production-ready optimized version and start the app
-# CMD npm run build && npm run start
+CMD npm run build && npm run start
