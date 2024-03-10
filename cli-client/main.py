@@ -40,8 +40,7 @@ class WindowTooSmall(Exception):
 # -------------------------------------------------------------------------- #
 
 parser = argparse.ArgumentParser(description='CLI Pong Client')
-parser.add_argument('ip_addr', type=str, help='IP Address')
-parser.add_argument('port', type=str, help='Port')
+parser.add_argument('-host', '--hostname', type=str, help='Hostname of the Server', default='https://localhost')
 parser.add_argument('-g', '--game_id', type=str, help='Game ID', default='-1')
 args = parser.parse_args()
 g_game_id = args.game_id
@@ -154,12 +153,12 @@ def handle_resize(sig, frame):
 #                                Socket Setup                                #
 # -------------------------------------------------------------------------- #
 
-sio = socketio.AsyncClient(logger=False, engineio_logger=False)
+sio = socketio.AsyncClient(logger=False, engineio_logger=False, ssl_verify=False)
 
 async def socket_initialize():
 	try:
-		requests.get('http://' + args.ip_addr + ':' + args.port + '/api/socket')
-		await sio.connect('http://' + args.ip_addr + ':' + args.port)
+		requests.get(f'{args.hostname}/api/socket', verify=False)
+		await sio.connect(args.hostname)
 	except Exception as e:
 		logging.error(RED + f'Error connecting to server: {e}' + RESET)
 		event_quit.set()
