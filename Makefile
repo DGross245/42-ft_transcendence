@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: dgross <dgross@student.42.fr>              +#+  +:+       +#+         #
+#    By: jschneid <jschneid@student.42heilbronn.    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/16 11:24:22 by dgross            #+#    #+#              #
-#    Updated: 2023/11/07 14:23:41 by dgross           ###   ########.fr        #
+#    Updated: 2024/02/01 09:42:26 by jschneid         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,20 +16,20 @@ all: up
 data:
 
 up: data
-	docker-compose up --build
+	@docker-compose up --build -d
 
 down:
-	docker-compose down
+	@docker-compose down
 
 clean:
-	docker-compose down -v --rmi all --remove-orphans
-	docker network prune -f
-	rm -rf ./database/data
+	@docker-compose down -v --rmi all --remove-orphans
+	@docker network prune -f
+	# @rm -rf ./database/data
 
 ps:
-	docker-compose ps
+	@docker-compose ps
 
 logs:
-	docker-compose logs
+	@docker-compose logs
 
 .PHONY: up data down clean ps logs
