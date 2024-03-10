@@ -128,11 +128,11 @@ def init_scaling_factors():
 	global g_paddle_speed
 	g_scaling_factor_height = curses.LINES / g_server_game_height / 2
 	g_scaling_factor_width = curses.COLS / g_server_game_width / 2
-	g_paddle_speed = int(g_server_game_height * g_scaling_factor_height // 10)
 	while g_paddle_length % 2 != 0 or g_paddle_length == 0:
 		g_scaling_factor_height -= 0.01
 		g_scaling_factor_width -= 0.01
 		g_paddle_length = int((g_server_game_height * g_scaling_factor_height) / (g_server_game_height / g_server_paddle_length))
+	g_paddle_speed = int(g_server_game_height * g_scaling_factor_height // 10)
 
 # -------------------------------------------------------------------------- #
 #                               Signal Handler                               #
