@@ -32,6 +32,10 @@ interface SearchableGamesTableProps {
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
+const getContent = (item: {[key: string]: string | GameState}, key: string) => {
+	return (key === "player1" ? getKeyValue(item, "playerAddress1") : key === "player2" ? getKeyValue(item, "playerAddress2") : getKeyValue(item, key))
+}
+
 const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, rows, highlightedRows, onRowClick, ariaLabel, onJoin, tooltipEnabled }) => {
 	const [filteredRows, setFilteredRows] = useState(rows ?? []);
 	const [search, setSearch] = useState("");
@@ -104,8 +108,10 @@ const SearchableGamesTable: React.FC<SearchableGamesTableProps> = ({ columns, ro
 								} else {
 									return (
 										<TableCell key={key} className={classes}>
-											<Tooltip showArrow={true} content={getKeyValue(item, key)} isDisabled={!tooltipEnabled}>
-												<div className="overflow-hidden :">{getKeyValue(item, key)}</div>
+											<Tooltip showArrow={true} content={getContent(item, key)} isDisabled={!tooltipEnabled}>
+												<div className="overflow-hidden :">
+													{getKeyValue(item, key)}
+												</div>
 											</Tooltip>
 										</TableCell>
 									)

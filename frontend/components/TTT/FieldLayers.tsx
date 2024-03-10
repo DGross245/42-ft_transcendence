@@ -52,7 +52,7 @@ export const FieldLayers = memo(() => {
 		}
 	}
 
-	return ( fieldArray );
+	return ( <>{fieldArray}</> );
 })
 
 FieldLayers.displayName = "FieldLayers"

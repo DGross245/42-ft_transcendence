@@ -13,6 +13,7 @@
 	"customizemodal.selectcolor": "Farbe auswählen",
 	"customizemodal.choosecolor": "Wähle deine Farbe",
 	"customizemodal.joingame": "Spiel beitreten",
+	"customizemodal.invalidusername.message": "Ungültiger Benutzername. Muss zwischen 5 und 26 Zeichen lang sein!",
 
 	"gamemodal.winner": "Gewinner",
 	"gamemodal.loser": "Verlierer",

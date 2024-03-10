@@ -7,6 +7,7 @@ export const usePongUI = () => {
 	const [showModal, setShowModal] = useState(false);
 	const { pongGameState, winner } = usePongGameState();
 	const { playerState, playerStatus } = usePongSocket();
+	const [soundPlayed, setSoundPlayed] = useState(false);
 	const playSound = useSound();
 
 	const closeModal = useCallback(() => {
@@ -19,7 +20,7 @@ export const usePongUI = () => {
 
 	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
-		if (pongGameState.gameOver) {
+		if (pongGameState.gameOver && !soundPlayed) {
 			const delay = 2000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
@@ -32,13 +33,16 @@ export const usePongUI = () => {
 						playSound("losing");
 					}
 				}
+				setSoundPlayed(true);
 			}, delay);
 			
 			return (() => {
 				clearTimeout(modalTimeout)
 			});
+		} else if (!pongGameState.gameOver && soundPlayed) {
+			setSoundPlayed(false);
 		}
-	}, [pongGameState.gameOver, openModal, winner, playerStatus, playerState.client, playerState.players, playSound]);
+	}, [pongGameState.gameOver, soundPlayed, openModal, winner, playerStatus, playerState.client, playerState.players, playSound]);
 
 	return {
 		closeModal,

@@ -4,13 +4,13 @@ import { Object3DNode, Vector3, extend } from '@react-three/fiber';
 import { MutableRefObject } from 'react';
 import { Mesh, MeshBasicMaterial } from 'three';
 
-import Orbitron_Regular from '@/public/fonts/Orbitron_Regular.json';
+import Orbitron_Regular from '@/public/fonts/Orbitron_Regular.json'
 import { usePongGameState } from '@/app/[lang]/pong/hooks/usePongGameState';
 
 extend({ TextGeometry })
 
 type ScoreType = {
-	[key: number]: { position: Vector3 };
+	[key: number]: { position: Array<number> };
 }
 
 /* The `declare module` statement is used to extend the existing module declaration in TypeScript.
@@ -62,8 +62,8 @@ export const Scoreboard = () => {
 		7:	{ position: [ 38, -7, -40] },
 	}
 
-	const position1 : Vector3 = Score1[scores.p1Score]?.position;
-	const position2 : Vector3 = Score2[scores.p2Score]?.position;
+	const pos1 = Score1[scores.p1Score]?.position;
+	const pos2 = Score2[scores.p2Score]?.position;
 
 	//* ------------------------------- functions ------------------------------ */
 	const getColor = ( ref:  MutableRefObject<Mesh>) => {
@@ -78,11 +78,11 @@ export const Scoreboard = () => {
 
 	return (
 		<>
-			<mesh visible={isScoreVisible} position={position1} rotation={[-Math.PI / 2, 0, 0]} >
+			<mesh visible={isScoreVisible} position={pos1 as Vector3} rotation={[-Math.PI / 2, 0, 0]} >
 				<textGeometry args={[String(scores.p1Score), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(leftPaddleRef) } />
 			</mesh>
-			<mesh visible={isScoreVisible} position={position2} rotation={[-Math.PI / 2, 0, 0]}>
+			<mesh visible={isScoreVisible} position={pos2 as Vector3} rotation={[-Math.PI / 2, 0, 0]}>
 				<textGeometry args={[String(scores.p2Score), {font, size: 35, height: 3}]} />
 				<meshBasicMaterial color={ getColor(rightPaddleRef) } />
 			</mesh>

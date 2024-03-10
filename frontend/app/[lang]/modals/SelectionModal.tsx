@@ -166,6 +166,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 					tournametInfo.push(
 						{
 							id: players[i],
+							playerName: (await getPlayer(players[i])).name,
 							score: ""
 						}
 					)
@@ -176,8 +177,10 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 				for (let i = 0; i < games.length; i++) {
 					gameStats.push({
 						id: String(i),
-						player1: games[i].player_scores[0].addr,
-						player2: games[i].player_scores[1].addr
+						playerAddress1: games[i].player_scores[0].addr,
+						playerAddress2: games[i].player_scores[1].addr,
+						player1: (await getPlayer(games[i].player_scores[0].addr)).name,
+						player2: (await getPlayer(games[i].player_scores[1].addr)).name
 					});
 				}
 				setGames(gameStats);
@@ -187,7 +190,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 						for (let j = 0; j < 2; j++) {
 							const index = tournametInfo.findIndex(info => info.id === games[i].player_scores[j].addr)
 
-							if (index) {
+							if (index !== -1) {
 								let currentScore = Number(tournametInfo[index].score);
 								let newScore = currentScore + Number(games[i].player_scores[j].score);
 								tournametInfo[index].score = String(newScore);
@@ -207,7 +210,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 		}
 
 		return () => clearInterval(fetchDataInterval);
-	}, [selectedTournament, tournamentState, getTournament, getTournamentTree]);
+	}, [selectedTournament, tournamentState, getPlayer,getTournament, getTournamentTree]);
 
 	const onGameCreate = async () => {
 		// search for already created tournaments
@@ -319,7 +322,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 					<SearchableGamesTable
 						ariaLabel="Tournaments Table"
 						columns={{
-							id: t("selectionmodal.player"),
+							playerName: t("selectionmodal.player"),
 							score: t("selectionmodal.score")
 						}}
 						rows={tournamentData}
@@ -435,7 +438,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ setGameID, onClose, c
 		}
 
 		setGameOptions({ gameMode: isGameMode, botStrength: 0, isBotActive: false });
-		setGameID(id);
+		setGameID && setGameID(id);
 		closeMain();
 	}
 

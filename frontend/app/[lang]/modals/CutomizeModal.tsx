@@ -1,6 +1,6 @@
 import { Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
 import ModalButton from "./components/ModalButton";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "@/app/i18n";
 import styles from "./Modals.module.css";
 import clsx from "clsx";
@@ -37,6 +37,10 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 		startGame(username, color);
 	}
 
+	const isInvalidUsername = useMemo(() => {
+		return username.length < 5 || username.length > 26;
+	}, [username]);
+
 	return (
 		<Modal
 			size="xl"
@@ -64,7 +68,9 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 						className="w-full"
 						style={{color: color}}
 						placeholder="HarryPotterObamaSonic10Inu"
-						onChange={(e) => setUsername(e.target.value)}
+						errorMessage={t("customizemodal.invalidusername.message")}
+						onValueChange={setUsername}
+						isInvalid={isInvalidUsername}
 						startContent={
 							<div className="pointer-events-none flex items-center">
 								<span className="text-default-400 text-small font-bold">@</span>

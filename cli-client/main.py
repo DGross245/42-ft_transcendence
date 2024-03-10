@@ -40,8 +40,7 @@ class WindowTooSmall(Exception):
 # -------------------------------------------------------------------------- #
 
 parser = argparse.ArgumentParser(description='CLI Pong Client')
-parser.add_argument('ip_addr', type=str, help='IP Address')
-parser.add_argument('port', type=str, help='Port')
+parser.add_argument('-host', '--hostname', type=str, help='Hostname of the Server', default='https://localhost')
 parser.add_argument('-g', '--game_id', type=str, help='Game ID', default='-1')
 args = parser.parse_args()
 g_game_id = args.game_id
@@ -154,12 +153,12 @@ def handle_resize(sig, frame):
 #                                Socket Setup                                #
 # -------------------------------------------------------------------------- #
 
-sio = socketio.AsyncClient(logger=False, engineio_logger=False)
+sio = socketio.AsyncClient(logger=False, engineio_logger=False, ssl_verify=False)
 
 async def socket_initialize():
 	try:
-		requests.get('http://' + args.ip_addr + ':' + args.port + '/api/socket')
-		await sio.connect('http://' + args.ip_addr + ':' + args.port)
+		requests.get(f'{args.hostname}/api/socket', verify=False)
+		await sio.connect(args.hostname)
 	except Exception as e:
 		logging.error(RED + f'Error connecting to server: {e}' + RESET)
 		event_quit.set()
@@ -337,11 +336,15 @@ def draw_ball(stdscr, ball, global_ball, score):
 
 def move_paddle(paddle, key):
 	if key == curses.KEY_UP:
-		if paddle['y'] - g_paddle_speed > server_y_to_cli_y(-g_server_game_height / 2) - curses.LINES / 40:
+		if paddle['y'] - g_paddle_speed > server_y_to_cli_y(-g_server_game_height / 2):
 			paddle['y'] -= g_paddle_speed
+		else:
+			paddle['y'] = server_y_to_cli_y(-g_server_game_height / 2)
 	elif key == curses.KEY_DOWN:
-		if paddle['y'] + g_paddle_speed + g_paddle_length < server_y_to_cli_y(g_server_game_height / 2) + curses.LINES / 40:
+		if paddle['y'] + g_paddle_speed + g_paddle_length < server_y_to_cli_y(g_server_game_height / 2) + 1:
 			paddle['y'] += g_paddle_speed
+		else:
+			paddle['y'] = server_y_to_cli_y(g_server_game_height / 2) + 1 - g_paddle_length
 	asyncio.run(send_paddle_data(paddle['y'], g_game_id))
 	return paddle
 
