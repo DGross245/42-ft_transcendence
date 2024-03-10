@@ -7,6 +7,20 @@ import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
 import { contract_address } from "@/components/hooks/useContract";
 
+const winston = require('winston');
+require('winston-logstash');
+
+const logger = winston.createLogger({
+	transports: [
+		new winston.transports.Logstash({
+			port: 5001,
+			node_name: 'transcendence',
+			mode: 'tcp',
+			host: 'localhost'
+		})
+	]
+});
+
 /* -------------------------------------------------------------------------- */
 /*                                Interface(s)                                */
 /* -------------------------------------------------------------------------- */
@@ -150,6 +164,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			});
 
 			socket.on('create-game', (gameMode: string) => {
+				logger.info('create-game', {gameMode: gameMode});
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 				const customGame = `Custom-Game-${gameMode}-${id}`;
 				console.log("custom game: ", customGame);
