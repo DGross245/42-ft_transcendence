@@ -4,21 +4,15 @@ FROM node:20-alpine
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the package.json and package-lock.json (or yarn.lock) to install dependencies
-COPY ./frontend/package*.json ./
+COPY ./frontend/ ./
+
+RUN chmod -R 777 .
 
 # Install dependencies, including Next.js
 RUN npm install
 RUN npm install next
-RUN mkdir -p node_modules/.cache && chmod -R 777 node_modules/.cache
-RUN chmod -R 777 .
 
-# Copy the rest of the application code
-COPY ./frontend/ ./
-# TO-DO:check if is necessary
-# COPY ./contracts/ ./
-
-# Expose the port that your Next.js app will run on
+# Expose the port that Next.js app will run on
 EXPOSE 3000
 
 RUN addgroup -g 1001 -S nodejs
