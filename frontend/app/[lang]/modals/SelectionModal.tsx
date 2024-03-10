@@ -84,16 +84,17 @@ const ModalContentsWrapper: React.FC<{children?: React.ReactNode, loading?: bool
 /*                               Modal Contents                               */
 /* -------------------------------------------------------------------------- */
 const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, closeMain, setGameOptions, tournamentState, wsclient }) => {
+	const { getTournaments, getTournament, tmContract, getTournamentTree, getPlayer } = useContract();
+	const { onCreateTournament, onJoinTournament, onStartTournament } = useJoinEvents(wsclient)
+	const { address } = useWeb3ModalAccount();
+	const { t } = useTranslation("modals");
+
 	const [selectedTournament, setSelectedTournament] = useState("");
 	const [tournament, setTournament] = useState(false);
 	const [tournamentID, setTournamentID] = useState(0);
 	const [data, setData] = useState<{[key: string]: string | GameState}[]>([]);
 	const [tournamentData, setTournamentData] = useState<{[key: string]: string | GameState}[]>([]);
-	const { getTournaments, getTournament, tmContract, getTournamentTree, getPlayer } = useContract();
-	const { onCreateTournament, onJoinTournament, onStartTournament } = useJoinEvents(wsclient)
-	const { address } = useWeb3ModalAccount();
 	const [games, setGames] = useState<{[key: string]: string | GameState}[]>([]);
-	const { t } = useTranslation("modals");
 
 	useEffect(() => {
 		const getSocketNumber = async (index: number) => {
@@ -349,7 +350,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 		>
 			<div className="flex items-end gap-2 justify-between">
 				<Snippet className="w-64 h-unit-10" symbol="ID" disableCopy={!tournament}> 0 </Snippet>
-				<Button className="w-full" color="primary" onClick={async () => {
+				<Button className="w-full" color="primary" isLoading={isLoading} onClick={async () => {
 					if (tournament) {
 						if (!(await onStartTournament(tournamentID, gameType))) {
 							setSelectedTournament(String(tournamentID));
