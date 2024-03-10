@@ -339,9 +339,13 @@ def move_paddle(paddle, key):
 	if key == curses.KEY_UP:
 		if paddle['y'] - g_paddle_speed > server_y_to_cli_y(-g_server_game_height / 2):
 			paddle['y'] -= g_paddle_speed
+		else:
+			paddle['y'] = server_y_to_cli_y(-g_server_game_height / 2)
 	elif key == curses.KEY_DOWN:
 		if paddle['y'] + g_paddle_speed + g_paddle_length < server_y_to_cli_y(g_server_game_height / 2) + 1:
 			paddle['y'] += g_paddle_speed
+		else:
+			paddle['y'] = server_y_to_cli_y(g_server_game_height / 2) + 1 - g_paddle_length
 	asyncio.run(send_paddle_data(paddle['y'], g_game_id))
 	return paddle
 
