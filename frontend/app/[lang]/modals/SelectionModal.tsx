@@ -350,7 +350,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 		>
 			<div className="flex items-end gap-2 justify-between">
 				<Snippet className="w-64 h-unit-10" symbol="ID" disableCopy={!tournament}> 0 </Snippet>
-				<Button className="w-full" color="primary" isLoading={isLoading} onClick={async () => {
+				<Button className="w-full" color="primary" onClick={async () => {
 					if (tournament) {
 						if (!(await onStartTournament(tournamentID, gameType))) {
 							setSelectedTournament(String(tournamentID));
