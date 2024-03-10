@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-
-volumes:
-
-networks:
-  transcendence:
-    driver: bridge
+  ft_transcendence:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
