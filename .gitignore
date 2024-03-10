@@ -3,3 +3,4 @@
 .DS_Store
 todo.txt
 ssl/
+node_modules/
