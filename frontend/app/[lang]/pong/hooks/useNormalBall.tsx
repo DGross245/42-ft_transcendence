@@ -191,10 +191,13 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 			wsclient?.emitMessageToGame(JSON.stringify(newScore), `ScoreUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 		}
 
-
+		if (playerState.client === 1 && playerState.master) {
+			checkWinner('1', scores.p2Score);
+			checkWinner('2', scores.p1Score);
+		}
 		checkWinner('1', playerState.master ? scores.p1Score : scores.p2Score);
 		checkWinner('2', playerState.master ? scores.p2Score : scores.p1Score);
-	}, [pongGameState.gameId, pongGameState.gameOver, scores, wsclient, playerState.master, setWinner, setBallVisibility, updatePongGameState]);
+	}, [pongGameState.gameId, playerState.client, pongGameState.gameOver, scores, wsclient, playerState.master, setWinner, setBallVisibility, updatePongGameState]);
 
 	// Game/render loop for the ball.
 	useFrame((_, deltaTime) => {
