@@ -27,8 +27,11 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 	useEffect(() => {
 		if (inputColor) {
 			setColor(inputColor);
+		} 
+		if (inputUsername) {
+			setUsername(inputUsername);
 		}
-	}, [inputColor, setColor]);
+	}, [inputColor, inputUsername]);
 
 	const onButtonClick = () => {
 		startGame(username, color);

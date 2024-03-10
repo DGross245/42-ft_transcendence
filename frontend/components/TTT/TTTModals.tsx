@@ -169,22 +169,24 @@ export const TTTModals = memo(() => {
 
 	useEffect(() => {
 		const getPlayerInfo = async () => {
-			if (playerAddress !== "") {
-				const playerInfo = await getPlayer(String(playerAddress));
-
-				const color = intToHexColor(Number(playerInfo.color));
-				setPlayerInfos({ color: color, name: String(playerInfo.name)});
+			if (address) {
+				const playerData = await getPlayer(String(address));
+				if (playerData && Number(playerData.addr) !== 0) {
+					const color = intToHexColor(Number(playerData.color));
+					setPlayerInfos({ color: color, name: playerData.name});
+				}
 			}
 		}
 
-		if (gameState.gameId !== '-1' && !customized) {
+		if (!customized) {
 			getPlayerInfo();
 		}
-	}, [customized, gameState.gameId, playerAddress, getPlayer, setPlayerInfos]);
+	}, [customized, gameState.gameId, address, getPlayer, setPlayerInfos]);
 
 	const initiateGame = async (username: string, color: string) => {
 		if (username !== playerInfos.name || color !== playerInfos.color) {
 			const colorCopy = color.replace('#', '0x');
+			setPlayerInfos({ color: color, name: String(username) });
 			if (await onSetNameAndColor(username, colorCopy)) {
 				return ;
 			}
@@ -200,6 +202,7 @@ export const TTTModals = memo(() => {
 		}
 	}, [gameState.reset, closeModal])
 
+	// first registartion
 	useEffect(() => {
 		const checkPlayerInfo = async () => {
 			const playerInfo = await getPlayer(String(address));
