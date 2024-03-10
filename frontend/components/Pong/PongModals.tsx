@@ -84,7 +84,7 @@ export const PongModals = memo(() => {
 	// Changes text based on winner
 	const getGameResult = useCallback(() => {
 		if (showModal) {
-			if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect")) {
+			if (winner === String(playerState.players[playerState.client].number + 1) || (winner === '' && playerStatus === "disconnect")) {
 				return (GameResult.Winner);
 			} else {
 				return (GameResult.Loser);
