@@ -30,7 +30,7 @@ export const CornerBorder = () => {
 		</mesh>
 	));
 
-	return (borders);
+	return (<>{borders}</>);
 }
 
 /**

@@ -1,8 +1,8 @@
 import crypto from 'crypto';
-import { RemoteSocket } from 'Socket.IO';
+import { RemoteSocket } from 'socket.io';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
-import { DecorateAcknowledgementsWithMultipleResponses } from 'Socket.IO/dist/typed-events';
-import { Server } from "Socket.IO";
+import { DecorateAcknowledgementsWithMultipleResponses } from 'socket.io/dist/typed-events';
+import { Server } from "socket.io";
 
 import { Game } from '@/components/hooks/useContract';
 import { contract } from './socket';

@@ -60,5 +60,5 @@ export const Grid = () => {
 		/>
 	)),[posAndRot])
 
-	return (lines);
+	return (<>{lines}</>);
 }

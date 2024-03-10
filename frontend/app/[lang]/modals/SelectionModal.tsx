@@ -438,7 +438,7 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ setGameID, onClose, c
 		}
 
 		setGameOptions({ gameMode: isGameMode, botStrength: 0, isBotActive: false });
-		setGameID(id);
+		setGameID && setGameID(id);
 		closeMain();
 	}
 

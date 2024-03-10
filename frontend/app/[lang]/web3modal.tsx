@@ -32,6 +32,6 @@ createWeb3Modal({
 });
 
 const Web3ModalProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
-	return children;
+	return (<>{children}</>);
 }
 export default Web3ModalProvider;
