@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
 
 import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
@@ -8,8 +8,10 @@ import GameModal, { GameResult, Status } from "@/app/[lang]/modals/GameModal";
 import useContract, { PlayerScore } from "../hooks/useContract";
 import { usePongUI } from "@/app/[lang]/pong/hooks/usePongUI";
 import { initialPongPlayerState } from "@/app/[lang]/pong/context/PongSockets";
-
-// TODO: Check if PongUI or UI in TTT is needed or can be simplified
+import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
+import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
+import { useJoinEvents } from "../hooks/useJoinGame";
+import { intToHexColor } from "../TTT/TTTModals";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -25,7 +27,8 @@ export const PongModals = memo(() => {
 		tournament,
 		updatePongGameState,
 		setStarted,
-		winner
+		winner,
+		setTournament
 	} = usePongGameState();
 	const {
 		continueIndex,
@@ -41,21 +44,35 @@ export const PongModals = memo(() => {
 		wsclient,
 		setPlayerState,
 		setSendRequest,
+		playerAddress,
+		customized,
+		setCustomized,
+		unregistered,
 		sendRequest
 	} = usePongSocket();
 	const {
 		submitGameResultRanked,
 		submitGameResultTournament,
-		getTournament
+		getTournament,
+		getPlayer
 	} = useContract();
 	const {
 		closeModal,
 		showModal
 	} = usePongUI();
+
+	const {
+		onSetNameAndColor
+	} = useJoinEvents(wsclient);
 	const router = useRouter();
+	const { tmContract } = useContract();
+	const {isConnected, address} = useWeb3ModalAccount();
 
 	//* ------------------------------- state variables ------------------------------ */
 	const [isClicked, setIsClicked] = useState(false);
+	const [playerInfos, setPlayerInfos] = useState({ color: "#ffffff", name: "KEK" });
+	const [showSetModal, setShowSetModal] = useState(false);
+	const [showCustomModal, setShowCustomModal] = useState(false);
 
 	/* ------------------------------- functions ------------------------------ */
 	const handleButtonClick = useCallback(() => {
@@ -67,17 +84,27 @@ export const PongModals = memo(() => {
 	// Changes text based on winner
 	const getGameResult = useCallback(() => {
 		if (showModal) {
-			if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect")) {
+			if (winner === String(playerState.players[playerState.client].number + 1) || (winner === '' && playerStatus === "disconnect")) {
 				return (GameResult.Winner);
 			} else {
-				return (GameResult.Looser);
+				return (GameResult.Loser);
 			}
 		}
 	}, [showModal, playerState, winner, playerStatus])
 
+
+	// Click handler for preventing clicking a button multiple times
+	const handleNextClick = async () => {
+		if (!isClicked) {
+			setIsClicked(true);
+			await sendScoreAndContinue();
+			setIsClicked(false);
+		}
+	};
+
 	// Function to handle sending player scores and continuing the game
 	const sendScoreAndContinue = async () => {
-		if (playerState.client === 0 || playerStatus === "disconnect" || playerStatus === "leave" ) {
+		if (playerState.master || playerStatus === "disconnect" || playerStatus === "leave" ) {
 			const maxClient = isGameMode ? 4 : 2;
 			const playerScore: PlayerScore[] = [];
 
@@ -87,34 +114,39 @@ export const PongModals = memo(() => {
 				})
 			}
 			if (tournament.id !== -1) {
-				const lol = getTournament(tournament.id);
-				const finished = (await lol).games[tournament.index].finished;
+				const data = await getTournament(tournament.id);
+				const finished = data.games[tournament.index].finished;
 				if (!finished) {
-					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+					if (!(await submitGameResultTournament(tournament.id, tournament.index, playerScore))) {
+						return ;
+					}
 				}
-			} else if (playerState.client === 0) {
-				await submitGameResultRanked(playerScore);
+			} else if (playerState.master) {
+				if (!(await submitGameResultRanked(playerScore))) {
+					return ;
+				}
+			}
+			const status = await wsclient?.updateStatus(false, pongGameState.gameId);
+			wsclient?.leave();
+	
+			// reset loop important states
+			closeModal();
+			updatePongGameState({ gameId: "-1", pause: true, reset: true });
+			setPlayerState(initialPongPlayerState());
+			setStarted(false);
+			setChipDisappear(false);
+			setTournament({ ...tournament, index: -1});
+
+			if (status) {
+				if (tournament.id !== -1) {
+					wsclient?.requestTournament(tournament.id, 'Pong');
+				} else {
+					wsclient?.joinQueue('Pong');
+				}
 			}
 			
 		}
 
-		const status = await wsclient?.updateStatus(false, pongGameState.gameId);
-		wsclient?.leave();
-
-		// reset loop important states
-		closeModal();
-		updatePongGameState({ gameId: "-1", pause: true, reset: true });
-		setPlayerState(initialPongPlayerState());
-		setStarted(false);
-		setChipDisappear(false);
-
-		if (status) {
-			if (tournament.id !== -1) {
-				wsclient?.requestTournament(tournament.id, 'Pong');
-			} else {
-				wsclient?.joinQueue('Pong');
-			}
-		}
 	}
 
 	// Returns Status enum based on playerStatus
@@ -128,23 +160,86 @@ export const PongModals = memo(() => {
 		}
 	}, [playerStatus]);
 
-	// Click handler for preventing clicking a button multiple times
-	const handleNextClick = async () => {
-		if (!isClicked) {
-			setIsClicked(true);
-			await sendScoreAndContinue();
-			setIsClicked(false);
-		}
-	};
-
 	// Quit handler
 	const quitGame = useCallback(() => {
 		router.push('/');
 		wsclient?.leave();
 	}, [wsclient, router]);
 
+	useEffect(() => {
+		const getPlayerInfo = async () => {
+			if (playerAddress !== "") {
+				const playerInfo = await getPlayer(String(playerAddress));
+
+				const color = intToHexColor(Number(playerInfo.color));
+				setPlayerInfos({ color: color, name: String(playerInfo.name)});
+			}
+		}
+
+		if (pongGameState.gameId !== '-1' && !customized) {
+			getPlayerInfo();
+		}
+	}, [customized, pongGameState.gameId, playerAddress, getPlayer, setPlayerInfos]);
+
+	const initiateGame = async (username: string, color: string) => {
+		if (username !== playerInfos.name || color !== playerInfos.color) {
+			const colorCopy = color.replace('#', '0x');
+			if (await onSetNameAndColor(username, colorCopy)) {
+				return ;
+			}
+		}
+
+		setCustomized(true);
+	}
+
+	useEffect(() => {
+		if (pongGameState.reset) {
+			closeModal();
+		}
+	}, [pongGameState.reset, closeModal])
+
+	useEffect(() => {
+		const checkPlayerInfo = async () => {
+			const playerInfo = await getPlayer(String(address));
+			if (Number(playerInfo.addr) === 0) {
+				setShowSetModal(true);
+			}
+		}
+
+		if (isConnected && tmContract && address) {
+			checkPlayerInfo();
+		}
+	}, [isConnected, getPlayer, address, tmContract]);
+
+	const registerNewPlayer = async (username: string, color: string) => {
+		const colorCopy = color.replace('#', '0x');
+		if (!(await onSetNameAndColor(username, colorCopy))) {
+			setShowSetModal(false);
+		}
+	}
+
+	useEffect(() => {
+		let timerId: NodeJS.Timeout;
+		if (pongGameState.gameId !== '-1' && !customized && tournament.id !== -1) {
+			timerId = setTimeout(() => {
+				setShowCustomModal(true);
+			}, 3000); 
+		}
+		else if (pongGameState.gameId !== '-1' && !customized) {
+			setShowCustomModal(true);
+		} else {
+			setShowCustomModal(false);
+		}
+		return () => {
+			if (timerId) {
+				clearTimeout(timerId);
+				
+			}
+		};
+	}, [pongGameState.gameId, customized, tournament]);
+
 	return (
-		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">
+		<>
 			{/* Pause Modal */}
 			<GameModal
 				isOpen={started && pongGameState.pause && !pongGameState.gameOver && pongGameState.gameId !== '-1'}
@@ -152,7 +247,7 @@ export const PongModals = memo(() => {
 				pauseInfo={{
 					onClick: handleButtonClick,
 					currentClients: continueIndex,
-					maxClients: isGameMode ? 3 : 2
+					maxClients: isGameMode ? 4 : 2
 				}}
 			/>
 			{tournament.id !== -1 ? (
@@ -161,13 +256,19 @@ export const PongModals = memo(() => {
 				) : (
 					pongGameState.gameId.includes("Custom-Game-") ? (
 						// Custom-Game Modal
-						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} loading={sendRequest} status={getStatus()} quit={quitGame}/>
+						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} status={getStatus()} buttonLoading={sendRequest} quit={quitGame}/>
 				) : (
 					// Ranked Modal
 					<GameModal isOpen={showModal} gameResult={getGameResult()} queue={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
 				)
 			)}
 
+			{!customized && (
+				<CustomizeModal isOpen={showCustomModal} color={playerInfos.color} username={playerInfos.name} startGame={initiateGame}/>
+			)}
+			{unregistered && (
+				<CustomizeModal isOpen={showSetModal} startGame={registerNewPlayer} />
+			)}
 			<Timer
 				playerClient={playerState.client}
 				isFull={isFull}
@@ -178,8 +279,8 @@ export const PongModals = memo(() => {
 				disappear={chipDisappear}
 				setDisappear={setChipDisappear}
 			/>
-		</section>
+		</>
 	)
 })
 
-PongModals.displayName = "TTTModals"
+PongModals.displayName = "PongModals"

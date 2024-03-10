@@ -1,10 +1,11 @@
 import { memo, useEffect, useState } from "react";
 
-import useWSClient from "@/helpers/wsclient";
+import useWSClient, { WSClientType } from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
 import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
 import useContract from "@/components/hooks/useContract";
+import { useRouter } from "next/navigation";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -27,7 +28,9 @@ export const TTTSocketEvents = memo(() => {
 		isFull,
 		setIsFull,
 		timerState,
-		setTimerState
+		setTimerState,
+		customized,
+		setPlayerAddress,
 	} = useSocket();
 	const {
 		gameState,
@@ -37,7 +40,7 @@ export const TTTSocketEvents = memo(() => {
 		botState,
 		setTournament,
 		setBot,
-		tournament
+		tournament,
 	} = useGameState();
 	const {
 		getPlayer,
@@ -45,6 +48,7 @@ export const TTTSocketEvents = memo(() => {
 	} = useContract();
 	const newClient = useWSClient();
 	const playSound = useSound();
+	const router = useRouter();
 
 	//* ------------------------------- state variables ------------------------------ */
 	const [playerSet, setPlayerSet] = useState(false);
@@ -59,12 +63,13 @@ export const TTTSocketEvents = memo(() => {
 			if (newClient) {
 				await newClient.waitingForSocket();
 				newClient.sendAddress(address);
-				setWsclient(newClient);
+				setWsclient(newClient as WSClientType);
+				setPlayerAddress(String(address));
 			}
 		};
 
 		waitForSocket();
-	}, [newClient, address, setWsclient]);
+	}, [newClient, address, setWsclient, setPlayerAddress]);
 
 	// Catches skip msg when player subscribed to a tournament is not present
 	useEffect(() => {
@@ -92,11 +97,10 @@ export const TTTSocketEvents = memo(() => {
 				setSymbolSet(false);
 
 				const { gameID, tournamentId, gameIndex } = await wsclient.waitingRoom();
-
 				if (tournamentId === -1 && !gameID.includes("Custom-Game-") && !isGameMode) {
 					wsclient.joinQueue("TTT");
 				} else {
-					setTournament({ id: tournamentId, index: gameIndex, isRunning: false});
+					setTournament({ id: tournamentId, index: gameIndex });
 				}
 				updateGameState({ gameId: gameID });
 			}
@@ -111,7 +115,7 @@ export const TTTSocketEvents = memo(() => {
 			if (wsclient && gameState.gameId !== "-1") {
 				const player = await getPlayer(String(address))
 				const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
-	
+
 				setPlayerState((prevState) => {
 					const updatedPlayers = prevState.players.map((prevPlayer, index) => {
 						if (index === numClients) {
@@ -149,11 +153,10 @@ export const TTTSocketEvents = memo(() => {
 			}
 		};
 
-		// TODO: Add some kind of setter to stop joining until user exits custimize modal
-		// if (tournament.isRunning) {
+		if (customized && address) {
 			joinTheGame();
-		// }
-	}, [wsclient, gameState.gameId, address, botState.isActive, tournament.isRunning, isGameMode, skip, setPlayerState, getPlayer]);
+		}
+	}, [wsclient, customized, gameState.gameId, address, botState.isActive, isGameMode, skip, setPlayerState, getPlayer]);
 
 	// Initial communication between both players (SEND message)
 	useEffect(() => {
@@ -166,6 +169,16 @@ export const TTTSocketEvents = memo(() => {
 				symbol: playerState.players[playerState.client].symbol,
 			}
 			wsclient?.emitMessageToGame(JSON.stringify(playerData), `PlayerData-${gameState.gameId}`, gameState.gameId);
+			if (botState.isActive && playerState.client === 0 && isGameMode) {
+				const botData = {
+					name: playerState.players[botState.client].name,
+					addr: playerState.players[botState.client].addr,
+					color: playerState.players[botState.client].color,
+					number: playerState.players[botState.client].number,
+					symbol: playerState.players[botState.client].symbol,
+				}
+				wsclient?.emitMessageToGame(JSON.stringify(botData), `PlayerData-${gameState.gameId}`, gameState.gameId);
+			}
 		};
 
 		if (playerState.client !== -1 && isFull === "FULL") {
@@ -173,9 +186,9 @@ export const TTTSocketEvents = memo(() => {
 			if (botState.isActive && !isGameMode) {
 				setPlayerSet(true);
 			}
-			updateGameState({ pause: false });
+			// updateGameState({ pause: false });
 		}
-	}, [playerState.client, isFull, botState.isActive, gameState.gameId, playerState.players, isGameMode, wsclient, updateGameState]);
+	}, [playerState.client, isFull, botState, gameState.gameId, playerState.players, isGameMode, wsclient]);
 
 	// Initial communication between both players (RECEIVE message)
 	useEffect(() => {
@@ -201,6 +214,10 @@ export const TTTSocketEvents = memo(() => {
 
 					return { ...prevState, players: updatedPlayers };
 				});
+
+				if (playerData.addr === "0xBotBOB01245") {
+					setBot((prevState) => ({ ...prevState, isActive: true }));
+				}
 			}
 
 			const notSetPlayer = playerState.players.find(player => player.name === "None");
@@ -218,7 +235,7 @@ export const TTTSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`PlayerData-${gameState.gameId}`, gameState.gameId);
 			} 
 		}
-	},[wsclient, gameState.gameId, playerState.players, isGameMode, setPlayerState]);
+	},[wsclient, gameState.gameId, playerState.players, isGameMode, setBot, setPlayerState]);
 
 	// Update 'isFull' state when lobby is full
 	useEffect(() => {
@@ -258,13 +275,13 @@ export const TTTSocketEvents = memo(() => {
 				endGame("unavailable");
 			}
 
-			wsclient?.addMessageListener(`player-left-${gameState.gameId}`, gameState.gameId, endGame)
+			wsclient?.addMessageListener(`player-left-${gameState.gameId}`, gameState.gameId, endGame);
 
 			return () => {
 				wsclient?.removeMessageListener(`player-left-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [gameState.gameId, gameState.gameOver, playerState.client, playerState.players, skip._skip, symbolSet, timerState, wsclient, setPlayerStatus, setRequestRematch, setSendRequest, setWinner, playSound, updateGameState]);
+	}, [gameState.gameId, gameState.gameOver, playerState.client, playerState.players, skip._skip, timerState, wsclient, setPlayerStatus, setRequestRematch, setSendRequest, setWinner, playSound, updateGameState]);
 
 	// Handle rematch request
 	useEffect(() => {
@@ -284,6 +301,23 @@ export const TTTSocketEvents = memo(() => {
 			}
 		}
 	}, [wsclient, gameState.gameId, setRematchIndex, setRequestRematch, playSound]);
+
+	// Handle tournament finish
+	useEffect(() => {
+		const finish = (msg: string) => {
+			setTournament({ id: -1, index: -1});
+			wsclient?.leave();
+			router.push('/');
+		};
+
+		if (wsclient && tournament.id !== -1) {
+			wsclient?.addMessageListener('tournament-finished', String(tournament.id), finish)
+
+			return () => {
+				wsclient?.removeMessageListener('tournament-finished', String(tournament.id));
+			}
+		}
+	}, [router, tournament.id, wsclient, setTournament]);
 
 	// Send rematch request
 	useEffect(() => {
@@ -374,15 +408,16 @@ export const TTTSocketEvents = memo(() => {
 			}
 
 			if (botState.isActive) {
-				setBot((prevState) => ({ ...prevState, symbol: playerState.players[botClientNumber].symbol }));
+				setBot(({ ...botState, symbol: symbols[botClientNumber] }));
 			}
 			setSymbolSet(true);
+			updateGameState({ pause: false });
 		};
 
 		if (playerSet && playerState.client === 0 && !symbolSet) {
 			sendRandomSymbol();
 		}
-	}, [playerSet, symbolSet, playerState, botState.isActive, gameState.gameId, isGameMode, wsclient, setBot, setPlayerState]);
+	}, [playerSet, symbolSet, playerState, botState, gameState.gameId, isGameMode, wsclient, setBot, setPlayerState, updateGameState]);
 
 	// Opponents receive newly shuffled symbols
 	useEffect(() => {
@@ -396,6 +431,7 @@ export const TTTSocketEvents = memo(() => {
 
 				return { ...prevState, players: updatedPlayers };
 			});
+			updateGameState({ pause: false });
 		};
 
 		if (wsclient && gameState.gameId !== "-1") {
@@ -405,7 +441,7 @@ export const TTTSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`ShuffeledPlayer-${gameState.gameId}`, gameState.gameId);
 			}
 		}
-	}, [wsclient, gameState.gameId, setPlayerState]);
+	}, [wsclient, gameState.gameId, setPlayerState, updateGameState]);
 
 	return (null);
 });

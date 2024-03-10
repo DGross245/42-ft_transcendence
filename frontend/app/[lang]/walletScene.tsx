@@ -12,9 +12,9 @@ const Wallet = () => {
 	const walletGLTF = useLoader(GLTFLoader, '/Models/wallet/scene.gltf');
 	const walletRef = useRef<any>();
 
-	useFrame(() =>{
+	useFrame((_, delta) =>{
 		if (walletRef && walletRef.current){
-			walletRef.current.rotation.y += 0.005;
+			walletRef.current.rotation.y += 0.5 * delta;
 			walletRef.current.position.y = 1.5
 		}
 	})
@@ -30,6 +30,7 @@ interface TextProps {
 	leftTitle: string;
 	rightTitle: string;
 }
+
 const Text = ({leftTitle, rightTitle}: TextProps) => {
 	return (<>
 		<Html position={[-3, 0, 0]} style={{ width: '1000px' }} className="text-white text-start text-6xl font-sans font-bold" zIndexRange={[-20]}>

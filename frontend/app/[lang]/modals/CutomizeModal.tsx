@@ -1,9 +1,9 @@
 import { Input, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
+import ModalButton from "./components/ModalButton";
+import { useEffect, useState } from "react";
+import { useTranslation } from "@/app/i18n";
 import styles from "./Modals.module.css";
-import ModalButton from "./ModalButton";
-import { useState } from "react";
 import clsx from "clsx";
-import useContract from "@/components/hooks/useContract";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -22,6 +22,16 @@ interface CustomizeModalProps {
 const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOpen, loading, username: inputUsername, startGame }) => {
 	const [username, setUsername] = useState(inputUsername || "");
 	const [color, setColor] = useState(inputColor || "#2563eb");
+	const { t } = useTranslation("modals");
+
+	useEffect(() => {
+		if (inputColor) {
+			setColor(inputColor);
+		} 
+		if (inputUsername) {
+			setUsername(inputUsername);
+		}
+	}, [inputColor, inputUsername]);
 
 	const onButtonClick = () => {
 		startGame(username, color);
@@ -33,8 +43,8 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 			isOpen={isOpen}
 			backdrop="blur"
 			placement="center"
-			hideCloseButton={true}
 			isDismissable={false}
+			hideCloseButton={true}
 			isKeyboardDismissDisabled={true}
 		>
 			<ModalContent>
@@ -42,14 +52,14 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 					<Spinner size="lg"/>
 				</div>}
 				<ModalHeader className={clsx({"opacity-0": loading})}>
-					<h1 className={clsx(styles.textWiggle, "text-2xl")}>Customize Your Game</h1>
+					<h1 className={clsx(styles.textWiggle, "text-2xl")}>{t("customizemodal.header")}</h1>
 				</ModalHeader>
 				<ModalBody className={clsx({"opacity-0": loading})}>
 					<Input
 						isRequired
 						type="username"
 						value={username}
-						label="Username"
+						label={t("customizemodal.username")}
 						variant="bordered"
 						className="w-full"
 						style={{color: color}}
@@ -63,12 +73,12 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 					/>
 					<div className="flex justify-end items-center">
 						<div className="flex items-center gap-4 font-bold">
-							<h1>Select Color: </h1>
+							<h1>{t("customizemodal.selectcolor")}: </h1>
 							<input
 								type="color"
 								value={color}
 								id="hs-color-input"
-								title="Choose your color"
+								title={t("customizemodal.choosecolor")}
 								className={styles.colorSelector}
 								onChange={(e) => setColor(e.target.value)}
 								style={{backgroundColor: color, borderColor: color}}
@@ -77,7 +87,9 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 					</div>
 				</ModalBody>
 				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
-					<ModalButton onClick={onButtonClick}>Join Game</ModalButton>
+					<ModalButton onClick={onButtonClick}>
+						{t("customizemodal.joingame")}
+					</ModalButton>
 				</ModalFooter>
 			</ModalContent>
 		</Modal>

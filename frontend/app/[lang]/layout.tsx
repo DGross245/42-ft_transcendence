@@ -7,6 +7,7 @@ import { Metadata } from "next";
 import clsx from "clsx";
 
 import "@/styles/globals.css";
+import "react-toastify/dist/ReactToastify.css";
 
 /* -------------------------------------------------------------------------- */
 /*                                    Meta                                    */

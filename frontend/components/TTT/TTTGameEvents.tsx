@@ -24,7 +24,8 @@ export const TTTGameEvents = memo(() => {
 		setLineVisible,
 		isGameMode,
 		currentTurn,
-		started
+		started,
+		setBotMoved
 	} = useGameState();
 	const {
 		rematchIndex,
@@ -33,7 +34,8 @@ export const TTTGameEvents = memo(() => {
 		setSendRequest,
 		continueIndex,
 		setSendContinueRequest,
-		setContinueIndex
+		setContinueIndex,
+		setCustomized
 	} = useSocket();
 	const escape = useKey(['Escape']);
 	const playSound = useSound();
@@ -49,9 +51,10 @@ export const TTTGameEvents = memo(() => {
 			setWinner('');
 			setCountdownVisible(true);
 			setLineVisible(false)
+			setCustomized(false);
 			updateGameState({ reset: false, gameOver: false})
 		}
-	}, [gameState.reset, updateGameState, setBoard, setCountdownVisible, setLineCoords, setLineVisible, setTurn, setWinner]);
+	}, [gameState.reset, setCustomized, updateGameState, setBoard, setCountdownVisible, setLineCoords, setLineVisible, setTurn, setWinner]);
 
 	// Handle pause when esc is pressed
 	useEffect(() => {
@@ -95,9 +98,10 @@ export const TTTGameEvents = memo(() => {
 	// Initializes the turn after countdown
 	useEffect(() => {
 		if (!countdownVisible && currentTurn === '' && started) {
+			setBotMoved(false);
 			setTurn('X');
 		}
-	}, [countdownVisible, currentTurn, setTurn, started]);
+	}, [countdownVisible, currentTurn, setTurn, setBotMoved, started]);
 
 	return (null);
 })

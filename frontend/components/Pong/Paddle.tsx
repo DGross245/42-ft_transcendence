@@ -48,6 +48,7 @@ export const GameControl = () => {
 	} = usePongGameState();
 	const right = useKey(['d', 'D']);
 	const left = useKey(['a', 'A']);
+	let previousPosition = 0;
 
 	//* ------------------------------- render loop ------------------------------ */
 	const paddleSpeed = 300;
@@ -80,16 +81,21 @@ export const GameControl = () => {
 					playerPaddle.pos = Math.min(playerPaddle.pos + paddleSpeed * delta, playerPaddle.maxPos);
 				}
 			}
-			if (playerState.client === 0 || playerState.client === 2) {
-				playerPaddle.ref.current.position.x = playerPaddle.pos;
-			} else {
-				playerPaddle.ref.current.position.z = playerPaddle.pos;
+
+			if (playerPaddle.pos !== previousPosition) {
+				previousPosition = playerPaddle.pos
+
+				if (playerState.client === 0 || playerState.client === 2) {
+					playerPaddle.ref.current.position.x = playerPaddle.pos;
+				} else {
+					playerPaddle.ref.current.position.z = playerPaddle.pos;
+				}
+				const newPaddleData = {
+					client: playerState.client,
+					pos: playerPaddle.pos
+				}
+				wsclient?.emitMessageToGame(JSON.stringify(newPaddleData), `Paddle-${pongGameState.gameId}`, pongGameState.gameId);
 			}
-			const newPaddleData = {
-				client: playerState.client,
-				pos: playerPaddle.pos
-			}
-			wsclient?.emitMessageToGame(JSON.stringify(newPaddleData), `Paddle-${pongGameState.gameId}`, pongGameState.gameId);
 		}
 	});
 

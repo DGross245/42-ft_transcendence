@@ -3,10 +3,12 @@
 import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers5/react'
 import scoresAbi from '../../public/tournamentManager_abi.json';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from '@/app/i18n';
 import { toast } from 'react-toastify';
+import { useSound } from './Sound';
 import { ethers } from 'ethers';
 
-export const contract_address = '0xD78F9fEc2c927d8722DD7D65e30552BC4380a118'
+export const contract_address = '0x4982051409D3F7f1C37d9f1e544EF6c6e8557148'
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -26,6 +28,7 @@ export interface Game {
 }
 export interface Tournament {
 	master: string
+	game_type: string,
 	duration_in_blocks: number
 	start_block: number
 	end_block: number
@@ -40,6 +43,8 @@ function useContract() {
 	const [tmContract, setTmContract] = useState<ethers.Contract | null>(null);
 	const { address, chainId, isConnected } = useWeb3ModalAccount();
 	const { walletProvider } = useWeb3ModalProvider();
+	const { t } = useTranslation("toasts");
+	const playSound =  useSound();
 
 	useEffect(() => {
 		if (isConnected && walletProvider) {
@@ -53,42 +58,48 @@ function useContract() {
 	const callContract = useCallback(async (functionName: string, args: any[] = []) => {
 		try {
 			const result = await tmContract?.[functionName](...args);
-			if (typeof result.wait !== "undefined") {
-				result.wait();
+			if (result && typeof result.wait !== "undefined") {
+				playSound("pay");
+				toast.info(t("toast.minted"))
+				const receipt = await result.wait();
+				// const event = receipt.events.find(event => event.event === events)
+				// const value = event.args.value;
+				// return (value);
+				return receipt;
 			}
 			return result;
 		} catch (error) {
 			if ((error as any)?.code == "ACTION_REJECTED") {
-				toast.warning("Transaction rejected by user");
+				toast.warning(t("toast.rejecteduser"));
 			} else {
-				toast.error("Error calling contract function");
+				toast.error(t("toast.errorcall"));
 			}
 		}
 		return null;
-	},[tmContract]);
+	},[tmContract, playSound, t]);
 
 	// creates a new tournament and adds calling address as master
 	// the caller HAS to join separately as a player if he wants to participate
-	const createTournament = useCallback(async (duration_in_blocks: number) => {
-		await callContract('createTournament', [duration_in_blocks]);
+	const createTournament = useCallback(async (duration_in_blocks: number, gameType: string) => {
+		return (await callContract('createTournament', [duration_in_blocks, gameType]));
 	},[callContract]);
 
 	// starts a previously created tournament and creates game tree
 	// players cannot join after this
 	const startTournament = useCallback(async (tournament_id: number) => {
-		await callContract('startTournament', [tournament_id]);
+		return (await callContract('startTournament', [tournament_id]));
 	},[callContract]);
 
 	// sets name and color of the player (player = calling address)
 	// color is a hex string, e.g. '0xFF0000'
 	// this "player profile" will be stored permanently accross all games and tournaments
 	const setNameAndColor = useCallback(async (name: string, color: string) => {
-		await callContract('setNameAndColor', [name, color]);
+		return (await callContract('setNameAndColor', [name, color]));
 	},[callContract]);
 
 	// calling address/player joins the specified tournament
 	const joinTournament = useCallback(async (tournament_id: number) => {
-		await callContract('joinTournament', [tournament_id]);
+		return (await callContract('joinTournament', [tournament_id]));
 	},[callContract]);
 
 	// tournament has to have at least 2 players for this to work
@@ -98,7 +109,7 @@ function useContract() {
 		// 	{ player: '0x0000000000', score: 1 },
 		// 	{ player: '0x4242424242', score: 2 },
 		// ]
-		await callContract('submitGameResultTournament', [tournament_id, game_id, scores]);
+		return (await callContract('submitGameResultTournament', [tournament_id, game_id, scores]));
 	},[callContract]);
 
 	// ranked games cannot be created beforehand, they will automatically be created upon submission of scores
@@ -109,7 +120,7 @@ function useContract() {
 		// 	{ player: '0x0000000000', score: 1 },
 		// 	{ player: '0x4242424242', score: 2 },
 		// ]
-		await callContract('submitGameResultRanked', [scores]);
+		return (await callContract('submitGameResultRanked', [scores]));
 	},[callContract]);
 
 	// returns array of all available tournaments
@@ -145,6 +156,7 @@ function useContract() {
 	},[callContract]);
 
 	return {
+		tmContract,
 		address,
 		createTournament,
 		startTournament,

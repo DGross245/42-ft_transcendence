@@ -1,21 +1,20 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { NextApiRequest, NextApiResponse } from "next";
-import { Server } from "Socket.IO";
+import { Server } from "socket.io";
 import crypto from 'crypto';
 import { ethers } from 'ethers';
 import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
-
-const contract_address = '0xD78F9fEc2c927d8722DD7D65e30552BC4380a118'
+import { contract_address } from "@/components/hooks/useContract";
 
 /* -------------------------------------------------------------------------- */
 /*                                Interface(s)                                */
 /* -------------------------------------------------------------------------- */
 interface SocketApiResponse extends NextApiResponse {
 	socket: ServerResponse<IncomingMessage>['socket'] & {
-	  server?: {
-		io?: Server | undefined;
-	  };
+		server?: {
+			io?: Server | undefined;
+		};
 	};
 }
 
@@ -26,6 +25,9 @@ export const contract = new ethers.Contract(contract_address, tournamentAbi, pro
 /*                                   Handler                                  */
 /* -------------------------------------------------------------------------- */
 const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promise<void> => {
+
+	const started: any = [];
+	const containBot: any = [];
 
 	const getElo = async (address: string) => {
 		if (address) {
@@ -52,7 +54,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 
 			socket.on('tournament', async (tournamentID: number, gameType: string) => {
 				const sockets = await io.in(`tournament-${tournamentID}`).fetchSockets();
-				tournamentHandler(sockets, tournamentID, gameType);
+				tournamentHandler(sockets, tournamentID, gameType, io);
 			});
 
 			socket.on('join-tournament', (tournamentID: number) => {
@@ -71,9 +73,47 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				socket.emit('Status-Changed', true);
 			});
 
-			socket.on('join-game', ( gameId: string, gameType: string, offset: number ) => {
+			socket.on('get-number-of-player-in-tournament', (tournamentID: number) => {
+				const room = io.sockets.adapter.rooms.get(`tournament-${tournamentID}`);
+				const numberOfPlayer = room ? room.size : 0;
+				socket.emit(`number-of-players-${tournamentID}`, numberOfPlayer);
+			});
+
+			socket.on('get-custom-games', (gameType: string) => {
+				const gameRooms = [];
+				let _status = undefined;
+
+				const CustomRooms = Array.from(io.sockets.adapter.rooms.keys()).filter((value) => value.includes(`Custom-Game-${gameType}`));
+
+				for (let i = 0; i < CustomRooms.length; i++) {
+					const room = io.sockets.adapter.rooms.get(CustomRooms[i]);
+
+					const status = started.includes(room);
+					if (status) {
+						_status = "Running"
+					} else {
+						_status = "Waiting..."
+					}
+					gameRooms.push({
+						id: CustomRooms[i],
+						state: _status,
+					})
+				}
+
+				socket.emit('custome-rooms', gameRooms);
+			});
+
+			socket.on('join-game', ( gameId: string, gameType: string, isBotActive: boolean) => {
 				const room = io.sockets.adapter.rooms.get(gameId);
 				const numClients = room ? room.size : 0;
+
+				let offset = isBotActive ? 1 : 0;
+			
+				const isBotPresent = containBot.includes(gameId);
+				if (isBotPresent) {
+					offset = 1;
+				}
+
 				let maxClients = 2 - offset;
 
 				if (gameType === "OneForAll")
@@ -82,10 +122,14 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 					maxClients = 3 - offset;
 
 				if (numClients < maxClients) {
-						socket.join(gameId);
-						socket.emit(`room-joined-${gameId}`, numClients);
+					if (numClients === 0 && offset === 1) {
+						containBot.push(gameId);
+					}
+					socket.join(gameId);
+					socket.emit(`room-joined-${gameId}`, numClients);
 					if (numClients === maxClients - 1) {
 						const topic = `Players-${gameId}`;
+						started.push(gameId);
 						io.to(gameId).emit(`message-${gameId}-${topic}`, "FULL");
 					}
 				}
@@ -105,15 +149,10 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				});
 			});
 
-			// socket.on('create-game', (msg: string) => {
-			// 	var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
-			// 	socket.emit(`game-created-${msg}`, id);
-			// });
-
-			socket.on('create-game', () => {
+			socket.on('create-game', (gameMode: string) => {
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
-				const customGame = `Custom-Game-${id}`;
-				console.log(customGame)
+				const customGame = `Custom-Game-${gameMode}-${id}`;
+				console.log("custom game: ", customGame);
 				socket.emit('match-found', customGame, -1, -1);
 			});
 

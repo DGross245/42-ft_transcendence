@@ -81,6 +81,10 @@ interface SocketContextValue {
 	customized: boolean;
 	/** Setter for customized */
 	setCustomized: Dispatch<SetStateAction<boolean>>;
+	/**  */
+	unregistered: boolean
+	/**  */
+	setUnregistered: Dispatch<SetStateAction<boolean>>;
 }
 
 
@@ -101,8 +105,7 @@ export const initialTTTPlayerState = () => ({
 
 export const SocketContext = createContext<SocketContextValue>({} as SocketContextValue);
 
-export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children: ReactNode }> = ({ initialWsClient, children }) => {
-	const [wsclient, setWsclient] = useState( initialWsClient !== undefined ? initialWsClient : null);
+export const Socket: React.FC<{ children: ReactNode, wsclient: WSClientType | null, setWsclient: Dispatch<SetStateAction<WSClientType | null>>}> = ({ wsclient, setWsclient, children }) => {
 	const [sendRequest, setSendRequest] = useState(false);
 	const [requestRematch, setRequestRematch] = useState(false);
 	const [playerStatus, setPlayerStatus] = useState("");
@@ -115,6 +118,7 @@ export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children:
 	const [playerState, setPlayerState] = useState(initialTTTPlayerState());
 	const [playerAddress, setPlayerAddress] = useState("");
 	const [customized, setCustomized] = useState(false);
+	const [unregistered, setUnregistered] = useState(true);
 
 	const value : SocketContextValue = {
 		wsclient,
@@ -142,7 +146,9 @@ export const Socket: React.FC<{ initialWsClient?: WSClientType | null, children:
 		playerAddress,
 		setPlayerAddress,
 		customized,
-		setCustomized
+		setCustomized,
+		unregistered,
+		setUnregistered
 	}
 
 	return (

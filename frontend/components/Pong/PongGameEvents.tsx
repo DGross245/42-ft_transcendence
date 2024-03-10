@@ -30,7 +30,8 @@ export const PongGameEvents = () => {
 		setCountdownRot,
 		setCountdownPos,
 		isGameMode,
-		isScoreVisible
+		isScoreVisible,
+		
 	} = usePongGameState();
 	const {
 		playerState,
@@ -40,7 +41,8 @@ export const PongGameEvents = () => {
 		setRematchIndex,
 		continueIndex,
 		setSendContinueRequest,
-		setContinueIndex
+		setContinueIndex,
+		setCustomized
 	} = usePongSocket();
 	const escape = useKey(['Escape']);
 	const playSound = useSound();
@@ -112,9 +114,10 @@ export const PongGameEvents = () => {
 			setScores({ p1Score: 0, p2Score: 0, p3Score: 0, p4Score: 0 });
 			setWinner('');
 			setScoreVisibility(false);
+			setCustomized(false);
 			updatePongGameState({ reset: false, gameOver: false });
 		}
-	}, [pongGameState.reset, setBallVisibility, setScoreVisibility, setScores, setWinner, updatePongGameState]);
+	}, [pongGameState.reset, setCustomized, setBallVisibility, setScoreVisibility, setScores, setWinner, updatePongGameState]);
 
 	// Handle pause when esc is pressed
 	useEffect(() => {
@@ -127,15 +130,17 @@ export const PongGameEvents = () => {
 	useEffect(() => {
 		// Check if all players have requested a rematch
 		if (rematchIndex === (isGameMode ? 4 : 2)) {
-			playSound("rematchAccept")
-
-			// Reset rematch-related flags
-			setRequestRematch(false);
-			setSendRequest(false);
-			setRematchIndex(0);
-
-			// Update game state to trigger a reset
-			updatePongGameState({ reset: true })
+			setTimeout(() => {
+				playSound("rematchAccept")
+				
+				// Reset rematch-related flags
+				setRematchIndex(0);
+				setRequestRematch(false);
+				setSendRequest(false);
+				
+				// Update game state to trigger a reset
+				updatePongGameState({ reset: true })
+			}, 1000);
 		}
 	}, [rematchIndex, isGameMode, playSound, setRequestRematch, setSendRequest, setRematchIndex, updatePongGameState]);
 
@@ -146,8 +151,8 @@ export const PongGameEvents = () => {
 			// Add delay so the game won't start right away
 			setTimeout(() => {
 				// Reset pause-related flags
-				setContinueIndex(0);
 				setSendContinueRequest(false);
+				setContinueIndex(0);
 
 				// Update game state to trigger a resume of the game
 				updatePongGameState({ pause: false});

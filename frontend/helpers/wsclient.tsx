@@ -2,14 +2,12 @@
 
 import io, { Socket } from 'socket.io-client';
 import { useEffect, useState } from 'react';
-import crypto from 'crypto';
-import { contract } from '@/pages/api/socket';
 
 export type WSClientType = {
-	// createGame: () => Promise<string>;
-	createGame: () => void;
+	createGame: (gameType: string) => void;
 	waitingRoom: () => Promise<{gameID: string, tournamentId: number, gameIndex: number}>;
 	joinGame: (gameId: string, gameType: string, isBot: boolean) => Promise<number>;
+	getNumberOfSocketsInTournament: (tournamentID: number) => Promise<number>;
 	waitingForSocket: () => Promise<void>;
 	emitMessageToGame: (msg: string, topic: string, gameId: string) => void;
 	addMessageListener: (topic: string, gameId: string, callback: (msg: string) => void) => void;
@@ -21,7 +19,9 @@ export type WSClientType = {
 	joinTournament: (tournamentID: number) => void;
 	requestTournament: (tournamentID: number, gameType: string) => void;
 	updateStatus: (isInGame: boolean, gameID: string) => Promise<boolean>;
+	getCustomGames: (gameType: string) => Promise<any>;
 	leave: () => void;
+	disconnect: () => void;
 };
 
 /* -------------------------------------------------------------------------- */
@@ -59,12 +59,29 @@ class WSClient {
 	// 	});
 	// }
 
+	disconnect() {
+		this.socket?.emit('leave');
+	}
 	leave() {
 		this.socket?.emit('leave');
 	}
-	createGame() {
-		this.socket!.emit('create-game');
+	createGame(gameType: string) {
+		this.socket!.emit('create-game', gameType);
 	}
+	async getCustomGames(gameType: string) : Promise<any> {
+		if (!this.socket) {
+			await this.waitingForSocket();
+		}
+
+		return new Promise((resolve, reject) => {
+			this.socket!.emit('get-custom-games', gameType);
+			this.socket!.on('custome-rooms', (CustomRooms: any) => {
+				this.socket!.removeListener('custome-rooms');
+				resolve(CustomRooms);
+			})
+		})
+	}
+
 	async updateStatus(isInGame: boolean, gameID: string) : Promise<boolean> {
 		return new Promise((resolve, reject) => {
 			this.socket!.emit('Update-Status', isInGame, gameID);
@@ -98,6 +115,19 @@ class WSClient {
 	async waitingForSocket(): Promise<void> {
 		await this.waitForSocket();
 		return ;
+	}
+
+	async getNumberOfSocketsInTournament (tournamentID: number) {
+		if (!this.socket) {
+			await this.waitingForSocket();
+		}
+		return new Promise((resolve, reject) => {
+			this.socket!.emit('get-number-of-player-in-tournament', tournamentID);
+			this.socket!.on(`number-of-players-${tournamentID}`, (numberOfPlayer: number) => {
+				this.socket!.removeListener(`number-of-players-${tournamentID}`);
+				resolve(numberOfPlayer);
+			})
+		});
 	}
 
 	async joinGame(gameId: string, gameType: string, isBot: boolean): Promise<number> {
@@ -148,8 +178,9 @@ const useWSClient = () => {
 	const [wsclient, setWsclient] = useState<WSClient | null>(null);
 
 	useEffect(() => {
-		if (window !== undefined)
+		if (window !== undefined) {
 			setWsclient(new WSClient());
+		}
 	},[]);
 
 	return wsclient;
@@ -158,4 +189,3 @@ const useWSClient = () => {
 export default useWSClient;
 
 // @todo add timeouts to all promises
-// @todo add join any game method

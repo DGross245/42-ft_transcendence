@@ -9,11 +9,16 @@ import { useUI } from "@/app/[lang]/tic-tac-toe/hooks/useUI";
 import { initialTTTPlayerState } from "@/app/[lang]/tic-tac-toe/context/TTTSockets";
 import useContract, { PlayerScore } from "../hooks/useContract";
 import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
-import { useJoinEvents } from "../JoinGame";
+import { useJoinEvents } from "../hooks/useJoinGame";
+import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
 /* -------------------------------------------------------------------------- */
+
+export function intToHexColor(intValue: number) {
+	return ('#' + intValue.toString(16).padStart(6, '0').toUpperCase());
+}
 
 export const TTTModals = memo(() => {
 	//* ------------------------------- hooks ------------------------------ */
@@ -41,8 +46,11 @@ export const TTTModals = memo(() => {
 		setSendRequest,
 		wsclient,
 		setPlayerState,
-		sendRequest,
-		playerAddress
+		playerAddress,
+		customized,
+		setCustomized,
+		unregistered,
+		sendRequest
 	} = useSocket();
 	const {
 		submitGameResultRanked,
@@ -57,11 +65,16 @@ export const TTTModals = memo(() => {
 
 	const {
 		onSetNameAndColor
-	} = useJoinEvents();
+	} = useJoinEvents(wsclient);
+	const router = useRouter();
+	const { tmContract } = useContract();
+	const {isConnected, address} = useWeb3ModalAccount();
+
 	//* ------------------------------- state variables ------------------------------ */
 	const [isClicked, setIsClicked] = useState(false);
-	const router = useRouter();
-	const [playerInfo, setPlayerInfo] = useState({ color: "0xffffff", name: "KEK" });
+	const [playerInfos, setPlayerInfos] = useState({ color: "#ffffff", name: "KEK" });
+	const [showSetModal, setShowSetModal] = useState(false);
+	const [showCustomModal, setShowCustomModal] = useState(false);
 
 	/* ------------------------------- functions ------------------------------ */
 	const handleButtonClick = useCallback(() => {
@@ -78,7 +91,7 @@ export const TTTModals = memo(() => {
 			} else if (winner === "draw") {
 				return (GameResult.Draw);
 			} else {
-				return (GameResult.Looser);
+				return (GameResult.Loser);
 			}
 		}
 	}, [showModal, playerState, winner, playerStatus])
@@ -104,32 +117,35 @@ export const TTTModals = memo(() => {
 				})
 			}
 			if (tournament.id !== -1) {
-				const data = getTournament(tournament.id);
-				const finished = (await data).games[tournament.index].finished;
+				const data = await getTournament(tournament.id);
+				const finished = data.games[tournament.index].finished;
 				if (!finished) {
-					await submitGameResultTournament(tournament.id, tournament.index, playerScore);
+					if (!(await submitGameResultTournament(tournament.id, tournament.index, playerScore))) {
+						return ;
+					}
 				}
 			} else if (playerState.client === 0) {
-				await submitGameResultRanked(playerScore);
+				if (!(await submitGameResultRanked(playerScore))) {
+					return ;
+				}
 			}
-		}
+			const status = await wsclient?.updateStatus(false, gameState.gameId);
+			wsclient?.leave();
 
-		const status = await wsclient?.updateStatus(false, gameState.gameId);
-		wsclient?.leave();
+			// reset loop important states
+			closeModal();
+			updateGameState({ gameId: "-1", pause: true, reset: true });
+			setPlayerState(initialTTTPlayerState());
+			setStarted(false);
+			setChipDisappear(false);
+			setTournament({ ...tournament, index: -1});
 
-		// reset loop important states
-		closeModal();
-		updateGameState({ gameId: "-1", pause: true, reset: true });
-		setPlayerState(initialTTTPlayerState());
-		setStarted(false);
-		setChipDisappear(false);
-
-		if (status) {
-			if (tournament.id !== -1) {
-				wsclient?.requestTournament(tournament.id, 'TTT');
-			} else {
-				console.log("test")
-				wsclient?.joinQueue('TTT');
+			if (status) {
+				if (tournament.id !== -1) {
+					wsclient?.requestTournament(tournament.id, 'TTT');
+				} else {
+					wsclient?.joinQueue('TTT');
+				}
 			}
 		}
 	}
@@ -147,35 +163,89 @@ export const TTTModals = memo(() => {
 
 	// Quit handler
 	const quitGame = useCallback(() => {
-		router.push('/');
 		wsclient?.leave();
+		router.push('/');
 	}, [wsclient, router]);
 
-	const getPlayerInfo = async () => {
-		if (playerAddress !== "") {
-			const playerInfo = await getPlayer(String(playerAddress));
-
-			console.log(playerInfo)
-			return { color: "0xffffff", name: "KEK"}
+	useEffect(() => {
+		const getPlayerInfo = async () => {
+			if (address) {
+				const playerData = await getPlayer(String(address));
+				if (playerData && Number(playerData.addr) !== 0) {
+					const color = intToHexColor(Number(playerData.color));
+					setPlayerInfos({ color: color, name: playerData.name});
+				}
+			}
 		}
-	}
 
-	// TODO: Add useEffect for handling playerInfo fetching
-	// useEffect(() => {
+		if (!customized) {
+			getPlayerInfo();
+		}
+	}, [customized, gameState.gameId, address, getPlayer, setPlayerInfos]);
 
-	// }, [])
-
-	// TODO: Add some kind of setter to initiat joining
 	const initiateGame = async (username: string, color: string) => {
-		if (username !== playerInfo.name || color !== playerInfo.color) {
-			await onSetNameAndColor(username, color);
+		if (username !== playerInfos.name || color !== playerInfos.color) {
+			const colorCopy = color.replace('#', '0x');
+			setPlayerInfos({ color: color, name: String(username) });
+			if (await onSetNameAndColor(username, colorCopy)) {
+				return ;
+			}
+
 		}
 
-		// setTournament()
+		setCustomized(true);
 	}
+
+	useEffect(() => {
+		if (gameState.reset) {
+			closeModal();
+		}
+	}, [gameState.reset, closeModal])
+
+	// first registartion
+	useEffect(() => {
+		const checkPlayerInfo = async () => {
+			const playerInfo = await getPlayer(String(address));
+			if (Number(playerInfo.addr) === 0) {
+				setShowSetModal(true);
+			}
+		}
+
+		if (isConnected && tmContract && address) {
+			checkPlayerInfo();
+		}
+	}, [isConnected, getPlayer, address, tmContract]);
+
+	const registerNewPlayer = async (username: string, color: string) => {
+		const colorCopy = color.replace('#', '0x');
+		if (!(await onSetNameAndColor(username, colorCopy))) {
+			setShowSetModal(false);
+		}
+	}
+
+	useEffect(() => {
+		let timerId: NodeJS.Timeout;
+
+		if (gameState.gameId !== '-1' && !customized && tournament.id !== -1) {
+			timerId = setTimeout(() => {
+				setShowCustomModal(true);
+			}, 3000); 
+		}
+		else if (gameState.gameId !== '-1' && !customized) {
+			setShowCustomModal(true);
+		} else {
+			setShowCustomModal(false);
+		}
+		return () => {
+			if (timerId) {
+				clearTimeout(timerId);
+				
+			}
+		};
+	}, [gameState.gameId, customized, tournament]);
 
 	return (
-		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">
+		<>
 			{/* Pause Modal */}
 			<GameModal
 				isOpen={started && gameState.pause && !gameState.gameOver && gameState.gameId !== '-1'}
@@ -190,25 +260,21 @@ export const TTTModals = memo(() => {
 				// Tournament Modal
 				<GameModal isOpen={showModal} gameResult={getGameResult()} nextGame={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
 				) : (
-					gameState.gameId.includes("Costome-Game-") ? (
+					gameState.gameId.includes("Custom-Game-") ? (
 						// Custom-Game Modal
-						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} loading={sendRequest} status={getStatus()} quit={quitGame}/>
+						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} status={getStatus()} buttonLoading={sendRequest} quit={quitGame}/>
 				) : (
 					// Ranked Modal
 					<GameModal isOpen={showModal} gameResult={getGameResult()} queue={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
 				)
 			)}
 
-			{/* {tournament.id !== -1 ? (
-				(tournament.isRunning === false && (
-					<CustomizeModal isOpen={tournament.id !== -1 && !tournament.isRunning} color={playerInfo.color} startGame={initiateGame}/>
-				))
-			) : (
-				//Implement CustomizeModal for every other match
-				<>
-				</>
-			)} */}
-
+			{!customized && (
+				<CustomizeModal isOpen={showCustomModal} color={playerInfos.color} username={playerInfos.name} startGame={initiateGame}/>
+			)}
+			{unregistered && (
+				<CustomizeModal isOpen={showSetModal} startGame={registerNewPlayer} />
+			)}
 			<Timer
 				playerClient={playerState.client}
 				isFull={isFull}
@@ -219,7 +285,7 @@ export const TTTModals = memo(() => {
 				disappear={chipDisappear}
 				setDisappear={setChipDisappear}
 			/>
-		</section>
+		</>
 	)
 })
 

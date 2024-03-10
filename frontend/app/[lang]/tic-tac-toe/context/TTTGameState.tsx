@@ -146,30 +146,33 @@ interface GameStateContextValue {
 	/** Sets the visibility of winning lines. */
 	setLineVisible: Dispatch<SetStateAction<boolean>>,
 	/** Stores information about the current tournament. */
-	tournament: {id: number, index: number, isRunning: boolean},
+	tournament: {id: number, index: number},
 	/** Sets information about the current tournament. */
-	setTournament: Dispatch<SetStateAction<{id: number, index: number, isRunning: boolean}>>,
+	setTournament: Dispatch<SetStateAction<{id: number, index: number}>>,
 	/** Indicates whether the game has started. */
 	started: boolean,
 	/** Sets whether the game has started. */
 	setStarted: Dispatch<SetStateAction<boolean>>,
+	botMoved: boolean,
+	/** Sets whether the game has started. */
+	setBotMoved: Dispatch<SetStateAction<boolean>>,
 }
 
 export const GameStateContext = createContext<GameStateContextValue>({} as GameStateContextValue);
 
-export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, children: ReactNode }> = ({ gameMode = false, isBotActive = false, children }) => {
+export const GameState: React.FC<{ gameID: string, gameMode: boolean, isBotActive: boolean, strength: number, children: ReactNode, tournament: {id: number, index: number}, setTournament: Dispatch<SetStateAction<{id: number, index: number}>>}> = ({ gameID, gameMode = false, isBotActive = false, strength = 0.9, tournament, setTournament, children}) => {
 	const [isGameMode, setGameMode] = useState(gameMode);
-	const [tournament, setTournament] = useState({ id: -1, index: -1, isRunning: false });
 	const [countdownVisible, setCountdownVisible] = useState(true);
 	const [currentTurn, setTurn] = useState('');
 	const [board, setBoard] = useState(initialBoard());
 	const [sceneCoords, setSceneCoords] = useState([...initialSceneCoords]);
 	const [winner, setWinner] = useState('');
-	const [gameState, setGameState] = useState({ gameId: "-1", pause: true, reset: false, gameOver: false });
+	const [gameState, setGameState] = useState({ gameId: gameID, pause: true, reset: false, gameOver: false });
 	const [lineCoords, setLineCoords] = useState([...winningCoords]);
 	const [isLineVisible, setLineVisible] = useState(false);
-	const [botState, setBot] = useState({ isActive: isBotActive, symbol: 'NOT DEFINED', strength: 0.9, client: -1});
+	const [botState, setBot] = useState({ isActive: isBotActive, symbol: 'NOT DEFINED', strength: strength, client: -1});
 	const [started, setStarted] = useState(false);
+	const [botMoved, setBotMoved] = useState(false);
 
 	const updateGameState = useCallback((newState: Partial<GameStateContextValue['gameState']>) => {
 		setGameState(prevState => ({
@@ -180,8 +183,9 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 
 	useEffect(() => {
 		setGameMode(gameMode);
-		setBot(prevState => ({ ...prevState, isActive: isBotActive }));
-	}, [gameMode, isBotActive]);
+		setBot(prevState => ({ ...prevState, isActive: isBotActive, strength: strength }));
+		updateGameState({ gameId: gameID })
+	}, [gameMode, isBotActive, gameID, strength, updateGameState]);
 
 	const value: GameStateContextValue = {
 		currentTurn,
@@ -207,7 +211,9 @@ export const GameState: React.FC<{ gameMode: boolean, isBotActive: boolean, chil
 		tournament,
 		setTournament,
 		started,
-		setStarted
+		setStarted,
+		botMoved,
+		setBotMoved
 	};
 
 	return (

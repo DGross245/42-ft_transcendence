@@ -2,6 +2,7 @@ import crypto from 'crypto';
 import { RemoteSocket } from 'Socket.IO';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { DecorateAcknowledgementsWithMultipleResponses } from 'Socket.IO/dist/typed-events';
+import { Server } from "Socket.IO";
 
 import { Game } from '@/components/hooks/useContract';
 import { contract } from './socket';
@@ -82,23 +83,28 @@ const shufflePlayers = (array: any) => {
 	return array;
 }
 
-export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number, gameType: string ) => {
+export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournamentID: number, gameType: string, io: Server ) => {
 	const games = (await contract.getTournamentTree(tournamentID)) as Game[];
 
+	let finished = 0;
 	let maxClients = 2;
 
-	if (gameType === 'OneForAll')
+	if (gameType === 'OneForAll') {
 		maxClients = 4;
-	if (gameType === 'Qubic')
+	}
+	if (gameType === 'Qubic') {
 		maxClients = 3;
+	}
 
 	for (let i = 0; i < games.length; i++) {
 		var players = [];
 		let allPlayersAvailable = true;
 		let skipGame = false;
 
-		if (games[i].finished)
+		if (games[i].finished) {
+			finished++;
 			continue ;
+		}
 		for (let j = 0; j < maxClients; j++) {
 			const player = findPlayer(sockets, games[i].player_scores[j].addr);
 			players.push(player);
@@ -114,8 +120,9 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 			}
 		}
 
-		if (allPlayersAvailable === false)
+		if (allPlayersAvailable === false) {
 			continue ;
+		}
 
 		var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 
@@ -128,14 +135,27 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 				shuffledPlayers[k].player!.emit('match-found', id, tournamentID, i);
 				if (skipGame) {
 					let address;
-					if (shuffledPlayers[0].player === null)
+					if (shuffledPlayers[0].player === null) {
 						address = shuffledPlayers[0].address;
-					else
+					} else {
 						address = shuffledPlayers[1].address
-						shuffledPlayers[k].player!.emit('Skip', address);
+					}
+					shuffledPlayers[k].player!.emit('Skip', address);
 				}
 			}
 			l++
+		}
+	}
+	if (finished === games.length) {
+		let playerReady = 0;
+		for (let i = 0; i < sockets.length; i++) {
+			if (!sockets[i].data.isInGame) {
+				playerReady++;
+			}
+		}
+		if (playerReady === sockets.length) {
+			const topic = 'tournament-finished';
+			io.to(`tournament-${tournamentID}`).emit(`message-${tournamentID}-${topic}`, "");
 		}
 	}
 }

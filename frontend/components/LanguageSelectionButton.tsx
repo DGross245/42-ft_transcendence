@@ -36,17 +36,25 @@ const LanguageSelectionButton: React.FC = () => {
 		date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
 		document.cookie = `NEXT_LOCALE=${newLocale};expires=${date.toUTCString()};path=/`;
 
+		const sendToPath = (path: string) => {
+			if(!(typeof window === undefined)) {
+				window.location.replace(path);
+			} else {
+				router.push(path);
+				router.refresh();
+			}
+		}
+
 		if (
 			currentLocale === i18nConfig.defaultLocale &&
 			!i18nConfig.prefixDefault
 		) {
-			router.push('/' + newLocale + currentPathname);
+			sendToPath('/' + newLocale + currentPathname);
 		} else {
-			router.push(
+			sendToPath(
 				currentPathname.replace(`/${currentLocale}`, `/${newLocale}`)
 			);
 		}
-		router.refresh();
 	}
 
 	return (

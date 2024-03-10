@@ -20,23 +20,25 @@ export const usePongUI = () => {
 	// Opens the EndModal after a delay if the 'gameOver' state is true.
 	useEffect(() => {
 		if (pongGameState.gameOver) {
-			const delay = 1000;
+			const delay = 2000;
 			const modalTimeout = setTimeout(() => {
 				openModal();
-				if (playerStatus === "unavailable") {
-					playSound("silly");
-				} else if (winner === String(playerState.players[0].number + 1) || (winner === '' && playerStatus === "disconnect")) {
-					playSound("win");
-				} else {
-					playSound("losing");
+				if (playerStatus !== 'leave') {
+					if (playerStatus === "unavailable") {
+						playSound("silly");
+					} else if (winner === String(playerState.players[playerState.client].number + 1)) {
+						playSound("win");
+					} else {
+						playSound("losing");
+					}
 				}
 			}, delay);
-
+			
 			return (() => {
 				clearTimeout(modalTimeout)
 			});
 		}
-	}, [pongGameState.gameOver, openModal, winner, playerStatus, playerState.players, playSound]);
+	}, [pongGameState.gameOver, openModal, winner, playerStatus, playerState.client, playerState.players, playSound]);
 
 	return {
 		closeModal,

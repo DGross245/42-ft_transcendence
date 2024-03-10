@@ -23,7 +23,7 @@ interface TimerProps {
 /* -------------------------------------------------------------------------- */
 export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, showChip, timerState, setTimerState, disappear, setDisappear }) => {
 	const { dimensions } = useWindow();
-	const [seconds, setSeconds] = useState(15);
+	const [seconds, setSeconds] = useState(30);
 	const playSound = useSound();
  
 
@@ -45,7 +45,7 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 
 						setTimeout(() => {
 							setDisappear(true);
-							setSeconds(15);
+							setSeconds(30);
 						}, 1500); 
 
 						clearInterval(interval);
@@ -58,7 +58,7 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 
 					setTimeout(() => {
 						setDisappear(true);
-						setSeconds(15);
+						setSeconds(30);
 					}, 1500); 
 				}
 			}, 1000);
@@ -78,7 +78,7 @@ export const Timer =  React.memo<TimerProps>(({playerClient, isFull, started, sh
 			className={`${disappear ? 'fade-out' : 'fade-in'}`}
 			style={{
 				position: 'absolute',
-				top: dimensions.height / 4.5,
+				top: dimensions.height / 4,
 				left: dimensions.width / 2,
 				transform: 'translate(-50%, -50%)',
 			}}

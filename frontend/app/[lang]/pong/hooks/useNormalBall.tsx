@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 
 import { usePongGameState } from "./usePongGameState";
@@ -17,11 +17,10 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		leftPaddleRef,
 		rightPaddleRef,
 		setScores,
-		botState,
-		setStarted,
-		started
+		started,
+		isGameMode
 	} = usePongGameState();
-	const { wsclient, playerState } = usePongSocket();
+	const { wsclient, playerState, customized} = usePongSocket();
 
 	const temp = useRef({ x: 0, z: 0, velocityX: 0, velocityZ: 0, speed: 0.1 });
 	const PositionRef = useRef({position: {x:0, z:0}, velocity: {x:0, z:0}, deltaTime: 0});
@@ -42,8 +41,9 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		const deltaZ = ball.z - paddlePos.z;
 		const normalizedY = deltaZ / halfPaddleHeight;
 
-		if (ball.speed <= 2)
+		if (ball.speed <= 2) {
 			ball.speed += 0.2;
+		}
 		ball.velocityX = direction * ball.speed;
 		ball.velocityZ = normalizedY * ball.speed;
 	}
@@ -86,7 +86,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		}
 	
 		if (onPositionChange && ballRef.current) {
-				onPositionChange(ballRef.current.position);
+			onPositionChange(ballRef.current.position);
 		}
 	}
 
@@ -127,19 +127,50 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		}
 	}, [wsclient, pongGameState.gameId]);
 
+	useEffect(() => {
+		const setNewScore = (msg: string) => {
+			const newScore = JSON.parse(msg);
+			if (!playerState.master) {
+				if (isGameMode) {
+					setScores((prevState) => ({
+						...prevState,
+						p1Score: newScore.p1Score,
+						p2Score: newScore.p2Score,
+						p3Score: newScore.p3Score,
+						p4Score: newScore.p4Score
+					}));
+				} else {
+					setScores((prevState) => ({
+						...prevState,
+						p1Score: newScore.p2Score,
+						p2Score: newScore.p1Score
+					}));
+				}
+			}
+		};
+
+		if (wsclient && pongGameState.gameId !== '-1') {
+			wsclient?.addMessageListener(`ScoreUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewScore);
+	
+			return () => {
+				wsclient?.removeMessageListener(`ScoreUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+			};
+		}
+	}, [wsclient, pongGameState.gameId, playerState.master, isGameMode, setScores]);
+
 	/**
 	 * Initiates the game by providing a random direction to the ball after the countdown 
 	 * sets the score visibility to true.
 	 */
 	useEffect(() => {
-		if (started) {
+		if (started || customized) {
 			randomBallDir();
 		}
-	}, [started]);
+	}, [started, customized]);
 
 	useEffect(() => {
 		const checkWinner = (player: string, playerScore: number) => {
-			if (playerScore === 7) {
+			if (playerScore === 7 && !pongGameState.gameOver) {
 				let ball = temp.current;
 				ball.x = 0;
 				ball.z = 0;
@@ -152,9 +183,18 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 			}
 		}
 
-		checkWinner('1', scores.p1Score);
-		checkWinner('2', scores.p2Score);
-	}, [scores.p1Score, scores.p2Score, setWinner, setBallVisibility, updatePongGameState]);
+		if (wsclient && pongGameState.gameId !== "-1" && playerState.master) {
+			const newScore = {
+				p1Score: scores.p1Score,
+				p2Score: scores.p2Score
+			}
+			wsclient?.emitMessageToGame(JSON.stringify(newScore), `ScoreUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+		}
+
+
+		checkWinner('1', playerState.master ? scores.p1Score : scores.p2Score);
+		checkWinner('2', playerState.master ? scores.p2Score : scores.p1Score);
+	}, [pongGameState.gameId, pongGameState.gameOver, scores, wsclient, playerState.master, setWinner, setBallVisibility, updatePongGameState]);
 
 	// Game/render loop for the ball.
 	useFrame((_, deltaTime) => {
@@ -200,7 +240,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		}
 		// Handling scoring when the ball is outside of the play area.
 		else if ((ball.x > 200 || ball.x < -200) && 
-			scores.p2Score !== 7 && scores.p1Score !== 7) {
+			scores.p2Score !== 7 && scores.p1Score !== 7 && playerState.master) {
 			if (ball.x < -200)
 				setScores({ ...scores, p2Score: scores.p2Score + 1 })
 			else
