@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import { useSound } from './Sound';
 import { ethers } from 'ethers';
 
-export const _address = '0x4982051409D3F7f1C37d9f1e544EF6c6e8557148'
+export const contract_address = '0x4982051409D3F7f1C37d9f1e544EF6c6e8557148'
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -37,10 +37,10 @@ export interface Tournament {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                 Hook                               */
+/*                                Contract Hook                               */
 /* -------------------------------------------------------------------------- */
-function use() {
-	const [tm, setTm] = useState<ethers. | null>(null);
+function useContract() {
+	const [tmContract, setTmContract] = useState<ethers.Contract | null>(null);
 	const { address, chainId, isConnected } = useWeb3ModalAccount();
 	const { walletProvider } = useWeb3ModalProvider();
 	const { t } = useTranslation("toasts");
@@ -50,14 +50,14 @@ function use() {
 		if (isConnected && walletProvider) {
 			const provider = new ethers.providers.Web3Provider(walletProvider);
 			const signer = provider.getSigner();
-			const tm = new ethers.(_address, scoresAbi, signer);
-			setTm(tm);
+			const tmContract = new ethers.Contract(contract_address, scoresAbi, signer);
+			setTmContract(tmContract);
 		}
 	}, [isConnected, walletProvider]);
 
-	const call = useCallback(async (functionName: string, args: any[] = []) => {
+	const callContract = useCallback(async (functionName: string, args: any[] = []) => {
 		try {
-			const result = await tm?.[functionName](...args);
+			const result = await tmContract?.[functionName](...args);
 			if (result && typeof result.wait !== "undefined") {
 				playSound("pay");
 				toast.info(t("toast.minted"))
@@ -76,31 +76,31 @@ function use() {
 			}
 		}
 		return null;
-	},[tm, playSound, t]);
+	},[tmContract, playSound, t]);
 
 	// creates a new tournament and adds calling address as master
 	// the caller HAS to join separately as a player if he wants to participate
 	const createTournament = useCallback(async (duration_in_blocks: number, gameType: string) => {
-		return (await call('createTournament', [duration_in_blocks, gameType]));
-	},[call]);
+		return (await callContract('createTournament', [duration_in_blocks, gameType]));
+	},[callContract]);
 
 	// starts a previously created tournament and creates game tree
 	// players cannot join after this
 	const startTournament = useCallback(async (tournament_id: number) => {
-		return (await call('startTournament', [tournament_id]));
-	},[call]);
+		return (await callContract('startTournament', [tournament_id]));
+	},[callContract]);
 
 	// sets name and color of the player (player = calling address)
 	// color is a hex string, e.g. '0xFF0000'
 	// this "player profile" will be stored permanently accross all games and tournaments
 	const setNameAndColor = useCallback(async (name: string, color: string) => {
-		return (await call('setNameAndColor', [name, color]));
-	},[call]);
+		return (await callContract('setNameAndColor', [name, color]));
+	},[callContract]);
 
 	// calling address/player joins the specified tournament
 	const joinTournament = useCallback(async (tournament_id: number) => {
-		return (await call('joinTournament', [tournament_id]));
-	},[call]);
+		return (await callContract('joinTournament', [tournament_id]));
+	},[callContract]);
 
 	// tournament has to have at least 2 players for this to work
 	const submitGameResultTournament = useCallback(async (tournament_id: number, game_id: number, scores: PlayerScore[]) => {
@@ -109,8 +109,8 @@ function use() {
 		// 	{ player: '0x0000000000', score: 1 },
 		// 	{ player: '0x4242424242', score: 2 },
 		// ]
-		return (await call('submitGameResultTournament', [tournament_id, game_id, scores]));
-	},[call]);
+		return (await callContract('submitGameResultTournament', [tournament_id, game_id, scores]));
+	},[callContract]);
 
 	// ranked games cannot be created beforehand, they will automatically be created upon submission of scores
 	// therefore, there are no error checks and arbitrary player_score arrays can be submitted
@@ -120,43 +120,43 @@ function use() {
 		// 	{ player: '0x0000000000', score: 1 },
 		// 	{ player: '0x4242424242', score: 2 },
 		// ]
-		return (await call('submitGameResultRanked', [scores]));
-	},[call]);
+		return (await callContract('submitGameResultRanked', [scores]));
+	},[callContract]);
 
 	// returns array of all available tournaments
 	const getTournaments = useCallback(async () => {
-		return (await call('getTournaments')) as Tournament[];
-	},[call]);
+		return (await callContract('getTournaments')) as Tournament[];
+	},[callContract]);
 
 	// returns a single tournament
 	const getTournament = useCallback(async (tournament_id: number) => {
-		return (await call('getTournament', [tournament_id])) as Tournament;
-	},[call]);
+		return (await callContract('getTournament', [tournament_id])) as Tournament;
+	},[callContract]);
 
 	// returns tournament tree (array of games) of a single tournament
 	const getTournamentTree = useCallback(async (tournament_id: number) => {
-		return (await call('getTournamentTree', [tournament_id])) as Game[];
-	},[call]);
+		return (await callContract('getTournamentTree', [tournament_id])) as Game[];
+	},[callContract]);
 
 	// returns information about a player
 	// match history not included, only name and color
 	const getPlayer = useCallback(async (address: string) => {
-		return (await call('getPlayer', [address])) as Player;
-	},[call])
+		return (await callContract('getPlayer', [address])) as Player;
+	},[callContract])
 
 	// returns array of all ranked games
 	// this can be used to display a leaderboard, as well as match history of a player
 	const getRankedGames = useCallback(async () => {
-		return (await call('getRankedGames')) as Game[];
-	},[call]);
+		return (await callContract('getRankedGames')) as Game[];
+	},[callContract]);
 
 	// returns number of games played divided by accumulated score across all games
 	const getPlayerRankedElo = useCallback(async (address: string) => {
-		return (await call('getPlayerRankedElo', [address])) as number;
-	},[call]);
+		return (await callContract('getPlayerRankedElo', [address])) as number;
+	},[callContract]);
 
 	return {
-		tm,
+		tmContract,
 		address,
 		createTournament,
 		startTournament,
@@ -173,4 +173,4 @@ function use() {
 	}
 };
 
-export default use;
+export default useContract;

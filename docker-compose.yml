@@ -1,13 +1,16 @@
 version: '3.7'
 services:
   elasticsearch:
+    container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
     environment:
       - discovery.type=single-node
     ports:
       - "9200:9200"
+    restart: always
 
   logstash:
+    container_name: logstash
     image: docker.elastic.co/logstash/logstash:7.12.0
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
@@ -20,6 +23,7 @@ services:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
 
   kibana:
+    container_name: kibana
     image: docker.elastic.co/kibana/kibana:7.12.0
     depends_on:
       - elasticsearch
@@ -27,6 +31,7 @@ services:
       - "5601:5601"
 
   transcendence:
+    container_name: transcendence
     build: .
     volumes:
       - .:/usr/src/app
@@ -34,3 +39,5 @@ services:
       - logstash
     environment:
       - LOGSTASH_HOST=logstash:5001
+    ports:
+      - "3000:3000"

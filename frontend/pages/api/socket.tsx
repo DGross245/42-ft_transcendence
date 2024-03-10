@@ -6,13 +6,12 @@ import { ethers } from 'ethers';
 import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
 import { contract_address } from "@/components/hooks/useContract";
+import { createLogger } from "winston";
+import { Logstash } from "winston-logstash";
 
-const winston = require('winston');
-require('winston-logstash');
-
-const logger = winston.createLogger({
+const logger = createLogger({
 	transports: [
-		new winston.transports.Logstash({
+		new Logstash({
 			port: 5001,
 			node_name: 'transcendence',
 			mode: 'tcp',
