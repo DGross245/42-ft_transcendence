@@ -53,7 +53,7 @@ g_win_score = 7
 
 g_server_game_width = 298
 g_server_game_height = 206
-g_server_paddle_length = 35
+g_server_paddle_length = 30
 g_scaling_factor_width = 1
 g_scaling_factor_height = 1
 
@@ -70,13 +70,13 @@ event_socket_ready = threading.Event()
 # -------------------------------------------------------------------------- #
 
 def server_y_to_cli_y(server_y):
-	return (int(server_y * g_scaling_factor_height + curses.LINES // 2))
+	return (int(server_y * g_scaling_factor_height + curses.LINES / 2))
 
 def server_x_to_cli_x(server_x):
-	return (int(server_x * g_scaling_factor_width + curses.COLS // 2))
+	return (int(server_x * g_scaling_factor_width + curses.COLS / 2))
 
 def cli_y_to_server_y(cli_y):
-	server_y = (cli_y - curses.LINES // 2) / g_scaling_factor_height
+	server_y = (cli_y - curses.LINES / 2) / g_scaling_factor_height
 	return server_y
 
 def init_game_state():
@@ -129,10 +129,10 @@ def init_scaling_factors():
 	g_scaling_factor_height = curses.LINES / g_server_game_height / 2
 	g_scaling_factor_width = curses.COLS / g_server_game_width / 2
 	g_paddle_speed = int(g_server_game_height * g_scaling_factor_height // 10)
-	while g_paddle_length % 2 == 0:
+	while g_paddle_length % 2 != 0 or g_paddle_length == 0:
 		g_scaling_factor_height -= 0.01
 		g_scaling_factor_width -= 0.01
-		g_paddle_length = int(g_server_game_height * g_scaling_factor_height / (g_server_game_height / g_server_paddle_length))
+		g_paddle_length = int((g_server_game_height * g_scaling_factor_height) / (g_server_game_height / g_server_paddle_length))
 
 # -------------------------------------------------------------------------- #
 #                               Signal Handler                               #
@@ -234,7 +234,7 @@ def register_message_handlers():
 		paddle_y = json.loads(msg)
 		logging.debug(RED + f'Received Paddle Data: {paddle_y}' + RESET)
 		global g_game_state
-		g_game_state['left_paddle']['y'] = server_y_to_cli_y(paddle_y) - math.ceil(g_paddle_length / 2)
+		g_game_state['left_paddle']['y'] = server_y_to_cli_y(paddle_y) - g_paddle_length // 2
 
 	@sio.on(f'message-{g_game_id}-ballUpdate-{g_game_id}')
 	async def receive_ball_data(msg: str):
@@ -306,7 +306,7 @@ async def send_message(msg: str, topic: str, game_id: str):
 		event_quit.set()
 
 async def send_paddle_data(paddle_y: str, game_id: str):
-	msg = cli_y_to_server_y(paddle_y + math.ceil(g_paddle_length // 2))
+	msg = cli_y_to_server_y(paddle_y + g_paddle_length // 2)
 	topic = f'paddleUpdate-{game_id}'
 	await send_message(msg, topic, game_id)
 
@@ -337,10 +337,10 @@ def draw_ball(stdscr, ball, global_ball, score):
 
 def move_paddle(paddle, key):
 	if key == curses.KEY_UP:
-		if paddle['y'] - g_paddle_speed >= server_y_to_cli_y(-g_server_game_height // 2) + 1:
+		if paddle['y'] - g_paddle_speed > server_y_to_cli_y(-g_server_game_height / 2) - curses.LINES / 40:
 			paddle['y'] -= g_paddle_speed
 	elif key == curses.KEY_DOWN:
-		if paddle['y'] + g_paddle_speed + g_paddle_length <= server_y_to_cli_y(g_server_game_height // 2) + 1:
+		if paddle['y'] + g_paddle_speed + g_paddle_length < server_y_to_cli_y(g_server_game_height / 2) + curses.LINES / 40:
 			paddle['y'] += g_paddle_speed
 	asyncio.run(send_paddle_data(paddle['y'], g_game_id))
 	return paddle
@@ -349,14 +349,14 @@ def draw_score(stdscr, game_state):
 	stdscr.addstr(2, curses.COLS // 2 - 3, f"{g_game_state['score']['left']} : {g_game_state['score']['right']}")
 
 def draw_field(stdscr):
-	i = server_y_to_cli_y(-g_server_game_height // 2)
-	while i < server_y_to_cli_y(g_server_game_height // 2):
+	i = server_y_to_cli_y(-g_server_game_height / 2)
+	while i < server_y_to_cli_y(g_server_game_height / 2):
 		stdscr.addstr(i, server_x_to_cli_x(0), '|')
 		i += 2
 	i = server_x_to_cli_x(-g_server_game_width / 2)
 	while i <= server_x_to_cli_x(g_server_game_width / 2):
-		stdscr.addstr(server_y_to_cli_y(-g_server_game_height // 2), i, '-')
-		stdscr.addstr(server_y_to_cli_y(g_server_game_height // 2), i, '-')
+		stdscr.addstr(server_y_to_cli_y(-g_server_game_height / 2), i, '-')
+		stdscr.addstr(server_y_to_cli_y(g_server_game_height / 2), i, '-')
 		i += 1
 
 def draw_box(stdscr, y, x, height, width):
@@ -449,10 +449,20 @@ def curses_thread(stdscr):
 	if curses.LINES < 20 or curses.COLS < 50:
 		raise WindowTooSmall
 	init_scaling_factors()
+	if g_scaling_factor_height < 0 or g_scaling_factor_width < 0:
+		raise WindowTooSmall
 	global g_game_state
 	g_game_state = init_game_state()
 	funcs = [start_loop, wait_loop, draw_countdown, game_loop, end_loop]
 	for i in range(len(funcs)):
+		stdscr.addstr(0, 0, 'paddle length: ' + str(g_paddle_length))
+		stdscr.addstr(1, 0, 'height scaling factor: ' + str(g_scaling_factor_height))
+		stdscr.addstr(2, 0, 'width scaling factor: ' + str(g_scaling_factor_width))
+		stdscr.addstr(3, 0, 'cli game height: ' + str(g_scaling_factor_height * g_server_game_height))
+		stdscr.addstr(4, 0, 'cli game width: ' + str(g_scaling_factor_width * g_server_game_width))
+		stdscr.addstr(5, 0, 'upper border: ' + str(server_y_to_cli_y(-g_server_game_height / 2)))
+		stdscr.addstr(6, 0, 'lower border: ' + str(server_y_to_cli_y(g_server_game_height / 2)))
+		stdscr.addstr(7, 0, 'window height: ' + str(curses.LINES))
 		funcs[i](stdscr)
 		stdscr.clear()
 		if event_quit.is_set():
