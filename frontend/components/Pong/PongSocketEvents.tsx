@@ -262,7 +262,6 @@ export const PongSocketEvents = memo(() => {
 
 	useEffect(() => {
         const makeMaster = (msg: string) => {
-			console.log("lool: ", msg)
             if (msg === "CLI") {
                 setPlayerState(prevState => ({
                     ...prevState,
@@ -337,13 +336,12 @@ export const PongSocketEvents = memo(() => {
 		const endGame = (msg: string) => {
 			setRequestRematch(false);
 			setSendRequest(false);
-			playSound(msg);
 			setPlayerStatus(msg);
 			if (!pongGameState.gameOver && playerState.client !== -1) {
-				setWinner(String(playerState.client))
-				console.log(playerState.client);
+				playSound(msg);
+				setWinner(String(playerState.client + 1))
+				updatePongGameState({ gameOver: true });
 			}
-			updatePongGameState({ gameOver: true });
 		};
 
 		if (wsclient && pongGameState.gameId !== '-1') {
