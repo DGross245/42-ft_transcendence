@@ -38,7 +38,7 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 	}
 
 	const isInvalidUsername = useMemo(() => {
-		return username.length < 5 || username.length > 26;
+		return username.length < 2 || username.length > 26;
 	}, [username]);
 
 	return (

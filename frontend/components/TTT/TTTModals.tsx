@@ -184,6 +184,10 @@ export const TTTModals = memo(() => {
 	}, [customized, gameState.gameId, address, getPlayer, setPlayerInfos]);
 
 	const initiateGame = async (username: string, color: string) => {
+		if (username.length < 2 || username.length > 26) {
+			return ;
+		}
+
 		if (username !== playerInfos.name || color !== playerInfos.color) {
 			const colorCopy = color.replace('#', '0x');
 			setPlayerInfos({ color: color, name: String(username) });
@@ -218,8 +222,10 @@ export const TTTModals = memo(() => {
 
 	const registerNewPlayer = async (username: string, color: string) => {
 		const colorCopy = color.replace('#', '0x');
-		if (!(await onSetNameAndColor(username, colorCopy))) {
-			setShowSetModal(false);
+		if (username.length > 1 && username.length < 27) {
+			if (!(await onSetNameAndColor(username, colorCopy))) {
+				setShowSetModal(false);
+			}
 		}
 	}
 

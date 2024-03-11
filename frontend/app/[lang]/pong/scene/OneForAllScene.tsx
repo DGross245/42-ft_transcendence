@@ -1,11 +1,12 @@
 "use client"
 
-import { useWindow } from "@/components/hooks/useWindow";
 import { Canvas } from "@react-three/fiber";
+import { OrbitControls } from "@react-three/drei";
+
+import { useWindow } from "@/components/hooks/useWindow";
 import Countdown from "@/components/Pong/Countdown";
 import Camera from "@/components/Pong/Camera";
 import { CubeLineX, CubeLineY } from "@/components/Pong/CubeLine";
-import { OrbitControls } from "@react-three/drei";
 import Scoreboard from "@/components/Pong/Scoreboard";
 import { CornerBorder } from "@/components/Pong/Border";
 import { PongGameEvents } from "@/components/Pong/PongGameEvents";

@@ -169,10 +169,11 @@ export const PongModals = memo(() => {
 	useEffect(() => {
 		const getPlayerInfo = async () => {
 			if (playerAddress !== "") {
-				const playerInfo = await getPlayer(String(playerAddress));
-
-				const color = intToHexColor(Number(playerInfo.color));
-				setPlayerInfos({ color: color, name: String(playerInfo.name)});
+				const playerData = await getPlayer(String(playerAddress));
+				if (playerData && Number(playerData.addr) !== 0) {
+					const color = intToHexColor(Number(playerData.color));
+					setPlayerInfos({ color: color, name: String(playerData.name)});
+				}
 			}
 		}
 
@@ -182,8 +183,13 @@ export const PongModals = memo(() => {
 	}, [customized, pongGameState.gameId, playerAddress, getPlayer, setPlayerInfos]);
 
 	const initiateGame = async (username: string, color: string) => {
+		if (username.length < 2 || username.length > 26) {
+			return ;
+		}
+
 		if (username !== playerInfos.name || color !== playerInfos.color) {
 			const colorCopy = color.replace('#', '0x');
+			setPlayerInfos({ color: color, name: String(username) });
 			if (await onSetNameAndColor(username, colorCopy)) {
 				return ;
 			}
@@ -213,13 +219,16 @@ export const PongModals = memo(() => {
 
 	const registerNewPlayer = async (username: string, color: string) => {
 		const colorCopy = color.replace('#', '0x');
-		if (!(await onSetNameAndColor(username, colorCopy))) {
-			setShowSetModal(false);
+		if (username.length > 1 && username.length < 27) {
+			if (!(await onSetNameAndColor(username, colorCopy))) {
+				setShowSetModal(false);
+			}
 		}
 	}
 
 	useEffect(() => {
 		let timerId: NodeJS.Timeout;
+
 		if (pongGameState.gameId !== '-1' && !customized && tournament.id !== -1) {
 			timerId = setTimeout(() => {
 				setShowCustomModal(true);

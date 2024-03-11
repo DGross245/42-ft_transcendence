@@ -139,7 +139,7 @@ export const PongGameEvents = () => {
 				setSendRequest(false);
 				
 				// Update game state to trigger a reset
-				updatePongGameState({ reset: true })
+				updatePongGameState({ reset: true, pause: true })
 			}, 1000);
 		}
 	}, [rematchIndex, isGameMode, playSound, setRequestRematch, setSendRequest, setRematchIndex, updatePongGameState]);

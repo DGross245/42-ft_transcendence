@@ -13,7 +13,7 @@
 	"customizemodal.selectcolor": "Select Color",
 	"customizemodal.choosecolor": "Choose your color",
 	"customizemodal.joingame": "Join Game",
-	"customizemodal.invalidusername.message": "Invalid username. Needs to be between 5 and 26 characters!",
+	"customizemodal.invalidusername.message": "Invalid username. Needs to be between 2 and 26 characters!",
 
 	"gamemodal.winner": "Winner",
 	"gamemodal.loser": "Loser",

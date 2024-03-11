@@ -84,16 +84,17 @@ const ModalContentsWrapper: React.FC<{children?: React.ReactNode, loading?: bool
 /*                               Modal Contents                               */
 /* -------------------------------------------------------------------------- */
 const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, closeMain, setGameOptions, tournamentState, wsclient }) => {
+	const { getTournaments, getTournament, tmContract, getTournamentTree, getPlayer } = useContract();
+	const { onCreateTournament, onJoinTournament, onStartTournament } = useJoinEvents(wsclient)
+	const { address } = useWeb3ModalAccount();
+	const { t } = useTranslation("modals");
+
 	const [selectedTournament, setSelectedTournament] = useState("");
 	const [tournament, setTournament] = useState(false);
 	const [tournamentID, setTournamentID] = useState(0);
 	const [data, setData] = useState<{[key: string]: string | GameState}[]>([]);
 	const [tournamentData, setTournamentData] = useState<{[key: string]: string | GameState}[]>([]);
-	const { getTournaments, getTournament, tmContract, getTournamentTree, getPlayer } = useContract();
-	const { onCreateTournament, onJoinTournament, onStartTournament } = useJoinEvents(wsclient)
-	const { address } = useWeb3ModalAccount();
 	const [games, setGames] = useState<{[key: string]: string | GameState}[]>([]);
-	const { t } = useTranslation("modals");
 
 	useEffect(() => {
 		const getSocketNumber = async (index: number) => {
@@ -241,10 +242,12 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 		if (await onCreateTournament(gameType)) {
 			return ;
 		}
-		if (await joinTournament(String((await getTournaments()).length - 1))) {
+		const id = String((await getTournaments()).length - 1);
+		if (await joinTournament(id)) {
 			return ;
 		}
 		setTournament(true);
+		setTournamentID(Number(id));
 	}
 
 	const joinTournament = async (id: string) => {
@@ -293,11 +296,10 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 			wsclient?.requestTournament(Number(id), gameType);
 		} else if (tournaments[Number(id)].master === String(address)) {
 			setTournament(true);
+			setTournamentID(Number(id));
 		} else {
 			setSelectedTournament(id);
 		}
- 
-		setTournamentID(Number(id));
 	}
 
 	useEffect(() => {
@@ -348,7 +350,7 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 			title={t("selectionmodal.selectgame.title")}
 		>
 			<div className="flex items-end gap-2 justify-between">
-				<Snippet className="w-64 h-unit-10" symbol="ID" disableCopy={!tournament}> 0 </Snippet>
+				<Snippet className="w-64 h-unit-10" symbol="ID" disableCopy={!tournament}>{tournamentID}</Snippet>
 				<Button className="w-full" color="primary" onClick={async () => {
 					if (tournament) {
 						if (!(await onStartTournament(tournamentID, gameType))) {
@@ -472,13 +474,13 @@ const CustomGamesContent: React.FC<ModalContentProps> = ({ setGameID, onClose, c
 				<Tab key="multi" title={t("selectionmodal.selectgame.multiopponent")} />
 			</Tabs>
 			<div className="flex gap-4">
-				<Snippet
+				{/* <Snippet
 					symbol="ID"
 					disableCopy={!game}
 					className={clsx("w-64 h-unit-10", {"opacity-40 cursor-not-allowed": !game})}
 				>
 					{game ?? ""}
-				</Snippet>
+				</Snippet> */}
 				<Button className="w-full" color="primary" onClick={onGameCreate}>
 					{t("selectionmodal.selectgame.creategame")}
 				</Button>
