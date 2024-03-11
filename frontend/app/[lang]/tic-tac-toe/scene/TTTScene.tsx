@@ -35,7 +35,6 @@ const TTTScene = () => {
 		<div style={{ width: "100%", height: "100%" }}>
 			<div className="scene-container">
 				<Canvas style={{ width: dimensions.width, height: dimensions.height - 128 }}>
-					{/* <JoinGame selected={selected} /> */}
 					<Camera />
 					<Countdown />
 					<Grid />

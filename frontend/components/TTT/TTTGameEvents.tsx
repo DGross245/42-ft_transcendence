@@ -75,7 +75,7 @@ export const TTTGameEvents = memo(() => {
 			setSendRequest(false);
 
 			// Update game state to trigger a reset
-			updateGameState({ reset: true});
+			updateGameState({ reset: true, pause: true });
 		}
 	}, [rematchIndex, isGameMode, setRequestRematch, setSendRequest, updateGameState, setRematchIndex, playSound]);
 
