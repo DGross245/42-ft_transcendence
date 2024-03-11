@@ -15,6 +15,7 @@ services:
     volumes:
       - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
       - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logstash/ssl/cert.crt:/usr/share/logstash/ssl/cert.crt
     depends_on:
       - elasticsearch
     ports:
