@@ -60,7 +60,7 @@ export const RightPaddle : React.FC<{ direction: Direction }> = ({ direction }) 
 					rightPaddleRef.current.position.z = Math.max(rightPaddleRef.current.position.z - paddleSpeed * delta, -borderPositionZ + 15);
 				}
 			} else {
-				rightPaddleRef.current.position.z = PositionRef.current;
+				rightPaddleRef.current.position.z += (PositionRef.current - rightPaddleRef.current.position.z) * 0.6 ;
 			}
 		}
 	});
@@ -99,13 +99,13 @@ export const LeftPaddle = () => {
 		}
 
 		if (leftPaddleRef && leftPaddleRef.current) {
-			const stringPos = JSON.stringify(leftPaddleRef.current.position.z);
-			wsclient?.emitMessageToGame(stringPos, `paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 			if (up.isKeyDown) {
 				leftPaddleRef.current.position.z = Math.max(leftPaddleRef.current.position.z - paddleSpeed * delta, -borderPositionZ + 15);
 			} else if (down.isKeyDown) {
 				leftPaddleRef.current.position.z = Math.min(leftPaddleRef.current.position.z + paddleSpeed * delta, borderPositionZ - 15);
 			}
+			const stringPos = JSON.stringify(leftPaddleRef.current.position.z);
+			wsclient?.emitMessageToGame(stringPos, `paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 		}
 	});
 
