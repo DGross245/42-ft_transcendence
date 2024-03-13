@@ -27,6 +27,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 	const halfPaddleWidth = 4 / 2;
 	const halfPaddleHeight = 30 / 2;
 	const halfBall = 2;
+	// let lastUpdate = performance.now();
 
 	/**
 	 * Changes the ball's direction after it collided with a paddle.
@@ -89,6 +90,38 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 			onPositionChange(ballRef.current.position);
 		}
 	}
+
+	// const predict = () => {
+	// 	// prediction between each 50 ms
+	// 	return {
+	// 		position: {x: 0, z: 0},
+	// 		velocity: {x: 0, z: 0},
+	// 	}
+	// }
+
+	// const correctPrediction = () => {
+
+	// }
+
+	// const updateGame = () => {
+
+	// 	if (playerState.master) {
+	// 		const msg = {
+	// 			position: { x: current.position.x, z: current.position.z },
+	// 			velocity: { x: current.velocity.x z: current.velocity.z },
+	// 		}
+	// 		wsclient?.emitMessageToGame(JSON.stringify(msg), `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+	// 	} else {
+	// 		const predicted = predict();
+	// 		const correctedPosition = correctPrediction(predicted);
+	// 		ballRef.current.position.x = correctedPosition.x;
+	// 		ballRef.current.position.z = correctedPosition.z;
+	// 	}
+
+	// 	if (onPositionChange && ballRef.current) {
+	// 		onPositionChange(ballRef.current.position);
+	// 	}
+	// }
 
 	/**
 	 * Sets the ball back to the middle and generates a random direction for the ball.
@@ -199,6 +232,21 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		checkWinner('2', playerState.master ? scores.p2Score : scores.p1Score);
 	}, [pongGameState.gameId, playerState.client, pongGameState.gameOver, scores, wsclient, playerState.master, setWinner, setBallVisibility, updatePongGameState]);
 
+	useFrame(() => {
+		const currentTime = performance.now();
+		const deltaTime = currentTime - lastUpdate;
+	
+		if (deltaTime >= 50) {
+			const msg = {
+				position: { x: ballRef.current.position.x, z: ballRef.current.position.z },
+				velocity: { x: temp.current.velocityX, z: temp.current.velocityZ },
+				deltaTime: deltaTime
+			}
+			wsclient?.emitMessageToGame(JSON.stringify(msg), `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+			lastUpdate = currentTime;
+		}
+	});
+	
 	// Game/render loop for the ball.
 	useFrame((_, deltaTime) => {
 		const ball = temp.current;

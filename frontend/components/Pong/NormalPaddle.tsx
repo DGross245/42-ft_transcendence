@@ -12,8 +12,6 @@ import { usePongSocket } from "../../app/[lang]/pong/hooks/usePongSocket";
 
 /**
  * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
- * @param ref - Forwarded reference for more control in parent component.
- * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
 export const RightPaddle : React.FC<{ direction: Direction }> = ({ direction }) => {
@@ -75,9 +73,6 @@ export const RightPaddle : React.FC<{ direction: Direction }> = ({ direction }) 
 
 /**
  * Creates a Three.js mesh representing the right paddle for the game scene and manages its movement.
- * @param ref - Forwarded reference for more control in parent component.
- * @param keyMap - An object mapping keyboard keys to their pressed/unpressed state.
- * @param position - The initial position of the paddle in 3D space as an array of [x, y, z] coordinates.
  * @returns A Three.js mesh representing the paddle.
  */
 export const LeftPaddle = () => {
@@ -86,6 +81,7 @@ export const LeftPaddle = () => {
 	const { wsclient, playerState } = usePongSocket();
 	const up = useKey(['W', 'w']);
 	const down = useKey(['S', 's'])
+	const lastPos = useRef(0);
 
 	const paddleSpeed = 300;
 	const borderPositionZ = 103;
@@ -104,8 +100,12 @@ export const LeftPaddle = () => {
 			} else if (down.isKeyDown) {
 				leftPaddleRef.current.position.z = Math.min(leftPaddleRef.current.position.z + paddleSpeed * delta, borderPositionZ - 15);
 			}
-			const stringPos = JSON.stringify(leftPaddleRef.current.position.z);
-			wsclient?.emitMessageToGame(stringPos, `paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+
+			if (leftPaddleRef.current.position.z !== lastPos.current) {
+				const stringPos = JSON.stringify(leftPaddleRef.current.position.z);
+				wsclient?.emitMessageToGame(stringPos, `paddleUpdate-${pongGameState.gameId}`, pongGameState.gameId);
+				lastPos.current = leftPaddleRef.current.position.z;
+			}
 		}
 	});
 
