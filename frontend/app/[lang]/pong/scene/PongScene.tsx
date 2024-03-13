@@ -1,7 +1,7 @@
 "use client"
 
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, Stats } from "@react-three/drei";
 
 import Countdown from "@/components/Pong/Countdown";
 import { useWindow } from "@/components/hooks/useWindow";
@@ -41,6 +41,7 @@ export default function PongScene() {
 						maxPolarAngle={Math.PI / 2}
 					/>
 					<Scoreboard />
+					<Stats />
 				</Canvas>
 				<PongModals />
 			</div>
