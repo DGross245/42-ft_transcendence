@@ -44,10 +44,17 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		if (temp.current.speed <= 2) {
 			temp.current.speed += 0.2;
 		}
-		temp.current.velocityX = direction * temp.current.speed;
-		temp.current.velocityZ = normalizedY * temp.current.speed;
-		if (!playerState.master) {
-			temp.current.velocityX *= -1;
+		const testX = direction * temp.current.speed;
+		const testZ = normalizedY * temp.current.speed;
+		temp.current.velocityX = testX
+		temp.current.velocityZ = testZ
+		if (playerState.master) {
+			const msg = {
+				position: { x: temp.current.x, z: temp.current.z },
+				velocity: { x: testX, z: testZ },
+				speed: 1.2
+			}
+			wsclient?.emitMessageToGame(JSON.stringify(msg), `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 		}
 	}
 
@@ -170,7 +177,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 	}, [pongGameState.gameId, playerState.client, ballRef, pongGameState.gameOver, scores, wsclient, playerState.master, setWinner, setBallVisibility, updatePongGameState]);
 
 	const predict = (deltaTime: number) => {
-		const deltaX = -temp.current.velocityX * 200 * deltaTime;
+		const deltaX = temp.current.velocityX * 200 * deltaTime;
 		const deltaZ = temp.current.velocityZ * 200 * deltaTime;
 
 		return {
@@ -200,7 +207,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 	useEffect(() => {
 		const setNewCoords = (msg: string) => {
 			const newPosition = JSON.parse(msg);
-			temp.current.velocityX = newPosition.velocity.x;
+			temp.current.velocityX = -newPosition.velocity.x;
 			temp.current.velocityZ = newPosition.velocity.z;
 			ballRef.current.position.x = -newPosition.position.x;
 			ballRef.current.position.z = newPosition.position.z;
@@ -222,7 +229,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 			const currentTime = performance.now();
 			const timePast = currentTime - lastUpdate;
 		
-			if (timePast >= 50) {
+			if (timePast >= 1000) {
 				const msg = {
 					position: { x: temp.current.x, z: temp.current.z },
 					velocity: { x: temp.current.velocityX, z: temp.current.velocityZ },
@@ -277,13 +284,13 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		// Handling scoring when the ball is outside of the play area.
 		else if ((ballRef.current.position.x > 200 || ballRef.current.position.x < -200) && 
 			scores.p2Score !== 7 && scores.p1Score !== 7) {
-			if (playerState.master) {
-				if (ballRef.current.position.x < -200) {
-					setScores({ ...scores, p2Score: scores.p2Score + 1 })
-				} else {
-					setScores({ ...scores, p1Score: scores.p1Score + 1 })
-				}
-			}
+			// if (playerState.master) {
+			// 	if (ballRef.current.position.x < -200) {
+			// 		setScores({ ...scores, p2Score: scores.p2Score + 1 })
+			// 	} else {
+			// 		setScores({ ...scores, p1Score: scores.p1Score + 1 })
+			// 	}
+			// }
 			randomBallDir();
 		}
 	});
