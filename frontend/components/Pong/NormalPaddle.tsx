@@ -58,7 +58,7 @@ export const RightPaddle : React.FC<{ direction: Direction }> = ({ direction }) 
 					rightPaddleRef.current.position.z = Math.max(rightPaddleRef.current.position.z - paddleSpeed * delta, -borderPositionZ + 15);
 				}
 			} else {
-				rightPaddleRef.current.position.z += (PositionRef.current - rightPaddleRef.current.position.z) * 0.6 ;
+				rightPaddleRef.current.position.z += (PositionRef.current - rightPaddleRef.current.position.z) ;
 			}
 		}
 	});

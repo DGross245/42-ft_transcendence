@@ -52,7 +52,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 			const msg = {
 				position: { x: temp.current.x, z: temp.current.z },
 				velocity: { x: testX, z: testZ },
-				speed: 1.2
+				speed: temp.current.speed,
 			}
 			wsclient?.emitMessageToGame(JSON.stringify(msg), `ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 		}
@@ -275,7 +275,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		else if (isCollidingWithPaddleX(rightPaddleRef.current.position)) {
 			changeBallDir(rightPaddleRef.current.position, -1);
 		}
-		if (isCollidingWithPaddleY(leftPaddleRef.current.position)) {
+		else if (isCollidingWithPaddleY(leftPaddleRef.current.position)) {
 			changeBallDir(leftPaddleRef.current.position, 1);
 		}
 		else if (isCollidingWithPaddleY(rightPaddleRef.current.position)) {
