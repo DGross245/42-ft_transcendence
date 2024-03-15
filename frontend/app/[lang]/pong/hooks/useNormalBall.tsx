@@ -314,13 +314,13 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		// Handling scoring when the ball is outside of the play area.
 		else if ((ballRef.current.position.x > 200 || ballRef.current.position.x < -200) && 
 			scores.p2Score !== 7 && scores.p1Score !== 7 && playerState.master) {
-			// if (playerState.master) {
-			// 	if (ballRef.current.position.x < -200) {
-			// 		setScores({ ...scores, p2Score: scores.p2Score + 1 })
-			// 	} else {
-			// 		setScores({ ...scores, p1Score: scores.p1Score + 1 })
-			// 	}
-			// }
+			if (playerState.master) {
+				if (ballRef.current.position.x < -200) {
+					setScores({ ...scores, p2Score: scores.p2Score + 1 })
+				} else {
+					setScores({ ...scores, p1Score: scores.p1Score + 1 })
+				}
+			}
 			randomBallDir();
 		}
 	});

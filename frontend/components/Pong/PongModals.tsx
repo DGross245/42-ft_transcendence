@@ -189,10 +189,10 @@ export const PongModals = memo(() => {
 
 		if (username !== playerInfos.name || color !== playerInfos.color) {
 			const colorCopy = color.replace('#', '0x');
-			setPlayerInfos({ color: color, name: String(username) });
 			if (await onSetNameAndColor(username, colorCopy)) {
 				return ;
 			}
+			setPlayerInfos({ color: color, name: String(username) });
 		}
 
 		setCustomized(true);
@@ -221,6 +221,7 @@ export const PongModals = memo(() => {
 		const colorCopy = color.replace('#', '0x');
 		if (username.length > 1 && username.length < 27) {
 			if (!(await onSetNameAndColor(username, colorCopy))) {
+				setPlayerInfos({ color: colorCopy, name: username });
 				setShowSetModal(false);
 			}
 		}

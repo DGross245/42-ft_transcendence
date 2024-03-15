@@ -18,6 +18,7 @@ import { WSClientType } from "@/helpers/wsclient";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import { useKey } from "@/components/hooks/useKey";
 import { useTranslation } from "@/app/i18n";
+import LoadingButton from "./components/LoadingButton";
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
 /* -------------------------------------------------------------------------- */
@@ -351,17 +352,17 @@ const TournamentContent: React.FC<ModalContentProps> = ({ onClose, gameType, clo
 		>
 			<div className="flex items-end gap-2 justify-between">
 				<Snippet className="w-64 h-unit-10" symbol="ID" disableCopy={!tournament}>{tournamentID}</Snippet>
-				<Button className="w-full" color="primary" onClick={async () => {
+				<LoadingButton className="w-full" color="primary" onClick={async () => {
 					if (tournament) {
 						if (!(await onStartTournament(tournamentID, gameType))) {
 							setSelectedTournament(String(tournamentID));
 						}
 					} else {
-						onGameCreate();
+						await onGameCreate();
 					}
 				}}>
 					{tournament ? t("selectionmodal.selectgame.start") : t("selectionmodal.selectgame.create")}
-				</Button>
+				</LoadingButton>
 			</div>
 			<Divider/>
 			<SearchableGamesTable

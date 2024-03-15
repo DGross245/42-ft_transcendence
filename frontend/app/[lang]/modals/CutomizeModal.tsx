@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "@/app/i18n";
 import styles from "./Modals.module.css";
 import clsx from "clsx";
+import LoadingButton from "./components/LoadingButton";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -13,7 +14,7 @@ interface CustomizeModalProps {
 	isOpen: boolean,
 	loading?: boolean,
 	username?: string,
-	startGame: (username: string, color: string) => void
+	startGame: (username: string, color: string) => Promise<void>
 }
 
 /* -------------------------------------------------------------------------- */
@@ -32,10 +33,6 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 			setUsername(inputUsername);
 		}
 	}, [inputColor, inputUsername]);
-
-	const onButtonClick = () => {
-		startGame(username, color);
-	}
 
 	const isInvalidUsername = useMemo(() => {
 		return username.length < 2 || username.length > 26;
@@ -93,9 +90,9 @@ const CustomizeModal: React.FC<CustomizeModalProps> = ({ color: inputColor, isOp
 					</div>
 				</ModalBody>
 				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
-					<ModalButton onClick={onButtonClick}>
+					<LoadingButton onClick={() => startGame(username, color)}>
 						{t("customizemodal.joingame")}
-					</ModalButton>
+					</LoadingButton>
 				</ModalFooter>
 			</ModalContent>
 		</Modal>
