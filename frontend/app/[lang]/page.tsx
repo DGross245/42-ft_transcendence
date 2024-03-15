@@ -10,6 +10,7 @@ import pongGameImage from "@/assets/pongGame.png";
 import tttGameImage from "@/assets/tttGame.png";
 import { WalletScene } from "./walletScene";
 import { useTranslation } from "../i18n";
+import PongGame from "./pong/page";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -21,7 +22,7 @@ interface GameCardProps {
 	path: string;
 }
 
-const GameCard: React.FC<GameCardProps> = ({title, image, path}) => {
+export const GameCard: React.FC<GameCardProps> = ({title, image, path}) => {
 	const router = useRouter();
 
 	return (
@@ -43,34 +44,22 @@ const GameCard: React.FC<GameCardProps> = ({title, image, path}) => {
 }
 
 export default function Home() {
-	const [connected, setConnected] = useState(false);
-	const { isConnected } = useWeb3ModalAccount();
-	const { t } = useTranslation("common");
+	// const [game, setGame] = useState("HOME");
 
-	useEffect(() => {
-		setConnected(isConnected);
-	}, [isConnected]);
+	// if (game === "Pong") {
+	// 	return (
+	// 		<section className="flex-col items-center justify-center h-full" hidden={game !== "Pong"}>
+	// 			<PongGame />
+	// 		</section>
+	// 	);
+	// } else if (game === "TTT") {
+	// 	return (
 
-	if (!connected) {
-		return (
-			<section className="flex-col items-center justify-center h-full" hidden={connected}>
-				<WalletScene />
-			</section>
-		)
-	}
-
+	// 	);
+	// }
 	return (
-		<section className="flex gap-5 items-center justify-center h-full p-5 flex-wrap md:flex-nowrap">
-			<GameCard
-				title={t('ttt')}
-				image={tttGameImage}
-				path="/tic-tac-toe"
-			/>
-			<GameCard
-				title={t('pong')}
-				image={pongGameImage}
-				path="/pong"
-			/>
+		<section className="flex-col items-center justify-center h-full">
+			<WalletScene />
 		</section>
 	);
 }
