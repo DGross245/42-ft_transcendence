@@ -50,6 +50,10 @@ export const RightPaddle : React.FC<{ direction: Direction }> = ({ direction }) 
 
 	//* ------------------------------- render loop ------------------------------ */
 	useFrame((_, delta) => {
+		if (pongGameState.gameOver) {
+			rightPaddleRef.current.position.z = 0;
+		}
+
 		if (rightPaddleRef && rightPaddleRef.current) {
 			if (botState.isActive && playerState.master) {
 				if (direction === Direction.Up) {
@@ -58,7 +62,7 @@ export const RightPaddle : React.FC<{ direction: Direction }> = ({ direction }) 
 					rightPaddleRef.current.position.z = Math.max(rightPaddleRef.current.position.z - paddleSpeed * delta, -borderPositionZ + 15);
 				}
 			} else {
-				rightPaddleRef.current.position.z += (PositionRef.current - rightPaddleRef.current.position.z) ;
+				rightPaddleRef.current.position.z += (PositionRef.current - rightPaddleRef.current.position.z) * 0.6 ;
 			}
 		}
 	});
@@ -92,6 +96,9 @@ export const LeftPaddle = () => {
 	useFrame((_, delta) => {
 		if (pongGameState.pause) {
 			return ;
+		}
+		if (pongGameState.gameOver) {
+			leftPaddleRef.current.position.z = 0;
 		}
 
 		if (leftPaddleRef && leftPaddleRef.current) {
