@@ -10,7 +10,8 @@ import pongGameImage from "@/assets/pongGame.png";
 import tttGameImage from "@/assets/tttGame.png";
 import { WalletScene } from "./walletScene";
 import { useTranslation } from "../i18n";
-import PongGame from "./pong/page";
+import Pong from "./pong/Pong";
+import TicTacToe from "./tic-tac-toe/TicTacToe";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -20,13 +21,19 @@ interface GameCardProps {
 	title: string;
 	image: StaticImageData;
 	path: string;
+	setGame: () => void;
 }
 
-export const GameCard: React.FC<GameCardProps> = ({title, image, path}) => {
+export const GameCard: React.FC<GameCardProps> = ({title, image, path, setGame}) => {
 	const router = useRouter();
 
+	const handleClick = () => {
+		setGame();
+		router.push(path);
+	};
+
 	return (
-		<Card className="py-4 max-w-[600px] cursor-pointer" isHoverable isPressable onPress={() => router.replace(path)}>
+		<Card className="py-4 max-w-[600px] cursor-pointer" isHoverable isPressable onPress={handleClick}>
 			<CardHeader className="flex-col items-center">
 				<h4 className="font-bold text-3xl">{title}</h4>
 			</CardHeader>
@@ -44,22 +51,27 @@ export const GameCard: React.FC<GameCardProps> = ({title, image, path}) => {
 }
 
 export default function Home() {
-	// const [game, setGame] = useState("HOME");
+	const [game, setGame] = useState("HOME");
+	const { isConnected } = useWeb3ModalAccount();
 
-	// if (game === "Pong") {
-	// 	return (
-	// 		<section className="flex-col items-center justify-center h-full" hidden={game !== "Pong"}>
-	// 			<PongGame />
-	// 		</section>
-	// 	);
-	// } else if (game === "TTT") {
-	// 	return (
+	if (game === "Pong" && isConnected) {
+		return (
+			<section className="flex-col items-center justify-center h-full" hidden={game !== "Pong"}>
+				<Pong />
+			</section>
+		);
+	} 
+	else if (game === "TTT" && isConnected) {
+		return (
+			<section className="flex-col items-center justify-center h-full" hidden={game !== "TTT"}>
+				<TicTacToe />
+			</section>
+		);
+	}
 
-	// 	);
-	// }
 	return (
 		<section className="flex-col items-center justify-center h-full">
-			<WalletScene />
+			<WalletScene setGame={setGame} />
 		</section>
 	);
 }

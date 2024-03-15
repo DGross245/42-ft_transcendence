@@ -45,7 +45,11 @@ const Text = ({leftTitle, rightTitle}: TextProps) => {
 	</>)
 }
 
-export const WalletScene = () => {
+interface WalletSceneProps {
+	setGame: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export const WalletScene: React.FC<WalletSceneProps> = ({ setGame }) => {
 	const [connected, setConnected] = useState(false);
 	const { dimensions } = useWindow();
 	const { t } = useTranslation("common");
@@ -58,14 +62,14 @@ export const WalletScene = () => {
 	if (!connected) {
 		return (
 			<div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-			<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
-				<ambientLight intensity={0.4} />
-				<pointLight position={[0, 2.5, 0]} intensity={10} color="white" />
-				<Wallet />
-				<Text leftTitle={t("ready_to_play")} rightTitle={t("connect_wallet")} />
-				<gridHelper position={[0, -1, 0]} args={[200, 200]} />
-			</Canvas>
-		</div>
+				<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
+					<ambientLight intensity={0.4} />
+					<pointLight position={[0, 2.5, 0]} intensity={10} color="white" />
+					<Wallet />
+					<Text leftTitle={t("ready_to_play")} rightTitle={t("connect_wallet")} />
+					<gridHelper position={[0, -1, 0]} args={[200, 200]} />
+				</Canvas>
+			</div>
 		)
 	}
 
@@ -78,11 +82,13 @@ export const WalletScene = () => {
 				<GameCard
 					title={t('ttt')}
 					image={tttGameImage}
+					setGame={() => setGame('TTT')}
 					path="/tic-tac-toe"
 				/>
 				<GameCard
 					title={t('pong')}
 					image={pongGameImage}
+					setGame={() => setGame('Pong')}
 					path="/pong"
 				/>
 			</div>

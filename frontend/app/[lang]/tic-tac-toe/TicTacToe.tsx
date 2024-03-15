@@ -10,7 +10,7 @@ import { useWeb3ModalAccount } from '@web3modal/ethers5/react';
 import { useRouter } from 'next/navigation';
 import { WSClientType } from '@/helpers/wsclient';
 
-export default function TicTacToePage() {
+export default function TicTacToe() {
 	const [wsclient, setWsclient] = useState<WSClientType | null>(null);
 	const [gameOptions, setGameOptions] = useState<GameOptions>({ gameMode: false, isBotActive: false, botStrength: 0.5 });
 	const [open, setOpen] = useState(true);
