@@ -10,8 +10,8 @@ import pongGameImage from "@/assets/pongGame.png";
 import tttGameImage from "@/assets/tttGame.png";
 import { WalletScene } from "./walletScene";
 import { useTranslation } from "../i18n";
-import Pong from "./pong/Pong";
-import TicTacToe from "./tic-tac-toe/TicTacToe";
+import Pong from "./pong/page";
+import TicTacToe from "./tic-tac-toe/page";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -54,20 +54,20 @@ export default function Home() {
 	const [game, setGame] = useState("HOME");
 	const { isConnected } = useWeb3ModalAccount();
 
-	if (game === "Pong" && isConnected) {
-		return (
-			<section className="flex-col items-center justify-center h-full" hidden={game !== "Pong"}>
-				<Pong />
-			</section>
-		);
-	} 
-	else if (game === "TTT" && isConnected) {
-		return (
-			<section className="flex-col items-center justify-center h-full" hidden={game !== "TTT"}>
-				<TicTacToe />
-			</section>
-		);
-	}
+	// if (game === "Pong" && isConnected) {
+	// 	return (
+	// 		<section className="flex-col items-center justify-center h-full" hidden={game !== "Pong"}>
+	// 			<Pong />
+	// 		</section>
+	// 	);
+	// } 
+	// else if (game === "TTT" && isConnected) {
+	// 	return (
+	// 		<section className="flex-col items-center justify-center h-full" hidden={game !== "TTT"}>
+	// 			<TicTacToe />
+	// 		</section>
+	// 	);
+	// }
 
 	return (
 		<section className="flex-col items-center justify-center h-full">

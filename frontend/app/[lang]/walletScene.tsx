@@ -11,6 +11,7 @@ import { GameCard } from "./page";
 import pongGameImage from "@/assets/pongGame.png";
 import tttGameImage from "@/assets/tttGame.png";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
+
 const Wallet = () => {
 	const walletGLTF = useLoader(GLTFLoader, '/Models/wallet/scene.gltf');
 	const walletRef = useRef<any>();
