@@ -1,5 +1,6 @@
-import { useSound } from "@/components/hooks/Sound";
 import { useCallback, useEffect, useState } from "react";
+
+import { useSound } from "@/components/hooks/Sound";
 import { usePongGameState } from "./usePongGameState";
 import { usePongSocket } from "./usePongSocket";
 
@@ -35,7 +36,7 @@ export const usePongUI = () => {
 				}
 				setSoundPlayed(true);
 			}, delay);
-			
+
 			return (() => {
 				clearTimeout(modalTimeout)
 			});

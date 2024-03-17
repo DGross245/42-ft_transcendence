@@ -106,8 +106,7 @@ export const useBallLogic = (onPositionChange: (position: Vector3) => void) => {
 			const { player, score, isOwnGoal } = paddleCollision[lastPaddleHit];
 			if (isOwnGoal && score !== 0) {
 				setScores({ ...scores, [player]: score - 1})
-			}
-			else if (!isOwnGoal) {
+			} else if (!isOwnGoal) {
 				setScores({ ...scores, [player]: score + 1})
 			}
 

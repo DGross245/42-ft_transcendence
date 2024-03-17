@@ -42,7 +42,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		if (playerState.master || !skipRef.current) {
 			const deltaZ = ballRef.current.position.z - paddlePos.z;
 			const normalizedY = deltaZ / halfPaddleHeight;
-		
+
 			if (temp.current.speed <= 2) {
 				temp.current.speed += 0.2;
 			}
@@ -50,7 +50,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 			const testZ = normalizedY * temp.current.speed;
 			temp.current.velocityX = testX
 			temp.current.velocityZ = testZ
-		
+
 			if (playerState.master) {
 				const msg = {
 					position: { x: temp.current.x, z: temp.current.z },
@@ -136,7 +136,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 
 		if (wsclient && pongGameState.gameId !== '-1') {
 			wsclient?.addMessageListener(`ScoreUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewScore);
-	
+
 			return () => {
 				wsclient?.removeMessageListener(`ScoreUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 			};
@@ -225,7 +225,7 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 
 		if (wsclient && pongGameState.gameId !== '-1' && !playerState.master) {
 			wsclient?.addMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId, setNewCoords);
-	
+
 			return () => {
 				wsclient?.removeMessageListener(`ballUpdate-${pongGameState.gameId}`, pongGameState.gameId);
 			};
@@ -301,14 +301,11 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 		// Handling ball collision with paddles.
 		else if (isCollidingWithPaddleX(leftPaddleRef.current.position)) {
 			changeBallDir(leftPaddleRef.current.position, 1);
-		}
-		else if (isCollidingWithPaddleX(rightPaddleRef.current.position)) {
+		} else if (isCollidingWithPaddleX(rightPaddleRef.current.position)) {
 			changeBallDir(rightPaddleRef.current.position, -1);
-		}
-		else if (isCollidingWithPaddleY(leftPaddleRef.current.position)) {
+		} else if (isCollidingWithPaddleY(leftPaddleRef.current.position)) {
 			changeBallDir(leftPaddleRef.current.position, 1);
-		}
-		else if (isCollidingWithPaddleY(rightPaddleRef.current.position)) {
+		} else if (isCollidingWithPaddleY(rightPaddleRef.current.position)) {
 			changeBallDir(rightPaddleRef.current.position, -1);
 		}
 		// Handling scoring when the ball is outside of the play area.

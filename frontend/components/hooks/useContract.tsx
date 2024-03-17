@@ -1,12 +1,13 @@
 "use client";
 
 import { useWeb3ModalProvider, useWeb3ModalAccount } from '@web3modal/ethers5/react'
-import scoresAbi from '../../public/tournamentManager_abi.json';
 import { useCallback, useEffect, useState } from 'react';
-import { useTranslation } from '@/app/i18n';
 import { toast } from 'react-toastify';
-import { useSound } from './Sound';
 import { ethers } from 'ethers';
+
+import scoresAbi from '../../public/tournamentManager_abi.json';
+import { useTranslation } from '@/app/i18n';
+import { useSound } from './Sound';
 
 export const contract_address = '0x4982051409D3F7f1C37d9f1e544EF6c6e8557148'
 
@@ -18,14 +19,17 @@ interface Player {
 	name: string
 	color: string
 }
+
 export interface PlayerScore {
 	addr: string
 	score: number
 }
+
 export interface Game {
 	player_scores: PlayerScore[]
 	finished: boolean
 }
+
 export interface Tournament {
 	master: string
 	game_type: string,
@@ -41,7 +45,7 @@ export interface Tournament {
 /* -------------------------------------------------------------------------- */
 function useContract() {
 	const [tmContract, setTmContract] = useState<ethers.Contract | null>(null);
-	const { address, chainId, isConnected } = useWeb3ModalAccount();
+	const { address, isConnected } = useWeb3ModalAccount();
 	const { walletProvider } = useWeb3ModalProvider();
 	const { t } = useTranslation("toasts");
 	const playSound =  useSound();

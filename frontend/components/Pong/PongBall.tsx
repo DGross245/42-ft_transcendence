@@ -1,9 +1,10 @@
 'use client'
 
-import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
-import { useBall } from "@/app/[lang]/pong/hooks/useNormalBall";
 import React from "react";
 import { Vector3 } from "three";
+
+import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
+import { useBall } from "@/app/[lang]/pong/hooks/useNormalBall";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */

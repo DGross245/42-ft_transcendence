@@ -1,7 +1,7 @@
 import { useFrame } from "@react-three/fiber";
 import { useEffect, useMemo, useRef } from "react";
-import { Direction } from "../../app/[lang]/pong/hooks/usePongBot";
 
+import { Direction } from "../../app/[lang]/pong/hooks/usePongBot";
 import { useKey } from "@/components/hooks/useKey";
 import { usePongGameState } from "../../app/[lang]/pong/hooks/usePongGameState";
 import { usePongSocket } from "../../app/[lang]/pong/hooks/usePongSocket";
