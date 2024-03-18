@@ -46,15 +46,15 @@ export const useBall = (onPositionChange: (position: Vector3) => void) => {
 			if (temp.current.speed <= 2) {
 				temp.current.speed += 0.2;
 			}
-			const testX = direction * temp.current.speed;
-			const testZ = normalizedY * temp.current.speed;
-			temp.current.velocityX = testX
-			temp.current.velocityZ = testZ
+			const tempX = direction * temp.current.speed;
+			const tempZ = normalizedY * temp.current.speed;
+			temp.current.velocityX = tempX
+			temp.current.velocityZ = tempZ
 
 			if (playerState.master) {
 				const msg = {
 					position: { x: temp.current.x, z: temp.current.z },
-					velocity: { x: testX, z: testZ },
+					velocity: { x: tempX, z: tempZ },
 					speed: temp.current.speed,
 				}
 				wsclient?.emitMessageToGame(JSON.stringify(msg), `changeBall-${pongGameState.gameId}`, pongGameState.gameId);
