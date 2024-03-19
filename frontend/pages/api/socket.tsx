@@ -42,6 +42,8 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 		}
 	}
 
+	logger.info('SocketHandler Called');
+
 	if (!res.socket.server?.io) {
 		const io = new Server(res.socket.server as any);
 		res.socket.server!.io = io;
