@@ -7,11 +7,17 @@ import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
 import { contract_address } from "@/components/hooks/useContract";
 import { LogstashTransport } from "winston-logstash-ts";
+import { format } from 'logform';
+
 
 const logger = LogstashTransport.createLogger("transcendence", {
+	host: 'logstash',
 	port: 5001,
 	protocol: 'tcp',
-	host: 'localhost'
+	format: format.combine(
+        format.timestamp(),
+        format.logstash(),
+    )
 });
 /* -------------------------------------------------------------------------- */
 /*                                Interface(s)                                */
