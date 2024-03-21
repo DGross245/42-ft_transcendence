@@ -6,40 +6,7 @@ import { usePongSocket } from "@/app/[lang]/pong/hooks/usePongSocket";
 import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
 import useContract from "@/components/hooks/useContract";
 import { useRouter } from "next/navigation";
-
-// // TODO: REMOVE THIS LATTER
-// export const usePrevious = (value, initialValue) => {
-// 	const ref = useRef(initialValue);
-// 	useEffect(() => {
-// 	  ref.current = value;
-// 	});
-// 	return ref.current;
-//   };
-
-//   export const useEffectDebugger = (effectHook, dependencies, dependencyNames = []) => {
-// 	const previousDeps = usePrevious(dependencies, []);
-  
-// 	const changedDeps = dependencies.reduce((accum, dependency, index) => {
-// 	  if (dependency !== previousDeps[index]) {
-// 		const keyName = dependencyNames[index] || index;
-// 		return {
-// 		  ...accum,
-// 		  [keyName]: {
-// 			before: previousDeps[index],
-// 			after: dependency
-// 		  }
-// 		};
-// 	  }
-  
-// 	  return accum;
-// 	}, {});
-  
-// 	if (Object.keys(changedDeps).length) {
-// 	  console.log('[use-effect-debugger] ', changedDeps);
-// 	}
-  
-// 	useEffect(effectHook, dependencies);
-// };
+import useOnUnUnmount from "../hooks/onUnmount";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -90,6 +57,12 @@ export const PongSocketEvents = memo(() => {
 	const newClient = useWSClient();
 	const playSound = useSound();
 	const router = useRouter();
+
+	useOnUnUnmount(() => {
+		if (wsclient) {
+			wsclient.disconnect();
+		}
+	});
 
 	//* ------------------------------- state variables ------------------------------ */
 	const [skip, setSkip] = useState({ _skip: false, address: "" })
