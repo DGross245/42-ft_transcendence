@@ -37,21 +37,9 @@ services:
     networks:
       - lognet
 
-  mock_logging:
-    container_name: mock_logger
-    build: mock_logging/
-    depends_on:
-      - logstash
-    environment:
-      - LOGSTASH_HOST=logstash:5001
-    ports:
-      - "3000:3000"
-    networks:
-      - lognet
-
-  # transcendence:
-  #   container_name: transcendence
-  #   build: .
+  # mock_logging:
+  #   container_name: mock_logger
+  #   build: mock_logging/
   #   depends_on:
   #     - logstash
   #   environment:
@@ -60,6 +48,18 @@ services:
   #     - "3000:3000"
   #   networks:
   #     - lognet
+
+  transcendence:
+    container_name: transcendence
+    build: .
+    depends_on:
+      - logstash
+    environment:
+      - LOGSTASH_HOST=logstash:5001
+    ports:
+      - "3000:3000"
+    networks:
+      - lognet
 
 networks:
   lognet:
