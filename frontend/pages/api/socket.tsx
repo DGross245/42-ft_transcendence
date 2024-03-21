@@ -6,7 +6,19 @@ import { ethers } from 'ethers';
 import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
 import { contract_address } from "@/components/hooks/useContract";
+import { LogstashTransport } from "winston-logstash-ts";
+import { format } from 'logform';
 
+
+const logger = LogstashTransport.createLogger("transcendence", {
+	host: 'logstash',
+	port: 5001,
+	protocol: 'tcp',
+	format: format.combine(
+        format.timestamp(),
+        format.logstash(),
+    )
+});
 /* -------------------------------------------------------------------------- */
 /*                                Interface(s)                                */
 /* -------------------------------------------------------------------------- */
@@ -35,6 +47,8 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			return (eloScore);
 		}
 	}
+
+	logger.info('SocketHandler Called');
 
 	if (!res.socket.server?.io) {
 		const io = new Server(res.socket.server as any);
@@ -143,6 +157,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			});
 
 			socket.on('create-game', (gameMode: string) => {
+				logger.info('create-game', {gameMode: gameMode});
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 				const customGame = `Custom-Game-${gameMode}-${id}`;
 				socket.emit('match-found', customGame, -1, -1);

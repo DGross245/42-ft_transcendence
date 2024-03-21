@@ -35,7 +35,8 @@
     "sharp": "^0.33.2",
     "socket.io": "^4.7.3",
     "socket.io-client": "^4.7.3",
-    "three": "^0.160.1"
+    "three": "^0.160.1",
+    "winston-logstash-ts": "^0.2.3"
   },
   "devDependencies": {
     "@types/memory-cache": "^0.2.5",

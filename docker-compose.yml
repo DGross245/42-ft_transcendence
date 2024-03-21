@@ -1,27 +1,65 @@
-version: '3.8'
-
+version: '3.7'
 services:
-  nextjs:
-    container_name: nextjs
-    build:
-      context: .
-      dockerfile: Dockerfile
-    networks:
-      - webnet
-
-  nginx:
-    container_name: nginx
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2-arm64
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./ssl:/etc/sslcerts/:ro
-    depends_on:
-      - nextjs
+      - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    restart: always
     networks:
-      - webnet
+      - lognet
+
+  logstash:
+    container_name: logstash
+    image: docker.elastic.co/logstash/logstash:8.12.2-arm64
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    depends_on:
+      - elasticsearch
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    ports:
+      - "5001:5001"
+    networks:
+      - lognet
+
+  kibana:
+    container_name: kibana
+    image: docker.elastic.co/kibana/kibana:8.12.2-arm64
+    volumes:
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+      - ./ssl:/usr/share/kibana/config/ssl
+    depends_on:
+      - elasticsearch
+    ports:
+      - "5601:5601"
+    restart: always
+    networks:
+      - lognet
+
+  # mock_logging:
+  #   container_name: mock_logger
+  #   build: mock_logging/
+  #   depends_on:
+  #     - logstash
+  #   environment:
+  #     - LOGSTASH_HOST=logstash:5001
+  #   ports:
+  #     - "3000:3000"
+  #   networks:
+  #     - lognet
+
+  transcendence:
+    container_name: transcendence
+    build: .
+    depends_on:
+      - logstash
+    environment:
+      - LOGSTASH_HOST=logstash:5001
+    ports:
+      - "3000:3000"
+    networks:
+      - lognet
 
 networks:
-  webnet:
+  lognet:
