@@ -3,8 +3,8 @@
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import { Card, CardBody, CardHeader } from "@nextui-org/react";
 import Image, { StaticImageData } from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import pongGameImage from "@/assets/pongGame.png";
 import tttGameImage from "@/assets/tttGame.png";
