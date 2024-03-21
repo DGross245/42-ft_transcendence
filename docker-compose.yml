@@ -6,7 +6,7 @@ services:
     volumes:
       - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     environment:
-      - ELASTIC_PASSWORD=password
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     healthcheck:
       test: curl -s http://localhost:9200 >/dev/null || exit 1
       interval: 5s
@@ -15,6 +15,7 @@ services:
     restart: always
     networks:
       - lognet
+
   setupelastic:
     container_name: setupelastic
     image: curlimages/curl:latest
@@ -34,7 +35,9 @@ services:
     depends_on:
       - elasticsearch
     environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+      - LS_JAVA_OPTS="-Xmx256m -Xms256m"
+      - ELASTIC_USER=${ELASTIC_USER}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     ports:
       - "5001:5001"
     networks:
@@ -48,6 +51,10 @@ services:
       - ./ssl:/usr/share/kibana/config/ssl
     depends_on:
       - elasticsearch
+    environment:
+      - KIBANA_USER=${KIBANA_USER}
+      - KIBANA_PASSWORD=${KIBANA_PASSWORD}
+      - KIBANA_ENCRYPTION_KEY=${KIBANA_ENCRYPTION_KEY}
     ports:
       - "5601:5601"
     restart: always
