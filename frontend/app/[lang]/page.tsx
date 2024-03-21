@@ -25,7 +25,7 @@ const GameCard: React.FC<GameCardProps> = ({title, image, path}) => {
 	const router = useRouter();
 
 	return (
-		<Card className="py-4 max-w-[600px] cursor-pointer" isHoverable isPressable onPress={() => router.replace(path)}>
+		<Card className="py-4 max-w-[600px] cursor-pointer" isHoverable isPressable onPress={() => router.push(path)}>
 			<CardHeader className="flex-col items-center">
 				<h4 className="font-bold text-3xl">{title}</h4>
 			</CardHeader>
