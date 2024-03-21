@@ -7,6 +7,11 @@ services:
       - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     environment:
       - ELASTIC_PASSWORD=password
+    healthcheck:
+      test: curl -s http://localhost:9200 >/dev/null || exit 1
+      interval: 5s
+      timeout: 5s
+      retries: 50
     restart: always
     networks:
       - lognet
@@ -14,7 +19,8 @@ services:
     container_name: setupelastic
     image: curlimages/curl:latest
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     restart: "no"
     entrypoint: [ "curl", "-X", "POST", "http://elasticsearch:9200/_security/user/kibana_system/_password", "-H", "Content-Type: application/json", "-d", "{\"password\": \"password\"}", "-u", "elastic:password" ]
     networks:
