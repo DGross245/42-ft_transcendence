@@ -7,6 +7,6 @@ server.host: 0.0.0.0
 # This section was automatically generated during setup.
 elasticsearch.hosts: ['http://elasticsearch:9200']
 elasticsearch.username: "kibana_system"
-elasticsearch.password: "password"
+elasticsearch.password: ${KIBANA_PASSWORD}
 
-xpack.security.encryptionKey: "nmNksPvm<PypvpgKVwWYM5ScNVCnpMPG"
+xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY}
