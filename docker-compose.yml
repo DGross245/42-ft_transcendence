@@ -5,7 +5,18 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2-arm64
     volumes:
       - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    environment:
+      - ELASTIC_PASSWORD=password
     restart: always
+    networks:
+      - lognet
+  setupelastic:
+    container_name: setupelastic
+    image: curlimages/curl:latest
+    depends_on:
+      - elasticsearch
+    restart: "no"
+    entrypoint: [ "curl", "-X", "POST", "http://elasticsearch:9200/_security/user/kibana_system/_password", "-H", "Content-Type: application/json", "-d", "{\"password\": \"password\"}", "-u", "elastic:password" ]
     networks:
       - lognet
 
@@ -36,18 +47,6 @@ services:
     restart: always
     networks:
       - lognet
-
-  # mock_logging:
-  #   container_name: mock_logger
-  #   build: mock_logging/
-  #   depends_on:
-  #     - logstash
-  #   environment:
-  #     - LOGSTASH_HOST=logstash:5001
-  #   ports:
-  #     - "3000:3000"
-  #   networks:
-  #     - lognet
 
   transcendence:
     container_name: transcendence
