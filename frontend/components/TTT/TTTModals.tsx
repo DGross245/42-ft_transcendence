@@ -11,6 +11,7 @@ import useContract, { PlayerScore } from "../hooks/useContract";
 import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
 import { useJoinEvents } from "../hooks/useJoinGame";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
+import useOnUnUnmount from "../hooks/onUnmount";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -69,6 +70,12 @@ export const TTTModals = memo(() => {
 	const router = useRouter();
 	const { tmContract } = useContract();
 	const {isConnected, address} = useWeb3ModalAccount();
+
+	useOnUnUnmount(() => {
+		if (wsclient) {
+			wsclient.disconnect();
+		}
+	});
 
 	//* ------------------------------- state variables ------------------------------ */
 	const [isClicked, setIsClicked] = useState(false);
