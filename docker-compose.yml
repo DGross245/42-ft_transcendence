@@ -6,7 +6,7 @@ services:
     volumes:
       - ./elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
     environment:
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_PASSWORD=password
     healthcheck:
       test: curl -s http://localhost:9200 >/dev/null || exit 1
       interval: 5s
@@ -35,9 +35,7 @@ services:
     depends_on:
       - elasticsearch
     environment:
-      - LS_JAVA_OPTS="-Xmx256m -Xms256m"
-      - ELASTIC_USER=${ELASTIC_USER}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     ports:
       - "5001:5001"
     networks:
@@ -52,9 +50,9 @@ services:
     depends_on:
       - elasticsearch
     environment:
-      - KIBANA_USER=${KIBANA_USER}
-      - KIBANA_PASSWORD=${KIBANA_PASSWORD}
-      - KIBANA_ENCRYPTION_KEY=${KIBANA_ENCRYPTION_KEY}
+      - KIBANA_USER=kibana_system
+      - KIBANA_PASSWORD=password
+      - KIBANA_ENCRYPTION_KEY=nmNksPvm<PypvpgKVwWYM5ScNVCnpMPG
     ports:
       - "5601:5601"
     restart: always
