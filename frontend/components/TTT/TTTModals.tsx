@@ -190,10 +190,10 @@ export const TTTModals = memo(() => {
 
 		if (username !== playerInfos.name || color !== playerInfos.color) {
 			const colorCopy = color.replace('#', '0x');
-			setPlayerInfos({ color: color, name: String(username) });
 			if (await onSetNameAndColor(username, colorCopy)) {
 				return ;
 			}
+			setPlayerInfos({ color: color, name: String(username) });
 
 		}
 
@@ -224,6 +224,7 @@ export const TTTModals = memo(() => {
 		const colorCopy = color.replace('#', '0x');
 		if (username.length > 1 && username.length < 27) {
 			if (!(await onSetNameAndColor(username, colorCopy))) {
+				setPlayerInfos({ color: colorCopy, name: username });
 				setShowSetModal(false);
 			}
 		}
@@ -264,14 +265,14 @@ export const TTTModals = memo(() => {
 			/>
 			{tournament.id !== -1 ? (
 				// Tournament Modal
-				<GameModal isOpen={showModal} gameResult={getGameResult()} nextGame={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
+				<GameModal isOpen={showModal} disableButton={playerState.client !== 0 && !(playerStatus === "disconnect" || playerStatus === "leave")} gameResult={getGameResult()} nextGame={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
 				) : (
 					gameState.gameId.includes("Custom-Game-") ? (
 						// Custom-Game Modal
 						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} status={getStatus()} buttonLoading={sendRequest} quit={quitGame}/>
 				) : (
 					// Ranked Modal
-					<GameModal isOpen={showModal} gameResult={getGameResult()} queue={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
+					<GameModal isOpen={showModal} disableButton={playerState.client !== 0 && !(playerStatus === "disconnect" || playerStatus === "leave")} gameResult={getGameResult()} queue={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
 				)
 			)}
 

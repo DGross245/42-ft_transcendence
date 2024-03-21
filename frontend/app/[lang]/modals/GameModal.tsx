@@ -1,10 +1,11 @@
 import { Chip, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Spinner } from "@nextui-org/react";
-import { ArrowRightIcon, PauseIcon } from "@heroicons/react/24/solid";
+import { PauseIcon } from "@heroicons/react/24/solid";
 import { RightArrowIcon } from "@/components/icons";
 import ModalButton from "./components/ModalButton";
 import { useTranslation } from "@/app/i18n";
 import styles from "./Modals.module.css";
 import clsx from "clsx";
+import LoadingButton from "./components/LoadingButton";
 
 /* -------------------------------------------------------------------------- */
 /*                                 Interfaces                                 */
@@ -31,12 +32,13 @@ interface GameWinningModalProps {
 	gameResult?: GameResult,
 	loading?: boolean,
 	rematch?: () => void,
-	nextGame?: () => void,
+	nextGame?: () => Promise<void>,
 	quit?: () => void,
-	queue?: () => void,
+	queue?: () => Promise<void>,
 	pauseInfo?: PauseButtonProps,
 	status?: Status,
-	buttonLoading?: boolean
+	buttonLoading?: boolean,
+	disableButton?: boolean
 }
 
 /* -------------------------------------------------------------------------- */
@@ -50,7 +52,7 @@ const InfoText: React.FC<{children: React.ReactNode, className?: string}> = ({ c
 	)
 }
 
-const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loading, rematch, nextGame, queue, quit, pauseInfo, status, buttonLoading }) => {
+const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, disableButton, gameResult, loading, rematch, nextGame, queue, quit, pauseInfo, status, buttonLoading }) => {
 	const { t } = useTranslation("modals");
 
 	return (
@@ -94,8 +96,8 @@ const GameModal: React.FC<GameWinningModalProps> = ({ isOpen, gameResult, loadin
 				<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
 					{quit		&& <ModalButton onClick={quit} color={"danger"}>{t("gamemodal.quit")}</ModalButton>}
 					{rematch	&& <ModalButton onClick={rematch} isDisabled={status !== undefined} isLoading={buttonLoading} >{t("gamemodal.rematch")}</ModalButton>}
-					{nextGame	&& <ModalButton onClick={nextGame}>{t("gamemodal.nextmatch")}</ModalButton>}
-					{queue		&& <ModalButton onClick={queue}>{t("gamemodal.queue")}</ModalButton>}
+					{nextGame	&& <LoadingButton isDisabled={disableButton} onClick={() => nextGame()}>{t("gamemodal.nextmatch")}</LoadingButton>}
+					{queue		&& <LoadingButton isDisabled={disableButton} onClick={() => queue()}>{t("gamemodal.queue")}</LoadingButton>}
 					{pauseInfo	&& (
 						<ModalButton
 							onClick={pauseInfo.onClick}

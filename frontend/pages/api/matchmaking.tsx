@@ -154,8 +154,10 @@ export const tournamentHandler = async (sockets: Matchmaking['sockets'], tournam
 			}
 		}
 		if (playerReady === sockets.length) {
-			const topic = 'tournament-finished';
-			io.to(`tournament-${tournamentID}`).emit(`message-${tournamentID}-${topic}`, "");
+			setTimeout(() => {
+				const topic = 'tournament-finished';
+				io.to(`tournament-${tournamentID}`).emit(`message-${tournamentID}-${topic}`, "");
+			}, 4500);
 		}
 	}
 }
