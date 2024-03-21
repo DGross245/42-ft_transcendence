@@ -81,23 +81,16 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 
 			socket.on('get-custom-games', (gameType: string) => {
 				const gameRooms = [];
-				let _status = undefined;
 
 				const CustomRooms = Array.from(io.sockets.adapter.rooms.keys()).filter((value) => value.includes(`Custom-Game-${gameType}`));
 
 				for (let i = 0; i < CustomRooms.length; i++) {
-					const room = io.sockets.adapter.rooms.get(CustomRooms[i]);
-
-					const status = started.includes(room);
+					const status = !started.includes(CustomRooms[i]);
 					if (status) {
-						_status = "Running"
-					} else {
-						_status = "Waiting..."
+						gameRooms.push({
+							id: CustomRooms[i],
+						});
 					}
-					gameRooms.push({
-						id: CustomRooms[i],
-						state: _status,
-					})
 				}
 
 				socket.emit('custome-rooms', gameRooms);

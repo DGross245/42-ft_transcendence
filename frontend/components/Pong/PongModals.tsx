@@ -109,9 +109,15 @@ export const PongModals = memo(() => {
 			const playerScore: PlayerScore[] = [];
 
 			for (let i = 0; i < maxClient; i++) {
-				playerScore.push({
-					addr: playerState.players[i].addr, score: scores.p1Score * 100,
-				})
+				if (i === 0) {
+					playerScore.push({
+						addr: playerState.players[i].addr, score: playerState.master ? scores.p1Score * 100 : scores.p2Score * 100,
+					})
+				} else {
+					playerScore.push({
+						addr: playerState.players[i].addr, score: playerState.master ? scores.p2Score * 100 : scores.p1Score * 100,
+					})
+				}
 			}
 			if (tournament.id !== -1) {
 				const data = await getTournament(tournament.id);
@@ -189,10 +195,10 @@ export const PongModals = memo(() => {
 
 		if (username !== playerInfos.name || color !== playerInfos.color) {
 			const colorCopy = color.replace('#', '0x');
-			setPlayerInfos({ color: color, name: String(username) });
 			if (await onSetNameAndColor(username, colorCopy)) {
 				return ;
 			}
+			setPlayerInfos({ color: color, name: String(username) });
 		}
 
 		setCustomized(true);
@@ -221,6 +227,7 @@ export const PongModals = memo(() => {
 		const colorCopy = color.replace('#', '0x');
 		if (username.length > 1 && username.length < 27) {
 			if (!(await onSetNameAndColor(username, colorCopy))) {
+				setPlayerInfos({ color: colorCopy, name: username });
 				setShowSetModal(false);
 			}
 		}
@@ -261,14 +268,14 @@ export const PongModals = memo(() => {
 			/>
 			{tournament.id !== -1 ? (
 				// Tournament Modal
-				<GameModal isOpen={showModal} gameResult={getGameResult()} nextGame={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
+				<GameModal isOpen={showModal} disableButton={!playerState.master && !(playerStatus === "disconnect" || playerStatus === "leave")} gameResult={getGameResult()} nextGame={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
 				) : (
 					pongGameState.gameId.includes("Custom-Game-") ? (
 						// Custom-Game Modal
 						<GameModal isOpen={showModal} gameResult={getGameResult()} rematch={()=> setSendRequest(true)} status={getStatus()} buttonLoading={sendRequest} quit={quitGame}/>
 				) : (
 					// Ranked Modal
-					<GameModal isOpen={showModal} gameResult={getGameResult()} queue={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
+					<GameModal isOpen={showModal} disableButton={!playerState.master && !(playerStatus === "disconnect" || playerStatus === "leave")} gameResult={getGameResult()} queue={() => handleNextClick()} status={getStatus()} quit={quitGame}/>
 				)
 			)}
 

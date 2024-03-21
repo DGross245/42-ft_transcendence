@@ -79,7 +79,9 @@ export const PongSocketEvents = memo(() => {
 		setTournament,
 		setBot,
 		tournament,
-		setWinner
+		setWinner,
+		setScores,
+		scores
 	} = usePongGameState();
 	const {
 		getPlayer,
@@ -341,6 +343,12 @@ export const PongSocketEvents = memo(() => {
 				playSound(msg);
 				setWinner(String(playerState.client + 1))
 				updatePongGameState({ gameOver: true });
+				if (isGameMode) {
+					const scoreKey = `p${playerState.client + 1}Score`;
+					setScores({ ...scores, [scoreKey]: 3 });
+				} else {
+					setScores({ ...scores, p1Score: 7 })
+				}
 			}
 		};
 
@@ -355,7 +363,7 @@ export const PongSocketEvents = memo(() => {
 				wsclient?.removeMessageListener(`player-left-${pongGameState.gameId}`, pongGameState.gameId);
 			}
 		}
-	}, [wsclient, pongGameState.gameId, playerState.client, pongGameState.gameOver, setWinner, timerState, skip._skip, setPlayerStatus, setRequestRematch, setSendRequest, playSound, updatePongGameState]);
+	}, [wsclient, scores, isGameMode, pongGameState.gameId, playerState.client, pongGameState.gameOver, setWinner, timerState, skip._skip, setScores, setPlayerStatus, setRequestRematch, setSendRequest, playSound, updatePongGameState]);
 
 	// Handle rematch request
 	useEffect(() => {
