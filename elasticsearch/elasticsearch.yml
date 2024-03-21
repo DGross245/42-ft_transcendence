@@ -4,5 +4,4 @@ discovery.type: single-node
 
 xpack.security.http.ssl.enabled: false
 
-xpack.security.enabled: false
-xpack.security.enrollment.enabled: false
+xpack.security.enabled: true
