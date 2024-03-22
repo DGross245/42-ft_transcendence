@@ -1,0 +1,11 @@
+{
+	"name": "logstash-logger",
+	"version": "1.0.0",
+	"description": "A Node.js application that logs to Logstash",
+	"main": "server.js",
+	"dependencies": {
+		"winston": "^3.12.0",
+		"winston-logstash": "^1.2.1",
+		"winston-logstash-transport": "^2.0.0"
+	}
+}
