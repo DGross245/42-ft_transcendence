@@ -16,20 +16,20 @@ all: up
 data:
 
 up: data
-	@docker-compose up --build -d
+	@docker compose up --build -d
 
 down:
-	@docker-compose down
+	@docker compose down
 
 clean:
-	@docker-compose down -v --rmi all --remove-orphans
+	@docker compose down -v --rmi all --remove-orphans
 	@docker network prune -f
 	# @rm -rf ./database/data
 
 ps:
-	@docker-compose ps
+	@docker compose ps
 
 logs:
-	@docker-compose logs
+	@docker compose logs
 
 .PHONY: up data down clean ps logs
