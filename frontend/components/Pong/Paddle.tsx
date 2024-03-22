@@ -48,11 +48,11 @@ export const GameControl = () => {
 	} = usePongGameState();
 	const right = useKey(['d', 'D']);
 	const left = useKey(['a', 'A']);
+	
 	let previousPosition = 0;
-
-	//* ------------------------------- render loop ------------------------------ */
 	const paddleSpeed = 300;
 
+	//* ------------------------------- render loop ------------------------------ */
 	useFrame((_, delta) => {
 		if (rightPaddleRef && rightPaddleRef.current) {
 			if (botState.isActive && playerState.master) {

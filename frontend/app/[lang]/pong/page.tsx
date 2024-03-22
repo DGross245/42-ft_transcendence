@@ -15,8 +15,8 @@ export default function PongPage() {
 	const [gameOptions, setGameOptions] = useState<GameOptions>({ gameMode: false, isBotActive: false, botStrength: 0.5});
 	const [open, setOpen] = useState(true);
 	const [tournament, setTournament] = useState({ id: -1, index: -1 });
-	const { isConnected } = useWeb3ModalAccount();
 	const [gameID, setGameID] = useState("-1");
+	const { isConnected } = useWeb3ModalAccount();
 	const router = useRouter();
 
 	useEffect(() => {
@@ -36,4 +36,3 @@ export default function PongPage() {
 		 </div>
 	);
 }
-

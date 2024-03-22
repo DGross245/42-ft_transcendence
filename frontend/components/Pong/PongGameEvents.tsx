@@ -1,6 +1,7 @@
+import { useEffect, useMemo } from "react";
+
 import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
 import { usePongSocket } from "@/app/[lang]/pong/hooks/usePongSocket";
-import { useEffect, useMemo } from "react";
 import { useKey } from "../hooks/useKey";
 import { useSound } from "../hooks/Sound";
 
@@ -31,7 +32,6 @@ export const PongGameEvents = () => {
 		setCountdownPos,
 		isGameMode,
 		isScoreVisible,
-		
 	} = usePongGameState();
 	const {
 		playerState,
