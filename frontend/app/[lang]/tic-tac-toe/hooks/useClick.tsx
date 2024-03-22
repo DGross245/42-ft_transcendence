@@ -48,7 +48,7 @@ export const useClick = () => {
 				setBotMoved(false);
 			}
 		}
-	},[clicked, board, botState,currentTurn, gameState.gameId, isGameMode, lineCoords, sceneCoords, setBotMoved, setLineCoords, setLineVisible, setTurn, setWinner, playSound, updateGameState, wsclient]);
+	},[clicked, board, botState,currentTurn, gameState.gameId, isGameMode, lineCoords, sceneCoords, wsclient, setBotMoved, setLineCoords, setLineVisible, setTurn, setWinner, playSound, updateGameState]);
 
 	// Thinking about sending only changed array instead of all of it
 	useEffect(() => {
@@ -65,7 +65,6 @@ export const useClick = () => {
 			} 
 		}
 	}, [wsclient, gameState.gameId, setBoard]);
-
 
 	return {
 		clicked, click

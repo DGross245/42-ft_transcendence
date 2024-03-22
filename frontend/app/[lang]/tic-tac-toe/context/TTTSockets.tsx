@@ -87,7 +87,6 @@ interface SocketContextValue {
 	setUnregistered: Dispatch<SetStateAction<boolean>>;
 }
 
-
 /**
  * The function `initialTTTPlayerState` initializes a state object for a Tic Tac Toe game with three
  * players.

@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Server } from "socket.io";
 import crypto from 'crypto';
 import { ethers } from 'ethers';
+
 import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
 import { contract_address } from "@/components/hooks/useContract";
@@ -115,7 +116,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 				const numClients = room ? room.size : 0;
 
 				let offset = isBotActive ? 1 : 0;
-			
+
 				const isBotPresent = containBot.includes(gameId);
 				if (isBotPresent) {
 					offset = 1;

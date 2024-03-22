@@ -8,16 +8,16 @@ export const useJoinEvents = (wsclient: WSClientType | null) => {
 		joinTournament,
 		startTournament,
 	} = useContract();
-	
+
 	const onCreateTournament = async (gameType: string) => {
 		const result = await createTournament(300000000, gameType);
 		if (!result) {
-			return (1)
+			return (1);
 		} else {
 			return (0);
 		}
 	}
-	
+
 	const onStartTournament = async (id: number, gameType: string) => {
 		const result = await startTournament(id);
 		if (!result) {
@@ -27,7 +27,7 @@ export const useJoinEvents = (wsclient: WSClientType | null) => {
 			return (0);
 		}
 	}
-	
+
 	const onNextMatch = async (id: number, gameType: string) => {
 		wsclient?.requestTournament(id, gameType);
 	}
@@ -40,11 +40,11 @@ export const useJoinEvents = (wsclient: WSClientType | null) => {
 			return (0);
 		}
 	}
-	
+
 	const onCreateCustom = (gameMode: string) => {
 		wsclient?.createGame(gameMode);
 	}
-	
+
 	const onJoinQueue = (gameType: string) => {
 		wsclient?.joinQueue(gameType)
 	}
