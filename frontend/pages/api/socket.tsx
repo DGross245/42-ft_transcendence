@@ -6,7 +6,13 @@ import { ethers } from 'ethers';
 import tournamentAbi from '@/public/tournamentManager_abi.json';
 import { matchmaking, tournamentHandler } from "./matchmaking";
 import { contract_address } from "@/components/hooks/useContract";
+import { LogstashTransport } from "winston-logstash-ts";
 
+const logger = LogstashTransport.createLogger("transcendence", {
+	port: 5001,
+	protocol: 'tcp',
+	host: 'localhost'
+});
 /* -------------------------------------------------------------------------- */
 /*                                Interface(s)                                */
 /* -------------------------------------------------------------------------- */
@@ -143,6 +149,7 @@ const SocketHandler = async (req: NextApiRequest, res: SocketApiResponse): Promi
 			});
 
 			socket.on('create-game', (gameMode: string) => {
+				logger.info('create-game', {gameMode: gameMode});
 				var id = crypto.randomBytes(20).toString('hex').substring(0, 7);
 				const customGame = `Custom-Game-${gameMode}-${id}`;
 				socket.emit('match-found', customGame, -1, -1);
