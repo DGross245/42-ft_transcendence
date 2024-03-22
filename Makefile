@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: jschneid <jschneid@student.42heilbronn.    +#+  +:+       +#+         #
+#    By: dna <dna@student.42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/09/16 11:24:22 by dgross            #+#    #+#              #
-#    Updated: 2024/02/01 09:42:26 by jschneid         ###   ########.fr        #
+#    Updated: 2024/03/22 03:11:06 by dna              ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@
 all: up
 
 data:
+	./create_certs.sh localhost
 
 up: data
 	@docker compose up --build -d
