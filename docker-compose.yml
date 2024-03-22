@@ -60,13 +60,29 @@ services:
 
   transcendence:
     container_name: transcendence
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
       - logstash
     environment:
       - LOGSTASH_HOST=logstash:5001
     ports:
       - "3000:3000"
+    networks:
+      - lognet
+
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/sslcerts/:ro
+    depends_on:
+      - nextjs
     networks:
       - lognet
 
