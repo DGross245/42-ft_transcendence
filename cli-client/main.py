@@ -8,7 +8,7 @@ import curses
 import signal
 import time
 import math
-import argparse
+import argparse	
 
 # -------------------------------------------------------------------------- #
 #                               Data Structure                               #
@@ -458,14 +458,14 @@ def curses_thread(stdscr):
 	g_game_state = init_game_state()
 	funcs = [start_loop, wait_loop, draw_countdown, game_loop, end_loop]
 	for i in range(len(funcs)):
-		stdscr.addstr(0, 0, 'paddle length: ' + str(g_paddle_length))
-		stdscr.addstr(1, 0, 'height scaling factor: ' + str(g_scaling_factor_height))
-		stdscr.addstr(2, 0, 'width scaling factor: ' + str(g_scaling_factor_width))
-		stdscr.addstr(3, 0, 'cli game height: ' + str(g_scaling_factor_height * g_server_game_height))
-		stdscr.addstr(4, 0, 'cli game width: ' + str(g_scaling_factor_width * g_server_game_width))
-		stdscr.addstr(5, 0, 'upper border: ' + str(server_y_to_cli_y(-g_server_game_height / 2)))
-		stdscr.addstr(6, 0, 'lower border: ' + str(server_y_to_cli_y(g_server_game_height / 2)))
-		stdscr.addstr(7, 0, 'window height: ' + str(curses.LINES))
+		# stdscr.addstr(0, 0, 'paddle length: ' + str(g_paddle_length))
+		# stdscr.addstr(1, 0, 'height scaling factor: ' + str(g_scaling_factor_height))
+		# stdscr.addstr(2, 0, 'width scaling factor: ' + str(g_scaling_factor_width))
+		# stdscr.addstr(3, 0, 'cli game height: ' + str(g_scaling_factor_height * g_server_game_height))
+		# stdscr.addstr(4, 0, 'cli game width: ' + str(g_scaling_factor_width * g_server_game_width))
+		# stdscr.addstr(5, 0, 'upper border: ' + str(server_y_to_cli_y(-g_server_game_height / 2)))
+		# stdscr.addstr(6, 0, 'lower border: ' + str(server_y_to_cli_y(g_server_game_height / 2)))
+		# stdscr.addstr(7, 0, 'window height: ' + str(curses.LINES))
 		funcs[i](stdscr)
 		stdscr.clear()
 		if event_quit.is_set():
