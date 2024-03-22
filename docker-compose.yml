@@ -58,8 +58,8 @@ services:
     networks:
       - lognet
 
-  transcendence:
-    container_name: transcendence
+  nextjs:
+    container_name: nextjs
     build:
       context: .
       dockerfile: Dockerfile
