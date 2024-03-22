@@ -12,8 +12,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 50
-    ports:
-      - "9200:9200"
     restart: always
     networks:
       - lognet
@@ -25,7 +23,7 @@ services:
       elasticsearch:
         condition: service_healthy
     restart: "no"
-    entrypoint: 'curl -X POST http://elasticsearch:9200/_security/user/${KIBANA_USER}/_password -H "Content-Type: application/json" -d "{\"password\": \"${KIBANA_PASSWORD}\"}" -u elastic:${ELASTIC_PASSWORD}'
+    entrypoint: "curl -X POST http://elasticsearch:9200/_security/user/${KIBANA_USER}/_password -H \"Content-Type: application/json\" -d \"{\\\"password\\\": \\\"${KIBANA_PASSWORD}\\\"}\" -u elastic:${ELASTIC_PASSWORD}"
     networks:
       - lognet
 
