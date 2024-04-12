@@ -8,7 +8,7 @@ This is a project we've created at 42. It is a web app built with Next.js and Ne
   - **Major module: Store tournament scores on the Blockchain**
     > Integrates blockchain technology into the Pong website to securely store tournament scores. Uses Ethereum's testing blockchain and Solidity for smart contracts.
 
-- ### Gameplay and User Experienc
+- ### Gameplay and User Experience
   - **Major module: Remote players**
     > Enables two distant players, each located on separate computers, to access the same website and participate in the same Pong game.
 
