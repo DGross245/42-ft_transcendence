@@ -5,47 +5,66 @@ This is a project we've created at 42. It is a web app built with Next.js and Ne
 ## Modules Implemented
 
 - ### Web
+
   - **Major module: Store tournament scores on the Blockchain**
+  
     > Integrates blockchain technology into the Pong website to securely store tournament scores. Uses Ethereum's testing blockchain and Solidity for smart contracts.
 
 - ### Gameplay and User Experience
+
   - **Major module: Remote players**
+
     > Enables two distant players, each located on separate computers, to access the same website and participate in the same Pong game.
 
   - **Major module: Multiplayers (more than 2 in the same game)**
+  
     > Enables more than two players to participate simultaneously in the same game, each with live control. Customizable gameplay mechanics for different numbers of players.
 
   - **Major module: New Game with History Tracking and Matchmaking**
+  
     > Introduces a new game with user history tracking and matchmaking for an enhanced user experience.
 
   - **Minor module: Game Customization Options**
+  
     > Provides customization features for all games on the platform.
 
 - ### AI-Algo
+
   - **Major module: Introduce AI Opponent**
+  
     > Adds AI player with human-like behavior for challenging gameplay. Goals: Strategic decision-making without A* algorithm. Adaptability to various scenarios.
 
 - ### Devops
+
   - **Major module: Infrastructure Setup for Log Management**
+  
     > Establishes robust log management using ELK stack (Elasticsearch, Logstash, Kibana), deploying Elasticsearch for storage, configuring Logstash for data processing, setting up Kibana for visualization, defining retention policies, and implementing security measures.
 
   - **Major module: Designing the Backend as Microservices**
+  
     > Architect backend using microservices. Divide into smaller, loosely-coupled microservices. Define clear boundaries and interfaces. Implement communication mechanisms. Ensure each handles a single, well-defined task.
 
 - ### Graphics
+
   - **Major module: Use of advanced 3D techniques**
+  
     > Introduces advanced 3D techniques using ThreeJS/WebGL for immersive visuals in Pong game. Enhances gameplay experience and revolutionizes visual elements.
 
 - ### Accessibility
+
   - **Minor module: Expanding Browser Compatibility**
+  
     > Expands browser compatibility by adding support for an additional web browser. Ensures seamless access and usage for users. Thorough testing and optimization for consistent user experience.
 
   - **Minor module: Multiple language support**
+  
     > Implements support for multiple languages on the website to cater to a diverse audience. Includes a language switcher for easy language selection. Translates essential content into supported languages for seamless navigation and interaction.
 
 - ### Server-Side Pong
+
   - **Major module: Enabling Pong Gameplay via CLI against Web Users with API Integration**
-    > Develops a Command-Line Interface (CLI) to play Pong against web users, integrating with the web application via API. Enables CLI users to join and interact with web players, with features including user authentication and real-time synchronization.
+  
+    > Develop a Command-Line Interface (CLI) to play Pong against web users, integrating with the web application via API. Enables CLI users to join and interact with web players, with features including user authentication and real-time synchronization.
 
 ### Total: 10.5 / 9.5 Modules ✅
 
