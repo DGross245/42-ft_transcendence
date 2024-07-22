@@ -79,10 +79,49 @@ pip install -r requirements.txt
 
 ## Usage
 
-**Main Project:**
+### Main Project
+
 1. Navigate to the project's main directory.
-2. Run `make` in your terminal to set things up.
-3. Connect to localhost
+2. Run `make` in your terminal to set up the project.
+3. Connect to localhost.
+
+### Crypto Wallet
+
+To utilize all features, you need a crypto wallet with free testnet tokens.
+
+**Setup MetaMask:**
+
+1. **Download MetaMask:**
+   - Via Chrome extension: [MetaMask on Chrome Web Store](https://chromewebstore.google.com/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=de)
+   - Via Website: [MetaMask Official Site](https://metamask.io/download/)
+
+2. **Create an Account or Log In.**
+
+3. **Configure the Sepolia Base Testnet:**
+   - Open the MetaMask browser extension.
+   - Click the network selection dropdown menu at the top of the extension.
+   - Click "Add Network."
+   - Select "Add a Network Manually."
+
+   Enter the following details:
+
+   | **Field**         | **Value**                |
+   |-------------------|--------------------------|
+   | Network Name      | SepoliaBase              |
+   | New RPC URL       | https://sepolia.base.org |
+   | Chain ID          | 84532                    |
+   | Currency Symbol   | SepoliaETH               |
+
+   Click "Save" and switch to the SepoliaBase network.
+
+### Tokens
+
+To start, you'll need testnet tokens:
+
+1. Visit this https://faucet.triangleplatform.com/base/sepolia
+2. Enter your wallet address (found in MetaMask under your account name, starting with 0x).
+
+If you encounter issues, search for "Base Sepolia Faucets" and try other available faucets.
 
 ---
 **CLI-tool:**
