@@ -84,6 +84,7 @@ pip install -r requirements.txt
 1. Navigate to the project's main directory.
 2. Run `make` in your terminal to set up the project.
 3. Connect to localhost.
+4. Login with your wallet
 
 ### Crypto Wallet
 
