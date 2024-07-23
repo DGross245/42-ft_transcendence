@@ -84,7 +84,12 @@ pip install -r requirements.txt
 1. Navigate to the project's main directory.
 2. Run `make` in your terminal to set up the project.
 3. Connect to localhost.
-4. Login with your wallet
+4. Log in with your wallet or use the Guest feature.
+
+**Note:** As a Guest, you will not have access to the following features:
+- Tournaments
+- Matchmaking
+- Color and name customization
 
 ### Crypto Wallet
 
