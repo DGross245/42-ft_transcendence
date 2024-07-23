@@ -4,7 +4,7 @@ import ModalButton from "./components/ModalButton";
 import pongGameImage from "@/assets/pongGame.png";
 import ticTacToeImage from "@/assets/tttGame.png";
 import BackButton from "./components/BackButton";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import styles from "./Modals.module.css";
 import Image from "next/image";
 import clsx from "clsx";
@@ -19,6 +19,7 @@ import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import { useKey } from "@/components/hooks/useKey";
 import { useTranslation } from "@/app/i18n";
 import LoadingButton from "./components/LoadingButton";
+import guestContext from "../guestProvider";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -529,6 +530,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ setGameID, wsclient, is
 	const router = useRouter();
 	const { onJoinQueue } = useJoinEvents(wsclient);
 	const tkey = useKey(['T', 't']);
+	const { isGuest } = useContext(guestContext);
 
 	useEffect(() => {
 		if (!isOpen) {
@@ -614,7 +616,7 @@ const SelectionModal: React.FC<SelectionModalProps> = ({ setGameID, wsclient, is
 						</div>
 					</ModalBody>
 					<ModalFooter className={clsx("flex justify-center", {"opacity-0": loading})}>
-						<ModalButton onClick={onButtonClick}>{modalData[selected].button}</ModalButton>
+						<ModalButton isDisabled={selected !== 'custom-games' && isGuest} onClick={onButtonClick}>{modalData[selected].button}</ModalButton>
 					</ModalFooter>
 				</>)}
 				{openSubModal && selected == "tournament-modes" && <TournamentContent wsclient={wsclient} tournamentState={tournamentState} setGameOptions={setGameOptions} gameType={gameType} closeMain={onClose} onClose={() => setOpenSubModal(false)}/>}

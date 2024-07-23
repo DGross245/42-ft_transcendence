@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
 
 import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
@@ -12,6 +12,7 @@ import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import { useJoinEvents } from "../hooks/useJoinGame";
 import { intToHexColor } from "../TTT/TTTModals";
+import guestContext from "@/app/[lang]/guestProvider";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -67,6 +68,7 @@ export const PongModals = memo(() => {
 	const router = useRouter();
 	const { tmContract } = useContract();
 	const {isConnected, address} = useWeb3ModalAccount();
+	const { isGuest } = useContext(guestContext);
 
 	//* ------------------------------- state variables ------------------------------ */
 	const [isClicked, setIsClicked] = useState(false);
@@ -183,22 +185,24 @@ export const PongModals = memo(() => {
 			}
 		}
 
-		if (pongGameState.gameId !== '-1' && !customized) {
+		if (pongGameState.gameId !== '-1' && !customized && !isGuest) {
 			getPlayerInfo();
 		}
-	}, [customized, pongGameState.gameId, playerAddress, getPlayer, setPlayerInfos]);
+	}, [customized, pongGameState.gameId, playerAddress, isGuest, getPlayer, setPlayerInfos]);
 
 	const initiateGame = async (username: string, color: string) => {
-		if (username.length < 2 || username.length > 26) {
-			return ;
-		}
-
-		if (username !== playerInfos.name || color !== playerInfos.color) {
-			const colorCopy = color.replace('#', '0x');
-			if (await onSetNameAndColor(username, colorCopy)) {
+		if (!isGuest) {
+			if (username.length < 2 || username.length > 26) {
 				return ;
 			}
-			setPlayerInfos({ color: color, name: String(username) });
+
+			if (username !== playerInfos.name || color !== playerInfos.color) {
+				const colorCopy = color.replace('#', '0x');
+				if (await onSetNameAndColor(username, colorCopy)) {
+					return ;
+				}
+				setPlayerInfos({ color: color, name: String(username) });
+			}
 		}
 
 		setCustomized(true);
@@ -226,7 +230,10 @@ export const PongModals = memo(() => {
 	const registerNewPlayer = async (username: string, color: string) => {
 		const colorCopy = color.replace('#', '0x');
 		if (username.length > 1 && username.length < 27) {
-			if (!(await onSetNameAndColor(username, colorCopy))) {
+			if (isGuest) {
+				setPlayerInfos({ color: colorCopy, name: username });
+				setShowSetModal(false);
+			} else if (!(await onSetNameAndColor(username, colorCopy))) {
 				setPlayerInfos({ color: colorCopy, name: username });
 				setShowSetModal(false);
 			}

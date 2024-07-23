@@ -5,10 +5,11 @@ import { PongSocket } from "./context/PongSockets";
 import OneForAllScene from "./scene/OneForAllScene";
 import { useRouter } from "next/navigation";
 import PongScene from "./scene/PongScene";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SelectionModal, { GameOptions } from "../modals/SelectionModal";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import { WSClientType } from "@/helpers/wsclient";
+import guestContext from "../guestProvider";
 
 export default function PongPage() {
 	const [wsclient, setWsclient] = useState<WSClientType | null>(null);
@@ -18,12 +19,13 @@ export default function PongPage() {
 	const [gameID, setGameID] = useState("-1");
 	const { isConnected } = useWeb3ModalAccount();
 	const router = useRouter();
+	const { isGuest } = useContext(guestContext);
 
 	useEffect(() => {
-		if (!isConnected) {
+		if (!isGuest && !isConnected) {
 			router.replace('/');
 		}
-	}, [isConnected, router]);
+	}, [isConnected, router, isGuest]);
 
 	return (
 		<div style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>

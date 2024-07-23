@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useContext, useEffect, useRef, useState } from "react";
 
 import useWSClient, { WSClientType } from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
@@ -7,6 +7,7 @@ import { usePongGameState } from "@/app/[lang]/pong/hooks/usePongGameState";
 import useContract from "@/components/hooks/useContract";
 import { useRouter } from "next/navigation";
 import useOnUnUnmount from "../hooks/onUnmount";
+import guestContext, { GuestProvider } from "@/app/[lang]/guestProvider";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -57,6 +58,7 @@ export const PongSocketEvents = memo(() => {
 	const newClient = useWSClient();
 	const playSound = useSound();
 	const router = useRouter();
+	const { isGuest } = useContext(guestContext);
 
 	useOnUnUnmount(() => {
 		if (wsclient) {
@@ -74,14 +76,14 @@ export const PongSocketEvents = memo(() => {
 		const waitForSocket = async () => {
 			if (newClient) {
 				await newClient.waitingForSocket();
-				newClient.sendAddress(address);
+				newClient.sendAddress(isGuest ? '0xGUEST' : address);
 				setWsclient(newClient as WSClientType);
-				setPlayerAddress(String(address));
+				setPlayerAddress(String(isGuest ? '0xGUEST' : address));
 			}
 		};
 
 		waitForSocket();
-	}, [newClient, address, setWsclient, setPlayerAddress]);
+	}, [newClient, address, setWsclient, setPlayerAddress, isGuest]);
 
 	// Catches skip msg when player subscribed to a tournament is not present
 	useEffect(() => {
@@ -135,7 +137,10 @@ export const PongSocketEvents = memo(() => {
 
 		const joinTheGame = async () => {
 			if (wsclient && pongGameState.gameId !== "-1") {
-				const player = await getPlayer(String(address));
+				let player = { addr: '0xGUEST', name: 'Guest', color: '0xffffff'};
+				if (!isGuest) {
+					player = await getPlayer(String(address))
+				}
 				const clients = await wsclient.joinGame(pongGameState.gameId, isGameMode ? "OneForAll" : "Pong", botState.isActive);
 
 				setPlayerState((prevState) => {
@@ -143,7 +148,7 @@ export const PongSocketEvents = memo(() => {
 						if (index === clients) {
 							return {
 								name: player.name,
-								addr: String(address),
+								addr: String(isGuest ? '0xGUEST' : address),
 								color: Number(player.color),
 								number: clients
 							};
@@ -179,10 +184,10 @@ export const PongSocketEvents = memo(() => {
 			}
 		};
 
-		if (customized && address) {
+		if (customized && (isGuest || address)) {
 			joinTheGame();
 		}
-	}, [wsclient, customized,pongGameState.gameId, address, botState.isActive, isGameMode, skip, , bottomPaddleRef, leftPaddleRef, rightPaddleRef, topPaddleRef, getPlayer, setPlayerState, setPlayerPaddle]);
+	}, [wsclient, customized,pongGameState.gameId, isGuest, address, botState.isActive, isGameMode, skip, , bottomPaddleRef, leftPaddleRef, rightPaddleRef, topPaddleRef, getPlayer, setPlayerState, setPlayerPaddle]);
 
 
 	useEffect(() => {

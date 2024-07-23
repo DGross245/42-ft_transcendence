@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useContext, useEffect, useState } from "react";
 
 import useWSClient, { WSClientType } from "@/helpers/wsclient";
 import { useSound } from "@/components/hooks/Sound";
@@ -6,6 +6,7 @@ import { useSocket } from "@/app/[lang]/tic-tac-toe/hooks/useSocket";
 import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
 import useContract from "@/components/hooks/useContract";
 import { useRouter } from "next/navigation";
+import guestContext from "@/app/[lang]/guestProvider";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -49,6 +50,7 @@ export const TTTSocketEvents = memo(() => {
 	const newClient = useWSClient();
 	const playSound = useSound();
 	const router = useRouter();
+	const { isGuest } = useContext(guestContext);
 
 	//* ------------------------------- state variables ------------------------------ */
 	const [playerSet, setPlayerSet] = useState(false);
@@ -62,14 +64,14 @@ export const TTTSocketEvents = memo(() => {
 		const waitForSocket = async () => {
 			if (newClient) {
 				await newClient.waitingForSocket();
-				newClient.sendAddress(address);
+				newClient.sendAddress(isGuest ? '0xGUEST' : address);
 				setWsclient(newClient as WSClientType);
-				setPlayerAddress(String(address));
+				setPlayerAddress(String(isGuest ? '0xGUEST' : address));
 			}
 		};
 
 		waitForSocket();
-	}, [newClient, address, setWsclient, setPlayerAddress]);
+	}, [newClient, address, isGuest, setWsclient, setPlayerAddress]);
 
 	// Catches skip msg when player subscribed to a tournament is not present
 	useEffect(() => {
@@ -113,7 +115,10 @@ export const TTTSocketEvents = memo(() => {
 	useEffect(() => {
 		const joinTheGame = async () => {
 			if (wsclient && gameState.gameId !== "-1") {
-				const player = await getPlayer(String(address))
+				let player = { addr: '0xGUEST', name: 'Guest', color: '0xffffff'};
+				if (!isGuest) {
+					player = await getPlayer(String(address))
+				}
 				const numClients = await wsclient.joinGame(gameState.gameId, isGameMode ? "Qubic" : "TicTacToe", botState.isActive);
 
 				setPlayerState((prevState) => {
@@ -121,7 +126,7 @@ export const TTTSocketEvents = memo(() => {
 						if (index === numClients) {
 							return {
 								name: player.name,
-								addr: String(address),
+								addr: String(isGuest ? '0xGUEST' : address),
 								color: Number(player.color),
 								number: numClients,
 								symbol: numClients === 0 ? 'X' : numClients === 1 ? 'O' : '🔳',
@@ -153,10 +158,10 @@ export const TTTSocketEvents = memo(() => {
 			}
 		};
 
-		if (customized && address) {
+		if (customized && (isGuest || address)) {
 			joinTheGame();
 		}
-	}, [wsclient, customized, gameState.gameId, address, botState.isActive, isGameMode, skip, setPlayerState, getPlayer]);
+	}, [wsclient, customized, gameState.gameId, address, botState.isActive, isGameMode, isGuest, skip, setPlayerState, getPlayer]);
 
 	// Initial communication between both players (SEND message)
 	useEffect(() => {

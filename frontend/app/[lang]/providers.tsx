@@ -1,10 +1,9 @@
 "use client";
 
-import { createWeb3Modal, defaultConfig } from '@web3modal/ethers5/react';
 import { NextUIProvider } from "@nextui-org/system";
 import { useRouter } from 'next/navigation';
-import { siteConfig } from "@/config/site";
 import Web3ModalProvider from './web3modal';
+import { GuestProvider } from "./guestProvider";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Interface                                 */
@@ -22,9 +21,11 @@ export function Providers({ children }: ProvidersProps) {
 
 	return (
 		<NextUIProvider navigate={router.push} className="h-screen">
-				<Web3ModalProvider>
-				{children}
-		</Web3ModalProvider>
-			</NextUIProvider>
+			<Web3ModalProvider>
+				<GuestProvider>
+					{children}
+				</GuestProvider>
+			</Web3ModalProvider>
+	  	</NextUIProvider>
 	);
 }

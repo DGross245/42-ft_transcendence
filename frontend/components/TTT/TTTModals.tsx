@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation"
 
 import { useGameState } from "@/app/[lang]/tic-tac-toe/hooks/useGameState";
@@ -12,6 +12,7 @@ import CustomizeModal from "@/app/[lang]/modals/CutomizeModal";
 import { useJoinEvents } from "../hooks/useJoinGame";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
 import useOnUnUnmount from "../hooks/onUnmount";
+import guestContext from "@/app/[lang]/guestProvider";
 
 /* -------------------------------------------------------------------------- */
 /*                                  Component                                 */
@@ -79,9 +80,10 @@ export const TTTModals = memo(() => {
 
 	//* ------------------------------- state variables ------------------------------ */
 	const [isClicked, setIsClicked] = useState(false);
-	const [playerInfos, setPlayerInfos] = useState({ color: "#ffffff", name: "KEK" });
+	const [playerInfos, setPlayerInfos] = useState({ color: "#ffffff", name: "Guest" });
 	const [showSetModal, setShowSetModal] = useState(false);
 	const [showCustomModal, setShowCustomModal] = useState(false);
+	const { isGuest } = useContext(guestContext);
 
 	/* ------------------------------- functions ------------------------------ */
 	const handleButtonClick = useCallback(() => {
@@ -185,23 +187,24 @@ export const TTTModals = memo(() => {
 			}
 		}
 
-		if (!customized) {
+		if (!customized && !isGuest) {
 			getPlayerInfo();
 		}
-	}, [customized, gameState.gameId, address, getPlayer, setPlayerInfos]);
+	}, [customized, gameState.gameId, address, isGuest, getPlayer, setPlayerInfos]);
 
 	const initiateGame = async (username: string, color: string) => {
-		if (username.length < 2 || username.length > 26) {
-			return ;
-		}
-
-		if (username !== playerInfos.name || color !== playerInfos.color) {
-			const colorCopy = color.replace('#', '0x');
-			if (await onSetNameAndColor(username, colorCopy)) {
+		if (!isGuest) {
+			if (username.length < 2 || username.length > 26) {
 				return ;
 			}
-			setPlayerInfos({ color: color, name: String(username) });
-
+	
+			if (username !== playerInfos.name || color !== playerInfos.color) {
+				const colorCopy = color.replace('#', '0x');
+				if (await onSetNameAndColor(username, colorCopy)) {
+					return ;
+				}
+				setPlayerInfos({ color: color, name: String(username) });
+			}
 		}
 
 		setCustomized(true);
@@ -230,7 +233,10 @@ export const TTTModals = memo(() => {
 	const registerNewPlayer = async (username: string, color: string) => {
 		const colorCopy = color.replace('#', '0x');
 		if (username.length > 1 && username.length < 27) {
-			if (!(await onSetNameAndColor(username, colorCopy))) {
+			if (isGuest) {
+				setPlayerInfos({ color: colorCopy, name: username });
+				setShowSetModal(false);
+			} else if (!(await onSetNameAndColor(username, colorCopy))) {
 				setPlayerInfos({ color: colorCopy, name: username });
 				setShowSetModal(false);
 			}

@@ -10,7 +10,7 @@ import { useWindow } from "@/components/hooks/useWindow";
 import pongGameImage from "@/assets/pongGame.png";
 import tttGameImage from "@/assets/tttGame.png";
 import { useWeb3ModalAccount } from "@web3modal/ethers5/react";
-import { Card, CardBody, CardHeader } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 import Image, { StaticImageData } from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -50,6 +50,8 @@ const Text = ({leftTitle, rightTitle}: TextProps) => {
 
 interface WalletSceneProps {
 	setGame: React.Dispatch<React.SetStateAction<string>>;
+	updateData: (guest: boolean) => void;
+	isGuest: boolean;
 }
 
 interface GameCardProps {
@@ -57,9 +59,10 @@ interface GameCardProps {
 	image: StaticImageData;
 	path: string;
 	setGame: () => void;
+	isGuest: boolean;
 }
 
-export const GameCard: React.FC<GameCardProps> = ({title, image, path, setGame}) => {
+export const GameCard: React.FC<GameCardProps> = ({title, image, isGuest, path, setGame}) => {
 	const router = useRouter();
 
 	const handleClick = () => {
@@ -85,7 +88,7 @@ export const GameCard: React.FC<GameCardProps> = ({title, image, path, setGame})
 	);
 }
 
-export const WalletScene: React.FC<WalletSceneProps> = ({ setGame }) => {
+export const WalletScene: React.FC<WalletSceneProps> = ({ setGame, isGuest, updateData }) => {
 	const [connected, setConnected] = useState(false);
 	const { dimensions } = useWindow();
 	const { t } = useTranslation("common");
@@ -93,9 +96,12 @@ export const WalletScene: React.FC<WalletSceneProps> = ({ setGame }) => {
 
 	useEffect(() => {
 		setConnected(isConnected);
-	}, [isConnected]);
+		if (isConnected) {
+			updateData(false);
+		}
+	}, [isConnected, updateData]);
 
-	if (!connected) {
+	if (!isGuest && !connected) {
 		return (
 			<div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
 				<Canvas style={{ width: dimensions.width, height: dimensions.height }}>
@@ -105,6 +111,11 @@ export const WalletScene: React.FC<WalletSceneProps> = ({ setGame }) => {
 					<Text leftTitle={t("ready_to_play")} rightTitle={t("connect_wallet")} />
 					<gridHelper position={[0, -1, 0]} args={[200, 200]} />
 				</Canvas>
+				<div style={{ position: 'absolute', bottom: '180px', display: 'flex', justifyContent: 'center', width: '100%' }}>
+					 <Button onClick={() => updateData(true)}>
+						Guest
+					</Button>
+				</div>
 			</div>
 		)
 	}
@@ -120,12 +131,14 @@ export const WalletScene: React.FC<WalletSceneProps> = ({ setGame }) => {
 					image={tttGameImage}
 					setGame={() => setGame('TTT')}
 					path="/tic-tac-toe"
+					isGuest={isGuest}
 				/>
 				<GameCard
 					title={t('pong')}
 					image={pongGameImage}
 					setGame={() => setGame('Pong')}
 					path="/pong"
+					isGuest={isGuest}
 				/>
 			</div>
 		</div>
